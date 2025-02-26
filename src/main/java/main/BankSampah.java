@@ -11,6 +11,6 @@ package main;
 public class BankSampah {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        System.out.println("test change World!");
     }
 }
