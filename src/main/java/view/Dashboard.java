@@ -37,28 +37,17 @@ public class Dashboard extends javax.swing.JFrame {
 
         dashboardPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        javax.swing.GroupLayout menu2Layout = new javax.swing.GroupLayout(menu2);
-        menu2.setLayout(menu2Layout);
-        menu2Layout.setHorizontalGroup(
-            menu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 127, Short.MAX_VALUE)
-        );
-        menu2Layout.setVerticalGroup(
-            menu2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 614, Short.MAX_VALUE)
-        );
-
         javax.swing.GroupLayout dashboardPanel1Layout = new javax.swing.GroupLayout(dashboardPanel1);
         dashboardPanel1.setLayout(dashboardPanel1Layout);
         dashboardPanel1Layout.setHorizontalGroup(
             dashboardPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(dashboardPanel1Layout.createSequentialGroup()
                 .addComponent(menu2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 950, Short.MAX_VALUE))
+                .addGap(0, 862, Short.MAX_VALUE))
         );
         dashboardPanel1Layout.setVerticalGroup(
             dashboardPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(menu2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(menu2, javax.swing.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
