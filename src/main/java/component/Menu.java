@@ -124,7 +124,7 @@ public class Menu extends javax.swing.JPanel {
                 .addComponent(jLabel6)
                 .addGap(5, 5, 5)
                 .addComponent(jLabel7)
-                .addContainerGap(139, Short.MAX_VALUE))
+                .addContainerGap(262, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
