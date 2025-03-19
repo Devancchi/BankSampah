@@ -19,12 +19,12 @@ import javax.swing.JFrame;
  *
  * @author devan
  */
-public class Menu extends javax.swing.JPanel {
+public class SideBar extends javax.swing.JPanel {
 
     /**
      * Creates new form Menu
      */
-    public Menu() {
+    public SideBar() {
         initComponents();
         setOpaque(false);
     }
