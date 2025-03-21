@@ -4,16 +4,17 @@
  */
 package view;
 
+
 /**
  *
  * @author devan
  */
-public class ManajemenNasabah extends javax.swing.JPanel {
+public class TabManajemenNasabah extends javax.swing.JPanel {
 
     /**
      * Creates new form ManajemenNasabah
      */
-    public ManajemenNasabah() {
+    public TabManajemenNasabah() {
         initComponents();
     }
 
