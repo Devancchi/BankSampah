@@ -16,13 +16,14 @@ import javax.swing.*;
 public class Button extends javax.swing.JPanel {
 
     private String text = "Tambah";
-    private Color backgroundColor = new Color(180, 255, 180);
-    private Color borderColor = new Color(0, 200, 0);
+    private Color backgroundColor = new Color(26, 243, 52, 97);
     private Color textColor = Color.BLACK;
+    private int cornerRadius = 20; // Ubah nilai untuk mengatur tingkat kelengkungan
 
     public Button() {
         setOpaque(false);
         setPreferredSize(new Dimension(80, 30));
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -36,6 +37,24 @@ public class Button extends javax.swing.JPanel {
                 repaint();
             }
         });
+    }
+
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Gambar background tombol dengan sudut melengkung
+        g2.setColor(backgroundColor);
+        g2.fillRoundRect(0, 0, getWidth(), getHeight(), cornerRadius, cornerRadius);
+
+        // Gambar teks di tengah tombol
+        g2.setColor(textColor);
+        g2.setFont(new Font("Arial", Font.BOLD, 14));
+        FontMetrics fm = g2.getFontMetrics();
+        int textX = (getWidth() - fm.stringWidth(text)) / 2;
+        int textY = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
+        g2.drawString(text, textX, textY);
     }
 
     /**

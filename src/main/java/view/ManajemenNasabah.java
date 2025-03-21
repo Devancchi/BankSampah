@@ -27,10 +27,145 @@ public class ManajemenNasabah extends javax.swing.JPanel {
     private void initComponents() {
 
         PanelMain = new javax.swing.JPanel();
+        ShadowUtama = new component.ShadowPanel();
+        ShadowSearch = new component.ShadowPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        ShadowSortby = new component.ShadowPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        ButtonTambahNasabah = new component.Button();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        table1 = new component.Table();
 
         setPreferredSize(new java.awt.Dimension(1200, 716));
 
         PanelMain.setLayout(new java.awt.CardLayout());
+
+        ShadowSearch.setBackground(new java.awt.Color(249, 251, 255));
+        ShadowSearch.setPreferredSize(new java.awt.Dimension(259, 43));
+
+        jLabel1.setBackground(new java.awt.Color(204, 204, 204));
+        jLabel1.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_search.png"))); // NOI18N
+        jLabel1.setText("Search");
+
+        javax.swing.GroupLayout ShadowSearchLayout = new javax.swing.GroupLayout(ShadowSearch);
+        ShadowSearch.setLayout(ShadowSearchLayout);
+        ShadowSearchLayout.setHorizontalGroup(
+            ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearchLayout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(jLabel1)
+                .addContainerGap(180, Short.MAX_VALUE))
+        );
+        ShadowSearchLayout.setVerticalGroup(
+            ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowSearchLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        jLabel2.setText("Nasabah");
+
+        ShadowSortby.setBackground(new java.awt.Color(249, 251, 255));
+        ShadowSortby.setPreferredSize(new java.awt.Dimension(185, 43));
+
+        jLabel3.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Short by :");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel4.setText("Newest");
+
+        javax.swing.GroupLayout ShadowSortbyLayout = new javax.swing.GroupLayout(ShadowSortby);
+        ShadowSortby.setLayout(ShadowSortbyLayout);
+        ShadowSortbyLayout.setHorizontalGroup(
+            ShadowSortbyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSortbyLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addContainerGap(68, Short.MAX_VALUE))
+        );
+        ShadowSortbyLayout.setVerticalGroup(
+            ShadowSortbyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSortbyLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ShadowSortbyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        ButtonTambahNasabah.setPreferredSize(new java.awt.Dimension(96, 30));
+
+        javax.swing.GroupLayout ButtonTambahNasabahLayout = new javax.swing.GroupLayout(ButtonTambahNasabah);
+        ButtonTambahNasabah.setLayout(ButtonTambahNasabahLayout);
+        ButtonTambahNasabahLayout.setHorizontalGroup(
+            ButtonTambahNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 96, Short.MAX_VALUE)
+        );
+        ButtonTambahNasabahLayout.setVerticalGroup(
+            ButtonTambahNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 30, Short.MAX_VALUE)
+        );
+
+        table1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"Dev", "Dev", "123", "Dev@gmail.com", ""},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Nama Nasabah", "Alamat", "Nomor Telp.", "Email", "Operasi"
+            }
+        ));
+        jScrollPane1.setViewportView(table1);
+
+        javax.swing.GroupLayout ShadowUtamaLayout = new javax.swing.GroupLayout(ShadowUtama);
+        ShadowUtama.setLayout(ShadowUtamaLayout);
+        ShadowUtamaLayout.setHorizontalGroup(
+            ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                .addGap(83, 83, 83)
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1055, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(51, 51, 51)
+                        .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36)
+                        .addComponent(ShadowSortby, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(82, 82, 82)
+                        .addComponent(ButtonTambahNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(62, Short.MAX_VALUE))
+        );
+        ShadowUtamaLayout.setVerticalGroup(
+            ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                        .addGap(44, 44, 44)
+                        .addComponent(jLabel2))
+                    .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ShadowSortby, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ButtonTambahNasabah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(41, 41, 41)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(171, Short.MAX_VALUE))
+        );
+
+        PanelMain.add(ShadowUtama, "card2");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -46,6 +181,16 @@ public class ManajemenNasabah extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private component.Button ButtonTambahNasabah;
     private javax.swing.JPanel PanelMain;
+    private component.ShadowPanel ShadowSearch;
+    private component.ShadowPanel ShadowSortby;
+    private component.ShadowPanel ShadowUtama;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private component.Table table1;
     // End of variables declaration//GEN-END:variables
 }

@@ -27,7 +27,7 @@
           <Group type="102" alignment="1" attributes="0">
               <Component id="SideBar" min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="PanelUtama" max="32767" attributes="0"/>
+                  <Component id="pn_utama" max="32767" attributes="0"/>
                   <Component id="TopBar" pref="1200" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -38,7 +38,7 @@
           <Group type="102" attributes="0">
               <Component id="TopBar" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-              <Component id="PanelUtama" max="32767" attributes="0"/>
+              <Component id="pn_utama" max="32767" attributes="0"/>
           </Group>
           <Component id="SideBar" pref="1024" max="32767" attributes="0"/>
       </Group>
@@ -124,7 +124,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="component.DashboardPanel" name="PanelUtama">
+    <Container class="component.DashboardPanel" name="pn_utama">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="fa" green="fa" red="fa" type="rgb"/>
@@ -137,11 +137,11 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Component id="ShadowCard" alignment="0" pref="1188" max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
                           <Component id="ShadowAktivitas" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
-                      <Component id="ShadowCard" pref="1188" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
