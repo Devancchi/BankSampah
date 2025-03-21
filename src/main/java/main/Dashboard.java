@@ -4,6 +4,7 @@
  */
 package main;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import component.Button;
 import java.awt.Color;
 
@@ -18,11 +19,10 @@ public class Dashboard extends javax.swing.JFrame {
      */
     public Dashboard() {
         initComponents();
-        setBackground(new Color(0,0,0,0));
+        setBackground(new Color(0, 0, 0, 0));
         SideBar.initMoving(Dashboard.this);
     }
-    
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -38,7 +38,7 @@ public class Dashboard extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        PanelUtama = new component.DashboardPanel();
+        pn_utama = new component.DashboardPanel();
         ShadowAktivitas = new component.ShadowPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table1 = new component.Table();
@@ -102,7 +102,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        PanelUtama.setBackground(new java.awt.Color(250, 250, 250));
+        pn_utama.setBackground(new java.awt.Color(250, 250, 250));
 
         table1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -291,22 +291,22 @@ public class Dashboard extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout PanelUtamaLayout = new javax.swing.GroupLayout(PanelUtama);
-        PanelUtama.setLayout(PanelUtamaLayout);
-        PanelUtamaLayout.setHorizontalGroup(
-            PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(PanelUtamaLayout.createSequentialGroup()
+        javax.swing.GroupLayout pn_utamaLayout = new javax.swing.GroupLayout(pn_utama);
+        pn_utama.setLayout(pn_utamaLayout);
+        pn_utamaLayout.setHorizontalGroup(
+            pn_utamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pn_utamaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PanelUtamaLayout.createSequentialGroup()
+                .addGroup(pn_utamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ShadowCard, javax.swing.GroupLayout.DEFAULT_SIZE, 1188, Short.MAX_VALUE)
+                    .addGroup(pn_utamaLayout.createSequentialGroup()
                         .addComponent(ShadowAktivitas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(ShadowCard, javax.swing.GroupLayout.DEFAULT_SIZE, 1188, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        PanelUtamaLayout.setVerticalGroup(
-            PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(PanelUtamaLayout.createSequentialGroup()
+        pn_utamaLayout.setVerticalGroup(
+            pn_utamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pn_utamaLayout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addComponent(ShadowCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(36, 36, 36)
@@ -321,7 +321,7 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(SideBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pn_utama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(TopBar, javax.swing.GroupLayout.DEFAULT_SIZE, 1200, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
@@ -329,7 +329,7 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(TopBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(pn_utama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(SideBar, javax.swing.GroupLayout.DEFAULT_SIZE, 1024, Short.MAX_VALUE)
         );
 
@@ -368,6 +368,7 @@ public class Dashboard extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                FlatLightLaf.setup();
                 new Dashboard().setVisible(true);
             }
         });
@@ -377,7 +378,6 @@ public class Dashboard extends javax.swing.JFrame {
     private component.Card CardSaldoTabungan;
     private component.Card CardTotalNasabah;
     private component.Card CardTotalSampah;
-    private component.DashboardPanel PanelUtama;
     private component.ShadowPanel ShadowAktivitas;
     private component.ShadowPanel ShadowCard;
     private component.SideBar SideBar;
@@ -397,6 +397,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private component.DashboardPanel pn_utama;
     private component.Table table1;
     // End of variables declaration//GEN-END:variables
 }
