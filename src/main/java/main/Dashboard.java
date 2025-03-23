@@ -5,7 +5,7 @@
 package main;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import component.Button;
+import component.Jbutton;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JPanel;
