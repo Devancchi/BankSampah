@@ -10,7 +10,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JPanel;
 import view.TabDashboard;
+import view.TabLaporanStatistik;
 import view.TabManajemenNasabah;
+import view.TabManajemenSampah;
 
 /**
  *
@@ -55,7 +57,6 @@ public class Dashboard extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(1440, 1024));
 
         TopBar.setPreferredSize(new java.awt.Dimension(1201, 75));
 
@@ -162,12 +163,22 @@ public class Dashboard extends javax.swing.JFrame {
         manajemen_sampah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_manajemen_sampah.png"))); // NOI18N
         manajemen_sampah.setText("Manajemen Sampah");
         manajemen_sampah.setPreferredSize(new java.awt.Dimension(240, 48));
+        manajemen_sampah.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                manajemen_sampahMouseClicked(evt);
+            }
+        });
 
         laporan_statistik.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
         laporan_statistik.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         laporan_statistik.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_laporan_statistik.png"))); // NOI18N
         laporan_statistik.setText("Laporan & Statistik");
         laporan_statistik.setPreferredSize(new java.awt.Dimension(240, 48));
+        laporan_statistik.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                laporan_statistikMouseClicked(evt);
+            }
+        });
 
         transaksi.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
         transaksi.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -250,7 +261,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addComponent(pn_sidebar, javax.swing.GroupLayout.PREFERRED_SIZE, 1022, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 2, Short.MAX_VALUE))
         );
 
         pack();
@@ -272,6 +283,22 @@ public class Dashboard extends javax.swing.JFrame {
         PanelUtama.repaint();
         PanelUtama.revalidate();
     }//GEN-LAST:event_dashboardMouseClicked
+
+    private void manajemen_sampahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_manajemen_sampahMouseClicked
+        PanelUtama.setOpaque(false);
+        PanelUtama.removeAll();
+        PanelUtama.add(new TabManajemenSampah());
+        PanelUtama.repaint();
+        PanelUtama.revalidate();
+    }//GEN-LAST:event_manajemen_sampahMouseClicked
+
+    private void laporan_statistikMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laporan_statistikMouseClicked
+        PanelUtama.setOpaque(false);
+        PanelUtama.removeAll();
+        PanelUtama.add(new TabLaporanStatistik());
+        PanelUtama.repaint();
+        PanelUtama.revalidate();
+    }//GEN-LAST:event_laporan_statistikMouseClicked
 
     /**
      * @param args the command line arguments
