@@ -10,9 +10,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JPanel;
 import view.TabDashboard;
+import view.TabDataBarang;
 import view.TabLaporanStatistik;
 import view.TabManajemenNasabah;
 import view.TabManajemenSampah;
+import view.TabTransaksi;
 
 /**
  *
@@ -185,12 +187,22 @@ public class Dashboard extends javax.swing.JFrame {
         transaksi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_transaksi.png"))); // NOI18N
         transaksi.setText("Transaksi");
         transaksi.setPreferredSize(new java.awt.Dimension(240, 48));
+        transaksi.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                transaksiMouseClicked(evt);
+            }
+        });
 
         data_barang.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
         data_barang.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         data_barang.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_data_barang.png"))); // NOI18N
         data_barang.setText("Data Barang");
         data_barang.setPreferredSize(new java.awt.Dimension(240, 48));
+        data_barang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                data_barangMouseClicked(evt);
+            }
+        });
 
         Settings.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         Settings.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -299,6 +311,22 @@ public class Dashboard extends javax.swing.JFrame {
         PanelUtama.repaint();
         PanelUtama.revalidate();
     }//GEN-LAST:event_laporan_statistikMouseClicked
+
+    private void transaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_transaksiMouseClicked
+        PanelUtama.setOpaque(false);
+        PanelUtama.removeAll();
+        PanelUtama.add(new TabTransaksi());
+        PanelUtama.repaint();
+        PanelUtama.revalidate();
+    }//GEN-LAST:event_transaksiMouseClicked
+
+    private void data_barangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_data_barangMouseClicked
+        PanelUtama.setOpaque(false);
+        PanelUtama.removeAll();
+        PanelUtama.add(new TabDataBarang());
+        PanelUtama.repaint();
+        PanelUtama.revalidate();
+    }//GEN-LAST:event_data_barangMouseClicked
 
     /**
      * @param args the command line arguments
