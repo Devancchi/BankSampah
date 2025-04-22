@@ -64,23 +64,6 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jbutton3 = new component.Jbutton();
-        panelAdd = new javax.swing.JPanel();
-        ShadowUtama1 = new component.ShadowPanel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        txt_id = new javax.swing.JTextField();
-        jLabel12 = new javax.swing.JLabel();
-        txt_nama = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        txt_email = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
-        txt_telepon = new javax.swing.JTextField();
-        jLabel13 = new javax.swing.JLabel();
-        txt_nama1 = new javax.swing.JTextField();
-        jLabel9 = new javax.swing.JLabel();
-        txt_email1 = new javax.swing.JTextField();
-        jbutton4 = new component.Jbutton();
-        jbutton5 = new component.Jbutton();
 
         setPreferredSize(new java.awt.Dimension(1200, 716));
         setLayout(new java.awt.CardLayout());
@@ -343,142 +326,6 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
 
         panelMain.add(panelView, "card2");
 
-        panelAdd.setLayout(new java.awt.CardLayout());
-
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
-        jLabel6.setText("Data Nasabah");
-
-        jLabel11.setFont(new java.awt.Font("Mongolian Baiti", 1, 21)); // NOI18N
-        jLabel11.setText("ID");
-
-        txt_id.setEditable(false);
-        txt_id.setBackground(new java.awt.Color(204, 204, 204));
-        txt_id.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        txt_id.setFocusable(false);
-        txt_id.setPreferredSize(new java.awt.Dimension(20, 22));
-        txt_id.setVerifyInputWhenFocusTarget(false);
-
-        jLabel12.setFont(new java.awt.Font("Mongolian Baiti", 1, 22)); // NOI18N
-        jLabel12.setText("Nama");
-
-        txt_nama.setPreferredSize(new java.awt.Dimension(20, 22));
-
-        jLabel7.setFont(new java.awt.Font("Mongolian Baiti", 1, 21)); // NOI18N
-        jLabel7.setText("Email");
-
-        txt_email.setPreferredSize(new java.awt.Dimension(20, 22));
-
-        jLabel8.setFont(new java.awt.Font("Mongolian Baiti", 1, 21)); // NOI18N
-        jLabel8.setText("Telepon");
-
-        txt_telepon.setPreferredSize(new java.awt.Dimension(20, 22));
-
-        jLabel13.setFont(new java.awt.Font("Mongolian Baiti", 1, 22)); // NOI18N
-        jLabel13.setText("Alamat");
-
-        txt_nama1.setPreferredSize(new java.awt.Dimension(20, 22));
-
-        jLabel9.setFont(new java.awt.Font("Mongolian Baiti", 1, 21)); // NOI18N
-        jLabel9.setText("Kode ");
-
-        txt_email1.setPreferredSize(new java.awt.Dimension(20, 22));
-
-        jbutton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_simpan.png"))); // NOI18N
-        jbutton4.setText("Simpan");
-        jbutton4.setFillClick(new java.awt.Color(30, 100, 150));
-        jbutton4.setFillOriginal(new java.awt.Color(41, 128, 185));
-        jbutton4.setFillOver(new java.awt.Color(36, 116, 170));
-        jbutton4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jbutton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbutton4ActionPerformed(evt);
-            }
-        });
-
-        jbutton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
-        jbutton5.setText("Batal");
-        jbutton5.setFillClick(new java.awt.Color(200, 125, 0));
-        jbutton5.setFillOriginal(new java.awt.Color(243, 156, 18));
-        jbutton5.setFillOver(new java.awt.Color(230, 145, 10));
-        jbutton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jbutton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbutton5ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout ShadowUtama1Layout = new javax.swing.GroupLayout(ShadowUtama1);
-        ShadowUtama1.setLayout(ShadowUtama1Layout);
-        ShadowUtama1Layout.setHorizontalGroup(
-            ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                        .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel13)
-                            .addComponent(jLabel9))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                        .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addGap(819, 819, 819)
-                                .addComponent(jbutton4, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jbutton5, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jLabel12)
-                                .addComponent(jLabel11)
-                                .addComponent(txt_id, javax.swing.GroupLayout.DEFAULT_SIZE, 1128, Short.MAX_VALUE)
-                                .addComponent(txt_nama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txt_nama1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txt_telepon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txt_email, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txt_email1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(0, 32, Short.MAX_VALUE))))
-        );
-        ShadowUtama1Layout.setVerticalGroup(
-            ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
-                    .addComponent(jbutton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbutton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel11)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel13)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_nama1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_telepon, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_email, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_email1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(385, Short.MAX_VALUE))
-        );
-
-        panelAdd.add(ShadowUtama1, "card2");
-
-        panelMain.add(panelAdd, "card2");
-
         add(panelMain, "card2");
     }// </editor-fold>//GEN-END:initComponents
 
@@ -498,25 +345,13 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jbutton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jbutton4ActionPerformed
-
-    private void jbutton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton5ActionPerformed
-        showPanel();
-    }//GEN-LAST:event_jbutton5ActionPerformed
-
     private void jbutton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton3ActionPerformed
-        panelMain.removeAll();
-        panelMain.add(panelAdd);
-        panelMain.repaint();
-        panelMain.revalidate();
+
     }//GEN-LAST:event_jbutton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.ShadowPanel ShadowUtama;
-    private component.ShadowPanel ShadowUtama1;
     private component.Card card1;
     private component.Card card2;
     private component.Card card3;
@@ -527,9 +362,6 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
@@ -539,26 +371,13 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private component.Jbutton jbutton3;
-    private component.Jbutton jbutton4;
-    private component.Jbutton jbutton5;
-    private javax.swing.JPanel panelAdd;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
     private component.ShadowPanel shadowPanel1;
     private component.Table table1;
-    private javax.swing.JTextField txt_email;
-    private javax.swing.JTextField txt_email1;
-    private javax.swing.JTextField txt_id;
-    private javax.swing.JTextField txt_nama;
-    private javax.swing.JTextField txt_nama1;
-    private javax.swing.JTextField txt_telepon;
     // End of variables declaration//GEN-END:variables
 }

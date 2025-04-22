@@ -321,6 +321,9 @@
               <Dimension value="[240, 48]"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="transaksiMouseClicked"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="data_barang">
           <Properties>
@@ -336,6 +339,9 @@
               <Dimension value="[240, 48]"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="data_barangMouseClicked"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="Settings">
           <Properties>
