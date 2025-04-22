@@ -6,6 +6,15 @@ package view;
 
 import component.Jbutton;
 import java.awt.Color;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import main.DBconnect;
 
 /**
  *
@@ -13,11 +22,13 @@ import java.awt.Color;
  */
 public class TabManajemenNasabah extends javax.swing.JPanel {
 
-    /**
-     * Creates new form ManajemenNasabah
-     */
+    private final Connection conn;
+
     public TabManajemenNasabah() {
         initComponents();
+        conn = DBconnect.getConnection();
+        setTabelModel();
+        loadData();
     }
 
     private void showPanel() {
@@ -41,7 +52,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         ShadowUtama = new component.ShadowPanel();
         ShadowSearch = new component.ShadowPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lb_dataNasabah = new javax.swing.JLabel();
         ShadowSortby = new component.ShadowPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -51,11 +62,11 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         jComboBox1 = new javax.swing.JComboBox<>();
         jButton4 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jbutton1 = new component.Jbutton();
-        jbutton2 = new component.Jbutton();
-        jbutton3 = new component.Jbutton();
+        btn_cancel = new component.Jbutton();
+        btn_delete = new component.Jbutton();
+        btn_add = new component.Jbutton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        table1 = new component.Table();
+        tbl_data = new component.Table();
         panelAdd = new javax.swing.JPanel();
         ShadowUtama1 = new component.ShadowPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -68,11 +79,11 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         txt_telepon = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
-        txt_nama1 = new javax.swing.JTextField();
+        txt_alamat = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        txt_email1 = new javax.swing.JTextField();
-        jbutton4 = new component.Jbutton();
-        jbutton5 = new component.Jbutton();
+        txt_kode = new javax.swing.JTextField();
+        btn_save = new component.Jbutton();
+        btn_back = new component.Jbutton();
 
         setPreferredSize(new java.awt.Dimension(1200, 716));
         setLayout(new java.awt.CardLayout());
@@ -106,8 +117,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
-        jLabel2.setText("Data Nasabah");
+        lb_dataNasabah.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        lb_dataNasabah.setText("Data Nasabah");
 
         ShadowSortby.setBackground(new java.awt.Color(249, 251, 255));
         ShadowSortby.setPreferredSize(new java.awt.Dimension(185, 43));
@@ -199,46 +210,56 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jbutton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
-        jbutton1.setText("Batal");
-        jbutton1.setFillClick(new java.awt.Color(200, 125, 0));
-        jbutton1.setFillOriginal(new java.awt.Color(243, 156, 18));
-        jbutton1.setFillOver(new java.awt.Color(230, 145, 10));
-        jbutton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jbutton1.addActionListener(new java.awt.event.ActionListener() {
+        btn_cancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
+        btn_cancel.setText("Batal");
+        btn_cancel.setFillClick(new java.awt.Color(200, 125, 0));
+        btn_cancel.setFillOriginal(new java.awt.Color(243, 156, 18));
+        btn_cancel.setFillOver(new java.awt.Color(230, 145, 10));
+        btn_cancel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_cancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbutton1ActionPerformed(evt);
+                btn_cancelActionPerformed(evt);
             }
         });
 
-        jbutton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_hapus.png"))); // NOI18N
-        jbutton2.setText("Hapus");
-        jbutton2.setFillClick(new java.awt.Color(190, 30, 20));
-        jbutton2.setFillOriginal(new java.awt.Color(231, 76, 60));
-        jbutton2.setFillOver(new java.awt.Color(210, 50, 40));
-        jbutton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-
-        jbutton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_tambah.png"))); // NOI18N
-        jbutton3.setText("Tambah");
-        jbutton3.setFillClick(new java.awt.Color(55, 130, 60));
-        jbutton3.setFillOriginal(new java.awt.Color(76, 175, 80));
-        jbutton3.setFillOver(new java.awt.Color(69, 160, 75));
-        jbutton3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jbutton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbutton3ActionPerformed(evt);
+        btn_delete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_hapus.png"))); // NOI18N
+        btn_delete.setText("Hapus");
+        btn_delete.setFillClick(new java.awt.Color(190, 30, 20));
+        btn_delete.setFillOriginal(new java.awt.Color(231, 76, 60));
+        btn_delete.setFillOver(new java.awt.Color(210, 50, 40));
+        btn_delete.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_delete.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_deleteMouseClicked(evt);
             }
         });
 
-        table1.setModel(new javax.swing.table.DefaultTableModel(
+        btn_add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_tambah.png"))); // NOI18N
+        btn_add.setText("Tambah");
+        btn_add.setFillClick(new java.awt.Color(55, 130, 60));
+        btn_add.setFillOriginal(new java.awt.Color(76, 175, 80));
+        btn_add.setFillOver(new java.awt.Color(69, 160, 75));
+        btn_add.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_add.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_addActionPerformed(evt);
+            }
+        });
+
+        tbl_data.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Nama", "Alamat", "Nomor Telp.", "Email"
+
             }
         ));
-        jScrollPane1.setViewportView(table1);
+        tbl_data.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_dataMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbl_data);
 
         javax.swing.GroupLayout ShadowUtamaLayout = new javax.swing.GroupLayout(ShadowUtama);
         ShadowUtama.setLayout(ShadowUtamaLayout);
@@ -250,17 +271,17 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1147, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(shadowPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                        .addComponent(lb_dataNasabah)
                         .addGap(145, 145, 145)
                         .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(ShadowSortby, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(146, 146, 146)
-                        .addComponent(jbutton3, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jbutton2, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jbutton1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(13, Short.MAX_VALUE))
         );
         ShadowUtamaLayout.setVerticalGroup(
@@ -270,10 +291,10 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(ShadowSearch, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(ShadowSortby, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbutton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbutton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbutton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lb_dataNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 762, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -318,34 +339,34 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         jLabel13.setFont(new java.awt.Font("Mongolian Baiti", 1, 22)); // NOI18N
         jLabel13.setText("Alamat");
 
-        txt_nama1.setPreferredSize(new java.awt.Dimension(20, 22));
+        txt_alamat.setPreferredSize(new java.awt.Dimension(20, 22));
 
         jLabel9.setFont(new java.awt.Font("Mongolian Baiti", 1, 21)); // NOI18N
         jLabel9.setText("Kode ");
 
-        txt_email1.setPreferredSize(new java.awt.Dimension(20, 22));
+        txt_kode.setPreferredSize(new java.awt.Dimension(20, 22));
 
-        jbutton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_simpan.png"))); // NOI18N
-        jbutton4.setText("Simpan");
-        jbutton4.setFillClick(new java.awt.Color(30, 100, 150));
-        jbutton4.setFillOriginal(new java.awt.Color(41, 128, 185));
-        jbutton4.setFillOver(new java.awt.Color(36, 116, 170));
-        jbutton4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jbutton4.addActionListener(new java.awt.event.ActionListener() {
+        btn_save.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_simpan.png"))); // NOI18N
+        btn_save.setText("Simpan");
+        btn_save.setFillClick(new java.awt.Color(30, 100, 150));
+        btn_save.setFillOriginal(new java.awt.Color(41, 128, 185));
+        btn_save.setFillOver(new java.awt.Color(36, 116, 170));
+        btn_save.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_save.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbutton4ActionPerformed(evt);
+                btn_saveActionPerformed(evt);
             }
         });
 
-        jbutton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
-        jbutton5.setText("Batal");
-        jbutton5.setFillClick(new java.awt.Color(200, 125, 0));
-        jbutton5.setFillOriginal(new java.awt.Color(243, 156, 18));
-        jbutton5.setFillOver(new java.awt.Color(230, 145, 10));
-        jbutton5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jbutton5.addActionListener(new java.awt.event.ActionListener() {
+        btn_back.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
+        btn_back.setText("Batal");
+        btn_back.setFillClick(new java.awt.Color(200, 125, 0));
+        btn_back.setFillOriginal(new java.awt.Color(243, 156, 18));
+        btn_back.setFillOver(new java.awt.Color(230, 145, 10));
+        btn_back.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_back.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbutton5ActionPerformed(evt);
+                btn_backActionPerformed(evt);
             }
         });
 
@@ -368,18 +389,18 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                             .addGroup(ShadowUtama1Layout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addGap(819, 819, 819)
-                                .addComponent(jbutton4, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btn_save, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jbutton5, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(btn_back, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jLabel12)
                                 .addComponent(jLabel11)
                                 .addComponent(txt_id, javax.swing.GroupLayout.DEFAULT_SIZE, 1128, Short.MAX_VALUE)
                                 .addComponent(txt_nama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txt_nama1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txt_alamat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(txt_telepon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(txt_email, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txt_email1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(txt_kode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(0, 32, Short.MAX_VALUE))))
         );
         ShadowUtama1Layout.setVerticalGroup(
@@ -388,8 +409,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addGap(34, 34, 34)
                 .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
-                    .addComponent(jbutton4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbutton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btn_save, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_back, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -401,7 +422,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel13)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_nama1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -413,7 +434,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_email1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_kode, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(385, Short.MAX_VALUE))
         );
 
@@ -440,24 +461,52 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jbutton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton3ActionPerformed
+    private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
         panelMain.removeAll();
         panelMain.add(panelAdd);
         panelMain.repaint();
         panelMain.revalidate();
-    }//GEN-LAST:event_jbutton3ActionPerformed
 
-    private void jbutton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jbutton4ActionPerformed
+        txt_id.setText(setIDAnggota());
+        if (btn_add.getText().equals("Ubah")) {
+            dataTabel();
+            btn_save.setText("Perbarui");
+        }
+    }//GEN-LAST:event_btn_addActionPerformed
 
-    private void jbutton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton5ActionPerformed
+    private void btn_saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_saveActionPerformed
+        if (btn_save.getText().equals("Tambah")) {
+            btn_save.setText("Simpan");
+        } else if (btn_save.getText().equals("Simpan")) {
+            insertData();
+        } else if (btn_save.getText().equals("Perbarui")) {
+            System.out.println("test");
+            updateData();
+        }
+    }//GEN-LAST:event_btn_saveActionPerformed
+
+    private void btn_backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_backActionPerformed
+        panelMain.removeAll();
+        panelMain.add(panelView);
+        panelMain.repaint();
+        panelMain.revalidate();
+    }//GEN-LAST:event_btn_backActionPerformed
+
+    private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
         showPanel();
-    }//GEN-LAST:event_jbutton5ActionPerformed
+    }//GEN-LAST:event_btn_cancelActionPerformed
 
-    private void jbutton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton1ActionPerformed
-        showPanel();
-    }//GEN-LAST:event_jbutton1ActionPerformed
+    private void tbl_dataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_dataMouseClicked
+        if (btn_add.getText().equals("Tambah")) {
+            btn_add.setText("Ubah");
+            btn_delete.setVisible(true);
+            btn_cancel.setVisible(true);
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_tbl_dataMouseClicked
+
+    private void btn_deleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_deleteMouseClicked
+        deleteData();
+    }//GEN-LAST:event_btn_deleteMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -465,6 +514,11 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private component.ShadowPanel ShadowSortby;
     private component.ShadowPanel ShadowUtama;
     private component.ShadowPanel ShadowUtama1;
+    private component.Jbutton btn_add;
+    private component.Jbutton btn_back;
+    private component.Jbutton btn_cancel;
+    private component.Jbutton btn_delete;
+    private component.Jbutton btn_save;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -474,7 +528,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
@@ -482,21 +535,208 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private component.Jbutton jbutton1;
-    private component.Jbutton jbutton2;
-    private component.Jbutton jbutton3;
-    private component.Jbutton jbutton4;
-    private component.Jbutton jbutton5;
+    private javax.swing.JLabel lb_dataNasabah;
     private javax.swing.JPanel panelAdd;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
     private component.ShadowPanel shadowPanel1;
-    private component.Table table1;
+    private component.Table tbl_data;
+    private javax.swing.JTextField txt_alamat;
     private javax.swing.JTextField txt_email;
-    private javax.swing.JTextField txt_email1;
     private javax.swing.JTextField txt_id;
+    private javax.swing.JTextField txt_kode;
     private javax.swing.JTextField txt_nama;
-    private javax.swing.JTextField txt_nama1;
     private javax.swing.JTextField txt_telepon;
     // End of variables declaration//GEN-END:variables
+        private void updateData() {
+        String idNasabah = txt_id.getText();
+        String namaNasabah = txt_nama.getText();
+        String alamat = txt_email.getText();
+        String telepon = txt_telepon.getText();
+        String email = txt_email.getText();
+        String kodeNasabah = txt_kode.getText();
+
+        if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty() || telepon.isEmpty() || email.isEmpty() || kodeNasabah.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!", "validasi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            String sql = "UPDATE manajemen_nasabah SET nama_nasabah=?, alamat=?, no_telfon=?, email=?, kode_nasabah=? WHERE id_nasabah=?";
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+
+                st.setString(1, namaNasabah);
+                st.setString(2, alamat);
+                st.setString(3, telepon);
+                st.setString(4, email);
+                st.setString(5, kodeNasabah);
+                st.setString(6, idNasabah);
+
+                int rowUpdated = st.executeUpdate();
+                if (rowUpdated > 0) {
+                    JOptionPane.showMessageDialog(this, "data berhasil diupdate");
+                    resetForm();
+                    loadData();
+                    showPanel();
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    private void deleteData() {
+        int selectedRow = tbl_data.getSelectedRow();
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Yakin ingin menghapus Data ini??",
+                "Konfirmasi Hapus Data",
+                JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            String id = tbl_data.getValueAt(selectedRow, 0).toString();
+            try {
+                String sql = "DELETE FROM manajemen_nasabah where id_nasabah=?";
+                try (PreparedStatement st = conn.prepareStatement(sql)) {
+                    st.setString(1, id);
+                    int rowDeleted = st.executeUpdate();
+                    if (rowDeleted > 0) {
+                        JOptionPane.showMessageDialog(this, "Data Berhasil Dihapus");
+                        resetForm();
+                        loadData();
+                        showPanel();
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Data Gagal Dihapus");
+                    }
+                }
+            } catch (SQLException e) {
+                Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+            }
+
+        }
+    }
+
+    private void dataTabel() {
+        panelView.setVisible(false);
+        panelAdd.setVisible(true);
+
+        int row = tbl_data.getSelectedRow();
+//        lb_dataNasabah.setText("Perbarui Data Nasabah");
+
+        txt_id.setEnabled(false);
+
+        txt_id.setText(tbl_data.getValueAt(row, 0).toString());
+        txt_nama.setText(tbl_data.getValueAt(row, 1).toString());
+        txt_alamat.setText(tbl_data.getValueAt(row, 2).toString());
+        txt_telepon.setText(tbl_data.getValueAt(row, 3).toString());
+        txt_email.setText(tbl_data.getValueAt(row, 4).toString());
+        txt_kode.setText(tbl_data.getValueAt(row, 5).toString());
+    }
+
+    private String setIDAnggota() {
+        String urutan = null;
+        String sql = "SELECT MAX(id_nasabah) AS Nomor FROM manajemen_nasabah";
+
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                int nomor = rs.getInt("Nomor") + 1;
+                urutan = String.valueOf(nomor);
+            } else {
+                urutan = "1";
+            }
+        } catch (SQLException e) {
+            java.util.logging.Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return urutan;
+    }
+
+    private void resetForm() {
+//        txt_id.setText("");
+        txt_nama.setText("");
+        txt_alamat.setText("");
+        txt_telepon.setText("");
+        txt_email.setText("");
+        txt_kode.setText("");
+    }
+
+    private void insertData() {
+        String idNasabah = txt_id.getText();
+        String namaNasabah = txt_nama.getText();
+        String alamat = txt_alamat.getText();
+        String telepon = txt_telepon.getText();
+        String email = txt_email.getText();
+        String kodeNasabah = txt_kode.getText();
+//        String tanggalBergabung = txt_tanggal.getText();
+
+        if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty() || telepon.isEmpty() || email.isEmpty() || kodeNasabah.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!", "validasi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            String sql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telfon, email, kode_nasabah) VALUES   (?,?,?,?,?,?)";
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                st.setString(1, idNasabah);
+                st.setString(2, namaNasabah);
+                st.setString(3, alamat);
+                st.setString(4, telepon);
+                st.setString(5, email);
+                st.setString(6, kodeNasabah);
+
+                int rowInserted = st.executeUpdate();
+                if (rowInserted > 0) {
+                    JOptionPane.showMessageDialog(this, "data berhasil ditambahkan");
+                    resetForm();
+                    txt_id.setText(setIDAnggota());
+                    loadData();
+                    showPanel();
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    private void getData(DefaultTableModel model) {
+        model.setRowCount(0);
+
+        try {
+            String sql = "SELECT * FROM manajemen_nasabah";
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                ResultSet rs = st.executeQuery();
+
+                while (rs.next()) {
+                    String idNasabah = rs.getString("id_nasabah");
+                    String namaNasabah = rs.getString("nama_nasabah");
+                    String alamat = rs.getString("alamat");
+                    String telepon = rs.getString("no_telfon");
+                    String email = rs.getString("email");
+                    String kodeNasabah = rs.getString("kode_nasabah");
+
+                    Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, kodeNasabah};
+                    model.addRow(rowData);
+
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    private void loadData() {
+        getData((DefaultTableModel) tbl_data.getModel());
+        btn_delete.setVisible(false);
+        btn_cancel.setVisible(false);
+
+    }
+
+    private void setTabelModel() {
+        DefaultTableModel model = (DefaultTableModel) tbl_data.getModel();
+        model.addColumn("ID");
+        model.addColumn("Nama");
+        model.addColumn("Alamat");
+        model.addColumn("Telepon");
+        model.addColumn("Email");
+        model.addColumn("Kode Nasabah");
+    }
+
 }
