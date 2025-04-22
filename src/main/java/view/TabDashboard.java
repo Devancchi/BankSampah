@@ -4,17 +4,31 @@
  */
 package view;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import main.DBconnect;
+
 /**
  *
  * @author devan
  */
 public class TabDashboard extends javax.swing.JPanel {
 
-    /**
-     * Creates new form TabDashboard
-     */
+    private final Connection conn;
+
     public TabDashboard() {
+        conn = DBconnect.getConnection();
         initComponents();
+        loadDashboardData();
+        setTabelModel();
+        loadLogData();
     }
 
     /**
@@ -29,70 +43,53 @@ public class TabDashboard extends javax.swing.JPanel {
         PanelUtama = new component.DashboardPanel();
         ShadowAktivitas = new component.ShadowPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        table1 = new component.Table();
-        jLabel14 = new javax.swing.JLabel();
+        tbl_log = new component.Table();
         ShadowCard = new component.ShadowPanel();
         CardTotalNasabah = new component.Card();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
+        lb_totalNasabah = new javax.swing.JLabel();
         CardTotalSampah = new component.Card();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
+        lb_totalSampah = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         CardSaldoTabungan = new component.Card();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
+        lb_totalTabungan = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
 
         PanelUtama.setBackground(new java.awt.Color(255, 255, 255));
 
-        table1.setModel(new javax.swing.table.DefaultTableModel(
+        tbl_log.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {},
+                {},
+                {},
+                {}
             },
             new String [] {
-                "Admin", "Tanggal", "Aktivitas"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false
-            };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
             }
-        });
-        jScrollPane1.setViewportView(table1);
-
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel14.setText("Aktivitas terbaru");
+        ));
+        jScrollPane1.setViewportView(tbl_log);
 
         javax.swing.GroupLayout ShadowAktivitasLayout = new javax.swing.GroupLayout(ShadowAktivitas);
         ShadowAktivitas.setLayout(ShadowAktivitasLayout);
         ShadowAktivitasLayout.setHorizontalGroup(
             ShadowAktivitasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowAktivitasLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(ShadowAktivitasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ShadowAktivitasLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 425, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1))
-                .addGap(6, 6, 6))
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
         ShadowAktivitasLayout.setVerticalGroup(
             ShadowAktivitasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowAktivitasLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel14)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowAktivitasLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(82, 82, 82))
         );
 
         ShadowCard.setPreferredSize(new java.awt.Dimension(1182, 126));
@@ -104,8 +101,8 @@ public class TabDashboard extends javax.swing.JPanel {
         jLabel6.setForeground(new java.awt.Color(153, 153, 153));
         jLabel6.setText("Total nasabah");
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel7.setText("1.000");
+        lb_totalNasabah.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lb_totalNasabah.setText("1.000");
 
         javax.swing.GroupLayout CardTotalNasabahLayout = new javax.swing.GroupLayout(CardTotalNasabah);
         CardTotalNasabah.setLayout(CardTotalNasabahLayout);
@@ -117,7 +114,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(CardTotalNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
-                    .addComponent(jLabel7))
+                    .addComponent(lb_totalNasabah))
                 .addContainerGap(171, Short.MAX_VALUE))
         );
         CardTotalNasabahLayout.setVerticalGroup(
@@ -128,7 +125,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     .addGroup(CardTotalNasabahLayout.createSequentialGroup()
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel7))
+                        .addComponent(lb_totalNasabah))
                     .addComponent(jLabel5))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -140,8 +137,11 @@ public class TabDashboard extends javax.swing.JPanel {
         jLabel9.setForeground(new java.awt.Color(153, 153, 153));
         jLabel9.setText("Total sampah");
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel10.setText("1.000");
+        lb_totalSampah.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lb_totalSampah.setText("1.000");
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setText("KG");
 
         javax.swing.GroupLayout CardTotalSampahLayout = new javax.swing.GroupLayout(CardTotalSampah);
         CardTotalSampah.setLayout(CardTotalSampahLayout);
@@ -153,8 +153,11 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(CardTotalSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9)
-                    .addComponent(jLabel10))
-                .addContainerGap(173, Short.MAX_VALUE))
+                    .addGroup(CardTotalSampahLayout.createSequentialGroup()
+                        .addComponent(lb_totalSampah)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1)))
+                .addContainerGap(143, Short.MAX_VALUE))
         );
         CardTotalSampahLayout.setVerticalGroup(
             CardTotalSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -164,7 +167,9 @@ public class TabDashboard extends javax.swing.JPanel {
                     .addGroup(CardTotalSampahLayout.createSequentialGroup()
                         .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel10))
+                        .addGroup(CardTotalSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lb_totalSampah)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel8))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -176,8 +181,8 @@ public class TabDashboard extends javax.swing.JPanel {
         jLabel12.setForeground(new java.awt.Color(153, 153, 153));
         jLabel12.setText("Saldo tabungan");
 
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel13.setText("Rp 1.000");
+        lb_totalTabungan.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lb_totalTabungan.setText("Rp 1.000");
 
         javax.swing.GroupLayout CardSaldoTabunganLayout = new javax.swing.GroupLayout(CardSaldoTabungan);
         CardSaldoTabungan.setLayout(CardSaldoTabunganLayout);
@@ -189,7 +194,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel12)
-                    .addComponent(jLabel13))
+                    .addComponent(lb_totalTabungan))
                 .addContainerGap(143, Short.MAX_VALUE))
         );
         CardSaldoTabunganLayout.setVerticalGroup(
@@ -200,7 +205,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     .addGroup(CardSaldoTabunganLayout.createSequentialGroup()
                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel13))
+                        .addComponent(lb_totalTabungan))
                     .addComponent(jLabel11))
                 .addContainerGap(27, Short.MAX_VALUE))
         );
@@ -210,13 +215,13 @@ public class TabDashboard extends javax.swing.JPanel {
         ShadowCardLayout.setHorizontalGroup(
             ShadowCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowCardLayout.createSequentialGroup()
-                .addGap(58, 58, 58)
+                .addGap(57, 57, 57)
                 .addComponent(CardTotalNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(48, 48, 48)
                 .addComponent(CardTotalSampah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(48, 48, 48)
                 .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(58, 58, 58))
+                .addContainerGap(94, Short.MAX_VALUE))
         );
         ShadowCardLayout.setVerticalGroup(
             ShadowCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -229,40 +234,44 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel14.setText("Aktivitas terbaru");
+
         javax.swing.GroupLayout PanelUtamaLayout = new javax.swing.GroupLayout(PanelUtama);
         PanelUtama.setLayout(PanelUtamaLayout);
         PanelUtamaLayout.setHorizontalGroup(
             PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanelUtamaLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
+                .addGap(57, 57, 57)
                 .addGroup(PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ShadowCard, javax.swing.GroupLayout.DEFAULT_SIZE, 1194, Short.MAX_VALUE)
-                    .addGroup(PanelUtamaLayout.createSequentialGroup()
-                        .addComponent(ShadowAktivitas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                    .addComponent(jLabel14)
+                    .addComponent(ShadowAktivitas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(ShadowCard, javax.swing.GroupLayout.DEFAULT_SIZE, 1192, Short.MAX_VALUE)
         );
         PanelUtamaLayout.setVerticalGroup(
             PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanelUtamaLayout.createSequentialGroup()
-                .addGap(22, 22, 22)
+                .addGap(49, 49, 49)
                 .addComponent(ShadowCard, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(51, 51, 51)
+                .addGap(42, 42, 42)
+                .addComponent(jLabel14)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ShadowAktivitas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1200, Short.MAX_VALUE)
+            .addGap(0, 1192, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 728, Short.MAX_VALUE)
+            .addGap(0, 967, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -276,17 +285,114 @@ public class TabDashboard extends javax.swing.JPanel {
     private component.DashboardPanel PanelUtama;
     private component.ShadowPanel ShadowAktivitas;
     private component.ShadowPanel ShadowCard;
-    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private component.Table table1;
+    private javax.swing.JLabel lb_totalNasabah;
+    private javax.swing.JLabel lb_totalSampah;
+    private javax.swing.JLabel lb_totalTabungan;
+    private component.Table tbl_log;
     // End of variables declaration//GEN-END:variables
+    private void setTabelModel() {
+        DefaultTableModel model = (DefaultTableModel) tbl_log.getModel();
+        model.addColumn("ID");
+        model.addColumn("Admin");
+        model.addColumn("Aktivitas");
+        model.addColumn("Tanggal");
+    }
+
+    private void getData(DefaultTableModel model) {
+        model.setRowCount(0);
+
+        try {
+            String sql = "SELECT * FROM log_aktivitas";
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                ResultSet rs = st.executeQuery();
+
+                while (rs.next()) {
+                    String idLog = rs.getString("id");
+                    String admin = rs.getString("admin");
+                    String aktivitas = rs.getString("aktivitas");
+                    String tanggal = rs.getString("tanggal");
+
+                    Object[] rowData = {idLog, admin, aktivitas, tanggal};
+                    model.addRow(rowData);
+
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    private void loadLogData() {
+        getData((DefaultTableModel) tbl_log.getModel());
+    }
+
+    public void loadDashboardData() {
+        try {
+            Connection conn = DBconnect.getConnection();
+            Statement stmt = conn.createStatement();
+
+            // Total Nasabah
+            ResultSet rsNasabah = stmt.executeQuery("SELECT COUNT(*) FROM manajemen_nasabah");
+            if (rsNasabah.next()) {
+                int totalNasabah = rsNasabah.getInt(1);
+                lb_totalNasabah.setText(String.valueOf(totalNasabah));
+            }
+
+            // Total Sampah
+            ResultSet rsSampah = stmt.executeQuery("SELECT SUM(berat_sampah) FROM setor_sampah");
+            if (rsSampah.next()) {
+                double totalSampah = rsSampah.getDouble(1);
+                lb_totalSampah.setText(String.valueOf(totalSampah));
+            }
+
+            // Saldo Tabungan = pemasukan - pengeluaran
+            ResultSet rsPemasukan = stmt.executeQuery(
+                    "SELECT SUM(db.harga * sub.jml) AS total_pemasukan "
+                    + "FROM ("
+                    + "   SELECT id_barang, COUNT(*) AS jml "
+                    + "   FROM laporan_pemasukan "
+                    + "   GROUP BY id_barang"
+                    + ") AS sub "
+                    + "JOIN data_barang db ON sub.id_barang = db.id_barang"
+            );
+
+            double pemasukan = rsPemasukan.next() ? rsPemasukan.getDouble("total_pemasukan") : 0;
+
+            ResultSet rsPengeluaran = stmt.executeQuery(
+                    "SELECT SUM(nominal) FROM manajemen_keuangan"
+            );
+            double pengeluaran = rsPengeluaran.next() ? rsPengeluaran.getDouble(1) : 0;
+
+            double saldo = pemasukan - pengeluaran;
+            lb_totalTabungan.setText("Rp " + String.format("%,.0f", saldo));
+
+            conn.close();
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal memuat data dashboard: " + e.getMessage());
+        }
+    }
+
+    private void insertLog(String admin, String aktivitas) {
+        try {
+            String sql = "INSERT INTO log_aktivitas (admin, aktivitas) VALUES (?, ?)";
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                st.setString(1, admin);
+                st.setString(2, aktivitas);
+                st.executeUpdate();
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(TabDashboard.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
 }
