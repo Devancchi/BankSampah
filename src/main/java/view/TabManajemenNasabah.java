@@ -5,6 +5,7 @@
 package view;
 
 import component.Jbutton;
+import component.LoggerUtil;
 import java.awt.Color;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
@@ -31,13 +33,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         loadData();
     }
 
-    private void showPanel() {
-        panelMain.removeAll();
-        panelMain.add(new TabManajemenNasabah());
-        panelMain.repaint();
-        panelMain.revalidate();
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -50,8 +45,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         panelMain = new javax.swing.JPanel();
         panelView = new javax.swing.JPanel();
         ShadowUtama = new component.ShadowPanel();
-        ShadowSearch = new component.ShadowPanel();
-        jLabel1 = new javax.swing.JLabel();
         lb_dataNasabah = new javax.swing.JLabel();
         ShadowSortby = new component.ShadowPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -67,6 +60,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_add = new component.Jbutton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_data = new component.Table();
+        txt_search = new component.PlaceholderTextField();
         panelAdd = new javax.swing.JPanel();
         ShadowUtama1 = new component.ShadowPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -92,31 +86,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         panelView.setLayout(new java.awt.CardLayout());
 
-        ShadowSearch.setBackground(new java.awt.Color(249, 251, 255));
-        ShadowSearch.setPreferredSize(new java.awt.Dimension(259, 43));
-
-        jLabel1.setBackground(new java.awt.Color(204, 204, 204));
-        jLabel1.setForeground(new java.awt.Color(204, 204, 204));
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_search.png"))); // NOI18N
-        jLabel1.setText("Search");
-
-        javax.swing.GroupLayout ShadowSearchLayout = new javax.swing.GroupLayout(ShadowSearch);
-        ShadowSearch.setLayout(ShadowSearchLayout);
-        ShadowSearchLayout.setHorizontalGroup(
-            ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowSearchLayout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jLabel1)
-                .addContainerGap(180, Short.MAX_VALUE))
-        );
-        ShadowSearchLayout.setVerticalGroup(
-            ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowSearchLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
         lb_dataNasabah.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         lb_dataNasabah.setText("Data Nasabah");
 
@@ -138,8 +107,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4)
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(51, Short.MAX_VALUE))
         );
         ShadowSortbyLayout.setVerticalGroup(
             ShadowSortbyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -261,41 +230,49 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(tbl_data);
 
+        txt_search.setPlaceholder("Cari Nasabah");
+        txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_searchKeyTyped(evt);
+            }
+        });
+
         javax.swing.GroupLayout ShadowUtamaLayout = new javax.swing.GroupLayout(ShadowUtama);
         ShadowUtama.setLayout(ShadowUtamaLayout);
         ShadowUtamaLayout.setHorizontalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(shadowPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45)
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1044, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(shadowPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(ShadowUtamaLayout.createSequentialGroup()
                         .addComponent(lb_dataNasabah)
-                        .addGap(145, 145, 145)
-                        .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGap(56, 56, 56)
+                        .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(67, 67, 67)
                         .addComponent(ShadowSortby, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(146, 146, 146)
+                        .addGap(115, 115, 115)
                         .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addGap(103, 103, 103))
         );
         ShadowUtamaLayout.setVerticalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
                 .addGap(34, 34, 34)
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(ShadowSearch, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(ShadowSortby, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lb_dataNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lb_dataNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
                     .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(47, 47, 47)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 762, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(shadowPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -401,7 +378,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                                 .addComponent(txt_telepon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(txt_email, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(txt_kode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(0, 32, Short.MAX_VALUE))))
+                        .addGap(0, 40, Short.MAX_VALUE))))
         );
         ShadowUtama1Layout.setVerticalGroup(
             ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -435,7 +412,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txt_kode, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(385, Short.MAX_VALUE))
+                .addContainerGap(384, Short.MAX_VALUE))
         );
 
         panelAdd.add(ShadowUtama1, "card2");
@@ -499,18 +476,24 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private void tbl_dataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_dataMouseClicked
         if (btn_add.getText().equals("Tambah")) {
             btn_add.setText("Ubah");
+            btn_add.setIcon(new ImageIcon("src\\main\\resources\\icon\\icon_edit.png"));
+            btn_add.setFillClick(new Color(30,100,150));
+            btn_add.setFillOriginal(new Color(41,128,185));
+            btn_add.setFillOver(new Color(36,116,170));
             btn_delete.setVisible(true);
             btn_cancel.setVisible(true);
-        }        // TODO add your handling code here:
+        }
     }//GEN-LAST:event_tbl_dataMouseClicked
-
     private void btn_deleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_deleteMouseClicked
         deleteData();
     }//GEN-LAST:event_btn_deleteMouseClicked
 
+    private void txt_searchKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyTyped
+        searchData();
+    }//GEN-LAST:event_txt_searchKeyTyped
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private component.ShadowPanel ShadowSearch;
     private component.ShadowPanel ShadowSortby;
     private component.ShadowPanel ShadowUtama;
     private component.ShadowPanel ShadowUtama1;
@@ -524,7 +507,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -546,9 +528,153 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private javax.swing.JTextField txt_id;
     private javax.swing.JTextField txt_kode;
     private javax.swing.JTextField txt_nama;
+    private component.PlaceholderTextField txt_search;
     private javax.swing.JTextField txt_telepon;
     // End of variables declaration//GEN-END:variables
-        private void updateData() {
+
+    ////////////////////////////////////buat setup awal/////////////////////////////////
+    private void showPanel() {
+        panelMain.removeAll();
+        panelMain.add(new TabManajemenNasabah());
+        panelMain.repaint();
+        panelMain.revalidate();
+    }
+
+    private void setTabelModel() {
+        DefaultTableModel model = (DefaultTableModel) tbl_data.getModel();
+        model.addColumn("ID");
+        model.addColumn("Nama");
+        model.addColumn("Alamat");
+        model.addColumn("Telepon");
+        model.addColumn("Email");
+        model.addColumn("Kode Nasabah");
+    }
+
+    /////////////////////////////////buat setup awal/////////////////////////////////
+
+    /////////////////////////////////buat ambil dan show data/////////////////////////////////
+    private void getData(DefaultTableModel model) {
+        model.setRowCount(0);
+
+        try {
+            String sql = "SELECT * FROM manajemen_nasabah";
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                ResultSet rs = st.executeQuery();
+
+                while (rs.next()) {
+                    String idNasabah = rs.getString("id_nasabah");
+                    String namaNasabah = rs.getString("nama_nasabah");
+                    String alamat = rs.getString("alamat");
+                    String telepon = rs.getString("no_telfon");
+                    String email = rs.getString("email");
+                    String kodeNasabah = rs.getString("kode_nasabah");
+
+                    Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, kodeNasabah};
+                    model.addRow(rowData);
+
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    private void loadData() {
+        getData((DefaultTableModel) tbl_data.getModel());
+        btn_delete.setVisible(false);
+        btn_cancel.setVisible(false);
+    }
+
+    private void dataTabel() {
+        panelView.setVisible(false);
+        panelAdd.setVisible(true);
+
+        int row = tbl_data.getSelectedRow();
+//        lb_dataNasabah.setText("Perbarui Data Nasabah");
+
+        txt_id.setEnabled(false);
+
+        txt_id.setText(tbl_data.getValueAt(row, 0).toString());
+        txt_nama.setText(tbl_data.getValueAt(row, 1).toString());
+        txt_alamat.setText(tbl_data.getValueAt(row, 2).toString());
+        txt_telepon.setText(tbl_data.getValueAt(row, 3).toString());
+        txt_email.setText(tbl_data.getValueAt(row, 4).toString());
+        txt_kode.setText(tbl_data.getValueAt(row, 5).toString());
+    }
+
+    private void searchData() {
+        String kataKunci = txt_search.getText();
+        DefaultTableModel model = (DefaultTableModel) tbl_data.getModel();
+        model.setRowCount(0);
+
+        try {
+            String sql = "SELECT * FROM manajemen_nasabah WHERE nama_nasabah LIKE ? OR email LIKE ?";
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                st.setString(1, "%" + kataKunci + "%");
+                st.setString(2, "%" + kataKunci + "%");
+                ResultSet rs = st.executeQuery();
+
+                while (rs.next()) {
+                    String idNasabah = rs.getString("id_nasabah");
+                    String namaNasabah = rs.getString("nama_nasabah");
+                    String alamat = rs.getString("alamat");
+                    String telepon = rs.getString("no_telfon");
+                    String email = rs.getString("email");
+                    String kodeNasabah = rs.getString("kode_nasabah");
+
+                    Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, kodeNasabah};
+                    model.addRow(rowData);
+
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+
+        }
+    }
+
+    /////////////////////////////////buat ambil dan show data/////////////////////////////////
+
+        /////////////////////////////////buat manip data/////////////////////////////////
+    private void insertData() {
+        String idNasabah = txt_id.getText();
+        String namaNasabah = txt_nama.getText();
+        String alamat = txt_alamat.getText();
+        String telepon = txt_telepon.getText();
+        String email = txt_email.getText();
+        String kodeNasabah = txt_kode.getText();
+//        String tanggalBergabung = txt_tanggal.getText();
+
+        if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty() || telepon.isEmpty() || email.isEmpty() || kodeNasabah.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!", "validasi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            String sql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telfon, email, kode_nasabah) VALUES   (?,?,?,?,?,?)";
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                st.setString(1, idNasabah);
+                st.setString(2, namaNasabah);
+                st.setString(3, alamat);
+                st.setString(4, telepon);
+                st.setString(5, email);
+                st.setString(6, kodeNasabah);
+
+                int rowInserted = st.executeUpdate();
+                if (rowInserted > 0) {
+                    JOptionPane.showMessageDialog(this, "data berhasil ditambahkan");
+                    resetForm();
+                    txt_id.setText(setIDAnggota());
+                    loadData();
+                    showPanel();
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    private void updateData() {
         String idNasabah = txt_id.getText();
         String namaNasabah = txt_nama.getText();
         String alamat = txt_email.getText();
@@ -575,6 +701,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 int rowUpdated = st.executeUpdate();
                 if (rowUpdated > 0) {
                     JOptionPane.showMessageDialog(this, "data berhasil diupdate");
+                    LoggerUtil.insert("admin", "Mengupdate data nasabah");  // Log aktivitas
                     resetForm();
                     loadData();
                     showPanel();
@@ -614,23 +741,10 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         }
     }
 
-    private void dataTabel() {
-        panelView.setVisible(false);
-        panelAdd.setVisible(true);
+    /////////////////////////////////buat manip data/////////////////////////////////
 
-        int row = tbl_data.getSelectedRow();
-//        lb_dataNasabah.setText("Perbarui Data Nasabah");
-
-        txt_id.setEnabled(false);
-
-        txt_id.setText(tbl_data.getValueAt(row, 0).toString());
-        txt_nama.setText(tbl_data.getValueAt(row, 1).toString());
-        txt_alamat.setText(tbl_data.getValueAt(row, 2).toString());
-        txt_telepon.setText(tbl_data.getValueAt(row, 3).toString());
-        txt_email.setText(tbl_data.getValueAt(row, 4).toString());
-        txt_kode.setText(tbl_data.getValueAt(row, 5).toString());
-    }
-
+    
+        /////////////////////////////////buat utility/////////////////////////////////
     private String setIDAnggota() {
         String urutan = null;
         String sql = "SELECT MAX(id_nasabah) AS Nomor FROM manajemen_nasabah";
@@ -658,85 +772,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         txt_kode.setText("");
     }
 
-    private void insertData() {
-        String idNasabah = txt_id.getText();
-        String namaNasabah = txt_nama.getText();
-        String alamat = txt_alamat.getText();
-        String telepon = txt_telepon.getText();
-        String email = txt_email.getText();
-        String kodeNasabah = txt_kode.getText();
-//        String tanggalBergabung = txt_tanggal.getText();
 
-        if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty() || telepon.isEmpty() || email.isEmpty() || kodeNasabah.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!", "validasi", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        try {
-            String sql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telfon, email, kode_nasabah) VALUES   (?,?,?,?,?,?)";
-            try (PreparedStatement st = conn.prepareStatement(sql)) {
-                st.setString(1, idNasabah);
-                st.setString(2, namaNasabah);
-                st.setString(3, alamat);
-                st.setString(4, telepon);
-                st.setString(5, email);
-                st.setString(6, kodeNasabah);
-
-                int rowInserted = st.executeUpdate();
-                if (rowInserted > 0) {
-                    JOptionPane.showMessageDialog(this, "data berhasil ditambahkan");
-                    resetForm();
-                    txt_id.setText(setIDAnggota());
-                    loadData();
-                    showPanel();
-                }
-            }
-        } catch (SQLException e) {
-            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
-        }
-    }
-
-    private void getData(DefaultTableModel model) {
-        model.setRowCount(0);
-
-        try {
-            String sql = "SELECT * FROM manajemen_nasabah";
-            try (PreparedStatement st = conn.prepareStatement(sql)) {
-                ResultSet rs = st.executeQuery();
-
-                while (rs.next()) {
-                    String idNasabah = rs.getString("id_nasabah");
-                    String namaNasabah = rs.getString("nama_nasabah");
-                    String alamat = rs.getString("alamat");
-                    String telepon = rs.getString("no_telfon");
-                    String email = rs.getString("email");
-                    String kodeNasabah = rs.getString("kode_nasabah");
-
-                    Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, kodeNasabah};
-                    model.addRow(rowData);
-
-                }
-            }
-        } catch (SQLException e) {
-            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
-        }
-    }
-
-    private void loadData() {
-        getData((DefaultTableModel) tbl_data.getModel());
-        btn_delete.setVisible(false);
-        btn_cancel.setVisible(false);
-
-    }
-
-    private void setTabelModel() {
-        DefaultTableModel model = (DefaultTableModel) tbl_data.getModel();
-        model.addColumn("ID");
-        model.addColumn("Nama");
-        model.addColumn("Alamat");
-        model.addColumn("Telepon");
-        model.addColumn("Email");
-        model.addColumn("Kode Nasabah");
-    }
-
+/////////////////////////////////buat utility/////////////////////////////////
 }
