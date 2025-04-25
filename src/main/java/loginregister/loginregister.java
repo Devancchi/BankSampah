@@ -9,21 +9,18 @@ import raven.modal.option.BorderOption;
 import raven.modal.option.Option;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
-
 import javax.swing.*;
 import java.awt.*;
 
 public class loginregister extends JFrame {
 
     public loginregister() {
-        
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(new Dimension(1366, 768));
         setBackgroundImage();
         setLocationRelativeTo(null);
         setLayout(new MigLayout("al center center"));
-        
-        
 
         // style modal border
         ModalDialog.getDefaultOption()
@@ -40,14 +37,13 @@ public class loginregister extends JFrame {
 
         showLogin();
     }
-    
-     private void setBackgroundImage() {
-        FlatSVGIcon backgroundSVG = new FlatSVGIcon("icon/BGlogin.svg");
-    JLabel backgroundLabel = new JLabel(backgroundSVG);
-    backgroundLabel.setLayout(new BorderLayout());
-    setContentPane(backgroundLabel);
-    }
 
+    private void setBackgroundImage() {
+        FlatSVGIcon backgroundSVG = new FlatSVGIcon("icon/BGlogin.svg");
+        JLabel backgroundLabel = new JLabel(backgroundSVG);
+        backgroundLabel.setLayout(new BorderLayout());
+        setContentPane(backgroundLabel);
+    }
 
     private void showLogin() {
         Option option = ModalDialog.createOption()
