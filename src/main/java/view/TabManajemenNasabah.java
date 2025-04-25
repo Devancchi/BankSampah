@@ -9,6 +9,8 @@ import component.LoggerUtil;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -199,28 +201,10 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_first.setText("First Page");
 
         btn_before.setText("<");
-        btn_before.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_beforeActionPerformed(evt);
-            }
-        });
-
         cbx_data.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "20", "40", "60", "80" }));
 
         btn_next.setText(">");
-        btn_next.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_nextActionPerformed(evt);
-            }
-        });
-
         btn_last.setText("Last Page");
-        btn_last.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_lastActionPerformed(evt);
-            }
-        });
-
         lb_halaman.setText("hal");
 
         javax.swing.GroupLayout ShadowUtamaLayout = new javax.swing.GroupLayout(ShadowUtama);
@@ -432,20 +416,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         add(panelMain, "card2");
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btn_beforeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_beforeActionPerformed
-        if (halamanSaatIni > 1) {
-            halamanSaatIni--;
-        }
-    }//GEN-LAST:event_btn_beforeActionPerformed
-
-    private void btn_lastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_lastActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_lastActionPerformed
-
-    private void btn_nextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_nextActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_nextActionPerformed
 
     private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
         panelMain.removeAll();
@@ -664,6 +634,17 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         lb_halaman.setText(String.valueOf("Halaman " + halamanSaatIni + " dari Total Data " + totalData));
         int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
         getData(startIndex, dataPerHalaman, (DefaultTableModel) tbl_data.getModel());
+        btn_delete.setVisible(false);
+        btn_cancel.setVisible(false);
+        resetPagination();
+    }
+
+    private void resetPagination() {
+        btn_add.setText("Tambah");
+        btn_add.setIcon(new ImageIcon("src\\main\\resources\\icon\\icon_tambah.png"));
+        btn_add.setFillClick(new Color(46, 204, 113));
+        btn_add.setFillOriginal(new Color(39, 174, 96));
+        btn_add.setFillOver(new Color(33, 150, 83));
         btn_delete.setVisible(false);
         btn_cancel.setVisible(false);
     }
