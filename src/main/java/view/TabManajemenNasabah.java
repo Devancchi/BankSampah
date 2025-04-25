@@ -201,13 +201,10 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_first.setText("First Page");
 
         btn_before.setText("<");
-
         cbx_data.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "20", "40", "60", "80" }));
 
         btn_next.setText(">");
-
         btn_last.setText("Last Page");
-
         lb_halaman.setText("hal");
 
         javax.swing.GroupLayout ShadowUtamaLayout = new javax.swing.GroupLayout(ShadowUtama);
