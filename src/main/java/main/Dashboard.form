@@ -161,19 +161,14 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="panelMoving" alignment="0" max="32767" attributes="0"/>
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="data_barang" alignment="1" pref="220" max="32767" attributes="0"/>
-                      <Component id="transaksi" alignment="1" pref="220" max="32767" attributes="0"/>
-                      <Component id="laporan_statistik" alignment="1" pref="220" max="32767" attributes="0"/>
-                      <Component id="manajemen_sampah" alignment="1" pref="220" max="32767" attributes="0"/>
-                      <Component id="dashboard" alignment="0" pref="220" max="32767" attributes="0"/>
-                      <Component id="manajemen_nasabah" alignment="1" pref="0" max="32767" attributes="0"/>
-                  </Group>
-              </Group>
               <Component id="logout" alignment="1" max="32767" attributes="0"/>
               <Component id="Settings" alignment="0" max="32767" attributes="0"/>
+              <Component id="dashboard" alignment="1" max="32767" attributes="0"/>
+              <Component id="manajemen_nasabah" alignment="1" max="32767" attributes="0"/>
+              <Component id="manajemen_sampah" alignment="1" max="32767" attributes="0"/>
+              <Component id="laporan_statistik" alignment="1" max="32767" attributes="0"/>
+              <Component id="transaksi" max="32767" attributes="0"/>
+              <Component id="data_barang" alignment="1" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">

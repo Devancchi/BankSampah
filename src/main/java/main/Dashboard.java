@@ -1,12 +1,9 @@
 package main;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import component.Jbutton;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.JPanel;
+import javax.swing.JLabel;
 import view.TabDashboard;
 import view.TabDataBarang;
 import view.TabLaporanStatistik;
@@ -20,11 +17,16 @@ import view.TabTransaksi;
  */
 public class Dashboard extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Login
-     */
+    private JLabel lastClickedLabel = null;
+
     public Dashboard() {
         initComponents();
+        setSidebarButtonEffect(dashboard);
+        setSidebarButtonEffect(manajemen_nasabah);
+        setSidebarButtonEffect(manajemen_sampah);
+        setSidebarButtonEffect(laporan_statistik);
+        setSidebarButtonEffect(transaksi);
+        setSidebarButtonEffect(data_barang);
         PanelUtama.setLayout(new BorderLayout());
     }
 
@@ -216,17 +218,14 @@ public class Dashboard extends javax.swing.JFrame {
         pn_sidebarLayout.setHorizontalGroup(
             pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panelMoving, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(pn_sidebarLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(data_barang, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                    .addComponent(transaksi, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                    .addComponent(laporan_statistik, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                    .addComponent(manajemen_sampah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                    .addComponent(dashboard, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                    .addComponent(manajemen_nasabah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
             .addComponent(logout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(Settings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(dashboard, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(manajemen_nasabah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(manajemen_sampah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(laporan_statistik, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(transaksi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(data_barang, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pn_sidebarLayout.setVerticalGroup(
             pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -279,6 +278,7 @@ public class Dashboard extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void manajemen_nasabahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_manajemen_nasabahMouseClicked
+        changeTabColor(manajemen_nasabah);
         PanelUtama.setOpaque(false);
         PanelUtama.removeAll();
         PanelUtama.add(new TabManajemenNasabah());
@@ -287,6 +287,7 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_manajemen_nasabahMouseClicked
 
     private void dashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dashboardMouseClicked
+        changeTabColor(dashboard);
         PanelUtama.setOpaque(false);
         PanelUtama.removeAll();
         PanelUtama.add(new TabDashboard());
@@ -295,6 +296,7 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_dashboardMouseClicked
 
     private void manajemen_sampahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_manajemen_sampahMouseClicked
+        changeTabColor(manajemen_sampah);
         PanelUtama.setOpaque(false);
         PanelUtama.removeAll();
         PanelUtama.add(new TabManajemenSampah());
@@ -303,6 +305,7 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_manajemen_sampahMouseClicked
 
     private void laporan_statistikMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laporan_statistikMouseClicked
+        changeTabColor(laporan_statistik);
         PanelUtama.setOpaque(false);
         PanelUtama.removeAll();
         PanelUtama.add(new TabLaporanStatistik());
@@ -311,6 +314,7 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_laporan_statistikMouseClicked
 
     private void transaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_transaksiMouseClicked
+        changeTabColor(transaksi);
         PanelUtama.setOpaque(false);
         PanelUtama.removeAll();
         PanelUtama.add(new TabTransaksi());
@@ -319,6 +323,7 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_transaksiMouseClicked
 
     private void data_barangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_data_barangMouseClicked
+        changeTabColor(data_barang);
         PanelUtama.setOpaque(false);
         PanelUtama.removeAll();
         PanelUtama.add(new TabDataBarang());
@@ -326,15 +331,72 @@ public class Dashboard extends javax.swing.JFrame {
         PanelUtama.revalidate();
     }//GEN-LAST:event_data_barangMouseClicked
 
+    private void setSidebarButtonEffect(JLabel label) {
+        Color defaultColor = new Color(255, 254, 84);
+        Color hoverColor = new Color(255, 230, 100);
+        Color clickColor = new Color(255, 200, 50);
+
+        label.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                // Jika tab sudah diklik, jangan ganti warna menjadi hover
+                if (label != lastClickedLabel) {
+                    label.setBackground(hoverColor);
+                    label.setOpaque(true);
+                    label.repaint();
+                }
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                // Kembalikan ke default jika tidak diklik
+                if (label != lastClickedLabel) {
+                    label.setBackground(defaultColor);
+                    label.setOpaque(true);
+                    label.repaint();
+                }
+            }
+
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                label.setBackground(clickColor);
+                label.setOpaque(true);
+                label.repaint();
+            }
+
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                // Jika tab sudah diklik, tetap pertahankan warna aktif
+                if (label != lastClickedLabel) {
+                    label.setBackground(hoverColor);
+                    label.setOpaque(true);
+                    label.repaint();
+                }
+            }
+        });
+    }
+
+    private void changeTabColor(JLabel newLabel) {
+        Color defaultColor = new Color(255, 254, 84);
+        Color clickColor = new Color(255, 200, 50);
+
+        // Kembalikan warna tab yang sebelumnya diklik ke default
+        if (lastClickedLabel != null && lastClickedLabel != newLabel) {
+            lastClickedLabel.setBackground(defaultColor);
+            lastClickedLabel.setOpaque(true);
+            lastClickedLabel.repaint();
+        }
+
+        // Ubah warna tab yang baru diklik
+        newLabel.setBackground(clickColor);
+        newLabel.setOpaque(true);
+        newLabel.repaint();
+
+        // Simpan tab yang terakhir diklik
+        lastClickedLabel = newLabel;
+    }
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
