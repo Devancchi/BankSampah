@@ -58,7 +58,7 @@ public class SignUp extends JPanel {
 
         add(new JSeparator(), "gapy 15 15");
 
-        add(new JLabel("Already have an account ?"), "split 2, gapx push n");
+        add(new JLabel("Sudah Punya Akun ?"), "split 2, gapx push n");
 
         ButtonLink cmdBackLogin = new ButtonLink("Login");
         add(cmdBackLogin, "gapx n push");
