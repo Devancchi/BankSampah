@@ -36,5 +36,27 @@
             <artifactId>flatlaf</artifactId>
             <version>3.5.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+            <version>3.5.2</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>io.github.dj-raven</groupId>
+            <artifactId>swing-datetime-picker</artifactId>
+            <version>1.4.0</version> <!-- contoh versi stabil -->
+        </dependency>
+        <dependency>
+    <groupId>com.sun.mail</groupId>
+    <artifactId>javax.mail</artifactId>
+    <version>1.6.2</version> <!-- atau versi terbaru lainnya -->
+</dependency>
+        <dependency>
+            <groupId>br.gov.frameworkdemoiselle.component</groupId>
+            <artifactId>demoiselle-mail</artifactId>
+            <version>2.1.0</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 </project>
