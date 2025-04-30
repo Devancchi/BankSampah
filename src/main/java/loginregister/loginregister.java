@@ -16,9 +16,11 @@ public class loginregister extends JFrame {
     private JPanel contentPanel;
 
     public loginregister() {
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(new Dimension(1366, 768));
         setLocationRelativeTo(null);
+        setLayout(new MigLayout("al center center"));
 
             setContentPane(new GradientPanel());
 
@@ -32,17 +34,17 @@ public class loginregister extends JFrame {
         showLogin();  // tampilkan login saat awal
     }
 
-    private void showLogin() {
-        Option option = ModalDialog.createOption()
-                .setCloseOnPressedEscape(false)
-                .setBackgroundClickType(Option.BackgroundClickType.BLOCK)
-                .setAnimationEnabled(false)
-                .setOpacity(0.2f);
+   private void showLogin() {
+    Option option = ModalDialog.createOption()
+            .setCloseOnPressedEscape(false)
+            .setBackgroundClickType(Option.BackgroundClickType.BLOCK)
+            .setAnimationEnabled(false)
+            .setOpacity(0.2f);
 
-        String icon = "icon/account.svg";  // pastikan ikon ada di folder yang benar
-        ModalDialog.showModal(this, new CustomModalBorder(new Login(), "Login", icon), option, Login.ID);
-    }
-
+    String icon = "icon/account.svg";
+    ModalDialog.showModal(this, new CustomModalBorder(new Login(), "Login", icon), option, Login.ID);
+}
+   
     public static void main(String[] args) {
         FlatRobotoFont.install();
         FlatLaf.registerCustomDefaultsSource("themes");

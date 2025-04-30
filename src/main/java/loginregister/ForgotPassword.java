@@ -1,54 +1,104 @@
 package loginregister;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import java.awt.Color;
 import login_register.component.ButtonLink;
 import net.miginfocom.swing.MigLayout;
 import raven.modal.ModalDialog;
+import main.DBconnect;
 
 import javax.swing.*;
-import loginregister.Login;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class ForgotPassword extends JPanel {
 
     public ForgotPassword() {
-        setLayout(new MigLayout("insets n 20 n 20,fillx,wrap,width 380", "[fill]"));
+        setLayout(new MigLayout("insets 20,fillx,wrap 1", "[fill]"));
 
-        JTextArea text = new JTextArea("Please enter the email address you used to create\nyour account, and we'll send you a link to reset\nyour password.");
-        text.setEditable(false);
-        text.setFocusable(false);
-        text.putClientProperty(FlatClientProperties.STYLE, "" +
-                "border:0,0,0,0;" +
-                "background:null;");
-        add(text);
+        add(new JLabel("Masukkan Username dan Password Baru"));
 
-        add(new JSeparator(), "gapy 15 15");
+        JTextField txtUsername = new JTextField();
+        txtUsername.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Contoh: krisna123");
+        add(txtUsername);
 
-        JLabel lbEmail = new JLabel("Email");
-        lbEmail.putClientProperty(FlatClientProperties.STYLE, "" +
-                "font:bold;");
-        add(lbEmail);
+        JPasswordField txtNewPassword = new JPasswordField();
+        txtNewPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Password Baru");
+        add(txtNewPassword);
 
-        JTextField txtEmail = new JTextField();
-        txtEmail.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Enter your email");
-        add(txtEmail);
+        JLabel lbNote = new JLabel("");
+        lbNote.putClientProperty(FlatClientProperties.STYLE, "font:-1; foreground:#d9534f;");
+        add(lbNote);
 
-        JButton cmdSubmit = new JButton("Submit") {
-            @Override
-            public boolean isDefaultButton() {
-                return true;
+        JButton cmdSubmit = new JButton("Ganti Password");
+        add(cmdSubmit, "gapy 10");
+
+        ButtonLink cmdBackLogin = new ButtonLink("Kembali ke Login");
+        add(cmdBackLogin, "al center");
+
+       cmdSubmit.addActionListener(e -> {
+    String username = txtUsername.getText().trim();
+    String newPassword = new String(txtNewPassword.getPassword()).trim();
+
+    if (username.isEmpty() || newPassword.isEmpty()) {
+        lbNote.setText("Username dan Password tidak boleh kosong.");
+        return;
+    }
+
+    try (Connection conn = DBconnect.getConnection()) {
+        String sql = "SELECT * FROM login WHERE nama = ?";
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(1, username);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                String level = rs.getString("level");
+                if ("admin".equalsIgnoreCase(level)) {
+                    lbNote.setText("Password untuk admin tidak dapat diubah.");
+                    return;
+                }
+
+                String hashedPassword = hashPassword(newPassword);
+                String updateSql = "UPDATE login SET password = ? WHERE nama = ?";
+                try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                    updateStmt.setString(1, hashedPassword);
+                    updateStmt.setString(2, username);
+                    int rowsUpdated = updateStmt.executeUpdate();
+                    if (rowsUpdated > 0) {
+                        lbNote.setForeground(new Color(0, 128, 0)); // Hijau
+                        lbNote.setText("Password berhasil diubah.");
+                        ModalDialog.popModel(Login.ID);
+                    } else {
+                        lbNote.setText("Terjadi kesalahan saat mengubah password.");
+                    }
+                }
+            } else {
+                lbNote.setText("Username tidak ditemukan.");
             }
-        };
-        cmdSubmit.putClientProperty(FlatClientProperties.STYLE, "" +
-                "foreground:#FFFFFF;");
+        }
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        lbNote.setText("Terjadi kesalahan koneksi.");
+    }
+});
 
-        add(cmdSubmit, "gapy 15 15");
 
-        ButtonLink cmdBackLogin = new ButtonLink("Back to login");
-        add(cmdBackLogin, "grow 0,al center");
+        cmdBackLogin.addActionListener(e -> ModalDialog.popModel(Login.ID)); // Kembali ke login
+    }
 
-        // event
-        cmdBackLogin.addActionListener(actionEvent -> {
-            ModalDialog.popModel(Login.ID);
-        });
+    // Fungsi untuk melakukan hashing MD5 pada password
+    private String hashPassword(String password) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(password.getBytes());
+        byte[] hashedBytes = md.digest();
+        
+        // Mengonversi byte array ke hexadecimal string
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hashedBytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 }
