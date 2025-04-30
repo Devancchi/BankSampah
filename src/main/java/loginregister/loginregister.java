@@ -7,6 +7,7 @@ import net.miginfocom.swing.MigLayout;
 import raven.modal.ModalDialog;
 import raven.modal.option.BorderOption;
 import raven.modal.option.Option;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +21,9 @@ public class loginregister extends JFrame {
         setSize(new Dimension(1366, 768));
         setLocationRelativeTo(null);
 
+        setLayout(new MigLayout("al center center"));
+
+
             setContentPane(new GradientPanel());
 
 
@@ -30,6 +34,21 @@ public class loginregister extends JFrame {
                 .setShadow(BorderOption.Shadow.MEDIUM);
 
         showLogin();  // tampilkan login saat awal
+        JButton button = new JButton("Show");
+
+        button.addActionListener(actionEvent -> {
+            showLogin();
+        });
+        add(button);
+
+        showLogin();
+    }
+
+    private void setBackgroundImage() {
+        FlatSVGIcon backgroundSVG = new FlatSVGIcon("icon/BGlogin.svg");
+        JLabel backgroundLabel = new JLabel(backgroundSVG);
+        backgroundLabel.setLayout(new BorderLayout());
+        setContentPane(backgroundLabel);
     }
 
     private void showLogin() {
