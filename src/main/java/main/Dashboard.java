@@ -12,6 +12,7 @@ import view.TabLaporanStatistik;
 import view.TabManajemenSampah;
 import view.TabTransaksi;
 import component.HeaderPanel;
+import view.TabManajemenNasabah;
 
 /**
  *
@@ -263,7 +264,7 @@ public class Dashboard extends javax.swing.JFrame {
         changeTabColor(manajemen_nasabah);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-//        panelMain.add(new TabManajemenNasabah());
+        panelMain.add(new TabManajemenNasabah());
         panelMain.repaint();
         panelMain.revalidate();
     }//GEN-LAST:event_manajemen_nasabahMouseClicked

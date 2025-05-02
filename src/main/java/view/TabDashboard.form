@@ -412,15 +412,17 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="btn_add" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                          <Component id="lb_halaman" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                          <Component id="btn_firstLog" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                          <Group type="103" alignment="3" groupAlignment="3" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                               <Component id="btn_beforeLog" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
                               <Component id="cbx_dataLog" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
                               <Component id="btn_nextLog" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
                               <Component id="btn_lastLog" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="btn_add" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
+                              <Component id="lb_halaman" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
+                              <Component id="btn_firstLog" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
