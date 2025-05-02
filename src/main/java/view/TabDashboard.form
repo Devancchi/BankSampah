@@ -52,11 +52,11 @@
                           <EmptySpace min="1" pref="1" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="panelTabel" max="32767" attributes="0"/>
-                              <Component id="panelBawah" max="32767" attributes="0"/>
+                              <Component id="panelBawah" pref="827" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="345" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="345" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -66,10 +66,10 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Component id="panelCard" min="-2" pref="100" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                  <Component id="panelTabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="panelTabel" max="32767" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="panelBawah" min="-2" max="-2" attributes="0"/>
+                  <Component id="panelBawah" min="-2" pref="50" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -88,11 +88,11 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                      <Component id="CardTotalNasabah" pref="256" max="32767" attributes="0"/>
+                      <Component id="CardTotalNasabah" pref="362" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="94" max="-2" attributes="0"/>
-                      <Component id="CardTotalSampah" pref="348" max="32767" attributes="0"/>
+                      <Component id="CardTotalSampah" pref="343" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
-                      <Component id="CardSaldoTabungan" pref="390" max="32767" attributes="0"/>
+                      <Component id="CardSaldoTabungan" pref="289" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -342,9 +342,8 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel14" min="-2" pref="44" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Component id="jScrollPane1" pref="713" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -386,23 +385,28 @@
           </SubComponents>
         </Container>
         <Container class="component.ShadowPanel" name="panelBawah">
+          <Properties>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[645, 57]"/>
+            </Property>
+          </Properties>
 
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="btn_add" min="-2" pref="130" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="lb_halaman" min="-2" pref="104" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="190" max="-2" attributes="0"/>
+                      <Component id="lb_halaman" min="-2" pref="200" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btn_firstLog" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="btn_beforeLog" min="-2" pref="33" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="cbx_dataLog" min="-2" pref="46" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btn_nextLog" min="-2" pref="37" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="btn_lastLog" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                   </Group>
@@ -410,22 +414,18 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                              <Component id="btn_beforeLog" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                              <Component id="cbx_dataLog" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                              <Component id="btn_nextLog" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                              <Component id="btn_lastLog" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="btn_add" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                              <Component id="lb_halaman" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                              <Component id="btn_firstLog" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                          </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="btn_add" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btn_lastLog" alignment="0" pref="39" max="32767" attributes="0"/>
+                          <Component id="btn_nextLog" alignment="0" max="32767" attributes="0"/>
+                          <Component id="cbx_dataLog" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btn_beforeLog" alignment="0" max="32767" attributes="0"/>
+                          <Component id="lb_halaman" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btn_firstLog" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
