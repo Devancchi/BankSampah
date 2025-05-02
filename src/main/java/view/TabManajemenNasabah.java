@@ -54,6 +54,9 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         panelMain = new javax.swing.JPanel();
         panelView = new javax.swing.JPanel();
         ShadowUtama = new component.ShadowPanel();
+        panelTabel = new component.ShadowPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbl_data = new component.Table();
         lb_dataNasabah = new javax.swing.JLabel();
         panelBawah = new component.ShadowPanel();
         lb_halaman = new javax.swing.JLabel();
@@ -61,14 +64,13 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         cbx_data = new javax.swing.JComboBox<>();
         btn_next = new javax.swing.JButton();
         btn_last = new javax.swing.JButton();
-        btn_first = new javax.swing.JButton();
         btn_add1 = new component.Jbutton();
-        btn_cancel = new component.Jbutton();
-        btn_delete = new component.Jbutton();
-        btn_add = new component.Jbutton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tbl_data = new component.Table();
+        btn_first = new javax.swing.JButton();
+        panelAction = new component.ShadowPanel();
         txt_search = new component.PlaceholderTextField();
+        btn_add = new component.Jbutton();
+        btn_delete = new component.Jbutton();
+        btn_cancel = new component.Jbutton();
         panelAdd = new javax.swing.JPanel();
         ShadowUtama1 = new component.ShadowPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -94,8 +96,47 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         panelView.setLayout(new java.awt.CardLayout());
 
+        tbl_data.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        tbl_data.setSelectionBackground(new java.awt.Color(255, 255, 0));
+        tbl_data.setSelectionForeground(new java.awt.Color(255, 255, 0));
+        tbl_data.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_dataMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbl_data);
+
         lb_dataNasabah.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         lb_dataNasabah.setText("Data Nasabah");
+
+        javax.swing.GroupLayout panelTabelLayout = new javax.swing.GroupLayout(panelTabel);
+        panelTabel.setLayout(panelTabelLayout);
+        panelTabelLayout.setHorizontalGroup(
+            panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelTabelLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(panelTabelLayout.createSequentialGroup()
+                        .addComponent(lb_dataNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(0, 0, 0))
+        );
+        panelTabelLayout.setVerticalGroup(
+            panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTabelLayout.createSequentialGroup()
+                .addComponent(lb_dataNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 714, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
+        );
 
         lb_halaman.setText("hal");
 
@@ -106,8 +147,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_next.setText(">");
 
         btn_last.setText("Last Page");
-
-        btn_first.setText("First Page");
 
         btn_add1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
         btn_add1.setText("export to Excel");
@@ -122,6 +161,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             }
         });
 
+        btn_first.setText("First Page");
+
         javax.swing.GroupLayout panelBawahLayout = new javax.swing.GroupLayout(panelBawah);
         panelBawah.setLayout(panelBawahLayout);
         panelBawahLayout.setHorizontalGroup(
@@ -129,7 +170,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             .addGroup(panelBawahLayout.createSequentialGroup()
                 .addComponent(btn_add1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_first)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -147,40 +188,20 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             .addGroup(panelBawahLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btn_last, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_next, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cbx_data, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_before, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_first, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lb_halaman, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(panelBawahLayout.createSequentialGroup()
-                        .addComponent(btn_add1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 5, Short.MAX_VALUE)))
+                    .addComponent(btn_before, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(btn_next, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbx_data, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btn_last, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_first, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lb_halaman, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_add1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        btn_cancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
-        btn_cancel.setText("Batal");
-        btn_cancel.setFillClick(new java.awt.Color(200, 125, 0));
-        btn_cancel.setFillOriginal(new java.awt.Color(243, 156, 18));
-        btn_cancel.setFillOver(new java.awt.Color(230, 145, 10));
-        btn_cancel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_cancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_cancelActionPerformed(evt);
-            }
-        });
-
-        btn_delete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_hapus.png"))); // NOI18N
-        btn_delete.setText("Hapus");
-        btn_delete.setFillClick(new java.awt.Color(190, 30, 20));
-        btn_delete.setFillOriginal(new java.awt.Color(231, 76, 60));
-        btn_delete.setFillOver(new java.awt.Color(210, 50, 40));
-        btn_delete.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_delete.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btn_deleteMouseClicked(evt);
+        txt_search.setPlaceholder("Cari Nasabah");
+        txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_searchKeyTyped(evt);
             }
         });
 
@@ -196,62 +217,76 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             }
         });
 
-        tbl_data.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
-        tbl_data.addMouseListener(new java.awt.event.MouseAdapter() {
+        btn_delete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_hapus.png"))); // NOI18N
+        btn_delete.setText("Hapus");
+        btn_delete.setFillClick(new java.awt.Color(190, 30, 20));
+        btn_delete.setFillOriginal(new java.awt.Color(231, 76, 60));
+        btn_delete.setFillOver(new java.awt.Color(210, 50, 40));
+        btn_delete.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_delete.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tbl_dataMouseClicked(evt);
+                btn_deleteMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tbl_data);
 
-        txt_search.setPlaceholder("Cari Nasabah");
-        txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txt_searchKeyTyped(evt);
+        btn_cancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
+        btn_cancel.setText("Batal");
+        btn_cancel.setFillClick(new java.awt.Color(200, 125, 0));
+        btn_cancel.setFillOriginal(new java.awt.Color(243, 156, 18));
+        btn_cancel.setFillOver(new java.awt.Color(230, 145, 10));
+        btn_cancel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_cancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cancelActionPerformed(evt);
             }
         });
+
+        javax.swing.GroupLayout panelActionLayout = new javax.swing.GroupLayout(panelAction);
+        panelAction.setLayout(panelActionLayout);
+        panelActionLayout.setHorizontalGroup(
+            panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelActionLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 904, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
+        );
+        panelActionLayout.setVerticalGroup(
+            panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelActionLayout.createSequentialGroup()
+                .addContainerGap(28, Short.MAX_VALUE)
+                .addGroup(panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(25, 25, 25))
+        );
 
         javax.swing.GroupLayout ShadowUtamaLayout = new javax.swing.GroupLayout(ShadowUtama);
         ShadowUtama.setLayout(ShadowUtamaLayout);
         ShadowUtamaLayout.setHorizontalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                .addGap(45, 45, 45)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1044, Short.MAX_VALUE)
-                    .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                        .addComponent(lb_dataNasabah)
-                        .addGap(56, 56, 56)
-                        .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(367, 367, 367)
-                        .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addGap(20, 20, 20)
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelAction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         ShadowUtamaLayout.setVerticalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(lb_dataNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
-                    .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(47, 47, 47)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 762, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(panelAction, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelTabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
                 .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -390,7 +425,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txt_kode, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(495, Short.MAX_VALUE))
+                .addContainerGap(415, Short.MAX_VALUE))
         );
 
         panelAdd.add(ShadowUtama1, "card2");
@@ -546,9 +581,11 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lb_dataNasabah;
     private javax.swing.JLabel lb_halaman;
+    private component.ShadowPanel panelAction;
     private javax.swing.JPanel panelAdd;
     private component.ShadowPanel panelBawah;
     private javax.swing.JPanel panelMain;
+    private component.ShadowPanel panelTabel;
     private javax.swing.JPanel panelView;
     private component.Table tbl_data;
     private component.PlaceholderTextField txt_alamat;

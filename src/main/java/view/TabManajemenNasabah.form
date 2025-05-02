@@ -16,7 +16,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,4,0,0,0,4,-80"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,3,-80,0,0,4,-88"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignCardLayout"/>
@@ -50,40 +50,23 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="panelBawah" max="32767" attributes="0"/>
-                              <Component id="jScrollPane1" pref="1044" max="32767" attributes="0"/>
-                              <Group type="102" attributes="0">
-                                  <Component id="lb_dataNasabah" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
-                                  <Component id="txt_search" min="-2" pref="226" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="367" max="-2" attributes="0"/>
-                                  <Component id="btn_add" min="-2" pref="79" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="btn_delete" min="-2" pref="79" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="btn_cancel" min="-2" pref="79" max="-2" attributes="0"/>
-                              </Group>
+                          <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="panelAction" max="32767" attributes="0"/>
+                              <Component id="panelTabel" max="32767" attributes="0"/>
+                              <Component id="panelBawah" alignment="0" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="111" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="lb_dataNasabah" alignment="1" pref="43" max="32767" attributes="0"/>
-                              <Component id="btn_add" alignment="1" max="32767" attributes="0"/>
-                              <Component id="txt_search" alignment="1" max="32767" attributes="0"/>
-                              <Component id="btn_delete" alignment="1" max="32767" attributes="0"/>
-                              <Component id="btn_cancel" alignment="1" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
-                          <Component id="jScrollPane1" min="-2" pref="762" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="panelAction" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="panelTabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                           <Component id="panelBawah" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -91,14 +74,77 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="lb_dataNasabah">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Segoe UI" size="22" style="1"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Data Nasabah"/>
-                  </Properties>
-                </Component>
+                <Container class="component.ShadowPanel" name="panelTabel">
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jScrollPane1" max="32767" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Component id="lb_dataNasabah" min="-2" pref="310" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="lb_dataNasabah" min="-2" pref="44" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                              <Component id="jScrollPane1" pref="714" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+                      <AuxValues>
+                        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                      </AuxValues>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                      <SubComponents>
+                        <Component class="component.Table" name="tbl_data">
+                          <Properties>
+                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                              <Table columnCount="0" rowCount="0"/>
+                            </Property>
+                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                              <TableColumnModel selectionModel="0"/>
+                            </Property>
+                            <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                              <Color blue="0" green="ff" red="ff" type="rgb"/>
+                            </Property>
+                            <Property name="selectionForeground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                              <Color blue="0" green="ff" red="ff" type="rgb"/>
+                            </Property>
+                            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                              <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                            </Property>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tbl_dataMouseClicked"/>
+                          </Events>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                    <Component class="javax.swing.JLabel" name="lb_dataNasabah">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Segoe UI" size="22" style="1"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Data Nasabah"/>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
+                </Container>
                 <Container class="component.ShadowPanel" name="panelBawah">
 
                   <Layout>
@@ -107,7 +153,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="btn_add1" min="-2" pref="130" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="lb_halaman" min="-2" pref="303" max="-2" attributes="0"/>
+                              <Component id="lb_halaman" min="-2" pref="200" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btn_first" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -127,18 +173,13 @@
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                                      <Component id="btn_last" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
-                                      <Component id="btn_next" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
-                                      <Component id="cbx_data" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
-                                      <Component id="btn_before" alignment="3" min="-2" pref="33" max="-2" attributes="0"/>
-                                      <Component id="btn_first" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
-                                      <Component id="lb_halaman" alignment="3" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="btn_add1" min="-2" pref="45" max="-2" attributes="0"/>
-                                      <EmptySpace min="0" pref="5" max="32767" attributes="0"/>
-                                  </Group>
+                                  <Component id="btn_before" alignment="1" pref="38" max="32767" attributes="0"/>
+                                  <Component id="btn_next" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="cbx_data" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="btn_last" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="btn_first" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="lb_halaman" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="btn_add1" alignment="0" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -181,11 +222,6 @@
                         <Property name="text" type="java.lang.String" value="Last Page"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JButton" name="btn_first">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="First Page"/>
-                      </Properties>
-                    </Component>
                     <Component class="component.Jbutton" name="btn_add1">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -210,110 +246,126 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_add1ActionPerformed"/>
                       </Events>
                     </Component>
+                    <Component class="javax.swing.JButton" name="btn_first">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="First Page"/>
+                      </Properties>
+                    </Component>
                   </SubComponents>
                 </Container>
-                <Component class="component.Jbutton" name="btn_cancel">
-                  <Properties>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/icon/icon_batal.png"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Batal"/>
-                    <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="0" green="7d" red="c8" type="rgb"/>
-                    </Property>
-                    <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="12" green="9c" red="f3" type="rgb"/>
-                    </Property>
-                    <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="a" green="91" red="e6" type="rgb"/>
-                    </Property>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Segoe UI" size="12" style="1"/>
-                    </Property>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_cancelActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="component.Jbutton" name="btn_delete">
-                  <Properties>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/icon/icon_hapus.png"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Hapus"/>
-                    <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="14" green="1e" red="be" type="rgb"/>
-                    </Property>
-                    <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="3c" green="4c" red="e7" type="rgb"/>
-                    </Property>
-                    <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="28" green="32" red="d2" type="rgb"/>
-                    </Property>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Segoe UI" size="12" style="1"/>
-                    </Property>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btn_deleteMouseClicked"/>
-                  </Events>
-                </Component>
-                <Component class="component.Jbutton" name="btn_add">
-                  <Properties>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/icon/icon_tambah.png"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Tambah"/>
-                    <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="3c" green="82" red="37" type="rgb"/>
-                    </Property>
-                    <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="50" green="af" red="4c" type="rgb"/>
-                    </Property>
-                    <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="4b" green="a0" red="45" type="rgb"/>
-                    </Property>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Segoe UI" size="12" style="1"/>
-                    </Property>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_addActionPerformed"/>
-                  </Events>
-                </Component>
-                <Container class="javax.swing.JScrollPane" name="jScrollPane1">
-                  <AuxValues>
-                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                  </AuxValues>
+                <Container class="component.ShadowPanel" name="panelAction">
 
-                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                              <Component id="txt_search" min="-2" pref="904" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btn_add" pref="90" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="btn_delete" pref="80" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="btn_cancel" pref="74" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace pref="28" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="txt_search" alignment="3" min="-2" pref="43" max="-2" attributes="0"/>
+                                  <Component id="btn_add" alignment="3" min="-2" pref="47" max="-2" attributes="0"/>
+                                  <Component id="btn_delete" alignment="3" min="-2" pref="47" max="-2" attributes="0"/>
+                                  <Component id="btn_cancel" alignment="3" min="-2" pref="47" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
                   <SubComponents>
-                    <Component class="component.Table" name="tbl_data">
+                    <Component class="component.PlaceholderTextField" name="txt_search">
                       <Properties>
-                        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="0" rowCount="0"/>
+                        <Property name="placeholder" type="java.lang.String" value="Cari Nasabah"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_searchKeyTyped"/>
+                      </Events>
+                    </Component>
+                    <Component class="component.Jbutton" name="btn_add">
+                      <Properties>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/icon/icon_tambah.png"/>
                         </Property>
-                        <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
-                          <TableColumnModel selectionModel="0"/>
+                        <Property name="text" type="java.lang.String" value="Tambah"/>
+                        <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="3c" green="82" red="37" type="rgb"/>
                         </Property>
-                        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                          <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                        <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="50" green="af" red="4c" type="rgb"/>
+                        </Property>
+                        <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="4b" green="a0" red="45" type="rgb"/>
+                        </Property>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Segoe UI" size="12" style="1"/>
                         </Property>
                       </Properties>
                       <Events>
-                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tbl_dataMouseClicked"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_addActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="component.Jbutton" name="btn_delete">
+                      <Properties>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/icon/icon_hapus.png"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Hapus"/>
+                        <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="14" green="1e" red="be" type="rgb"/>
+                        </Property>
+                        <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="3c" green="4c" red="e7" type="rgb"/>
+                        </Property>
+                        <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="28" green="32" red="d2" type="rgb"/>
+                        </Property>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Segoe UI" size="12" style="1"/>
+                        </Property>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btn_deleteMouseClicked"/>
+                      </Events>
+                    </Component>
+                    <Component class="component.Jbutton" name="btn_cancel">
+                      <Properties>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/icon/icon_batal.png"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Batal"/>
+                        <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="0" green="7d" red="c8" type="rgb"/>
+                        </Property>
+                        <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="12" green="9c" red="f3" type="rgb"/>
+                        </Property>
+                        <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="a" green="91" red="e6" type="rgb"/>
+                        </Property>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Segoe UI" size="12" style="1"/>
+                        </Property>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_cancelActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
                 </Container>
-                <Component class="component.PlaceholderTextField" name="txt_search">
-                  <Properties>
-                    <Property name="placeholder" type="java.lang.String" value="Cari Nasabah"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_searchKeyTyped"/>
-                  </Events>
-                </Component>
               </SubComponents>
             </Container>
           </SubComponents>
@@ -410,7 +462,7 @@
                           <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="txt_kode" min="-2" pref="36" max="-2" attributes="0"/>
-                          <EmptySpace pref="495" max="32767" attributes="0"/>
+                          <EmptySpace pref="415" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
