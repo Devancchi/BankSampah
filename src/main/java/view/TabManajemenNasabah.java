@@ -11,19 +11,30 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
 import main.DBconnect;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  *
@@ -68,8 +79,9 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         cbx_data = new javax.swing.JComboBox<>();
         btn_next = new javax.swing.JButton();
         btn_last = new javax.swing.JButton();
-        btn_add1 = new component.Jbutton();
+        btn_Export = new component.Jbutton();
         btn_first = new javax.swing.JButton();
+        btn_Import = new component.Jbutton();
         panelAction = new component.ShadowPanel();
         txt_search = new component.PlaceholderTextField();
         btn_add = new component.Jbutton();
@@ -152,27 +164,42 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         btn_last.setText("Last Page");
 
-        btn_add1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
-        btn_add1.setText("export to Excel");
-        btn_add1.setFillClick(new java.awt.Color(55, 130, 60));
-        btn_add1.setFillOriginal(new java.awt.Color(76, 175, 80));
-        btn_add1.setFillOver(new java.awt.Color(69, 160, 75));
-        btn_add1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_add1.setRoundedCorner(40);
-        btn_add1.addActionListener(new java.awt.event.ActionListener() {
+        btn_Export.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
+        btn_Export.setText("export to Excel");
+        btn_Export.setFillClick(new java.awt.Color(55, 130, 60));
+        btn_Export.setFillOriginal(new java.awt.Color(76, 175, 80));
+        btn_Export.setFillOver(new java.awt.Color(69, 160, 75));
+        btn_Export.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_Export.setRoundedCorner(40);
+        btn_Export.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_add1ActionPerformed(evt);
+                btn_ExportActionPerformed(evt);
             }
         });
 
         btn_first.setText("First Page");
+
+        btn_Import.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
+        btn_Import.setText("Import to Excel");
+        btn_Import.setFillClick(new java.awt.Color(55, 130, 60));
+        btn_Import.setFillOriginal(new java.awt.Color(76, 175, 80));
+        btn_Import.setFillOver(new java.awt.Color(69, 160, 75));
+        btn_Import.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_Import.setRoundedCorner(40);
+        btn_Import.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ImportActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelBawahLayout = new javax.swing.GroupLayout(panelBawah);
         panelBawah.setLayout(panelBawahLayout);
         panelBawahLayout.setHorizontalGroup(
             panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBawahLayout.createSequentialGroup()
-                .addComponent(btn_add1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_Export, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_Import, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -198,7 +225,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                     .addComponent(btn_last, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btn_first, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lb_halaman, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_add1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btn_Export, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_Import, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -539,7 +567,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         searchData();
     }//GEN-LAST:event_txt_searchKeyTyped
 
-    private void btn_add1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add1ActionPerformed
+    private void btn_ExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ExportActionPerformed
         DefaultTableModel model = new DefaultTableModel(
                 new String[]{"ID", "Nama", "Alamat", "Telepon", "Email", "Kode"}, 0
         );
@@ -558,14 +586,25 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             ExcelExporter.exportTableModelToExcel(model, fileToSave);
             JOptionPane.showMessageDialog(null, "Export berhasil!");
         }
-    }//GEN-LAST:event_btn_add1ActionPerformed
+    }//GEN-LAST:event_btn_ExportActionPerformed
+
+    private void btn_ImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ImportActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileFilter(new FileNameExtensionFilter("Excel Files", "xlsx", "xls"));
+
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = chooser.getSelectedFile();
+            importExcelToDatabase(selectedFile);
+        }
+    }//GEN-LAST:event_btn_ImportActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.ShadowPanel ShadowUtama;
     private component.ShadowPanel ShadowUtama1;
+    private component.Jbutton btn_Export;
+    private component.Jbutton btn_Import;
     private component.Jbutton btn_add;
-    private component.Jbutton btn_add1;
     private component.Jbutton btn_back;
     private javax.swing.JButton btn_before;
     private component.Jbutton btn_cancel;
@@ -964,7 +1003,7 @@ private boolean isDuplicate(String telepon, String email) {
                     String id = rs.getString("id_nasabah");
                     String nama = rs.getString("nama_nasabah");
                     String alamat = rs.getString("alamat");
-                    String telepon = rs.getString("no_telpon");
+                    String telepon = rs.getString("no_telfon");
                     String email = rs.getString("email");
                     String kode = rs.getString("kode_nasabah");
 
@@ -977,6 +1016,131 @@ private boolean isDuplicate(String telepon, String email) {
         }
     }
 
+//    public void importExcelToDatabase(File excelFile) {
+//        try (FileInputStream fis = new FileInputStream(excelFile); Workbook workbook = new XSSFWorkbook(fis)) {
+//
+//            Sheet sheet = workbook.getSheetAt(0);
+//            Iterator<Row> rowIterator = sheet.iterator();
+//
+//            // Lewati header
+//            if (rowIterator.hasNext()) {
+//                rowIterator.next();
+//            }
+//
+//            String insertSql = "INSERT INTO nasabah (id_nasabah, nama_nasabah, alamat, no_telfon, email, kode_nasabah) VALUES (?, ?, ?, ?, ?, ?)";
+//            PreparedStatement insertPs = conn.prepareStatement(insertSql);
+//
+//            String checkSql = "SELECT COUNT(*) FROM nasabah WHERE no_tefon = ? OR email = ?";
+//            PreparedStatement checkPs = conn.prepareStatement(checkSql);
+//
+//            int successCount = 0;
+//            int skippedCount = 0;
+//
+//            while (rowIterator.hasNext()) {
+//                Row row = rowIterator.next();
+//
+//                String id = row.getCell(0).toString();
+//                String nama = row.getCell(1).getStringCellValue();
+//                String alamat = row.getCell(2).getStringCellValue();
+//                String telepon = row.getCell(3).toString(); // Numeric diubah string
+//                String email = row.getCell(4).getStringCellValue();
+//                String kode = row.getCell(5).getStringCellValue();
+//
+//                // Cek duplikat berdasarkan telepon atau email
+//                checkPs.setString(1, telepon);
+//                checkPs.setString(2, email);
+//                ResultSet rs = checkPs.executeQuery();
+//                rs.next();
+//                int count = rs.getInt(1);
+//
+//                if (count == 0) {
+//                    insertPs.setString(1, id);
+//                    insertPs.setString(2, nama);
+//                    insertPs.setString(3, alamat);
+//                    insertPs.setString(4, telepon);
+//                    insertPs.setString(5, email);
+//                    insertPs.setString(6, kode);
+//                    insertPs.addBatch();
+//                    successCount++;
+//                } else {
+//                    skippedCount++;
+//                }
+//            }
+//
+//            insertPs.executeBatch();
+//            JOptionPane.showMessageDialog(null, "Import selesai!\nBerhasil: " + successCount + "\nDuplikat dilewati: " + skippedCount);
+//
+//        } catch (IOException | SQLException e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(null, "Import gagal: " + e.getMessage());
+//        }
+//    }
+//
+public void importExcelToDatabase(File excelFile) {
+    try (FileInputStream fis = new FileInputStream(excelFile)) {
 
+        Workbook workbook;
+        if (excelFile.getName().endsWith(".xlsx")) {
+            workbook = new XSSFWorkbook(fis); // Format baru
+        } else if (excelFile.getName().endsWith(".xls")) {
+            workbook = new HSSFWorkbook(fis); // Format lama
+        } else {
+            throw new IllegalArgumentException("File bukan .xls atau .xlsx");
+        }
+
+        Sheet sheet = workbook.getSheetAt(0);
+        Iterator<Row> rowIterator = sheet.iterator();
+
+        // Lewati header
+        if (rowIterator.hasNext()) rowIterator.next();
+
+        String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telfon, email, kode_nasabah) VALUES (?, ?, ?, ?, ?, ?)";
+        PreparedStatement insertPs = conn.prepareStatement(insertSql);
+
+        String checkSql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telfon = ? OR email = ?";
+        PreparedStatement checkPs = conn.prepareStatement(checkSql);
+
+        int successCount = 0;
+        int skippedCount = 0;
+
+        while (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+
+            String id = row.getCell(0).toString();
+            String nama = row.getCell(1).getStringCellValue();
+            String alamat = row.getCell(2).getStringCellValue();
+            String telepon = row.getCell(3).toString();
+            String email = row.getCell(4).getStringCellValue();
+            String kode = row.getCell(5).getStringCellValue();
+
+            checkPs.setString(1, telepon);
+            checkPs.setString(2, email);
+            ResultSet rs = checkPs.executeQuery();
+            rs.next();
+            int count = rs.getInt(1);
+
+            if (count == 0) {
+                    insertPs.setString(1, id);
+                    insertPs.setString(2, nama);
+                    insertPs.setString(3, alamat);
+                    insertPs.setString(4, telepon);
+                    insertPs.setString(5, email);
+                    insertPs.setString(6, kode);
+                    insertPs.addBatch();
+                successCount++;
+            } else {
+                skippedCount++;
+            }
+        }
+
+        insertPs.executeBatch();
+        loadData(); 
+        JOptionPane.showMessageDialog(null, "Import selesai!\nBerhasil: " + successCount + "\nDuplikat dilewati: " + skippedCount);
+
+    } catch (IOException | SQLException | IllegalArgumentException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Import gagal: " + e.getMessage());
+    }
+}
 /////////////////////////////////buat utility/////////////////////////////////
 }
