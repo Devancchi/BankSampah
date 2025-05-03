@@ -151,7 +151,9 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="btn_add1" min="-2" pref="130" max="-2" attributes="0"/>
+                              <Component id="btn_Export" min="-2" pref="130" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btn_Import" min="-2" pref="130" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="lb_halaman" min="-2" pref="200" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -179,7 +181,8 @@
                                   <Component id="btn_last" alignment="1" max="32767" attributes="0"/>
                                   <Component id="btn_first" alignment="0" max="32767" attributes="0"/>
                                   <Component id="lb_halaman" alignment="1" max="32767" attributes="0"/>
-                                  <Component id="btn_add1" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="btn_Export" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="btn_Import" alignment="1" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -222,7 +225,7 @@
                         <Property name="text" type="java.lang.String" value="Last Page"/>
                       </Properties>
                     </Component>
-                    <Component class="component.Jbutton" name="btn_add1">
+                    <Component class="component.Jbutton" name="btn_Export">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/icon/icon_excel.png"/>
@@ -243,13 +246,37 @@
                         <Property name="roundedCorner" type="int" value="40"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_add1ActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_ExportActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btn_first">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="First Page"/>
                       </Properties>
+                    </Component>
+                    <Component class="component.Jbutton" name="btn_Import">
+                      <Properties>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/icon/icon_excel.png"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Import to Excel"/>
+                        <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="3c" green="82" red="37" type="rgb"/>
+                        </Property>
+                        <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="50" green="af" red="4c" type="rgb"/>
+                        </Property>
+                        <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="4b" green="a0" red="45" type="rgb"/>
+                        </Property>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Segoe UI" size="12" style="1"/>
+                        </Property>
+                        <Property name="roundedCorner" type="int" value="40"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_ImportActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
