@@ -6,6 +6,7 @@ package view;
 
 import component.ExcelExporter;
 import component.LoggerUtil;
+import component.NumberOnlyFilter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +22,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
 import main.DBconnect;
 
 /**
@@ -40,6 +42,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         setTabelModel();
         loadData();
         paginationNasabah();
+        ((AbstractDocument) txt_telepon.getDocument()).setDocumentFilter(new NumberOnlyFilter());
+        ((AbstractDocument) txt_kode.getDocument()).setDocumentFilter(new NumberOnlyFilter());
     }
 
     /**
@@ -759,10 +763,11 @@ private void paginationNasabah() {
         model.setRowCount(0);
 
         try {
-            String sql = "SELECT * FROM manajemen_nasabah WHERE nama_nasabah LIKE ? OR email LIKE ?";
+            String sql = "SELECT * FROM manajemen_nasabah WHERE nama_nasabah LIKE ? OR email LIKE ? OR no_telfon LIKE ?";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setString(1, "%" + kataKunci + "%");
                 st.setString(2, "%" + kataKunci + "%");
+                st.setString(3, "%" + kataKunci + "%");
                 ResultSet rs = st.executeQuery();
 
                 while (rs.next()) {
@@ -787,6 +792,26 @@ private void paginationNasabah() {
     /////////////////////////////////buat ambil dan show data/////////////////////////////////
 
         /////////////////////////////////buat manip data/////////////////////////////////
+    
+private boolean isDuplicate(String telepon, String email) {
+        String sql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telfon = ? OR email = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, telepon);
+            ps.setString(2, email);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     private void insertData() {
         String idNasabah = txt_id.getText();
         String namaNasabah = txt_nama.getText();
@@ -798,6 +823,10 @@ private void paginationNasabah() {
 
         if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty() || telepon.isEmpty() || email.isEmpty() || kodeNasabah.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!", "validasi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (isDuplicate(telepon, email)) {
+            JOptionPane.showMessageDialog(null, "Telepon atau Email sudah digunakan!");
             return;
         }
 
@@ -935,7 +964,7 @@ private void paginationNasabah() {
                     String id = rs.getString("id_nasabah");
                     String nama = rs.getString("nama_nasabah");
                     String alamat = rs.getString("alamat");
-                    String telepon = rs.getString("no_telfon");
+                    String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
                     String kode = rs.getString("kode_nasabah");
 
