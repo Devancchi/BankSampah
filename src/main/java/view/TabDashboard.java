@@ -564,25 +564,25 @@ public class TabDashboard extends javax.swing.JPanel {
                 lb_totalSampah.setText(String.valueOf(totalSampah));
             }
 
-            // Saldo Tabungan = pemasukan - pengeluaran
+// Total Pemasukan
             ResultSet rsPemasukan = stmt.executeQuery(
-                    "SELECT SUM(db.harga * sub.jml) AS total_pemasukan "
-                    + "FROM ("
-                    + "   SELECT id_barang, COUNT(*) AS jml "
-                    + "   FROM laporan_pemasukan "
-                    + "   GROUP BY id_barang"
-                    + ") AS sub "
-                    + "JOIN data_barang db ON sub.id_barang = db.id_barang"
+                    "SELECT SUM(db.harga) AS total_pemasukan "
+                    + "FROM laporan_pemasukan lp "
+                    + "JOIN data_barang db ON lp.id_barang = db.id_barang"
             );
-
             double pemasukan = rsPemasukan.next() ? rsPemasukan.getDouble("total_pemasukan") : 0;
 
+// Total Pengeluaran
             ResultSet rsPengeluaran = stmt.executeQuery(
-                    "SELECT SUM(nominal) FROM manajemen_keuangan"
+                    "SELECT SUM(s.harga) AS total_pengeluaran "
+                    + "FROM laporan_pengeluaran lp "
+                    + "JOIN setor_sampah s ON lp.id_setoran = s.id_setoran"
             );
-            double pengeluaran = rsPengeluaran.next() ? rsPengeluaran.getDouble(1) : 0;
+            double pengeluaran = rsPengeluaran.next() ? rsPengeluaran.getDouble("total_pengeluaran") : 0;
 
             double saldo = pemasukan - pengeluaran;
+            lb_totalTabungan.setText("Rp " + String.format("%,.0f", saldo));
+
             lb_totalTabungan.setText("Rp " + String.format("%,.0f", saldo));
 
             conn.close();

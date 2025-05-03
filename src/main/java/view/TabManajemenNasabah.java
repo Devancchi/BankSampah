@@ -744,7 +744,7 @@ private void paginationNasabah() {
                     String idNasabah = rs.getString("id_nasabah");
                     String namaNasabah = rs.getString("nama_nasabah");
                     String alamat = rs.getString("alamat");
-                    String telepon = rs.getString("no_telfon");
+                    String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
                     String kodeNasabah = rs.getString("kode_nasabah");
 
@@ -802,7 +802,7 @@ private void paginationNasabah() {
         model.setRowCount(0);
 
         try {
-            String sql = "SELECT * FROM manajemen_nasabah WHERE nama_nasabah LIKE ? OR email LIKE ? OR no_telfon LIKE ?";
+            String sql = "SELECT * FROM manajemen_nasabah WHERE nama_nasabah LIKE ? OR email LIKE ? OR no_telpon LIKE ?";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setString(1, "%" + kataKunci + "%");
                 st.setString(2, "%" + kataKunci + "%");
@@ -813,7 +813,7 @@ private void paginationNasabah() {
                     String idNasabah = rs.getString("id_nasabah");
                     String namaNasabah = rs.getString("nama_nasabah");
                     String alamat = rs.getString("alamat");
-                    String telepon = rs.getString("no_telfon");
+                    String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
                     String kodeNasabah = rs.getString("kode_nasabah");
 
@@ -833,7 +833,7 @@ private void paginationNasabah() {
         /////////////////////////////////buat manip data/////////////////////////////////
     
 private boolean isDuplicate(String telepon, String email) {
-        String sql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telfon = ? OR email = ?";
+        String sql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telpon = ? OR email = ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, telepon);
@@ -870,7 +870,7 @@ private boolean isDuplicate(String telepon, String email) {
         }
 
         try {
-            String sql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telfon, email, kode_nasabah) VALUES   (?,?,?,?,?,?)";
+            String sql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, kode_nasabah) VALUES   (?,?,?,?,?,?)";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setString(1, idNasabah);
                 st.setString(2, namaNasabah);
@@ -907,7 +907,7 @@ private boolean isDuplicate(String telepon, String email) {
         }
 
         try {
-            String sql = "UPDATE manajemen_nasabah SET nama_nasabah=?, alamat=?, no_telfon=?, email=?, kode_nasabah=? WHERE id_nasabah=?";
+            String sql = "UPDATE manajemen_nasabah SET nama_nasabah=?, alamat=?, no_telpon=?, email=?, kode_nasabah=? WHERE id_nasabah=?";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
 
                 st.setString(1, namaNasabah);
@@ -1003,7 +1003,7 @@ private boolean isDuplicate(String telepon, String email) {
                     String id = rs.getString("id_nasabah");
                     String nama = rs.getString("nama_nasabah");
                     String alamat = rs.getString("alamat");
-                    String telepon = rs.getString("no_telfon");
+                    String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
                     String kode = rs.getString("kode_nasabah");
 
@@ -1027,7 +1027,7 @@ private boolean isDuplicate(String telepon, String email) {
 //                rowIterator.next();
 //            }
 //
-//            String insertSql = "INSERT INTO nasabah (id_nasabah, nama_nasabah, alamat, no_telfon, email, kode_nasabah) VALUES (?, ?, ?, ?, ?, ?)";
+//            String insertSql = "INSERT INTO nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, kode_nasabah) VALUES (?, ?, ?, ?, ?, ?)";
 //            PreparedStatement insertPs = conn.prepareStatement(insertSql);
 //
 //            String checkSql = "SELECT COUNT(*) FROM nasabah WHERE no_tefon = ? OR email = ?";
@@ -1094,10 +1094,10 @@ public void importExcelToDatabase(File excelFile) {
         // Lewati header
         if (rowIterator.hasNext()) rowIterator.next();
 
-        String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telfon, email, kode_nasabah) VALUES (?, ?, ?, ?, ?, ?)";
+        String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, kode_nasabah) VALUES (?, ?, ?, ?, ?, ?)";
         PreparedStatement insertPs = conn.prepareStatement(insertSql);
 
-        String checkSql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telfon = ? OR email = ?";
+        String checkSql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telpon = ? OR email = ?";
         PreparedStatement checkPs = conn.prepareStatement(checkSql);
 
         int successCount = 0;
