@@ -308,7 +308,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="lb_user" max="32767" attributes="0"/>
-                          <Component id="lb_role" alignment="0" pref="91" max="32767" attributes="0"/>
+                          <Component id="lb_level" alignment="0" pref="91" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -319,14 +319,14 @@
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="lb_user" min="-2" pref="22" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="lb_role" min="-2" max="-2" attributes="0"/>
+                      <Component id="lb_level" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="lb_role">
+            <Component class="javax.swing.JLabel" name="lb_level">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Admin"/>
               </Properties>

@@ -1,6 +1,9 @@
 package main;
 
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JFrame;
@@ -12,7 +15,13 @@ import view.TabLaporanStatistik;
 import view.TabManajemenSampah;
 import view.TabTransaksi;
 import component.HeaderPanel;
+import java.awt.EventQueue;
+import java.awt.Font;
+import javax.swing.UIManager;
+import loginregister.loginregister;
 import component.UserInfo;
+import component.UserSession;
+import loginregister.Login;
 import view.TabManajemenNasabah;
 
 /**
@@ -22,10 +31,10 @@ import view.TabManajemenNasabah;
 public class Dashboard extends javax.swing.JFrame {
 
     private JLabel lastClickedLabel = null;
-    private final UserInfo userInfo;
+    private UserSession user;
 
-    public Dashboard(UserInfo userInfo) {
-        this.userInfo = userInfo;
+    public Dashboard(UserSession user) {
+        this.user = user;
         initComponents();
 
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -36,7 +45,8 @@ public class Dashboard extends javax.swing.JFrame {
         setSidebarButtonEffect(transaksi);
         setSidebarButtonEffect(data_barang);
         panelMain.setLayout(new BorderLayout());
-        showUserInfo();
+        lb_user.setText(user.getNama());
+        lb_level.setText(user.getLevel());
     }
 
     /**
@@ -60,7 +70,7 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         panelCredential = new javax.swing.JPanel();
-        lb_role = new javax.swing.JLabel();
+        lb_level = new javax.swing.JLabel();
         lb_user = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
 
@@ -204,7 +214,7 @@ public class Dashboard extends javax.swing.JFrame {
 
         panelCredential.setBackground(new java.awt.Color(255, 255, 255));
 
-        lb_role.setText("Admin");
+        lb_level.setText("Admin");
 
         lb_user.setText("User");
 
@@ -216,7 +226,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(panelCredentialLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lb_user, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lb_role, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE))
+                    .addComponent(lb_level, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelCredentialLayout.setVerticalGroup(
@@ -224,7 +234,7 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCredentialLayout.createSequentialGroup()
                 .addComponent(lb_user, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lb_role)
+                .addComponent(lb_level)
                 .addContainerGap())
         );
 
@@ -344,11 +354,6 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.repaint();
         panelMain.revalidate();
     }//GEN-LAST:event_dashboardMouseClicked
-    private void showUserInfo() {
-        lb_user.setText(userInfo.getNama());
-        lb_role.setText(userInfo.getRole());
-    }
-
     private void setSidebarButtonEffect(JLabel label) {
         Color defaultColor = new Color(255, 254, 84);
         Color hoverColor = new Color(255, 230, 100);
@@ -414,7 +419,11 @@ public class Dashboard extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-
+        FlatRobotoFont.install();
+        FlatLaf.registerCustomDefaultsSource("themes");
+        FlatMacLightLaf.setup();
+        UIManager.put("defaultFont", new Font(FlatRobotoFont.FAMILY, Font.PLAIN, 13));
+        EventQueue.invokeLater(() -> new loginregister().setVisible(true));
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -465,11 +474,10 @@ public class Dashboard extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        UserInfo userInfo = new UserInfo("John Doe", "Admin");
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 FlatLightLaf.setup();
-                new Dashboard(userInfo).setVisible(true); // ← ini benar
+                new Login().setVisible(true);
             }
         });
     }
@@ -481,7 +489,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel laporan_statistik;
-    private javax.swing.JLabel lb_role;
+    private javax.swing.JLabel lb_level;
     private javax.swing.JLabel lb_user;
     private javax.swing.JLabel manajemen_nasabah;
     private javax.swing.JLabel manajemen_sampah;
