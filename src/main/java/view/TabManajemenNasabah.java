@@ -4,10 +4,12 @@
  */
 package view;
 
+import component.ExcelExporter;
 import component.LoggerUtil;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +17,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -28,7 +31,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
     private final Connection conn;
     private int halamanSaatIni = 1;
-    private int dataPerHalaman = 20;
+    private int dataPerHalaman = 18;
     private int totalPages;
 
     public TabManajemenNasabah() {
@@ -52,13 +55,14 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         panelView = new javax.swing.JPanel();
         ShadowUtama = new component.ShadowPanel();
         lb_dataNasabah = new javax.swing.JLabel();
-        shadowPanel1 = new component.ShadowPanel();
+        panelBawah = new component.ShadowPanel();
         lb_halaman = new javax.swing.JLabel();
-        btn_first = new javax.swing.JButton();
         btn_before = new javax.swing.JButton();
         cbx_data = new javax.swing.JComboBox<>();
         btn_next = new javax.swing.JButton();
         btn_last = new javax.swing.JButton();
+        btn_first = new javax.swing.JButton();
+        btn_add1 = new component.Jbutton();
         btn_cancel = new component.Jbutton();
         btn_delete = new component.Jbutton();
         btn_add = new component.Jbutton();
@@ -95,8 +99,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         lb_halaman.setText("hal");
 
-        btn_first.setText("First Page");
-
         btn_before.setText("<");
 
         cbx_data.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "20", "40", "60", "80" }));
@@ -105,40 +107,56 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         btn_last.setText("Last Page");
 
-        javax.swing.GroupLayout shadowPanel1Layout = new javax.swing.GroupLayout(shadowPanel1);
-        shadowPanel1.setLayout(shadowPanel1Layout);
-        shadowPanel1Layout.setHorizontalGroup(
-            shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(shadowPanel1Layout.createSequentialGroup()
-                .addGroup(shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(shadowPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
-                        .addComponent(btn_first)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_before)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbx_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_next)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btn_last))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
-                        .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        shadowPanel1Layout.setVerticalGroup(
-            shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowPanel1Layout.createSequentialGroup()
-                .addComponent(lb_halaman, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
+        btn_first.setText("First Page");
+
+        btn_add1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
+        btn_add1.setText("export to Excel");
+        btn_add1.setFillClick(new java.awt.Color(55, 130, 60));
+        btn_add1.setFillOriginal(new java.awt.Color(76, 175, 80));
+        btn_add1.setFillOver(new java.awt.Color(69, 160, 75));
+        btn_add1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_add1.setRoundedCorner(40);
+        btn_add1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_add1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelBawahLayout = new javax.swing.GroupLayout(panelBawah);
+        panelBawah.setLayout(panelBawahLayout);
+        panelBawahLayout.setHorizontalGroup(
+            panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBawahLayout.createSequentialGroup()
+                .addComponent(btn_add1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btn_last, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(btn_first)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_before)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbx_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_next)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_last)
+                .addGap(0, 0, 0))
+        );
+        panelBawahLayout.setVerticalGroup(
+            panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBawahLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btn_last, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btn_next, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(cbx_data, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btn_before, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_first, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btn_first, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lb_halaman, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(panelBawahLayout.createSequentialGroup()
+                        .addComponent(btn_add1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 5, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -205,25 +223,21 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         ShadowUtamaLayout.setHorizontalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(45, 45, 45)
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1044, Short.MAX_VALUE)
                     .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1044, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                                .addComponent(lb_dataNasabah)
-                                .addGap(56, 56, 56)
-                                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(367, 367, 367)
-                                .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowUtamaLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(shadowPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(103, 103, 103))
+                        .addComponent(lb_dataNasabah)
+                        .addGap(56, 56, 56)
+                        .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(367, 367, 367)
+                        .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(111, Short.MAX_VALUE))
         );
         ShadowUtamaLayout.setVerticalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -236,10 +250,10 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                     .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(47, 47, 47)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 726, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(shadowPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 762, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         panelView.add(ShadowUtama, "card2");
@@ -376,7 +390,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txt_kode, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(415, Short.MAX_VALUE))
+                .addContainerGap(495, Short.MAX_VALUE))
         );
 
         panelAdd.add(ShadowUtama1, "card2");
@@ -486,11 +500,33 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         searchData();
     }//GEN-LAST:event_txt_searchKeyTyped
 
+    private void btn_add1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add1ActionPerformed
+        DefaultTableModel model = new DefaultTableModel(
+                new String[]{"ID", "Nama", "Alamat", "Telepon", "Email", "Kode"}, 0
+        );
+        getAllNasabahData(model);
+
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Simpan file Excel");
+        int option = chooser.showSaveDialog(null);
+
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = chooser.getSelectedFile();
+            if (!fileToSave.getName().endsWith(".xls")) {
+                fileToSave = new File(fileToSave.getAbsolutePath() + ".xls");
+            }
+
+            ExcelExporter.exportTableModelToExcel(model, fileToSave);
+            JOptionPane.showMessageDialog(null, "Export berhasil!");
+        }
+    }//GEN-LAST:event_btn_add1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.ShadowPanel ShadowUtama;
     private component.ShadowPanel ShadowUtama1;
     private component.Jbutton btn_add;
+    private component.Jbutton btn_add1;
     private component.Jbutton btn_back;
     private javax.swing.JButton btn_before;
     private component.Jbutton btn_cancel;
@@ -511,9 +547,9 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private javax.swing.JLabel lb_dataNasabah;
     private javax.swing.JLabel lb_halaman;
     private javax.swing.JPanel panelAdd;
+    private component.ShadowPanel panelBawah;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
-    private component.ShadowPanel shadowPanel1;
     private component.Table tbl_data;
     private component.PlaceholderTextField txt_alamat;
     private component.PlaceholderTextField txt_email;
@@ -523,8 +559,9 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private component.PlaceholderTextField txt_search;
     private component.PlaceholderTextField txt_telepon;
     // End of variables declaration//GEN-END:variables
+
     ////////////////////////////////////buat setup awal/////////////////////////////////
-        private void paginationNasabah() {
+private void paginationNasabah() {
         btn_first.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -589,6 +626,30 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     /////////////////////////////////buat setup awal/////////////////////////////////
 
     /////////////////////////////////buat ambil dan show data/////////////////////////////////
+    
+        private void calculateTotalPage() {
+        int totalData = getTotalData();
+        totalPages = (int) Math.ceil((double) totalData / dataPerHalaman);
+
+    }
+
+    private int getTotalData() {
+        int totalData = 0;
+        try {
+            String sql = "Select Count(*) AS total FROM manajemen_nasabah";
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                ResultSet rs = st.executeQuery();
+                if (rs.next()) {
+                    totalData = rs.getInt("total");
+                }
+            }
+
+        } catch (Exception e) {
+            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return totalData;
+    }
+
     private void getData(int startIndex, int entriesPage, DefaultTableModel model) {
         model.setRowCount(0);
 
@@ -617,33 +678,10 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         }
     }
 
-    private void calculateTotalPage() {
-        int totalData = getTotalData();
-        totalPages = (int) Math.ceil((double) totalData / dataPerHalaman);
-
-    }
-
-    private int getTotalData() {
-        int totalData = 0;
-        try {
-            String sql = "Select Count(*) AS total FROM manajemen_nasabah";
-            try (PreparedStatement st = conn.prepareStatement(sql)) {
-                ResultSet rs = st.executeQuery();
-                if (rs.next()) {
-                    totalData = rs.getInt("total");
-                }
-            }
-
-        } catch (Exception e) {
-            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
-        }
-        return totalData;
-    }
-
     private void loadData() {
         calculateTotalPage();
         int totalData = getTotalData();
-        lb_halaman.setText(String.valueOf("Halaman " + halamanSaatIni + " dari Total Data " + totalData));
+        lb_halaman.setText(String.valueOf("Page " + halamanSaatIni + " dari Total " + totalData + " Data"));
         int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
         getData(startIndex, dataPerHalaman, (DefaultTableModel) tbl_data.getModel());
         btn_delete.setVisible(false);
@@ -846,6 +884,31 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         txt_telepon.setText("");
         txt_email.setText("");
         txt_kode.setText("");
+    }
+
+    private void getAllNasabahData(DefaultTableModel model) {
+        model.setRowCount(0);
+
+        try {
+            String sql = "SELECT * FROM manajemen_nasabah ORDER BY id_nasabah DESC";
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                ResultSet rs = st.executeQuery();
+
+                while (rs.next()) {
+                    String id = rs.getString("id_nasabah");
+                    String nama = rs.getString("nama_nasabah");
+                    String alamat = rs.getString("alamat");
+                    String telepon = rs.getString("no_telfon");
+                    String email = rs.getString("email");
+                    String kode = rs.getString("kode_nasabah");
+
+                    Object[] rowData = {id, nama, alamat, telepon, email, kode};
+                    model.addRow(rowData);
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Gagal ambil data nasabah:\n" + e.getMessage());
+        }
     }
 
 
