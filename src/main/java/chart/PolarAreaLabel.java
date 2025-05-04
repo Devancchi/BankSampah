@@ -1,4 +1,4 @@
-package component;
+package chart;
 
 import java.awt.Color;
 import java.awt.Graphics;
