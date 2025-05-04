@@ -46,7 +46,7 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf-extras</artifactId>
-            <version>3.5.2</version>
+            <version>3.6</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -69,6 +69,24 @@
             <groupId>io.github.dj-raven</groupId>
             <artifactId>swing-datetime-picker</artifactId>
             <version>1.4.0</version> <!-- contoh versi stabil -->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.4.1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.5.5</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.timingframework</groupId>
+            <artifactId>timingframework</artifactId>
+            <version>1.0</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 </project>

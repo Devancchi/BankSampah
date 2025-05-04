@@ -19,6 +19,9 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import javax.swing.UIManager;
 import loginregister.loginregister;
+import component.UserInfo;
+import component.UserSession;
+import loginregister.Login;
 import view.TabManajemenNasabah;
 
 /**
@@ -28,10 +31,12 @@ import view.TabManajemenNasabah;
 public class Dashboard extends javax.swing.JFrame {
 
     private JLabel lastClickedLabel = null;
+    private UserSession user;
 
-    public Dashboard() {
+    public Dashboard(UserSession user) {
+        this.user = user;
         initComponents();
-        
+
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setSidebarButtonEffect(dashboard);
         setSidebarButtonEffect(manajemen_nasabah);
@@ -40,6 +45,8 @@ public class Dashboard extends javax.swing.JFrame {
         setSidebarButtonEffect(transaksi);
         setSidebarButtonEffect(data_barang);
         panelMain.setLayout(new BorderLayout());
+        lb_user.setText(user.getNama());
+        lb_level.setText(user.getLevel());
     }
 
     /**
@@ -61,12 +68,14 @@ public class Dashboard extends javax.swing.JFrame {
         transaksi = new javax.swing.JLabel();
         data_barang = new javax.swing.JLabel();
         panelMain = new javax.swing.JPanel();
-        headerPanel2 = new component.HeaderPanel();
+        jPanel1 = new javax.swing.JPanel();
+        panelCredential = new javax.swing.JPanel();
+        lb_level = new javax.swing.JLabel();
+        lb_user = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(1440, 1024));
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(1440, 1024));
 
         pn_sidebar.setBackground(new java.awt.Color(255, 254, 84));
         pn_sidebar.setPreferredSize(new java.awt.Dimension(240, 1024));
@@ -185,7 +194,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
                 .addComponent(data_barang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(632, Short.MAX_VALUE))
+                .addContainerGap(545, Short.MAX_VALUE))
         );
 
         panelMain.setBackground(new java.awt.Color(204, 204, 204));
@@ -194,11 +203,75 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.setLayout(panelMainLayout);
         panelMainLayout.setHorizontalGroup(
             panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1248, Short.MAX_VALUE)
+            .addGap(0, 952, Short.MAX_VALUE)
         );
         panelMainLayout.setVerticalGroup(
             panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 873, Short.MAX_VALUE)
+        );
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        panelCredential.setBackground(new java.awt.Color(255, 255, 255));
+
+        lb_level.setText("Admin");
+
+        lb_user.setText("User");
+
+        javax.swing.GroupLayout panelCredentialLayout = new javax.swing.GroupLayout(panelCredential);
+        panelCredential.setLayout(panelCredentialLayout);
+        panelCredentialLayout.setHorizontalGroup(
+            panelCredentialLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelCredentialLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelCredentialLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lb_user, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lb_level, javax.swing.GroupLayout.DEFAULT_SIZE, 91, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        panelCredentialLayout.setVerticalGroup(
+            panelCredentialLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCredentialLayout.createSequentialGroup()
+                .addComponent(lb_user, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lb_level)
+                .addContainerGap())
+        );
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 153));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 10, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 46, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(panelCredential, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(panelCredential, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -208,21 +281,18 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(pn_sidebar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addComponent(headerPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(pn_sidebar, javax.swing.GroupLayout.DEFAULT_SIZE, 1025, Short.MAX_VALUE)
+                    .addComponent(pn_sidebar, javax.swing.GroupLayout.DEFAULT_SIZE, 938, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(headerPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(3, 3, 3)
                         .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -284,7 +354,6 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.repaint();
         panelMain.revalidate();
     }//GEN-LAST:event_dashboardMouseClicked
-
     private void setSidebarButtonEffect(JLabel label) {
         Color defaultColor = new Color(255, 254, 84);
         Color hoverColor = new Color(255, 230, 100);
@@ -408,7 +477,7 @@ public class Dashboard extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 FlatLightLaf.setup();
-                new Dashboard().setVisible(true);
+                new Login().setVisible(true);
             }
         });
     }
@@ -416,11 +485,15 @@ public class Dashboard extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel dashboard;
     private javax.swing.JLabel data_barang;
-    private component.HeaderPanel headerPanel2;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel laporan_statistik;
+    private javax.swing.JLabel lb_level;
+    private javax.swing.JLabel lb_user;
     private javax.swing.JLabel manajemen_nasabah;
     private javax.swing.JLabel manajemen_sampah;
+    private javax.swing.JPanel panelCredential;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelMoving;
     private javax.swing.JPanel pn_sidebar;

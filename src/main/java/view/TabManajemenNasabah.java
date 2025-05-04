@@ -6,22 +6,35 @@ package view;
 
 import component.ExcelExporter;
 import component.LoggerUtil;
+import component.NumberOnlyFilter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
 import main.DBconnect;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  *
@@ -40,6 +53,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         setTabelModel();
         loadData();
         paginationNasabah();
+        ((AbstractDocument) txt_telepon.getDocument()).setDocumentFilter(new NumberOnlyFilter());
+        ((AbstractDocument) txt_kode.getDocument()).setDocumentFilter(new NumberOnlyFilter());
     }
 
     /**
@@ -53,7 +68,9 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         panelMain = new javax.swing.JPanel();
         panelView = new javax.swing.JPanel();
-        ShadowUtama = new component.ShadowPanel();
+        panelTabel = new component.ShadowPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbl_data = new component.Table();
         lb_dataNasabah = new javax.swing.JLabel();
         panelBawah = new component.ShadowPanel();
         lb_halaman = new javax.swing.JLabel();
@@ -61,16 +78,15 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         cbx_data = new javax.swing.JComboBox<>();
         btn_next = new javax.swing.JButton();
         btn_last = new javax.swing.JButton();
+        btn_Export = new component.Jbutton();
         btn_first = new javax.swing.JButton();
-        btn_add1 = new component.Jbutton();
-        btn_cancel = new component.Jbutton();
-        btn_delete = new component.Jbutton();
-        btn_add = new component.Jbutton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tbl_data = new component.Table();
+        btn_Import = new component.Jbutton();
+        panelAction = new component.ShadowPanel();
         txt_search = new component.PlaceholderTextField();
+        btn_add = new component.Jbutton();
+        btn_delete = new component.Jbutton();
+        btn_cancel = new component.Jbutton();
         panelAdd = new javax.swing.JPanel();
-        ShadowUtama1 = new component.ShadowPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         txt_id = new javax.swing.JTextField();
@@ -92,7 +108,22 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         panelMain.setLayout(new java.awt.CardLayout());
 
-        panelView.setLayout(new java.awt.CardLayout());
+        tbl_data.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        tbl_data.setSelectionBackground(new java.awt.Color(255, 255, 0));
+        tbl_data.setSelectionForeground(new java.awt.Color(255, 255, 0));
+        tbl_data.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_dataMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbl_data);
 
         lb_dataNasabah.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         lb_dataNasabah.setText("Data Nasabah");
@@ -107,18 +138,31 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         btn_last.setText("Last Page");
 
+        btn_Export.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
+        btn_Export.setText("Export To Excel");
+        btn_Export.setFillClick(new java.awt.Color(55, 130, 60));
+        btn_Export.setFillOriginal(new java.awt.Color(76, 175, 80));
+        btn_Export.setFillOver(new java.awt.Color(69, 160, 75));
+        btn_Export.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_Export.setRoundedCorner(40);
+        btn_Export.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ExportActionPerformed(evt);
+            }
+        });
+
         btn_first.setText("First Page");
 
-        btn_add1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
-        btn_add1.setText("export to Excel");
-        btn_add1.setFillClick(new java.awt.Color(55, 130, 60));
-        btn_add1.setFillOriginal(new java.awt.Color(76, 175, 80));
-        btn_add1.setFillOver(new java.awt.Color(69, 160, 75));
-        btn_add1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_add1.setRoundedCorner(40);
-        btn_add1.addActionListener(new java.awt.event.ActionListener() {
+        btn_Import.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
+        btn_Import.setText("Import From Excel");
+        btn_Import.setFillClick(new java.awt.Color(30, 100, 180));
+        btn_Import.setFillOriginal(new java.awt.Color(66, 133, 244));
+        btn_Import.setFillOver(new java.awt.Color(69, 160, 75));
+        btn_Import.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_Import.setRoundedCorner(40);
+        btn_Import.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_add1ActionPerformed(evt);
+                btn_ImportActionPerformed(evt);
             }
         });
 
@@ -127,60 +171,64 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         panelBawahLayout.setHorizontalGroup(
             panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBawahLayout.createSequentialGroup()
-                .addComponent(btn_add1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_Export, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_Import, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_first)
+                .addComponent(btn_first, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_before)
+                .addComponent(btn_before, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbx_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cbx_data, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_next)
+                .addComponent(btn_next, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_last)
+                .addComponent(btn_last, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
         panelBawahLayout.setVerticalGroup(
             panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBawahLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btn_last, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_next, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cbx_data, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_before, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_first, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lb_halaman, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(panelBawahLayout.createSequentialGroup()
-                        .addComponent(btn_add1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 5, Short.MAX_VALUE)))
+                .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_Export, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_Import, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_first, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_before, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbx_data, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_next, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_last, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout panelTabelLayout = new javax.swing.GroupLayout(panelTabel);
+        panelTabel.setLayout(panelTabelLayout);
+        panelTabelLayout.setHorizontalGroup(
+            panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelTabelLayout.createSequentialGroup()
+                .addComponent(lb_dataNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jScrollPane1)
+            .addComponent(panelBawah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        panelTabelLayout.setVerticalGroup(
+            panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTabelLayout.createSequentialGroup()
+                .addComponent(lb_dataNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 678, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        btn_cancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
-        btn_cancel.setText("Batal");
-        btn_cancel.setFillClick(new java.awt.Color(200, 125, 0));
-        btn_cancel.setFillOriginal(new java.awt.Color(243, 156, 18));
-        btn_cancel.setFillOver(new java.awt.Color(230, 145, 10));
-        btn_cancel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_cancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_cancelActionPerformed(evt);
-            }
-        });
-
-        btn_delete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_hapus.png"))); // NOI18N
-        btn_delete.setText("Hapus");
-        btn_delete.setFillClick(new java.awt.Color(190, 30, 20));
-        btn_delete.setFillOriginal(new java.awt.Color(231, 76, 60));
-        btn_delete.setFillOver(new java.awt.Color(210, 50, 40));
-        btn_delete.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_delete.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btn_deleteMouseClicked(evt);
+        txt_search.setPlaceholder("Cari Nasabah 🔎");
+        txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_searchKeyTyped(evt);
             }
         });
 
@@ -196,71 +244,81 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             }
         });
 
-        tbl_data.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
-        tbl_data.addMouseListener(new java.awt.event.MouseAdapter() {
+        btn_delete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_hapus.png"))); // NOI18N
+        btn_delete.setText("Hapus");
+        btn_delete.setFillClick(new java.awt.Color(190, 30, 20));
+        btn_delete.setFillOriginal(new java.awt.Color(231, 76, 60));
+        btn_delete.setFillOver(new java.awt.Color(210, 50, 40));
+        btn_delete.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_delete.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tbl_dataMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(tbl_data);
-
-        txt_search.setPlaceholder("Cari Nasabah");
-        txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txt_searchKeyTyped(evt);
+                btn_deleteMouseClicked(evt);
             }
         });
 
-        javax.swing.GroupLayout ShadowUtamaLayout = new javax.swing.GroupLayout(ShadowUtama);
-        ShadowUtama.setLayout(ShadowUtamaLayout);
-        ShadowUtamaLayout.setHorizontalGroup(
-            ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                .addGap(45, 45, 45)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1044, Short.MAX_VALUE)
-                    .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                        .addComponent(lb_dataNasabah)
-                        .addGap(56, 56, 56)
-                        .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(367, 367, 367)
-                        .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(111, Short.MAX_VALUE))
+        btn_cancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
+        btn_cancel.setText("Batal");
+        btn_cancel.setFillClick(new java.awt.Color(200, 125, 0));
+        btn_cancel.setFillOriginal(new java.awt.Color(243, 156, 18));
+        btn_cancel.setFillOver(new java.awt.Color(230, 145, 10));
+        btn_cancel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_cancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cancelActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelActionLayout = new javax.swing.GroupLayout(panelAction);
+        panelAction.setLayout(panelActionLayout);
+        panelActionLayout.setHorizontalGroup(
+            panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelActionLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 778, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(106, 106, 106)
+                .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
         );
-        ShadowUtamaLayout.setVerticalGroup(
-            ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(lb_dataNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
-                    .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(47, 47, 47)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 762, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+        panelActionLayout.setVerticalGroup(
+            panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelActionLayout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelActionLayout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(25, 25, 25))
         );
 
-        panelView.add(ShadowUtama, "card2");
+        javax.swing.GroupLayout panelViewLayout = new javax.swing.GroupLayout(panelView);
+        panelView.setLayout(panelViewLayout);
+        panelViewLayout.setHorizontalGroup(
+            panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelViewLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelAction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(20, 20, 20))
+        );
+        panelViewLayout.setVerticalGroup(
+            panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelViewLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(panelAction, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(20, 20, 20))
+        );
 
         panelMain.add(panelView, "card2");
-
-        panelAdd.setLayout(new java.awt.CardLayout());
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel6.setText("Data Nasabah");
@@ -324,48 +382,43 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         txt_kode.setPlaceholder("Kode");
 
-        javax.swing.GroupLayout ShadowUtama1Layout = new javax.swing.GroupLayout(ShadowUtama1);
-        ShadowUtama1.setLayout(ShadowUtama1Layout);
-        ShadowUtama1Layout.setHorizontalGroup(
-            ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                        .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel13)
-                            .addComponent(jLabel9)
-                            .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                                    .addComponent(jLabel6)
-                                    .addGap(819, 819, 819)
-                                    .addComponent(btn_save, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(btn_back, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel12)
-                                    .addComponent(jLabel11)
-                                    .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(txt_nama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                        .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_kode, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_email, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_telepon, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+        javax.swing.GroupLayout panelAddLayout = new javax.swing.GroupLayout(panelAdd);
+        panelAdd.setLayout(panelAddLayout);
+        panelAddLayout.setHorizontalGroup(
+            panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelAddLayout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel13)
+                    .addComponent(jLabel9)
+                    .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(panelAddLayout.createSequentialGroup()
+                            .addComponent(jLabel6)
+                            .addGap(819, 819, 819)
+                            .addComponent(btn_save, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(btn_back, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel11)
+                            .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txt_nama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_kode, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_email, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_telepon, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        ShadowUtama1Layout.setVerticalGroup(
-            ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+        panelAddLayout.setVerticalGroup(
+            panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelAddLayout.createSequentialGroup()
+                .addGap(224, 224, 224)
+                .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btn_save, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_back, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btn_back, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -390,10 +443,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txt_kode, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(495, Short.MAX_VALUE))
+                .addContainerGap(225, Short.MAX_VALUE))
         );
-
-        panelAdd.add(ShadowUtama1, "card2");
 
         panelMain.add(panelAdd, "card2");
 
@@ -500,7 +551,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         searchData();
     }//GEN-LAST:event_txt_searchKeyTyped
 
-    private void btn_add1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_add1ActionPerformed
+    private void btn_ExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ExportActionPerformed
         DefaultTableModel model = new DefaultTableModel(
                 new String[]{"ID", "Nama", "Alamat", "Telepon", "Email", "Kode"}, 0
         );
@@ -519,14 +570,23 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             ExcelExporter.exportTableModelToExcel(model, fileToSave);
             JOptionPane.showMessageDialog(null, "Export berhasil!");
         }
-    }//GEN-LAST:event_btn_add1ActionPerformed
+    }//GEN-LAST:event_btn_ExportActionPerformed
+
+    private void btn_ImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ImportActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileFilter(new FileNameExtensionFilter("Excel Files", "xlsx", "xls"));
+
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = chooser.getSelectedFile();
+            importExcelToDatabase(selectedFile);
+        }
+    }//GEN-LAST:event_btn_ImportActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private component.ShadowPanel ShadowUtama;
-    private component.ShadowPanel ShadowUtama1;
+    private component.Jbutton btn_Export;
+    private component.Jbutton btn_Import;
     private component.Jbutton btn_add;
-    private component.Jbutton btn_add1;
     private component.Jbutton btn_back;
     private javax.swing.JButton btn_before;
     private component.Jbutton btn_cancel;
@@ -546,9 +606,11 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lb_dataNasabah;
     private javax.swing.JLabel lb_halaman;
+    private component.ShadowPanel panelAction;
     private javax.swing.JPanel panelAdd;
     private component.ShadowPanel panelBawah;
     private javax.swing.JPanel panelMain;
+    private component.ShadowPanel panelTabel;
     private javax.swing.JPanel panelView;
     private component.Table tbl_data;
     private component.PlaceholderTextField txt_alamat;
@@ -664,7 +726,7 @@ private void paginationNasabah() {
                     String idNasabah = rs.getString("id_nasabah");
                     String namaNasabah = rs.getString("nama_nasabah");
                     String alamat = rs.getString("alamat");
-                    String telepon = rs.getString("no_telfon");
+                    String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
                     String kodeNasabah = rs.getString("kode_nasabah");
 
@@ -722,17 +784,18 @@ private void paginationNasabah() {
         model.setRowCount(0);
 
         try {
-            String sql = "SELECT * FROM manajemen_nasabah WHERE nama_nasabah LIKE ? OR email LIKE ?";
+            String sql = "SELECT * FROM manajemen_nasabah WHERE nama_nasabah LIKE ? OR email LIKE ? OR no_telpon LIKE ?";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setString(1, "%" + kataKunci + "%");
                 st.setString(2, "%" + kataKunci + "%");
+                st.setString(3, "%" + kataKunci + "%");
                 ResultSet rs = st.executeQuery();
 
                 while (rs.next()) {
                     String idNasabah = rs.getString("id_nasabah");
                     String namaNasabah = rs.getString("nama_nasabah");
                     String alamat = rs.getString("alamat");
-                    String telepon = rs.getString("no_telfon");
+                    String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
                     String kodeNasabah = rs.getString("kode_nasabah");
 
@@ -750,6 +813,26 @@ private void paginationNasabah() {
     /////////////////////////////////buat ambil dan show data/////////////////////////////////
 
         /////////////////////////////////buat manip data/////////////////////////////////
+    
+private boolean isDuplicate(String telepon, String email) {
+        String sql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telpon = ? OR email = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, telepon);
+            ps.setString(2, email);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     private void insertData() {
         String idNasabah = txt_id.getText();
         String namaNasabah = txt_nama.getText();
@@ -763,9 +846,13 @@ private void paginationNasabah() {
             JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!", "validasi", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        if (isDuplicate(telepon, email)) {
+            JOptionPane.showMessageDialog(null, "Telepon atau Email sudah digunakan!");
+            return;
+        }
 
         try {
-            String sql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telfon, email, kode_nasabah) VALUES   (?,?,?,?,?,?)";
+            String sql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, kode_nasabah) VALUES   (?,?,?,?,?,?)";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setString(1, idNasabah);
                 st.setString(2, namaNasabah);
@@ -802,7 +889,7 @@ private void paginationNasabah() {
         }
 
         try {
-            String sql = "UPDATE manajemen_nasabah SET nama_nasabah=?, alamat=?, no_telfon=?, email=?, kode_nasabah=? WHERE id_nasabah=?";
+            String sql = "UPDATE manajemen_nasabah SET nama_nasabah=?, alamat=?, no_telpon=?, email=?, kode_nasabah=? WHERE id_nasabah=?";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
 
                 st.setString(1, namaNasabah);
@@ -898,7 +985,7 @@ private void paginationNasabah() {
                     String id = rs.getString("id_nasabah");
                     String nama = rs.getString("nama_nasabah");
                     String alamat = rs.getString("alamat");
-                    String telepon = rs.getString("no_telfon");
+                    String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
                     String kode = rs.getString("kode_nasabah");
 
@@ -911,6 +998,131 @@ private void paginationNasabah() {
         }
     }
 
+//    public void importExcelToDatabase(File excelFile) {
+//        try (FileInputStream fis = new FileInputStream(excelFile); Workbook workbook = new XSSFWorkbook(fis)) {
+//
+//            Sheet sheet = workbook.getSheetAt(0);
+//            Iterator<Row> rowIterator = sheet.iterator();
+//
+//            // Lewati header
+//            if (rowIterator.hasNext()) {
+//                rowIterator.next();
+//            }
+//
+//            String insertSql = "INSERT INTO nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, kode_nasabah) VALUES (?, ?, ?, ?, ?, ?)";
+//            PreparedStatement insertPs = conn.prepareStatement(insertSql);
+//
+//            String checkSql = "SELECT COUNT(*) FROM nasabah WHERE no_tefon = ? OR email = ?";
+//            PreparedStatement checkPs = conn.prepareStatement(checkSql);
+//
+//            int successCount = 0;
+//            int skippedCount = 0;
+//
+//            while (rowIterator.hasNext()) {
+//                Row row = rowIterator.next();
+//
+//                String id = row.getCell(0).toString();
+//                String nama = row.getCell(1).getStringCellValue();
+//                String alamat = row.getCell(2).getStringCellValue();
+//                String telepon = row.getCell(3).toString(); // Numeric diubah string
+//                String email = row.getCell(4).getStringCellValue();
+//                String kode = row.getCell(5).getStringCellValue();
+//
+//                // Cek duplikat berdasarkan telepon atau email
+//                checkPs.setString(1, telepon);
+//                checkPs.setString(2, email);
+//                ResultSet rs = checkPs.executeQuery();
+//                rs.next();
+//                int count = rs.getInt(1);
+//
+//                if (count == 0) {
+//                    insertPs.setString(1, id);
+//                    insertPs.setString(2, nama);
+//                    insertPs.setString(3, alamat);
+//                    insertPs.setString(4, telepon);
+//                    insertPs.setString(5, email);
+//                    insertPs.setString(6, kode);
+//                    insertPs.addBatch();
+//                    successCount++;
+//                } else {
+//                    skippedCount++;
+//                }
+//            }
+//
+//            insertPs.executeBatch();
+//            JOptionPane.showMessageDialog(null, "Import selesai!\nBerhasil: " + successCount + "\nDuplikat dilewati: " + skippedCount);
+//
+//        } catch (IOException | SQLException e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(null, "Import gagal: " + e.getMessage());
+//        }
+//    }
+//
+public void importExcelToDatabase(File excelFile) {
+    try (FileInputStream fis = new FileInputStream(excelFile)) {
 
+        Workbook workbook;
+        if (excelFile.getName().endsWith(".xlsx")) {
+            workbook = new XSSFWorkbook(fis); // Format baru
+        } else if (excelFile.getName().endsWith(".xls")) {
+            workbook = new HSSFWorkbook(fis); // Format lama
+        } else {
+            throw new IllegalArgumentException("File bukan .xls atau .xlsx");
+        }
+
+        Sheet sheet = workbook.getSheetAt(0);
+        Iterator<Row> rowIterator = sheet.iterator();
+
+        // Lewati header
+        if (rowIterator.hasNext()) rowIterator.next();
+
+        String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, kode_nasabah) VALUES (?, ?, ?, ?, ?, ?)";
+        PreparedStatement insertPs = conn.prepareStatement(insertSql);
+
+        String checkSql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telpon = ? OR email = ?";
+        PreparedStatement checkPs = conn.prepareStatement(checkSql);
+
+        int successCount = 0;
+        int skippedCount = 0;
+
+        while (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+
+            String id = row.getCell(0).toString();
+            String nama = row.getCell(1).getStringCellValue();
+            String alamat = row.getCell(2).getStringCellValue();
+            String telepon = row.getCell(3).toString();
+            String email = row.getCell(4).getStringCellValue();
+            String kode = row.getCell(5).getStringCellValue();
+
+            checkPs.setString(1, telepon);
+            checkPs.setString(2, email);
+            ResultSet rs = checkPs.executeQuery();
+            rs.next();
+            int count = rs.getInt(1);
+
+            if (count == 0) {
+                    insertPs.setString(1, id);
+                    insertPs.setString(2, nama);
+                    insertPs.setString(3, alamat);
+                    insertPs.setString(4, telepon);
+                    insertPs.setString(5, email);
+                    insertPs.setString(6, kode);
+                    insertPs.addBatch();
+                successCount++;
+            } else {
+                skippedCount++;
+            }
+        }
+
+        insertPs.executeBatch();
+        loadData(); 
+        JOptionPane.showMessageDialog(null, "Import selesai!\nBerhasil: " + successCount + "\nDuplikat dilewati: " + skippedCount);
+
+    } catch (IOException | SQLException | IllegalArgumentException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Import gagal: " + e.getMessage());
+    }
+}
 /////////////////////////////////buat utility/////////////////////////////////
 }
