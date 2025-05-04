@@ -4,6 +4,13 @@
  */
 package view;
 
+import com.mysql.cj.result.Row;
+import component.ExcelExporter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,8 +18,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import main.DBconnect;
 
 /**
@@ -22,6 +32,9 @@ import main.DBconnect;
 public class TabDashboard extends javax.swing.JPanel {
 
     private final Connection conn;
+    private int halamanSaatIni = 1;
+    private int dataPerHalaman = 15;
+    private int totalPages;
 
     public TabDashboard() {
         conn = DBconnect.getConnection();
@@ -29,6 +42,7 @@ public class TabDashboard extends javax.swing.JPanel {
         loadDashboardData();
         setTabelModel();
         loadLogData();
+        paginationLog();
     }
 
     /**
@@ -41,10 +55,7 @@ public class TabDashboard extends javax.swing.JPanel {
     private void initComponents() {
 
         PanelUtama = new component.DashboardPanel();
-        ShadowAktivitas = new component.ShadowPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tbl_log = new component.Table();
-        ShadowCard = new component.ShadowPanel();
+        panelCard = new component.ShadowPanel();
         CardTotalNasabah = new component.Card();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -58,41 +69,25 @@ public class TabDashboard extends javax.swing.JPanel {
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         lb_totalTabungan = new javax.swing.JLabel();
+        panelTabel = new component.ShadowPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbl_log = new component.Table();
         jLabel14 = new javax.swing.JLabel();
+        panelBawah = new component.ShadowPanel();
+        btn_add = new component.Jbutton();
+        lb_halaman = new javax.swing.JLabel();
+        btn_firstLog = new javax.swing.JButton();
+        btn_beforeLog = new javax.swing.JButton();
+        cbx_dataLog = new javax.swing.JComboBox<>();
+        btn_nextLog = new javax.swing.JButton();
+        btn_lastLog = new javax.swing.JButton();
+
+        setPreferredSize(new java.awt.Dimension(1192, 944));
 
         PanelUtama.setBackground(new java.awt.Color(255, 255, 255));
+        PanelUtama.setPreferredSize(new java.awt.Dimension(1192, 944));
 
-        tbl_log.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
-            }
-        ));
-        jScrollPane1.setViewportView(tbl_log);
-
-        javax.swing.GroupLayout ShadowAktivitasLayout = new javax.swing.GroupLayout(ShadowAktivitas);
-        ShadowAktivitas.setLayout(ShadowAktivitasLayout);
-        ShadowAktivitasLayout.setHorizontalGroup(
-            ShadowAktivitasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowAktivitasLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
-        );
-        ShadowAktivitasLayout.setVerticalGroup(
-            ShadowAktivitasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowAktivitasLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(82, 82, 82))
-        );
-
-        ShadowCard.setPreferredSize(new java.awt.Dimension(1182, 126));
+        panelCard.setPreferredSize(new java.awt.Dimension(1182, 126));
 
         CardTotalNasabah.setPreferredSize(new java.awt.Dimension(315, 99));
 
@@ -115,7 +110,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addGroup(CardTotalNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(lb_totalNasabah))
-                .addContainerGap(171, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         CardTotalNasabahLayout.setVerticalGroup(
             CardTotalNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -157,7 +152,7 @@ public class TabDashboard extends javax.swing.JPanel {
                         .addComponent(lb_totalSampah)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel1)))
-                .addContainerGap(143, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         CardTotalSampahLayout.setVerticalGroup(
             CardTotalSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -195,7 +190,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addGroup(CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel12)
                     .addComponent(lb_totalTabungan))
-                .addContainerGap(143, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         CardSaldoTabunganLayout.setVerticalGroup(
             CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,72 +205,206 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addContainerGap(27, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout ShadowCardLayout = new javax.swing.GroupLayout(ShadowCard);
-        ShadowCard.setLayout(ShadowCardLayout);
-        ShadowCardLayout.setHorizontalGroup(
-            ShadowCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowCardLayout.createSequentialGroup()
-                .addGap(57, 57, 57)
-                .addComponent(CardTotalNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(48, 48, 48)
-                .addComponent(CardTotalSampah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(48, 48, 48)
-                .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(94, Short.MAX_VALUE))
+        javax.swing.GroupLayout panelCardLayout = new javax.swing.GroupLayout(panelCard);
+        panelCard.setLayout(panelCardLayout);
+        panelCardLayout.setHorizontalGroup(
+            panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelCardLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
+                .addGap(94, 94, 94)
+                .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+                .addGap(77, 77, 77)
+                .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                .addContainerGap())
         );
-        ShadowCardLayout.setVerticalGroup(
-            ShadowCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowCardLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addGroup(ShadowCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+        panelCardLayout.setVerticalGroup(
+            panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCardLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addGroup(panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        tbl_log.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane1.setViewportView(tbl_log);
+
+        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel14.setText("Aktivitas terbaru");
+        jLabel14.setPreferredSize(new java.awt.Dimension(145, 30));
+
+        javax.swing.GroupLayout panelTabelLayout = new javax.swing.GroupLayout(panelTabel);
+        panelTabel.setLayout(panelTabelLayout);
+        panelTabelLayout.setHorizontalGroup(
+            panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelTabelLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 827, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0))
+        );
+        panelTabelLayout.setVerticalGroup(
+            panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelTabelLayout.createSequentialGroup()
+                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 713, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        btn_add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
+        btn_add.setText("export to Excel");
+        btn_add.setFillClick(new java.awt.Color(55, 130, 60));
+        btn_add.setFillOriginal(new java.awt.Color(76, 175, 80));
+        btn_add.setFillOver(new java.awt.Color(69, 160, 75));
+        btn_add.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_add.setRoundedCorner(40);
+        btn_add.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_addActionPerformed(evt);
+            }
+        });
+
+        lb_halaman.setText("hal");
+
+        btn_firstLog.setText("First Page");
+        btn_firstLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_firstLogActionPerformed(evt);
+            }
+        });
+
+        btn_beforeLog.setText("<");
+
+        cbx_dataLog.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "15", "30", "45", "60" }));
+        cbx_dataLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbx_dataLogActionPerformed(evt);
+            }
+        });
+
+        btn_nextLog.setText(">");
+
+        btn_lastLog.setText("Last Page");
+
+        javax.swing.GroupLayout panelBawahLayout = new javax.swing.GroupLayout(panelBawah);
+        panelBawah.setLayout(panelBawahLayout);
+        panelBawahLayout.setHorizontalGroup(
+            panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBawahLayout.createSequentialGroup()
+                .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_firstLog)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btn_beforeLog, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbx_dataLog, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_nextLog, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btn_lastLog)
+                .addGap(0, 0, 0))
+        );
+        panelBawahLayout.setVerticalGroup(
+            panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBawahLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btn_beforeLog, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbx_dataLog, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_nextLog, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_lastLog, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(6, 6, 6))
+        );
 
         javax.swing.GroupLayout PanelUtamaLayout = new javax.swing.GroupLayout(PanelUtama);
         PanelUtama.setLayout(PanelUtamaLayout);
         PanelUtamaLayout.setHorizontalGroup(
             PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanelUtamaLayout.createSequentialGroup()
-                .addGap(57, 57, 57)
+                .addGap(20, 20, 20)
                 .addGroup(PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel14)
-                    .addComponent(ShadowAktivitas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(ShadowCard, javax.swing.GroupLayout.DEFAULT_SIZE, 1192, Short.MAX_VALUE)
+                    .addGroup(PanelUtamaLayout.createSequentialGroup()
+                        .addComponent(panelCard, javax.swing.GroupLayout.DEFAULT_SIZE, 1171, Short.MAX_VALUE)
+                        .addGap(1, 1, 1))
+                    .addGroup(PanelUtamaLayout.createSequentialGroup()
+                        .addGroup(PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 345, Short.MAX_VALUE))))
         );
         PanelUtamaLayout.setVerticalGroup(
             PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanelUtamaLayout.createSequentialGroup()
-                .addGap(49, 49, 49)
-                .addComponent(ShadowCard, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
-                .addComponent(jLabel14)
+                .addComponent(panelCard, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ShadowAktivitas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1192, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 967, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
+        DefaultTableModel model = new DefaultTableModel(
+                new String[]{"ID", "Admin", "Aktivitas", "Tanggal"}, 0
+        );
+        getAllData(model);
+
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Simpan file Excel");
+        int option = chooser.showSaveDialog(null);
+
+        if (option == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = chooser.getSelectedFile();
+            if (!fileToSave.getName().endsWith(".xls")) {
+                fileToSave = new File(fileToSave.getAbsolutePath() + ".xls");
+            }
+
+            ExcelExporter.exportTableModelToExcel(model, fileToSave);
+            JOptionPane.showMessageDialog(null, "Export berhasil!");
+
+        }
+    }//GEN-LAST:event_btn_addActionPerformed
+
+    private void cbx_dataLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbx_dataLogActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbx_dataLogActionPerformed
+
+    private void btn_firstLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_firstLogActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_firstLogActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -283,8 +412,12 @@ public class TabDashboard extends javax.swing.JPanel {
     private component.Card CardTotalNasabah;
     private component.Card CardTotalSampah;
     private component.DashboardPanel PanelUtama;
-    private component.ShadowPanel ShadowAktivitas;
-    private component.ShadowPanel ShadowCard;
+    private component.Jbutton btn_add;
+    private javax.swing.JButton btn_beforeLog;
+    private javax.swing.JButton btn_firstLog;
+    private javax.swing.JButton btn_lastLog;
+    private javax.swing.JButton btn_nextLog;
+    private javax.swing.JComboBox<String> cbx_dataLog;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -294,11 +427,83 @@ public class TabDashboard extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lb_halaman;
     private javax.swing.JLabel lb_totalNasabah;
     private javax.swing.JLabel lb_totalSampah;
     private javax.swing.JLabel lb_totalTabungan;
+    private component.ShadowPanel panelBawah;
+    private component.ShadowPanel panelCard;
+    private component.ShadowPanel panelTabel;
     private component.Table tbl_log;
     // End of variables declaration//GEN-END:variables
+            private void paginationLog() {
+        btn_firstLog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                halamanSaatIni = 1;
+                loadLogData();
+            }
+        });
+        btn_beforeLog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (halamanSaatIni > 1) {
+                    halamanSaatIni--;
+                    loadLogData();
+                }
+            }
+        });
+        cbx_dataLog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dataPerHalaman = Integer.parseInt(cbx_dataLog.getSelectedItem().toString());
+                halamanSaatIni = 1;
+                loadLogData();
+            }
+        });
+        btn_nextLog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if (halamanSaatIni < totalPages) {
+                    halamanSaatIni++;
+                    loadLogData();
+                }
+
+            }
+        });
+        btn_lastLog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                halamanSaatIni = totalPages;
+                loadLogData();
+            }
+        });
+    }
+
+    private int getTotalData() {
+        int totalData = 0;
+        try {
+            String sql = "Select Count(*) AS total FROM log_aktivitas";
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                ResultSet rs = st.executeQuery();
+                if (rs.next()) {
+                    totalData = rs.getInt("total");
+                }
+            }
+
+        } catch (Exception e) {
+//            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return totalData;
+    }
+
+    private void calculateTotalPage() {
+        int totalData = getTotalData();
+        totalPages = (int) Math.ceil((double) totalData / dataPerHalaman);
+
+    }
+
     private void setTabelModel() {
         DefaultTableModel model = (DefaultTableModel) tbl_log.getModel();
         model.addColumn("ID");
@@ -307,12 +512,14 @@ public class TabDashboard extends javax.swing.JPanel {
         model.addColumn("Tanggal");
     }
 
-    private void getData(DefaultTableModel model) {
+    private void getData(int startIndex, int entriesPage, DefaultTableModel model) {
         model.setRowCount(0);
 
         try {
-            String sql = "SELECT * FROM log_aktivitas";
+            String sql = "SELECT * FROM log_aktivitas ORDER BY id DESC LIMIT ?,?";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
+                st.setInt(1, startIndex);
+                st.setInt(2, entriesPage);
                 ResultSet rs = st.executeQuery();
 
                 while (rs.next()) {
@@ -327,12 +534,16 @@ public class TabDashboard extends javax.swing.JPanel {
                 }
             }
         } catch (SQLException e) {
-            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+//            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
     private void loadLogData() {
-        getData((DefaultTableModel) tbl_log.getModel());
+        calculateTotalPage();
+        int totalData = getTotalData();
+        lb_halaman.setText(String.valueOf("Page " + halamanSaatIni + " dari " + totalData + " Data"));
+        int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
+        getData(startIndex, dataPerHalaman, (DefaultTableModel) tbl_log.getModel());
     }
 
     public void loadDashboardData() {
@@ -392,6 +603,57 @@ public class TabDashboard extends javax.swing.JPanel {
             }
         } catch (SQLException e) {
             Logger.getLogger(TabDashboard.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+//    public void exportToExcel(JTable table, String filePath) {
+//        try {
+//            TableModel model = table.getModel();
+//            XSSFWorkbook workbook = new XSSFWorkbook();
+//            XSSFsheet sheet = workbook.createSheet("Data");
+//            
+//            Row headerRow = sheet.createRow(0);
+//            for (int i = 0; i < model.getColumnCount(); i++) {
+//            Cell cell = headerRow.createCell(i);
+//            cell.setCellValue(model.getColumnName(i));
+//            }
+//            
+//            for (int i = 0; i < model.getRowCount(); i++) {
+//            Row row = sheet.createRow(i + 1);
+//            for (int j = 0; j < model.getColumnCount(); j++) {
+//                Cell cell = row.createCell(j);
+//                cell.setCellValue(model.getValueAt(i,j).toString());
+//            }
+//            }
+//            
+//            FileOutputStream fileOut = new FileOutputStream(new File(filePath));
+//            workbook.write(fileOut);
+//            fileOut.close();
+//            JOptionPane.showMessageDialog(null, "data Berhasil diekspor ke file Excel");
+//        } catch (IOException e) {
+//        JOptionPane.showMessageDialog(null, "terjadi kesalaah saat ekspor data");
+//        }
+//    }
+    private void getAllData(DefaultTableModel model) {
+        model.setRowCount(0);
+
+        try {
+            String sql = "SELECT * FROM log_aktivitas ORDER BY id DESC";
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                ResultSet rs = st.executeQuery();
+
+                while (rs.next()) {
+                    String idLog = rs.getString("id");
+                    String admin = rs.getString("admin");
+                    String aktivitas = rs.getString("aktivitas");
+                    String tanggal = rs.getString("tanggal");
+
+                    Object[] rowData = {idLog, admin, aktivitas, tanggal};
+                    model.addRow(rowData);
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Gagal ambil semua data:\n" + e.getMessage());
         }
     }
 

@@ -1,15 +1,25 @@
 package main;
 
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import view.TabDashboard;
 import view.TabDataBarang;
 import view.TabLaporanStatistik;
-import view.TabManajemenNasabah;
+//import view.TabManajemenNasabah;
 import view.TabManajemenSampah;
 import view.TabTransaksi;
+import component.HeaderPanel;
+import java.awt.EventQueue;
+import java.awt.Font;
+import javax.swing.UIManager;
+import loginregister.loginregister;
+import view.TabManajemenNasabah;
 
 /**
  *
@@ -21,13 +31,15 @@ public class Dashboard extends javax.swing.JFrame {
 
     public Dashboard() {
         initComponents();
+        
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setSidebarButtonEffect(dashboard);
         setSidebarButtonEffect(manajemen_nasabah);
         setSidebarButtonEffect(manajemen_sampah);
         setSidebarButtonEffect(laporan_statistik);
         setSidebarButtonEffect(transaksi);
         setSidebarButtonEffect(data_barang);
-        PanelUtama.setLayout(new BorderLayout());
+        panelMain.setLayout(new BorderLayout());
     }
 
     /**
@@ -39,12 +51,6 @@ public class Dashboard extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        TopBar = new component.HeaderPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        PanelUtama = new component.DashboardPanel();
         pn_sidebar = new javax.swing.JPanel();
         panelMoving = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
@@ -54,69 +60,16 @@ public class Dashboard extends javax.swing.JFrame {
         laporan_statistik = new javax.swing.JLabel();
         transaksi = new javax.swing.JLabel();
         data_barang = new javax.swing.JLabel();
-        Settings = new javax.swing.JLabel();
-        logout = new javax.swing.JLabel();
+        panelMain = new javax.swing.JPanel();
+        headerPanel2 = new component.HeaderPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(1440, 1024));
         setUndecorated(true);
-
-        TopBar.setPreferredSize(new java.awt.Dimension(1201, 75));
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_notif.png"))); // NOI18N
-
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_admin.png"))); // NOI18N
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel3.setText("John");
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
-        jLabel4.setText("Admin");
-
-        javax.swing.GroupLayout TopBarLayout = new javax.swing.GroupLayout(TopBar);
-        TopBar.setLayout(TopBarLayout);
-        TopBarLayout.setHorizontalGroup(
-            TopBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TopBarLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(TopBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4))
-                .addGap(41, 41, 41))
-        );
-        TopBarLayout.setVerticalGroup(
-            TopBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, TopBarLayout.createSequentialGroup()
-                .addContainerGap(33, Short.MAX_VALUE)
-                .addGroup(TopBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(TopBarLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel4))
-                    .addGroup(TopBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jLabel2)
-                        .addComponent(jLabel1)))
-                .addContainerGap())
-        );
-
-        PanelUtama.setBackground(new java.awt.Color(250, 250, 250));
-
-        javax.swing.GroupLayout PanelUtamaLayout = new javax.swing.GroupLayout(PanelUtama);
-        PanelUtama.setLayout(PanelUtamaLayout);
-        PanelUtamaLayout.setHorizontalGroup(
-            PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1200, Short.MAX_VALUE)
-        );
-        PanelUtamaLayout.setVerticalGroup(
-            PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 949, Short.MAX_VALUE)
-        );
+        setPreferredSize(new java.awt.Dimension(1440, 1024));
 
         pn_sidebar.setBackground(new java.awt.Color(255, 254, 84));
-        pn_sidebar.setPreferredSize(new java.awt.Dimension(240, 1039));
+        pn_sidebar.setPreferredSize(new java.awt.Dimension(240, 1024));
 
         panelMoving.setOpaque(false);
 
@@ -204,22 +157,11 @@ public class Dashboard extends javax.swing.JFrame {
             }
         });
 
-        Settings.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        Settings.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        Settings.setText("Settings");
-        Settings.setPreferredSize(new java.awt.Dimension(78, 15));
-
-        logout.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        logout.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        logout.setText("Logout");
-
         javax.swing.GroupLayout pn_sidebarLayout = new javax.swing.GroupLayout(pn_sidebar);
         pn_sidebar.setLayout(pn_sidebarLayout);
         pn_sidebarLayout.setHorizontalGroup(
             pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panelMoving, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(logout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(Settings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(dashboard, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(manajemen_nasabah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(manajemen_sampah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -243,11 +185,20 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
                 .addComponent(data_barang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 537, Short.MAX_VALUE)
-                .addComponent(Settings, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(logout)
-                .addGap(39, 39, 39))
+                .addContainerGap(632, Short.MAX_VALUE))
+        );
+
+        panelMain.setBackground(new java.awt.Color(204, 204, 204));
+
+        javax.swing.GroupLayout panelMainLayout = new javax.swing.GroupLayout(panelMain);
+        panelMain.setLayout(panelMainLayout);
+        panelMainLayout.setHorizontalGroup(
+            panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1248, Short.MAX_VALUE)
+        );
+        panelMainLayout.setVerticalGroup(
+            panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -259,77 +210,80 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(pn_sidebar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(TopBar, javax.swing.GroupLayout.DEFAULT_SIZE, 1200, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addComponent(headerPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(TopBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(pn_sidebar, javax.swing.GroupLayout.PREFERRED_SIZE, 1022, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 2, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(pn_sidebar, javax.swing.GroupLayout.DEFAULT_SIZE, 1025, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(headerPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void data_barangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_data_barangMouseClicked
+        changeTabColor(data_barang);
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabDataBarang());
+        panelMain.repaint();
+        panelMain.revalidate();
+    }//GEN-LAST:event_data_barangMouseClicked
+
+    private void transaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_transaksiMouseClicked
+        changeTabColor(transaksi);
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabTransaksi());
+        panelMain.repaint();
+        panelMain.revalidate();
+    }//GEN-LAST:event_transaksiMouseClicked
+
+    private void laporan_statistikMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laporan_statistikMouseClicked
+        changeTabColor(laporan_statistik);
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabLaporanStatistik());
+        panelMain.repaint();
+        panelMain.revalidate();
+    }//GEN-LAST:event_laporan_statistikMouseClicked
+
+    private void manajemen_sampahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_manajemen_sampahMouseClicked
+        changeTabColor(manajemen_sampah);
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabManajemenSampah());
+        panelMain.repaint();
+        panelMain.revalidate();
+    }//GEN-LAST:event_manajemen_sampahMouseClicked
+
     private void manajemen_nasabahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_manajemen_nasabahMouseClicked
         changeTabColor(manajemen_nasabah);
-        PanelUtama.setOpaque(false);
-        PanelUtama.removeAll();
-        PanelUtama.add(new TabManajemenNasabah());
-        PanelUtama.repaint();
-        PanelUtama.revalidate();
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabManajemenNasabah());
+        panelMain.repaint();
+        panelMain.revalidate();
     }//GEN-LAST:event_manajemen_nasabahMouseClicked
 
     private void dashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dashboardMouseClicked
         changeTabColor(dashboard);
-        PanelUtama.setOpaque(false);
-        PanelUtama.removeAll();
-        PanelUtama.add(new TabDashboard());
-        PanelUtama.repaint();
-        PanelUtama.revalidate();
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabDashboard());
+        panelMain.repaint();
+        panelMain.revalidate();
     }//GEN-LAST:event_dashboardMouseClicked
-
-    private void manajemen_sampahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_manajemen_sampahMouseClicked
-        changeTabColor(manajemen_sampah);
-        PanelUtama.setOpaque(false);
-        PanelUtama.removeAll();
-        PanelUtama.add(new TabManajemenSampah());
-        PanelUtama.repaint();
-        PanelUtama.revalidate();
-    }//GEN-LAST:event_manajemen_sampahMouseClicked
-
-    private void laporan_statistikMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laporan_statistikMouseClicked
-        changeTabColor(laporan_statistik);
-        PanelUtama.setOpaque(false);
-        PanelUtama.removeAll();
-        PanelUtama.add(new TabLaporanStatistik());
-        PanelUtama.repaint();
-        PanelUtama.revalidate();
-    }//GEN-LAST:event_laporan_statistikMouseClicked
-
-    private void transaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_transaksiMouseClicked
-        changeTabColor(transaksi);
-        PanelUtama.setOpaque(false);
-        PanelUtama.removeAll();
-        PanelUtama.add(new TabTransaksi());
-        PanelUtama.repaint();
-        PanelUtama.revalidate();
-    }//GEN-LAST:event_transaksiMouseClicked
-
-    private void data_barangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_data_barangMouseClicked
-        changeTabColor(data_barang);
-        PanelUtama.setOpaque(false);
-        PanelUtama.removeAll();
-        PanelUtama.add(new TabDataBarang());
-        PanelUtama.repaint();
-        PanelUtama.revalidate();
-    }//GEN-LAST:event_data_barangMouseClicked
 
     private void setSidebarButtonEffect(JLabel label) {
         Color defaultColor = new Color(255, 254, 84);
@@ -396,7 +350,11 @@ public class Dashboard extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-
+        FlatRobotoFont.install();
+        FlatLaf.registerCustomDefaultsSource("themes");
+        FlatMacLightLaf.setup();
+        UIManager.put("defaultFont", new Font(FlatRobotoFont.FAMILY, Font.PLAIN, 13));
+        EventQueue.invokeLater(() -> new loginregister().setVisible(true));
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -421,6 +379,30 @@ public class Dashboard extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -432,20 +414,14 @@ public class Dashboard extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private component.DashboardPanel PanelUtama;
-    private javax.swing.JLabel Settings;
-    private component.HeaderPanel TopBar;
     private javax.swing.JLabel dashboard;
     private javax.swing.JLabel data_barang;
-    private javax.swing.JLabel jLabel1;
+    private component.HeaderPanel headerPanel2;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel laporan_statistik;
-    private javax.swing.JLabel logout;
     private javax.swing.JLabel manajemen_nasabah;
     private javax.swing.JLabel manajemen_sampah;
+    private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelMoving;
     private javax.swing.JPanel pn_sidebar;
     private javax.swing.JLabel transaksi;
