@@ -4,13 +4,11 @@
  */
 package view;
 
-import com.mysql.cj.result.Row;
 import component.ExcelExporter;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,10 +18,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import main.DBconnect;
+import chart.ModelPolarAreaChart;
 
 /**
  *
@@ -43,6 +40,13 @@ public class TabDashboard extends javax.swing.JPanel {
         setTabelModel();
         loadLogData();
         paginationLog();
+        ChartPenjualanVsPembelian.addItem(new ModelPolarAreaChart(new Color(255, 193, 7), "Penjualan Barang", 60));
+        ChartPenjualanVsPembelian.addItem(new ModelPolarAreaChart(new Color(33, 150, 243), "Pembelian Sampah", 50));
+        ChartPenjualanVsPembelian.start();
+        ChartSampahMasukVsBarangKeluar.addItem(new ModelPolarAreaChart(new Color(76, 175, 80), "Sampah Masuk", 80));
+        ChartSampahMasukVsBarangKeluar.addItem(new ModelPolarAreaChart(new Color(244, 67, 54), "Barang Keluar", 45));
+        ChartSampahMasukVsBarangKeluar.start();
+
     }
 
     /**
@@ -54,7 +58,6 @@ public class TabDashboard extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        PanelUtama = new component.DashboardPanel();
         panelCard = new component.ShadowPanel();
         CardTotalNasabah = new component.Card();
         jLabel5 = new javax.swing.JLabel();
@@ -73,6 +76,8 @@ public class TabDashboard extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_log = new component.Table();
         jLabel14 = new javax.swing.JLabel();
+        ChartSampahMasukVsBarangKeluar = new chart.PolarAreaChart();
+        ChartPenjualanVsPembelian = new chart.PolarAreaChart();
         panelBawah = new component.ShadowPanel();
         btn_add = new component.Jbutton();
         lb_halaman = new javax.swing.JLabel();
@@ -83,9 +88,6 @@ public class TabDashboard extends javax.swing.JPanel {
         btn_lastLog = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(1192, 944));
-
-        PanelUtama.setBackground(new java.awt.Color(255, 255, 255));
-        PanelUtama.setPreferredSize(new java.awt.Dimension(1192, 944));
 
         panelCard.setPreferredSize(new java.awt.Dimension(1182, 126));
 
@@ -110,7 +112,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addGroup(CardTotalNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(lb_totalNasabah))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, 0))
         );
         CardTotalNasabahLayout.setVerticalGroup(
             CardTotalNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -152,7 +154,7 @@ public class TabDashboard extends javax.swing.JPanel {
                         .addComponent(lb_totalSampah)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel1)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, 0))
         );
         CardTotalSampahLayout.setVerticalGroup(
             CardTotalSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,7 +192,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addGroup(CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel12)
                     .addComponent(lb_totalTabungan))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, 0))
         );
         CardSaldoTabunganLayout.setVerticalGroup(
             CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -211,12 +213,12 @@ public class TabDashboard extends javax.swing.JPanel {
             panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelCardLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
-                .addGap(94, 94, 94)
-                .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
-                .addGap(77, 77, 77)
-                .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+                .addGap(42, 42, 42)
+                .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+                .addGap(42, 42, 42)
+                .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
         panelCardLayout.setVerticalGroup(
             panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -225,7 +227,8 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addGroup(panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tbl_log.setModel(new javax.swing.table.DefaultTableModel(
@@ -245,28 +248,10 @@ public class TabDashboard extends javax.swing.JPanel {
         jLabel14.setText("Aktivitas terbaru");
         jLabel14.setPreferredSize(new java.awt.Dimension(145, 30));
 
-        javax.swing.GroupLayout panelTabelLayout = new javax.swing.GroupLayout(panelTabel);
-        panelTabel.setLayout(panelTabelLayout);
-        panelTabelLayout.setHorizontalGroup(
-            panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelTabelLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 827, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0))
-        );
-        panelTabelLayout.setVerticalGroup(
-            panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelTabelLayout.createSequentialGroup()
-                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 713, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        panelBawah.setPreferredSize(new java.awt.Dimension(645, 57));
 
         btn_add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
-        btn_add.setText("export to Excel");
+        btn_add.setText("Export To Excel");
         btn_add.setFillClick(new java.awt.Color(55, 130, 60));
         btn_add.setFillOriginal(new java.awt.Color(76, 175, 80));
         btn_add.setFillOver(new java.awt.Color(69, 160, 75));
@@ -305,62 +290,69 @@ public class TabDashboard extends javax.swing.JPanel {
         panelBawahLayout.setHorizontalGroup(
             panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBawahLayout.createSequentialGroup()
-                .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 231, Short.MAX_VALUE)
+                .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_firstLog)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btn_beforeLog, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbx_dataLog, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_beforeLog)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_nextLog, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btn_lastLog)
+                .addComponent(cbx_dataLog, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_nextLog, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_lastLog, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
         panelBawahLayout.setVerticalGroup(
             panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBawahLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btn_beforeLog, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cbx_dataLog, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_nextLog, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_lastLog, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(6, 6, 6))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBawahLayout.createSequentialGroup()
+                .addGap(0, 5, Short.MAX_VALUE)
+                .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_beforeLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbx_dataLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_nextLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_lastLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
-        javax.swing.GroupLayout PanelUtamaLayout = new javax.swing.GroupLayout(PanelUtama);
-        PanelUtama.setLayout(PanelUtamaLayout);
-        PanelUtamaLayout.setHorizontalGroup(
-            PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(PanelUtamaLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(PanelUtamaLayout.createSequentialGroup()
-                        .addComponent(panelCard, javax.swing.GroupLayout.DEFAULT_SIZE, 1171, Short.MAX_VALUE)
-                        .addGap(1, 1, 1))
-                    .addGroup(PanelUtamaLayout.createSequentialGroup()
-                        .addGroup(PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 345, Short.MAX_VALUE))))
+        javax.swing.GroupLayout panelTabelLayout = new javax.swing.GroupLayout(panelTabel);
+        panelTabel.setLayout(panelTabelLayout);
+        panelTabelLayout.setHorizontalGroup(
+            panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelTabelLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelTabelLayout.createSequentialGroup()
+                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(panelTabelLayout.createSequentialGroup()
+                        .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ChartSampahMasukVsBarangKeluar, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                            .addComponent(ChartPenjualanVsPembelian, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
         );
-        PanelUtamaLayout.setVerticalGroup(
-            PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(PanelUtamaLayout.createSequentialGroup()
-                .addComponent(panelCard, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+        panelTabelLayout.setVerticalGroup(
+            panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelTabelLayout.createSequentialGroup()
+                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelTabelLayout.createSequentialGroup()
+                        .addComponent(ChartPenjualanVsPembelian, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addGap(120, 120, 120)
+                        .addComponent(ChartSampahMasukVsBarangKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -368,11 +360,21 @@ public class TabDashboard extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelCard, javax.swing.GroupLayout.DEFAULT_SIZE, 1152, Short.MAX_VALUE))
+                .addGap(20, 20, 20))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(panelCard, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(20, 20, 20))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -411,7 +413,8 @@ public class TabDashboard extends javax.swing.JPanel {
     private component.Card CardSaldoTabungan;
     private component.Card CardTotalNasabah;
     private component.Card CardTotalSampah;
-    private component.DashboardPanel PanelUtama;
+    private chart.PolarAreaChart ChartPenjualanVsPembelian;
+    private chart.PolarAreaChart ChartSampahMasukVsBarangKeluar;
     private component.Jbutton btn_add;
     private javax.swing.JButton btn_beforeLog;
     private javax.swing.JButton btn_firstLog;
@@ -565,25 +568,25 @@ public class TabDashboard extends javax.swing.JPanel {
                 lb_totalSampah.setText(String.valueOf(totalSampah));
             }
 
-            // Saldo Tabungan = pemasukan - pengeluaran
+// Total Pemasukan
             ResultSet rsPemasukan = stmt.executeQuery(
-                    "SELECT SUM(db.harga * sub.jml) AS total_pemasukan "
-                    + "FROM ("
-                    + "   SELECT id_barang, COUNT(*) AS jml "
-                    + "   FROM laporan_pemasukan "
-                    + "   GROUP BY id_barang"
-                    + ") AS sub "
-                    + "JOIN data_barang db ON sub.id_barang = db.id_barang"
+                    "SELECT SUM(db.harga) AS total_pemasukan "
+                    + "FROM laporan_pemasukan lp "
+                    + "JOIN data_barang db ON lp.id_barang = db.id_barang"
             );
-
             double pemasukan = rsPemasukan.next() ? rsPemasukan.getDouble("total_pemasukan") : 0;
 
+// Total Pengeluaran
             ResultSet rsPengeluaran = stmt.executeQuery(
-                    "SELECT SUM(nominal) FROM manajemen_keuangan"
+                    "SELECT SUM(s.harga) AS total_pengeluaran "
+                    + "FROM laporan_pengeluaran lp "
+                    + "JOIN setor_sampah s ON lp.id_setoran = s.id_setoran"
             );
-            double pengeluaran = rsPengeluaran.next() ? rsPengeluaran.getDouble(1) : 0;
+            double pengeluaran = rsPengeluaran.next() ? rsPengeluaran.getDouble("total_pengeluaran") : 0;
 
             double saldo = pemasukan - pengeluaran;
+            lb_totalTabungan.setText("Rp " + String.format("%,.0f", saldo));
+
             lb_totalTabungan.setText("Rp " + String.format("%,.0f", saldo));
 
             conn.close();
