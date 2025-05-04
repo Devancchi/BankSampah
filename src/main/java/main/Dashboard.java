@@ -1,6 +1,9 @@
 package main;
 
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JFrame;
@@ -12,6 +15,10 @@ import view.TabLaporanStatistik;
 import view.TabManajemenSampah;
 import view.TabTransaksi;
 import component.HeaderPanel;
+import java.awt.EventQueue;
+import java.awt.Font;
+import javax.swing.UIManager;
+import loginregister.loginregister;
 import view.TabManajemenNasabah;
 
 /**
@@ -343,7 +350,11 @@ public class Dashboard extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-
+        FlatRobotoFont.install();
+        FlatLaf.registerCustomDefaultsSource("themes");
+        FlatMacLightLaf.setup();
+        UIManager.put("defaultFont", new Font(FlatRobotoFont.FAMILY, Font.PLAIN, 13));
+        EventQueue.invokeLater(() -> new loginregister().setVisible(true));
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
