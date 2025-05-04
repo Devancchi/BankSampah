@@ -81,6 +81,7 @@ public class TabDashboard extends javax.swing.JPanel {
         cbx_dataLog = new javax.swing.JComboBox<>();
         btn_nextLog = new javax.swing.JButton();
         btn_lastLog = new javax.swing.JButton();
+        polarAreaChart1 = new component.PolarAreaChart();
 
         setPreferredSize(new java.awt.Dimension(1192, 944));
 
@@ -211,11 +212,11 @@ public class TabDashboard extends javax.swing.JPanel {
             panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelCardLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+                .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
                 .addGap(94, 94, 94)
-                .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+                .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
                 .addGap(77, 77, 77)
-                .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
+                .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panelCardLayout.setVerticalGroup(
@@ -252,9 +253,10 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(panelTabelLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 827, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0))
+                    .addGroup(panelTabelLayout.createSequentialGroup()
+                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addComponent(jScrollPane1)))
         );
         panelTabelLayout.setVerticalGroup(
             panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -319,7 +321,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addComponent(btn_nextLog, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_lastLog)
-                .addGap(0, 0, 0))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelBawahLayout.setVerticalGroup(
             panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -336,6 +338,17 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
+        javax.swing.GroupLayout polarAreaChart1Layout = new javax.swing.GroupLayout(polarAreaChart1);
+        polarAreaChart1.setLayout(polarAreaChart1Layout);
+        polarAreaChart1Layout.setHorizontalGroup(
+            polarAreaChart1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 418, Short.MAX_VALUE)
+        );
+        polarAreaChart1Layout.setVerticalGroup(
+            polarAreaChart1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 338, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout PanelUtamaLayout = new javax.swing.GroupLayout(PanelUtama);
         PanelUtama.setLayout(PanelUtamaLayout);
         PanelUtamaLayout.setHorizontalGroup(
@@ -344,20 +357,24 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addGap(20, 20, 20)
                 .addGroup(PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(PanelUtamaLayout.createSequentialGroup()
-                        .addComponent(panelCard, javax.swing.GroupLayout.DEFAULT_SIZE, 1171, Short.MAX_VALUE)
+                        .addComponent(panelCard, javax.swing.GroupLayout.DEFAULT_SIZE, 1177, Short.MAX_VALUE)
                         .addGap(1, 1, 1))
                     .addGroup(PanelUtamaLayout.createSequentialGroup()
-                        .addGroup(PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, 827, Short.MAX_VALUE))
-                        .addGap(345, 345, 345))))
+                        .addGroup(PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, 742, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(polarAreaChart1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         PanelUtamaLayout.setVerticalGroup(
             PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanelUtamaLayout.createSequentialGroup()
                 .addComponent(panelCard, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addComponent(panelTabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(157, 157, 157)
+                .addGroup(PanelUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelTabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(polarAreaChart1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -371,7 +388,7 @@ public class TabDashboard extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(PanelUtama, javax.swing.GroupLayout.DEFAULT_SIZE, 1076, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -433,6 +450,7 @@ public class TabDashboard extends javax.swing.JPanel {
     private component.ShadowPanel panelBawah;
     private component.ShadowPanel panelCard;
     private component.ShadowPanel panelTabel;
+    private component.PolarAreaChart polarAreaChart1;
     private component.Table tbl_log;
     // End of variables declaration//GEN-END:variables
             private void paginationLog() {
