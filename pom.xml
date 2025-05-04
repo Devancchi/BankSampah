@@ -46,7 +46,7 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf-extras</artifactId>
-            <version>3.6</version>
+            <version>3.5.2</version>
             <type>jar</type>
         </dependency>
         <dependency>

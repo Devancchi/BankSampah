@@ -20,6 +20,10 @@ public class CustomModalBorder extends Modal {
         this.icon = icon;
     }
 
+    CustomModalBorder(Login login, String login0, FlatSVGIcon backgroundSVG) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     @Override
     public void installComponent() {
         setLayout(new MigLayout("wrap,fillx", "[fill]"));
