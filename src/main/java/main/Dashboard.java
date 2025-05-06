@@ -14,12 +14,10 @@ import view.TabLaporanStatistik;
 //import view.TabManajemenNasabah;
 import view.TabManajemenSampah;
 import view.TabTransaksi;
-import component.HeaderPanel;
 import java.awt.EventQueue;
 import java.awt.Font;
 import javax.swing.UIManager;
 import loginregister.loginregister;
-import component.UserInfo;
 import component.UserSession;
 import loginregister.Login;
 import view.TabManajemenNasabah;
@@ -47,6 +45,12 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.setLayout(new BorderLayout());
         lb_user.setText(user.getNama());
         lb_level.setText(user.getLevel());
+        changeTabColor(dashboard);
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabDashboard());
+        panelMain.repaint();
+        panelMain.revalidate();
     }
 
     /**
