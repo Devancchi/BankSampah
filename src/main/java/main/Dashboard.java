@@ -75,7 +75,6 @@ public class Dashboard extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setUndecorated(true);
 
         pn_sidebar.setBackground(new java.awt.Color(255, 254, 84));
         pn_sidebar.setPreferredSize(new java.awt.Dimension(240, 1024));
