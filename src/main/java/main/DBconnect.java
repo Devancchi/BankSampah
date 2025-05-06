@@ -4,13 +4,14 @@ package main;
  *
  * @author devan
  */
+import component.LoggerUtil;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBconnect {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/bank_sampah";
+    private static final String URL = "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 
@@ -20,6 +21,7 @@ public class DBconnect {
             Class.forName("com.mysql.cj.jdbc.Driver"); // Load MySQL JDBC Driver
             connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             System.out.println("Koneksi Berhasil!");
+            LoggerUtil.setConnection(connection);  // Set koneksi untuk LoggerUtil
         } catch (ClassNotFoundException e) {
             System.out.println("Driver tidak ditemukan: " + e.getMessage());
         } catch (SQLException e) {

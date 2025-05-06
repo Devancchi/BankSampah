@@ -36,7 +36,7 @@ public class ModelItem {
         this.harga = harga;
     }
     
-    public double getStok() {
+    public int getStok() {
         return stok;
     }
 
