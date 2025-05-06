@@ -107,6 +107,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         lblTotal = new javax.swing.JLabel();
         txt_Kode = new javax.swing.JTextField();
         jLabel17 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
         shadowPanel2 = new component.ShadowPanel();
         jLabel15 = new javax.swing.JLabel();
         btnRiwayatSetor = new component.Jbutton();
@@ -227,6 +228,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         jLabel17.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel17.setText("Nama Nasabah");
 
+        jLabel20.setText("jLabel20");
+
         javax.swing.GroupLayout shadowPanel1Layout = new javax.swing.GroupLayout(shadowPanel1);
         shadowPanel1.setLayout(shadowPanel1Layout);
         shadowPanel1Layout.setHorizontalGroup(
@@ -235,7 +238,11 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 .addGap(35, 35, 35)
                 .addGroup(shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel2)
+                    .addGroup(shadowPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel20)
+                        .addGap(10, 10, 10))
                     .addComponent(jLabel5)
                     .addComponent(txt_Berat)
                     .addComponent(cbxKategori, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -263,7 +270,9 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shadowPanel1Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -431,7 +440,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             .addGroup(shadowPanel3Layout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addGroup(shadowPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1159, Short.MAX_VALUE)
                     .addGroup(shadowPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel16)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1143,6 +1152,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

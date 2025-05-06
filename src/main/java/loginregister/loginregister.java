@@ -7,7 +7,6 @@ import net.miginfocom.swing.MigLayout;
 import raven.modal.ModalDialog;
 import raven.modal.option.BorderOption;
 import raven.modal.option.Option;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,12 +19,9 @@ public class loginregister extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(new Dimension(1366, 768));
         setLocationRelativeTo(null);
-
         setLayout(new MigLayout("al center center"));
 
-
-            setContentPane(new GradientPanel());
-
+        setContentPane(new GradientPanel());
 
         // Setting untuk modal dialog
         ModalDialog.getDefaultOption()
@@ -34,21 +30,6 @@ public class loginregister extends JFrame {
                 .setShadow(BorderOption.Shadow.MEDIUM);
 
         showLogin();  // tampilkan login saat awal
-        JButton button = new JButton("Show");
-
-        button.addActionListener(actionEvent -> {
-            showLogin();
-        });
-        add(button);
-
-        showLogin();
-    }
-
-    private void setBackgroundImage() {
-        FlatSVGIcon backgroundSVG = new FlatSVGIcon("icon/BGlogin.svg");
-        JLabel backgroundLabel = new JLabel(backgroundSVG);
-        backgroundLabel.setLayout(new BorderLayout());
-        setContentPane(backgroundLabel);
     }
 
     private void showLogin() {
@@ -58,10 +39,14 @@ public class loginregister extends JFrame {
                 .setAnimationEnabled(false)
                 .setOpacity(0.2f);
 
-        String icon = "icon/account.svg";  // pastikan ikon ada di folder yang benar
+        // Menggunakan path yang benar untuk icon sahabat.svg
+        // Coba beberapa kemungkinan path
+        String icon = "icon/account.svg";
+        
+        // Gunakan CustomModalBorder dengan path icon
         ModalDialog.showModal(this, new CustomModalBorder(new Login(), "Login", icon), option, Login.ID);
     }
-
+   
     public static void main(String[] args) {
         FlatRobotoFont.install();
         FlatLaf.registerCustomDefaultsSource("themes");
