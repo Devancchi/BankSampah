@@ -10,6 +10,11 @@ import java.text.DecimalFormat;
 
 public class Item extends javax.swing.JPanel {
 
+    private Color fillOriginal = new Color(245, 245, 245); // abu-abu terang
+    private Color fillHover = new Color(220, 220, 220); // abu-abu hover
+    private Color fillSelected = new Color(255, 193, 7); // gold
+    private Color currentFill = fillOriginal;
+
     public ModelItem getData() {
         return data;
     }
@@ -29,6 +34,35 @@ public class Item extends javax.swing.JPanel {
         initComponents();
         setOpaque(false);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Hover effect
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                if (!selected) {
+                    currentFill = fillHover;
+                    repaint();
+                }
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                if (!selected) {
+                    currentFill = fillOriginal;
+                    repaint();
+                }
+            }
+
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                setSelected(true); // biar panel kelihatan dipilih
+                currentFill = fillSelected;
+                repaint();
+
+                // Kirim sinyal ke listener (untuk deselect item lain)
+                firePropertyChange("itemSelected", false, true);
+            }
+        });
     }
 
     private ModelItem data;
@@ -47,14 +81,20 @@ public class Item extends javax.swing.JPanel {
     public void paint(Graphics grphcs) {
         Graphics2D g2 = (Graphics2D) grphcs.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(new Color(242, 242, 242));
+        g2.setColor(currentFill);
         g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
         if (selected) {
-            g2.setColor(new Color(94, 156, 255));
+            g2.setColor(fillSelected);
             g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
         }
         g2.dispose();
         super.paint(grphcs);
+    }
+
+    public void deselect() {
+        selected = false;
+        currentFill = fillOriginal;
+        repaint();
     }
 
     @SuppressWarnings("unchecked")
