@@ -40,10 +40,10 @@ public class TabDashboard extends javax.swing.JPanel {
         setTabelModel();
         loadLogData();
         paginationLog();
-        ChartPenjualanVsPembelian.addItem(new ModelPolarAreaChart(new Color(255, 193, 7), "Penjualan Barang", 60));
-        ChartPenjualanVsPembelian.addItem(new ModelPolarAreaChart(new Color(33, 150, 243), "Pembelian Sampah", 50));
+        ChartPenjualanVsPembelian.addItem(new ModelPolarAreaChart(new Color(255, 193, 7), "Produk Terjual", 60));
+        ChartPenjualanVsPembelian.addItem(new ModelPolarAreaChart(new Color(33, 150, 243), "Sampah Dibeli", 50));
         ChartPenjualanVsPembelian.start();
-        ChartSampahMasukVsBarangKeluar.addItem(new ModelPolarAreaChart(new Color(76, 175, 80), "Sampah Masuk", 80));
+        ChartSampahMasukVsBarangKeluar.addItem(new ModelPolarAreaChart(new Color(76, 175, 80), "Sampah Masuk", 80));   
         ChartSampahMasukVsBarangKeluar.addItem(new ModelPolarAreaChart(new Color(244, 67, 54), "Barang Keluar", 45));
         ChartSampahMasukVsBarangKeluar.start();
 
@@ -292,16 +292,16 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(panelBawahLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 231, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
                 .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_beforeLog)
+                .addComponent(btn_beforeLog, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbx_dataLog, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cbx_dataLog, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_nextLog, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_nextLog, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_lastLog, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
@@ -544,7 +544,7 @@ public class TabDashboard extends javax.swing.JPanel {
     private void loadLogData() {
         calculateTotalPage();
         int totalData = getTotalData();
-        lb_halaman.setText(String.valueOf("Page " + halamanSaatIni + " dari " + totalData + " Data"));
+        lb_halaman.setText(String.valueOf("Page " + halamanSaatIni + " Dari Total " + totalData + " Data"));
         int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
         getData(startIndex, dataPerHalaman, (DefaultTableModel) tbl_log.getModel());
     }

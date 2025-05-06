@@ -39,7 +39,7 @@ public class PolarAreaChart extends javax.swing.JComponent {
                 repaint();
             }
         };
-        animator = new Animator(800, target);
+        animator = new Animator(200, target);
         animator.setResolution(0);
         animator.setAcceleration(0.5f);
         animator.setDeceleration(0.5f);
