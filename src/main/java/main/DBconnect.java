@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 public class DBconnect {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu";
+    private static final String URL = "jdbc:mysql://localhost:3306/bank_sampah";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 

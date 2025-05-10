@@ -11,7 +11,6 @@ import javax.swing.JLabel;
 import view.TabDashboard;
 import view.TabDataBarang;
 import view.TabLaporanStatistik;
-//import view.TabManajemenNasabah;
 import view.TabManajemenSampah;
 import view.TabTransaksi;
 import java.awt.EventQueue;
@@ -344,7 +343,7 @@ public class Dashboard extends javax.swing.JFrame {
         changeTabColor(manajemen_nasabah);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabManajemenNasabah());
+        panelMain.add(new TabManajemenNasabah(user));
         panelMain.repaint();
         panelMain.revalidate();
     }//GEN-LAST:event_manajemen_nasabahMouseClicked

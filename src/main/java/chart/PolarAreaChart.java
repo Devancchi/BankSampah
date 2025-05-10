@@ -24,7 +24,7 @@ public class PolarAreaChart extends javax.swing.JComponent {
     private final List<ModelPolarAreaChart> list = new ArrayList<>();
     private double maxValues;
     private double totalValues;
-    private final int PADDING_BOTTON = 30;
+    private final int PADDING_BOTTON = 50;
     private final Animator animator;
     private float animate;
 
@@ -190,9 +190,9 @@ public class PolarAreaChart extends javax.swing.JComponent {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(195, Short.MAX_VALUE)
+                .addContainerGap(201, Short.MAX_VALUE)
                 .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
     }// </editor-fold>//GEN-END:initComponents
 

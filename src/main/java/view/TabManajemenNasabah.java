@@ -7,6 +7,7 @@ package view;
 import component.ExcelExporter;
 import component.LoggerUtil;
 import component.NumberOnlyFilter;
+import component.UserSession;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,8 +33,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
@@ -46,8 +45,10 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private int halamanSaatIni = 1;
     private int dataPerHalaman = 18;
     private int totalPages;
+    private final UserSession users;
 
-    public TabManajemenNasabah() {
+    public TabManajemenNasabah(UserSession user) {
+        this.users = user;
         initComponents();
         conn = DBconnect.getConnection();
         setTabelModel();
@@ -691,9 +692,15 @@ private void paginationNasabah() {
         });
     }
 
+    private void calculateTotalPage() {
+        int totalData = getTotalData();
+        totalPages = (int) Math.ceil((double) totalData / dataPerHalaman);
+
+    }
+
     private void showPanel() {
         panelMain.removeAll();
-        panelMain.add(new TabManajemenNasabah());
+        panelMain.add(new TabManajemenNasabah(users));
         panelMain.repaint();
         panelMain.revalidate();
     }
@@ -712,12 +719,6 @@ private void paginationNasabah() {
 
     /////////////////////////////////buat ambil dan show data/////////////////////////////////
     
-        private void calculateTotalPage() {
-        int totalData = getTotalData();
-        totalPages = (int) Math.ceil((double) totalData / dataPerHalaman);
-
-    }
-
     private int getTotalData() {
         int totalData = 0;
         try {
@@ -774,16 +775,6 @@ private void paginationNasabah() {
         resetPagination();
     }
 
-    private void resetPagination() {
-        btn_add.setText("Tambah");
-        btn_add.setIcon(new ImageIcon("src\\main\\resources\\icon\\icon_tambah.png"));
-        btn_add.setFillClick(new Color(46, 204, 113));
-        btn_add.setFillOriginal(new Color(39, 174, 96));
-        btn_add.setFillOver(new Color(33, 150, 83));
-        btn_delete.setVisible(false);
-        btn_cancel.setVisible(false);
-    }
-
     private void dataTabel() {
         panelView.setVisible(false);
         panelAdd.setVisible(true);
@@ -836,25 +827,6 @@ private void paginationNasabah() {
     /////////////////////////////////buat ambil dan show data/////////////////////////////////
 
         /////////////////////////////////buat manip data/////////////////////////////////
-    
-private boolean isDuplicate(String telepon, String email) {
-        String sql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telpon = ? OR email = ?";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, telepon);
-            ps.setString(2, email);
-
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                int count = rs.getInt(1);
-                return count > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
 
     private void insertData() {
         String idNasabah = txt_id.getText();
@@ -887,6 +859,7 @@ private boolean isDuplicate(String telepon, String email) {
                 int rowInserted = st.executeUpdate();
                 if (rowInserted > 0) {
                     JOptionPane.showMessageDialog(this, "data berhasil ditambahkan");
+                    LoggerUtil.insert(users.getId(), "Menambah data nasabah ID: " + idNasabah);
                     resetForm();
                     txt_id.setText(setIDAnggota());
                     loadData();
@@ -925,7 +898,7 @@ private boolean isDuplicate(String telepon, String email) {
                 int rowUpdated = st.executeUpdate();
                 if (rowUpdated > 0) {
                     JOptionPane.showMessageDialog(this, "data berhasil diupdate");
-                    LoggerUtil.insert("admin", "Mengupdate data nasabah");  // Log aktivitas
+                    LoggerUtil.insert(users.getId(), "Mengupdate data nasabah ID: " + idNasabah);
                     resetForm();
                     loadData();
                     showPanel();
@@ -951,6 +924,7 @@ private boolean isDuplicate(String telepon, String email) {
                     int rowDeleted = st.executeUpdate();
                     if (rowDeleted > 0) {
                         JOptionPane.showMessageDialog(this, "Data Berhasil Dihapus");
+                        LoggerUtil.insert(users.getId(), "Menghapus data nasabah dengan ID: " + id);
                         resetForm();
                         loadData();
                         showPanel();
@@ -963,37 +937,6 @@ private boolean isDuplicate(String telepon, String email) {
             }
 
         }
-    }
-
-    /////////////////////////////////buat manip data/////////////////////////////////
-
-    
-        /////////////////////////////////buat utility/////////////////////////////////
-    private String setIDAnggota() {
-        String urutan = null;
-        String sql = "SELECT MAX(id_nasabah) AS Nomor FROM manajemen_nasabah";
-
-        try (PreparedStatement st = conn.prepareStatement(sql)) {
-            ResultSet rs = st.executeQuery();
-            if (rs.next()) {
-                int nomor = rs.getInt("Nomor") + 1;
-                urutan = String.valueOf(nomor);
-            } else {
-                urutan = "1";
-            }
-        } catch (SQLException e) {
-            java.util.logging.Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
-        }
-        return urutan;
-    }
-
-    private void resetForm() {
-//        txt_id.setText("");
-        txt_nama.setText("");
-        txt_alamat.setText("");
-        txt_telepon.setText("");
-        txt_email.setText("");
-        txt_kode.setText("");
     }
 
     private void getAllNasabahData(DefaultTableModel model) {
@@ -1021,110 +964,83 @@ private boolean isDuplicate(String telepon, String email) {
         }
     }
 
-//    public void importExcelToDatabase(File excelFile) {
-//        try (FileInputStream fis = new FileInputStream(excelFile); Workbook workbook = new XSSFWorkbook(fis)) {
-//
-//            Sheet sheet = workbook.getSheetAt(0);
-//            Iterator<Row> rowIterator = sheet.iterator();
-//
-//            // Lewati header
-//            if (rowIterator.hasNext()) {
-//                rowIterator.next();
-//            }
-//
-//            String insertSql = "INSERT INTO nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, kode_nasabah) VALUES (?, ?, ?, ?, ?, ?)";
-//            PreparedStatement insertPs = conn.prepareStatement(insertSql);
-//
-//            String checkSql = "SELECT COUNT(*) FROM nasabah WHERE no_tefon = ? OR email = ?";
-//            PreparedStatement checkPs = conn.prepareStatement(checkSql);
-//
-//            int successCount = 0;
-//            int skippedCount = 0;
-//
-//            while (rowIterator.hasNext()) {
-//                Row row = rowIterator.next();
-//
-//                String id = row.getCell(0).toString();
-//                String nama = row.getCell(1).getStringCellValue();
-//                String alamat = row.getCell(2).getStringCellValue();
-//                String telepon = row.getCell(3).toString(); // Numeric diubah string
-//                String email = row.getCell(4).getStringCellValue();
-//                String kode = row.getCell(5).getStringCellValue();
-//
-//                // Cek duplikat berdasarkan telepon atau email
-//                checkPs.setString(1, telepon);
-//                checkPs.setString(2, email);
-//                ResultSet rs = checkPs.executeQuery();
-//                rs.next();
-//                int count = rs.getInt(1);
-//
-//                if (count == 0) {
-//                    insertPs.setString(1, id);
-//                    insertPs.setString(2, nama);
-//                    insertPs.setString(3, alamat);
-//                    insertPs.setString(4, telepon);
-//                    insertPs.setString(5, email);
-//                    insertPs.setString(6, kode);
-//                    insertPs.addBatch();
-//                    successCount++;
-//                } else {
-//                    skippedCount++;
-//                }
-//            }
-//
-//            insertPs.executeBatch();
-//            JOptionPane.showMessageDialog(null, "Import selesai!\nBerhasil: " + successCount + "\nDuplikat dilewati: " + skippedCount);
-//
-//        } catch (IOException | SQLException e) {
-//            e.printStackTrace();
-//            JOptionPane.showMessageDialog(null, "Import gagal: " + e.getMessage());
-//        }
-//    }
-//
-public void importExcelToDatabase(File excelFile) {
-    try (FileInputStream fis = new FileInputStream(excelFile)) {
+    /////////////////////////////////buat manip data/////////////////////////////////
 
-        Workbook workbook;
-        if (excelFile.getName().endsWith(".xlsx")) {
-            workbook = new XSSFWorkbook(fis); // Format baru
-        } else if (excelFile.getName().endsWith(".xls")) {
-            workbook = new HSSFWorkbook(fis); // Format lama
-        } else {
-            throw new IllegalArgumentException("File bukan .xls atau .xlsx");
+    
+    /////////////////////////////////buat utility/////////////////////////////////
+    private String setIDAnggota() {
+        String urutan = null;
+        String sql = "SELECT MAX(id_nasabah) AS Nomor FROM manajemen_nasabah";
+
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                int nomor = rs.getInt("Nomor") + 1;
+                urutan = String.valueOf(nomor);
+            } else {
+                urutan = "1";
+            }
+        } catch (SQLException e) {
+            java.util.logging.Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
         }
+        return urutan;
+    }
 
-        Sheet sheet = workbook.getSheetAt(0);
-        Iterator<Row> rowIterator = sheet.iterator();
+    private void resetForm() {
+//        txt_id.setText("");
+        txt_nama.setText("");
+        txt_alamat.setText("");
+        txt_telepon.setText("");
+        txt_email.setText("");
+        txt_kode.setText("");
+    }
 
-        // Lewati header
-        if (rowIterator.hasNext()) rowIterator.next();
+    public void importExcelToDatabase(File excelFile) {
+        try (FileInputStream fis = new FileInputStream(excelFile)) {
 
-        String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, kode_nasabah) VALUES (?, ?, ?, ?, ?, ?)";
-        PreparedStatement insertPs = conn.prepareStatement(insertSql);
+            Workbook workbook;
+            if (excelFile.getName().endsWith(".xlsx")) {
+                workbook = new XSSFWorkbook(fis); // Format baru
+            } else if (excelFile.getName().endsWith(".xls")) {
+                workbook = new HSSFWorkbook(fis); // Format lama
+            } else {
+                throw new IllegalArgumentException("File bukan .xls atau .xlsx");
+            }
 
-        String checkSql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telpon = ? OR email = ?";
-        PreparedStatement checkPs = conn.prepareStatement(checkSql);
+            Sheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
 
-        int successCount = 0;
-        int skippedCount = 0;
+            // Lewati header
+            if (rowIterator.hasNext()) {
+                rowIterator.next();
+            }
 
-        while (rowIterator.hasNext()) {
-            Row row = rowIterator.next();
+            String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, kode_nasabah) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement insertPs = conn.prepareStatement(insertSql);
 
-            String id = row.getCell(0).toString();
-            String nama = row.getCell(1).getStringCellValue();
-            String alamat = row.getCell(2).getStringCellValue();
-            String telepon = row.getCell(3).toString();
-            String email = row.getCell(4).getStringCellValue();
-            String kode = row.getCell(5).getStringCellValue();
+            String checkSql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telpon = ? OR email = ?";
+            PreparedStatement checkPs = conn.prepareStatement(checkSql);
 
-            checkPs.setString(1, telepon);
-            checkPs.setString(2, email);
-            ResultSet rs = checkPs.executeQuery();
-            rs.next();
-            int count = rs.getInt(1);
+            int successCount = 0;
+            int skippedCount = 0;
 
-            if (count == 0) {
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+
+                String id = row.getCell(0).toString();
+                String nama = row.getCell(1).getStringCellValue();
+                String alamat = row.getCell(2).getStringCellValue();
+                String telepon = row.getCell(3).toString();
+                String email = row.getCell(4).getStringCellValue();
+                String kode = row.getCell(5).getStringCellValue();
+
+                checkPs.setString(1, telepon);
+                checkPs.setString(2, email);
+                ResultSet rs = checkPs.executeQuery();
+                rs.next();
+                int count = rs.getInt(1);
+
+                if (count == 0) {
                     insertPs.setString(1, id);
                     insertPs.setString(2, nama);
                     insertPs.setString(3, alamat);
@@ -1132,20 +1048,52 @@ public void importExcelToDatabase(File excelFile) {
                     insertPs.setString(5, email);
                     insertPs.setString(6, kode);
                     insertPs.addBatch();
-                successCount++;
-            } else {
-                skippedCount++;
+                    successCount++;
+                } else {
+                    skippedCount++;
+                }
             }
+
+            insertPs.executeBatch();
+            loadData();
+            LoggerUtil.insert(users.getId(), "Import data nasabah");
+            JOptionPane.showMessageDialog(null, "Import selesai!\nBerhasil: " + successCount + "\nDuplikat dilewati: " + skippedCount);
+
+        } catch (IOException | SQLException | IllegalArgumentException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Import gagal: " + e.getMessage());
+        }
+    }
+
+    private void resetPagination() {
+        btn_add.setText("Tambah");
+        btn_add.setIcon(new ImageIcon("src\\main\\resources\\icon\\icon_tambah.png"));
+        btn_add.setFillClick(new Color(46, 204, 113));
+        btn_add.setFillOriginal(new Color(39, 174, 96));
+        btn_add.setFillOver(new Color(33, 150, 83));
+        btn_delete.setVisible(false);
+        btn_cancel.setVisible(false);
+    }
+
+    private boolean isDuplicate(String telepon, String email) {
+        String sql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telpon = ? OR email = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, telepon);
+            ps.setString(2, email);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        insertPs.executeBatch();
-        loadData(); 
-        JOptionPane.showMessageDialog(null, "Import selesai!\nBerhasil: " + successCount + "\nDuplikat dilewati: " + skippedCount);
-
-    } catch (IOException | SQLException | IllegalArgumentException e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Import gagal: " + e.getMessage());
+        return false;
     }
-}
+
+
 /////////////////////////////////buat utility/////////////////////////////////
 }
