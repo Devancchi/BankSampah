@@ -666,32 +666,28 @@ public class TabDashboard extends javax.swing.JPanel {
         int totalTerjual = 0;
 
         String queryStok = "SELECT SUM(stok) AS total_stok FROM data_barang";
-        String queryTerjual = "SELECT COUNT(id_laporan_pemasukan) AS total_terjual FROM laporan_pemasukan";
+        String queryTerjual = "SELECT SUM(jumlah) AS total_terjual FROM laporan_pemasukan";
 
         try {
             Connection conn = DBconnect.getConnection();
 
-            // Ambil total stok
             PreparedStatement psStok = conn.prepareStatement(queryStok);
             ResultSet rsStok = psStok.executeQuery();
             if (rsStok.next()) {
                 totalStok = rsStok.getInt("total_stok");
             }
 
-            // Ambil total barang terjual
             PreparedStatement psTerjual = conn.prepareStatement(queryTerjual);
             ResultSet rsTerjual = psTerjual.executeQuery();
             if (rsTerjual.next()) {
                 totalTerjual = rsTerjual.getInt("total_terjual");
             }
 
-            // Tampilkan ke chart
             ChartBarangTerjualVsBarangSisa.clear();
-            ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(new Color(33, 150, 243), "Barang Terjual", totalTerjual));
-            ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(new Color(255, 193, 7), "Barang Tersisa", totalStok));
+            ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(Color.RED, "Barang Terjual", totalTerjual));
+            ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(Color.GREEN, "Barang Tersisa", totalStok));
             ChartBarangTerjualVsBarangSisa.start();
 
-            // Jangan lupa tutup resource
             rsStok.close();
             rsTerjual.close();
             psStok.close();
@@ -702,5 +698,4 @@ public class TabDashboard extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-
 }
