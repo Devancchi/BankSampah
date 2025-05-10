@@ -146,8 +146,7 @@ public class PolarAreaChart extends javax.swing.JComponent {
         list.add(data);
         calculateValues(data);
         repaint();
-        PolarAreaLabel label = new PolarAreaLabel();
-        label.setText(data.getName());
+        PolarAreaLabel label = new PolarAreaLabel(data.getName(), data.getValues());
         label.setBackground(data.getColor());
         panel.add(label);
         panel.repaint();
