@@ -110,6 +110,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         panelMain.setLayout(new java.awt.CardLayout());
 
+        panelView.setBackground(new java.awt.Color(250, 250, 250));
+
         tbl_data.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -227,7 +229,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        txt_search.setPlaceholder("Cari Nasabah 🔎");
+        txt_search.setPlaceholder("Cari Nasabah");
         txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txt_searchKeyTyped(evt);

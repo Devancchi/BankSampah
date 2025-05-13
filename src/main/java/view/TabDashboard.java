@@ -85,6 +85,7 @@ public class TabDashboard extends javax.swing.JPanel {
         btn_nextLog = new javax.swing.JButton();
         btn_lastLog = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(250, 250, 250));
         setPreferredSize(new java.awt.Dimension(1192, 944));
 
         panelCard.setPreferredSize(new java.awt.Dimension(1182, 126));
@@ -642,13 +643,16 @@ public class TabDashboard extends javax.swing.JPanel {
         model.setRowCount(0);
 
         try {
-            String sql = "SELECT * FROM log_aktivitas ORDER BY id DESC";
+            String sql = "SELECT log_aktivitas.id_log, login.nama_user, log_aktivitas.aktivitas, log_aktivitas.tanggal \n"
+                    + "FROM log_aktivitas \n"
+                    + "JOIN login ON log_aktivitas.id_user = login.id_user \n"
+                    + "ORDER BY log_aktivitas.id_log DESC";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 ResultSet rs = st.executeQuery();
 
                 while (rs.next()) {
-                    String idLog = rs.getString("id");
-                    String admin = rs.getString("admin");
+                    String idLog = rs.getString("id_log");
+                    String admin = rs.getString("nama_user");
                     String aktivitas = rs.getString("aktivitas");
                     String tanggal = rs.getString("tanggal");
 
