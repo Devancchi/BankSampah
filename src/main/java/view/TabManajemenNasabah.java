@@ -55,7 +55,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         loadData();
         paginationNasabah();
         ((AbstractDocument) txt_telepon.getDocument()).setDocumentFilter(new NumberOnlyFilter());
-        ((AbstractDocument) txt_kode.getDocument()).setDocumentFilter(new NumberOnlyFilter());
     }
 
     /**
@@ -96,14 +95,12 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
         btn_save = new component.Jbutton();
         btn_back = new component.Jbutton();
         txt_nama = new component.PlaceholderTextField();
         txt_alamat = new component.PlaceholderTextField();
         txt_telepon = new component.PlaceholderTextField();
         txt_email = new component.PlaceholderTextField();
-        txt_kode = new component.PlaceholderTextField();
 
         setPreferredSize(new java.awt.Dimension(1200, 716));
         setLayout(new java.awt.CardLayout());
@@ -349,9 +346,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         jLabel13.setFont(new java.awt.Font("Mongolian Baiti", 1, 22)); // NOI18N
         jLabel13.setText("Alamat");
 
-        jLabel9.setFont(new java.awt.Font("Mongolian Baiti", 1, 21)); // NOI18N
-        jLabel9.setText("Kode ");
-
         btn_save.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_simpan.png"))); // NOI18N
         btn_save.setText("Simpan");
         btn_save.setFillClick(new java.awt.Color(30, 100, 150));
@@ -384,13 +378,11 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         txt_email.setPlaceholder("Email");
 
-        txt_kode.setPlaceholder("Kode");
-
         javax.swing.GroupLayout panelFormLayout = new javax.swing.GroupLayout(panelForm);
         panelForm.setLayout(panelFormLayout);
         panelFormLayout.setHorizontalGroup(
             panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1152, Short.MAX_VALUE)
+            .addGap(0, 1183, Short.MAX_VALUE)
             .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panelFormLayout.createSequentialGroup()
                     .addContainerGap()
@@ -398,7 +390,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                         .addComponent(jLabel7)
                         .addComponent(jLabel8)
                         .addComponent(jLabel13)
-                        .addComponent(jLabel9)
                         .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(panelFormLayout.createSequentialGroup()
                                 .addComponent(jLabel6)
@@ -411,7 +402,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                                 .addComponent(jLabel11)
                                 .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(txt_nama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(txt_kode, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txt_email, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txt_telepon, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txt_alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -419,7 +409,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         );
         panelFormLayout.setVerticalGroup(
             panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 904, Short.MAX_VALUE)
+            .addGap(0, 932, Short.MAX_VALUE)
             .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panelFormLayout.createSequentialGroup()
                     .addContainerGap()
@@ -447,11 +437,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                     .addComponent(jLabel7)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(txt_email, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jLabel9)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(txt_kode, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(431, Short.MAX_VALUE)))
+                    .addContainerGap(504, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout panelAddLayout = new javax.swing.GroupLayout(panelAdd);
@@ -492,6 +478,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 txt_nama.requestFocusInWindow();
             }
         });
+        
         txt_nama.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
@@ -519,20 +506,10 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         txt_email.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-                    txt_kode.requestFocus();
-                }
-            }
-        });
-
-        txt_kode.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
                     btn_save.requestFocus();
                 }
             }
         });
-
-
     }//GEN-LAST:event_btn_addActionPerformed
 
     private void btn_saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_saveActionPerformed
@@ -578,7 +555,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
     private void btn_ExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ExportActionPerformed
         DefaultTableModel model = new DefaultTableModel(
-                new String[]{"ID", "Nama", "Alamat", "Telepon", "Email", "Kode"}, 0
+                new String[]{"ID", "Nama", "Alamat", "Telepon", "Email"}, 0
         );
         getAllNasabahData(model);
 
@@ -627,7 +604,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lb_dataNasabah;
     private javax.swing.JLabel lb_halaman;
@@ -642,7 +618,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private component.PlaceholderTextField txt_alamat;
     private component.PlaceholderTextField txt_email;
     private javax.swing.JTextField txt_id;
-    private component.PlaceholderTextField txt_kode;
     private component.PlaceholderTextField txt_nama;
     private component.PlaceholderTextField txt_search;
     private component.PlaceholderTextField txt_telepon;
@@ -714,7 +689,6 @@ private void paginationNasabah() {
         model.addColumn("Alamat");
         model.addColumn("Telepon");
         model.addColumn("Email");
-        model.addColumn("Kode Nasabah");
     }
 
     /////////////////////////////////buat setup awal/////////////////////////////////
@@ -754,9 +728,8 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    String kodeNasabah = rs.getString("kode_nasabah");
 
-                    Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, kodeNasabah};
+                    Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email};
                     model.addRow(rowData);
 
                 }
@@ -782,7 +755,6 @@ private void paginationNasabah() {
         panelAdd.setVisible(true);
 
         int row = tbl_data.getSelectedRow();
-//        lb_dataNasabah.setText("Perbarui Data Nasabah");
 
         txt_id.setEnabled(false);
 
@@ -791,7 +763,6 @@ private void paginationNasabah() {
         txt_alamat.setText(tbl_data.getValueAt(row, 2).toString());
         txt_telepon.setText(tbl_data.getValueAt(row, 3).toString());
         txt_email.setText(tbl_data.getValueAt(row, 4).toString());
-        txt_kode.setText(tbl_data.getValueAt(row, 5).toString());
     }
 
     private void searchData() {
@@ -813,9 +784,8 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    String kodeNasabah = rs.getString("kode_nasabah");
 
-                    Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, kodeNasabah};
+                    Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email};
                     model.addRow(rowData);
 
                 }
@@ -829,17 +799,14 @@ private void paginationNasabah() {
     /////////////////////////////////buat ambil dan show data/////////////////////////////////
 
         /////////////////////////////////buat manip data/////////////////////////////////
-
     private void insertData() {
         String idNasabah = txt_id.getText();
         String namaNasabah = txt_nama.getText();
         String alamat = txt_alamat.getText();
         String telepon = txt_telepon.getText();
         String email = txt_email.getText();
-        String kodeNasabah = txt_kode.getText();
-//        String tanggalBergabung = txt_tanggal.getText();
 
-        if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty() || telepon.isEmpty() || email.isEmpty() || kodeNasabah.isEmpty()) {
+        if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty() || telepon.isEmpty() || email.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!", "validasi", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -849,14 +816,13 @@ private void paginationNasabah() {
         }
 
         try {
-            String sql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, kode_nasabah) VALUES   (?,?,?,?,?,?)";
+            String sql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email) VALUES   (?,?,?,?,?)";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setString(1, idNasabah);
                 st.setString(2, namaNasabah);
                 st.setString(3, alamat);
                 st.setString(4, telepon);
                 st.setString(5, email);
-                st.setString(6, kodeNasabah);
 
                 int rowInserted = st.executeUpdate();
                 if (rowInserted > 0) {
@@ -879,23 +845,21 @@ private void paginationNasabah() {
         String alamat = txt_email.getText();
         String telepon = txt_telepon.getText();
         String email = txt_email.getText();
-        String kodeNasabah = txt_kode.getText();
 
-        if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty() || telepon.isEmpty() || email.isEmpty() || kodeNasabah.isEmpty()) {
+        if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty() || telepon.isEmpty() || email.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!", "validasi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         try {
-            String sql = "UPDATE manajemen_nasabah SET nama_nasabah=?, alamat=?, no_telpon=?, email=?, kode_nasabah=? WHERE id_nasabah=?";
+            String sql = "UPDATE manajemen_nasabah SET nama_nasabah=?, alamat=?, no_telpon=?, email=? WHERE id_nasabah=?";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
 
                 st.setString(1, namaNasabah);
                 st.setString(2, alamat);
                 st.setString(3, telepon);
                 st.setString(4, email);
-                st.setString(5, kodeNasabah);
-                st.setString(6, idNasabah);
+                st.setString(5, idNasabah);
 
                 int rowUpdated = st.executeUpdate();
                 if (rowUpdated > 0) {
@@ -955,9 +919,8 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    String kode = rs.getString("kode_nasabah");
 
-                    Object[] rowData = {id, nama, alamat, telepon, email, kode};
+                    Object[] rowData = {id, nama, alamat, telepon, email};
                     model.addRow(rowData);
                 }
             }
@@ -970,31 +933,28 @@ private void paginationNasabah() {
 
     
     /////////////////////////////////buat utility/////////////////////////////////
-    private String setIDAnggota() {
-        String urutan = null;
-        String sql = "SELECT MAX(id_nasabah) AS Nomor FROM manajemen_nasabah";
+private String setIDAnggota() {
+        String urutan = "NSB001";
+        String sql = "SELECT MAX(CAST(SUBSTRING(id_nasabah, 4) AS UNSIGNED)) AS Nomor FROM manajemen_nasabah";
 
         try (PreparedStatement st = conn.prepareStatement(sql)) {
             ResultSet rs = st.executeQuery();
-            if (rs.next()) {
+            if (rs.next() && rs.getString("Nomor") != null) {
                 int nomor = rs.getInt("Nomor") + 1;
-                urutan = String.valueOf(nomor);
-            } else {
-                urutan = "1";
+                urutan = String.format("NSB%03d", nomor);
             }
         } catch (SQLException e) {
             java.util.logging.Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
         }
+
         return urutan;
     }
 
     private void resetForm() {
-//        txt_id.setText("");
         txt_nama.setText("");
         txt_alamat.setText("");
         txt_telepon.setText("");
         txt_email.setText("");
-        txt_kode.setText("");
     }
 
     public void importExcelToDatabase(File excelFile) {
@@ -1002,9 +962,9 @@ private void paginationNasabah() {
 
             Workbook workbook;
             if (excelFile.getName().endsWith(".xlsx")) {
-                workbook = new XSSFWorkbook(fis); // Format baru
+                workbook = new XSSFWorkbook(fis);
             } else if (excelFile.getName().endsWith(".xls")) {
-                workbook = new HSSFWorkbook(fis); // Format lama
+                workbook = new HSSFWorkbook(fis);
             } else {
                 throw new IllegalArgumentException("File bukan .xls atau .xlsx");
             }
@@ -1012,12 +972,11 @@ private void paginationNasabah() {
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
 
-            // Lewati header
             if (rowIterator.hasNext()) {
                 rowIterator.next();
             }
 
-            String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, kode_nasabah) VALUES (?, ?, ?, ?, ?, ?)";
+            String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement insertPs = conn.prepareStatement(insertSql);
 
             String checkSql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telpon = ? OR email = ?";
@@ -1034,7 +993,6 @@ private void paginationNasabah() {
                 String alamat = row.getCell(2).getStringCellValue();
                 String telepon = row.getCell(3).toString();
                 String email = row.getCell(4).getStringCellValue();
-                String kode = row.getCell(5).getStringCellValue();
 
                 checkPs.setString(1, telepon);
                 checkPs.setString(2, email);
@@ -1048,7 +1006,6 @@ private void paginationNasabah() {
                     insertPs.setString(3, alamat);
                     insertPs.setString(4, telepon);
                     insertPs.setString(5, email);
-                    insertPs.setString(6, kode);
                     insertPs.addBatch();
                     successCount++;
                 } else {
