@@ -36,7 +36,7 @@ public class Dashboard extends javax.swing.JFrame {
 
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setSidebarButtonEffect(dashboard);
-        setSidebarButtonEffect(manajemen_nasabah);
+        setSidebarButtonEffect(nasabah);
         setSidebarButtonEffect(manajemen_sampah);
         setSidebarButtonEffect(laporan_statistik);
         setSidebarButtonEffect(transaksi);
@@ -64,13 +64,18 @@ public class Dashboard extends javax.swing.JFrame {
         pn_sidebar = new javax.swing.JPanel();
         panelMoving = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
-        dashboard = new javax.swing.JLabel();
-        manajemen_nasabah = new javax.swing.JLabel();
-        manajemen_sampah = new javax.swing.JLabel();
-        laporan_statistik = new javax.swing.JLabel();
+        shadowNasabah = new component.ShadowPanel();
+        nasabah = new javax.swing.JLabel();
+        shadowTransaksi = new component.ShadowPanel();
         transaksi = new javax.swing.JLabel();
+        shadowSampah = new component.ShadowPanel();
+        manajemen_sampah = new javax.swing.JLabel();
+        shadowLaporan = new component.ShadowPanel();
+        laporan_statistik = new javax.swing.JLabel();
+        shadowDataBarang = new component.ShadowPanel();
         data_barang = new javax.swing.JLabel();
-        shadowPanel1 = new component.ShadowPanel();
+        shadowDashboard = new component.ShadowPanel();
+        dashboard = new javax.swing.JLabel();
         panelMain = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         panelCredential = new javax.swing.JPanel();
@@ -103,49 +108,37 @@ public class Dashboard extends javax.swing.JFrame {
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
-        dashboard.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        dashboard.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        dashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_dashboard.png"))); // NOI18N
-        dashboard.setText("Dashboard");
-        dashboard.setPreferredSize(new java.awt.Dimension(240, 48));
-        dashboard.addMouseListener(new java.awt.event.MouseAdapter() {
+        shadowNasabah.setBorderRadius(50);
+
+        nasabah.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        nasabah.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        nasabah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_manajemen_nasabah.png"))); // NOI18N
+        nasabah.setText("Nasabah");
+        nasabah.setPreferredSize(new java.awt.Dimension(240, 48));
+        nasabah.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                dashboardMouseClicked(evt);
+                nasabahMouseClicked(evt);
             }
         });
 
-        manajemen_nasabah.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        manajemen_nasabah.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        manajemen_nasabah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_manajemen_nasabah.png"))); // NOI18N
-        manajemen_nasabah.setText("Manajemen Nasabah");
-        manajemen_nasabah.setPreferredSize(new java.awt.Dimension(240, 48));
-        manajemen_nasabah.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                manajemen_nasabahMouseClicked(evt);
-            }
-        });
+        javax.swing.GroupLayout shadowNasabahLayout = new javax.swing.GroupLayout(shadowNasabah);
+        shadowNasabah.setLayout(shadowNasabahLayout);
+        shadowNasabahLayout.setHorizontalGroup(
+            shadowNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(shadowNasabahLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(nasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        shadowNasabahLayout.setVerticalGroup(
+            shadowNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowNasabahLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(nasabah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
-        manajemen_sampah.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        manajemen_sampah.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        manajemen_sampah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_manajemen_sampah.png"))); // NOI18N
-        manajemen_sampah.setText("Manajemen Sampah");
-        manajemen_sampah.setPreferredSize(new java.awt.Dimension(240, 48));
-        manajemen_sampah.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                manajemen_sampahMouseClicked(evt);
-            }
-        });
-
-        laporan_statistik.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        laporan_statistik.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        laporan_statistik.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_laporan_statistik.png"))); // NOI18N
-        laporan_statistik.setText("Laporan & Statistik");
-        laporan_statistik.setPreferredSize(new java.awt.Dimension(240, 48));
-        laporan_statistik.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                laporan_statistikMouseClicked(evt);
-            }
-        });
+        shadowTransaksi.setBorderRadius(50);
 
         transaksi.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
         transaksi.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -158,6 +151,82 @@ public class Dashboard extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout shadowTransaksiLayout = new javax.swing.GroupLayout(shadowTransaksi);
+        shadowTransaksi.setLayout(shadowTransaksiLayout);
+        shadowTransaksiLayout.setHorizontalGroup(
+            shadowTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(shadowTransaksiLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(transaksi, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        shadowTransaksiLayout.setVerticalGroup(
+            shadowTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(shadowTransaksiLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        shadowSampah.setBorderRadius(50);
+
+        manajemen_sampah.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        manajemen_sampah.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        manajemen_sampah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_manajemen_sampah.png"))); // NOI18N
+        manajemen_sampah.setText("Manajemen Sampah");
+        manajemen_sampah.setPreferredSize(new java.awt.Dimension(240, 48));
+        manajemen_sampah.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                manajemen_sampahMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout shadowSampahLayout = new javax.swing.GroupLayout(shadowSampah);
+        shadowSampah.setLayout(shadowSampahLayout);
+        shadowSampahLayout.setHorizontalGroup(
+            shadowSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(manajemen_sampah, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+        );
+        shadowSampahLayout.setVerticalGroup(
+            shadowSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(shadowSampahLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(manajemen_sampah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        shadowLaporan.setBorderRadius(50);
+
+        laporan_statistik.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        laporan_statistik.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        laporan_statistik.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_laporan_statistik.png"))); // NOI18N
+        laporan_statistik.setText("Laporan & Statistik");
+        laporan_statistik.setPreferredSize(new java.awt.Dimension(240, 48));
+        laporan_statistik.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                laporan_statistikMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout shadowLaporanLayout = new javax.swing.GroupLayout(shadowLaporan);
+        shadowLaporan.setLayout(shadowLaporanLayout);
+        shadowLaporanLayout.setHorizontalGroup(
+            shadowLaporanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(shadowLaporanLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(laporan_statistik, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                .addGap(15, 15, 15))
+        );
+        shadowLaporanLayout.setVerticalGroup(
+            shadowLaporanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(shadowLaporanLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(laporan_statistik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        shadowDataBarang.setBorderRadius(50);
+
         data_barang.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
         data_barang.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         data_barang.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_data_barang.png"))); // NOI18N
@@ -169,17 +238,51 @@ public class Dashboard extends javax.swing.JFrame {
             }
         });
 
-        shadowPanel1.setBorderRadius(50);
-
-        javax.swing.GroupLayout shadowPanel1Layout = new javax.swing.GroupLayout(shadowPanel1);
-        shadowPanel1.setLayout(shadowPanel1Layout);
-        shadowPanel1Layout.setHorizontalGroup(
-            shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 186, Short.MAX_VALUE)
+        javax.swing.GroupLayout shadowDataBarangLayout = new javax.swing.GroupLayout(shadowDataBarang);
+        shadowDataBarang.setLayout(shadowDataBarangLayout);
+        shadowDataBarangLayout.setHorizontalGroup(
+            shadowDataBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(shadowDataBarangLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(data_barang, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                .addContainerGap())
         );
-        shadowPanel1Layout.setVerticalGroup(
-            shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 44, Short.MAX_VALUE)
+        shadowDataBarangLayout.setVerticalGroup(
+            shadowDataBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(shadowDataBarangLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(data_barang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        shadowDashboard.setBorderRadius(50);
+
+        dashboard.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        dashboard.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        dashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_dashboard.png"))); // NOI18N
+        dashboard.setText("Dashboard");
+        dashboard.setPreferredSize(new java.awt.Dimension(240, 48));
+        dashboard.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dashboardMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout shadowDashboardLayout = new javax.swing.GroupLayout(shadowDashboard);
+        shadowDashboard.setLayout(shadowDashboardLayout);
+        shadowDashboardLayout.setHorizontalGroup(
+            shadowDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(shadowDashboardLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(dashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        shadowDashboardLayout.setVerticalGroup(
+            shadowDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowDashboardLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(dashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout pn_sidebarLayout = new javax.swing.GroupLayout(pn_sidebar);
@@ -187,36 +290,34 @@ public class Dashboard extends javax.swing.JFrame {
         pn_sidebarLayout.setHorizontalGroup(
             pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panelMoving, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(dashboard, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(manajemen_nasabah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(manajemen_sampah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(laporan_statistik, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(transaksi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(data_barang, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pn_sidebarLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(shadowPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(shadowNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(shadowTransaksi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(shadowSampah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(shadowLaporan, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(shadowDataBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(shadowDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         pn_sidebarLayout.setVerticalGroup(
             pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pn_sidebarLayout.createSequentialGroup()
                 .addComponent(panelMoving, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(dashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(manajemen_nasabah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(manajemen_sampah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(laporan_statistik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5)
-                .addComponent(data_barang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(shadowPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(shadowDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(shadowNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(shadowSampah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(shadowLaporan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(shadowTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(shadowDataBarang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panelMain.setBackground(new java.awt.Color(204, 204, 204));
@@ -359,14 +460,14 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.revalidate();
     }//GEN-LAST:event_manajemen_sampahMouseClicked
 
-    private void manajemen_nasabahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_manajemen_nasabahMouseClicked
-        changeTabColor(manajemen_nasabah);
+    private void nasabahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nasabahMouseClicked
+        changeTabColor(nasabah);
         panelMain.setOpaque(false);
         panelMain.removeAll();
         panelMain.add(new TabManajemenNasabah(user));
         panelMain.repaint();
         panelMain.revalidate();
-    }//GEN-LAST:event_manajemen_nasabahMouseClicked
+    }//GEN-LAST:event_nasabahMouseClicked
 
     private void dashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dashboardMouseClicked
         changeTabColor(dashboard);
@@ -513,13 +614,18 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JLabel laporan_statistik;
     private javax.swing.JLabel lb_level;
     private javax.swing.JLabel lb_user;
-    private javax.swing.JLabel manajemen_nasabah;
     private javax.swing.JLabel manajemen_sampah;
+    private javax.swing.JLabel nasabah;
     private javax.swing.JPanel panelCredential;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelMoving;
     private javax.swing.JPanel pn_sidebar;
-    private component.ShadowPanel shadowPanel1;
+    private component.ShadowPanel shadowDashboard;
+    private component.ShadowPanel shadowDataBarang;
+    private component.ShadowPanel shadowLaporan;
+    private component.ShadowPanel shadowNasabah;
+    private component.ShadowPanel shadowSampah;
+    private component.ShadowPanel shadowTransaksi;
     private javax.swing.JLabel transaksi;
     // End of variables declaration//GEN-END:variables
 }
