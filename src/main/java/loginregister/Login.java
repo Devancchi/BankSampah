@@ -101,7 +101,7 @@ public class Login extends JPanel {
 
             try (Connection con = DBconnect.getConnection()) {
                 // Query untuk memeriksa username yang ada di database
-                String sql = "SELECT * FROM login WHERE nama = ?";
+                String sql = "SELECT * FROM login WHERE nama_user = ?";
                 PreparedStatement pst = con.prepareStatement(sql);
                 pst.setString(1, username);
                 ResultSet rs = pst.executeQuery();
@@ -115,7 +115,10 @@ public class Login extends JPanel {
                         // Login berhasil
                         SwingUtilities.getWindowAncestor(this).dispose();  // Tutup form login
 
-                        UserSession user = new UserSession(rs.getString("nama"), rs.getString("level"));
+                        int idUser = rs.getInt("id_user");
+                        String nama = rs.getString("nama_user");
+                        String level = rs.getString("level");
+                        UserSession user = new UserSession(idUser, nama, level);
                         Dashboard dashboard = new Dashboard(user);
                         dashboard.setVisible(true);
 
