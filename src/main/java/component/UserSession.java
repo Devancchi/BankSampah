@@ -9,12 +9,18 @@ package component;
  * @author devan
  */
 public class UserSession {
+    private int id;
     private String nama;
     private String level;
 
-    public UserSession(String nama, String level) {
+    public UserSession(int id, String nama, String level) {
+        this.id = id;
         this.nama = nama;
         this.level = level;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getNama() {
@@ -25,4 +31,5 @@ public class UserSession {
         return level;
     }
 }
+
 
