@@ -207,7 +207,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Total sampah"/>
+                <Property name="text" type="java.lang.String" value="Total berat sampah"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="lb_totalSampah">
@@ -280,7 +280,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Saldo tabungan"/>
+                <Property name="text" type="java.lang.String" value="Laba"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="lb_totalTabungan">

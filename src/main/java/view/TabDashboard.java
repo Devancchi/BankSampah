@@ -131,7 +131,7 @@ public class TabDashboard extends javax.swing.JPanel {
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_total_sampah.png"))); // NOI18N
 
         jLabel9.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel9.setText("Total sampah");
+        jLabel9.setText("Total berat sampah");
 
         lb_totalSampah.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lb_totalSampah.setText("1.000");
@@ -175,7 +175,7 @@ public class TabDashboard extends javax.swing.JPanel {
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_total_tabungan.png"))); // NOI18N
 
         jLabel12.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel12.setText("Saldo tabungan");
+        jLabel12.setText("Laba");
 
         lb_totalTabungan.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lb_totalTabungan.setText("Rp 1.000");
@@ -503,7 +503,6 @@ public class TabDashboard extends javax.swing.JPanel {
     private void calculateTotalPage() {
         int totalData = getTotalData();
         totalPages = (int) Math.ceil((double) totalData / dataPerHalaman);
-
     }
 
     private void setTabelModel() {
@@ -649,7 +648,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     + "ORDER BY log_aktivitas.id_log DESC";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 ResultSet rs = st.executeQuery();
-
+                
                 while (rs.next()) {
                     String idLog = rs.getString("id_log");
                     String admin = rs.getString("nama_user");
@@ -670,11 +669,10 @@ public class TabDashboard extends javax.swing.JPanel {
         int totalTerjual = 0;
 
         String queryStok = "SELECT SUM(stok) AS total_stok FROM data_barang";
-        String queryTerjual = "SELECT SUM(jumlah) AS total_terjual FROM laporan_pemasukan";
+        String queryTerjual = "SELECT SUM(qty) AS total_terjual FROM transaksi";
 
         try {
             Connection conn = DBconnect.getConnection();
-
             PreparedStatement psStok = conn.prepareStatement(queryStok);
             ResultSet rsStok = psStok.executeQuery();
             if (rsStok.next()) {
@@ -691,7 +689,7 @@ public class TabDashboard extends javax.swing.JPanel {
             ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(Color.RED, "Barang Terjual", totalTerjual));
             ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(Color.GREEN, "Barang Tersisa", totalStok));
             ChartBarangTerjualVsBarangSisa.start();
-
+            
             rsStok.close();
             rsTerjual.close();
             psStok.close();
