@@ -818,6 +818,9 @@ private void paginationNasabah() {
                     model.addRow(rowData);
                 }
             }
+        tbl_data.clearSelection();
+        resetPagination();
+        resetForm();
         } catch (SQLException e) {
             Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
         }
