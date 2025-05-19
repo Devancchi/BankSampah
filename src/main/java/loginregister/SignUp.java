@@ -97,7 +97,7 @@ public class SignUp extends JPanel {
                 }
 
                 try (Connection conn = DBconnect.getConnection()) {
-                    String sql = "INSERT INTO login (email, nama, password, level) VALUES (?, ?, ?, ?)";
+                    String sql = "INSERT INTO login (email, nama_user, password, level) VALUES (?, ?, ?, ?)";
                     PreparedStatement pst = conn.prepareStatement(sql);
                     pst.setString(1, email);
                     pst.setString(2, username);

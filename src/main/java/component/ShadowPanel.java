@@ -11,13 +11,24 @@ package component;
 import java.awt.*;
 import javax.swing.*;
 
-public class ShadowPanel extends javax.swing.JPanel {
+public class ShadowPanel extends JPanel {
 
     private int shadowSize = 10; // Ukuran shadow
+    private int borderRadius = 25; // Radius sudut tumpul, default 25
 
     public ShadowPanel() {
         initComponents();
         setOpaque(false); // Supaya panel mendukung transparansi
+    }
+
+    // Properti untuk mengatur borderRadius
+    public int getBorderRadius() {
+        return borderRadius;
+    }
+
+    public void setBorderRadius(int borderRadius) {
+        this.borderRadius = borderRadius;
+        repaint(); // Penting: gambar ulang panel untuk menampilkan perubahan
     }
 
     @Override
@@ -31,9 +42,8 @@ public class ShadowPanel extends javax.swing.JPanel {
         g2.setColor(shadowColor);
         g2.fillRoundRect(shadowSize, shadowSize, getWidth() - shadowSize * 2, getHeight() - shadowSize * 2, 15, 15);
 
-        int tumpul = 25;
         g2.setColor(getBackground());
-        g2.fillRoundRect(0, 0, getWidth(), getHeight(), tumpul, tumpul);
+        g2.fillRoundRect(0, 0, getWidth(), getHeight(), borderRadius, borderRadius); // Menggunakan borderRadius
 
         super.paintComponent(grphcs);
     }
