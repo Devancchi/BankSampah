@@ -49,7 +49,7 @@ public class ForgotPassword extends JPanel {
     }
 
     try (Connection conn = DBconnect.getConnection()) {
-        String sql = "SELECT * FROM login WHERE nama = ?";
+        String sql = "SELECT * FROM login WHERE nama_user = ?";
         try (PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setString(1, username);
             ResultSet rs = pst.executeQuery();
@@ -61,7 +61,7 @@ public class ForgotPassword extends JPanel {
                 }
 
                 String hashedPassword = hashPassword(newPassword);
-                String updateSql = "UPDATE login SET password = ? WHERE nama = ?";
+                String updateSql = "UPDATE login SET password = ? WHERE nama_user = ?";
                 try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
                     updateStmt.setString(1, hashedPassword);
                     updateStmt.setString(2, username);

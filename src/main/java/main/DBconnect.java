@@ -1,9 +1,5 @@
 package main;
 
-/**
- *
- * @author devan
- */
 import component.LoggerUtil;
 import java.sql.Connection;
 import java.sql.DriverManager;
