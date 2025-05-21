@@ -33,18 +33,17 @@ public class loginregister extends JFrame {
     }
 
     private void showLogin() {
-        Option option = ModalDialog.createOption()
-                .setCloseOnPressedEscape(false)
-                .setBackgroundClickType(Option.BackgroundClickType.BLOCK)
-                .setAnimationEnabled(false)
-                .setOpacity(0.2f);
+         Option option = ModalDialog.createOption()
+            .setCloseOnPressedEscape(false)
+            .setBackgroundClickType(Option.BackgroundClickType.BLOCK)
+            .setAnimationEnabled(false)
+            .setOpacity(0.2f);
 
-        // Menggunakan path yang benar untuk icon sahabat.svg
-        // Coba beberapa kemungkinan path
-        String icon = "icon/account.svg";
-        
-        // Gunakan CustomModalBorder dengan path icon
-        ModalDialog.showModal(this, new CustomModalBorder(new Login(), "Login", icon), option, Login.ID);
+    // Gunakan path yang benar untuk icon sahabat.svg
+    String icon = "icon/account.svg";
+    
+    // Gunakan CustomModalBorder dengan path icon
+    ModalDialog.showModal(this, new CustomModalBorder(new Login(), "Login", icon), option, Login.ID);
     }
    
     public static void main(String[] args) {
