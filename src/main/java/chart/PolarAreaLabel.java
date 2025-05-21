@@ -9,10 +9,14 @@ import javax.swing.border.EmptyBorder;
 
 public class PolarAreaLabel extends JLabel {
 
-    public PolarAreaLabel() {
+    private String valueText;
+
+    public PolarAreaLabel(String name, double value) {
+        setText(name + ": " + (int) value);  // Gabungkan nama dan angka dalam satu string
         setBorder(new EmptyBorder(3, 25, 3, 3));
         setFont(getFont().deriveFont(0, 13));
         setForeground(new Color(100, 100, 100));
+        valueText = name + ": " + (int) value;  // Simpan teks dengan angka
     }
 
     @Override

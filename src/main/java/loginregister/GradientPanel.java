@@ -25,9 +25,9 @@ public class GradientPanel extends JPanel {
         // Warna-warna gradasi mirip gambar
         float[] dist = {0.0f, 0.5f, 1.0f};
         Color[] colors = {
-            new Color(249, 253, 80),     // #F9FD50 kuning terang
-            new Color(255, 255, 200),    // putih kekuningan
-            new Color(200, 240, 200)     // hijau pastel terang
+            new Color(36, 82, 72),     // #F9FD50 kuning terang
+            new Color(168, 222, 211),    // putih kekuningan
+            new Color(31, 179, 148)     // hijau pastel terang
         };
 
         RadialGradientPaint paint = new RadialGradientPaint(center, radius, dist, colors, CycleMethod.NO_CYCLE);

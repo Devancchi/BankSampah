@@ -1,6 +1,7 @@
 package view;
 
 import component.Item;
+import component.Jbutton;
 import component.ModelItem;
 import java.awt.*;
 import java.awt.event.*;
@@ -32,32 +33,29 @@ public class TabDataBarang extends javax.swing.JPanel {
     public TabDataBarang() {
         initComponents();
 
+
         scrollBarang.setViewportView(panelBarang);
         scrollBarang.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         // Hapus isi panel sebelum load data
         panelBarang.removeAll();
         panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
-
         ////////// get data barang  saat item di klik //////////
         try {
             String sql = "SELECT * FROM data_barang";
             PreparedStatement pst = conn.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
-
             while (rs.next()) {
                 int id = rs.getInt("id_barang"); // sesuaikan nama kolomnya
                 String nama = rs.getString("nama_barang");
                 String kode = rs.getString("kode_barang");
                 double harga = rs.getDouble("harga");
                 int stok = rs.getInt("stok");
-
                 byte[] gambarBytes = rs.getBytes("gambar"); // jika gambar disimpan sebagai BLOB
                 Icon icon = null;
                 if (gambarBytes != null) {
                     icon = new ImageIcon(gambarBytes);
                 }
-
                 // Di dalam method pembuatan item
                 ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
                 Item itemPanel = new Item();
@@ -93,7 +91,6 @@ public class TabDataBarang extends javax.swing.JPanel {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         panelBarang.revalidate();
         panelBarang.repaint();
 
@@ -219,7 +216,118 @@ public class TabDataBarang extends javax.swing.JPanel {
         txt_harga1.setText(String.valueOf(item.getHarga()));
         txt_stok1.setText(String.valueOf(item.getStok()));
     }
+    
+    private void searchDataBarang(String keyword) {
+        try {
+            panelBarang.removeAll();
+            panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
+            
+            String sql = "SELECT * FROM data_barang WHERE nama LIKE ? OR kode_barang LIKE ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            String likeKeyword = "%" + keyword + "%";
+            pst.setString(1, likeKeyword);
+            pst.setString(2, likeKeyword);
+            
+            ResultSet rs = pst.executeQuery();
+            
+            while (rs.next()) {
+                int id = rs.getInt("id_barang");
+                String nama = rs.getString("nama");
+                String kode = rs.getString("kode_barang");
+                double harga = rs.getDouble("harga");
+                int stok = rs.getInt("stok");
+                byte[] gambarBytes = rs.getBytes("gambar");
+                
+                Icon icon = null;
+                if (gambarBytes != null) {
+                    icon = new ImageIcon(gambarBytes);
+                }
+                
+                ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
+                Item itemPanel = new Item();
+                itemPanel.setData(model);
+                itemPanel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        selectedItem = model;
+                        btnEdit.setEnabled(true);
+                        btnHapus.setEnabled(true);
+                    }
+                });
+                
+                panelBarang.add(itemPanel);
+            }
+            
+            rs.close();
+            pst.close();
+            
+            panelBarang.revalidate();
+            panelBarang.repaint();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public String getRandomNumberString() {
+        Random rnd = new Random();
+        StringBuilder sb = new StringBuilder();
+        // Digit pertama tidak boleh 0 agar tetap 12 digit signifikan
+        sb.append(rnd.nextInt(9) + 1); // 1-9
+        // Tambahan 11 digit acak lainnya (0-9)
+        for (int i = 0; i < 11; i++) {
+            sb.append(rnd.nextInt(10));
+        }
+        
+        return sb.toString(); // Total 12 digit
+    }
+    
+    public void generate(String kode) {
+        try {
+            Code128Bean barcode = new Code128Bean();
+            final int dpi = 160;
+            
+            int length = kode.length();
 
+            // Menyesuaikan module width berdasarkan panjang kode
+            double moduleWidth;
+            if (length <= 8) {
+                moduleWidth = 0.6; // mm
+            } else if (length <= 15) {
+                moduleWidth = 0.45;
+            } else {
+                moduleWidth = 0.30;
+            }
+            
+            barcode.setModuleWidth(moduleWidth); // Lebar tiap garis barcode (mm)
+            barcode.setBarHeight(15); // Tinggi barcode (mm)
+            barcode.setFontSize(4); // Ukuran font
+            barcode.setQuietZone(2); // Margin samping (mm)
+            barcode.doQuietZone(true);
+
+            // Output file ke folder resources/barcode
+            File outputFile = new File("src/main/resources/barcode/" + kode + ".png");
+            outputFile.getParentFile().mkdirs();
+            
+            BitmapCanvasProvider canvas = new BitmapCanvasProvider(
+                    new FileOutputStream(outputFile),
+                    "image/x-png", dpi, BufferedImage.TYPE_BYTE_BINARY, false, 0);
+            
+            barcode.generateBarcode(canvas, kode);
+            canvas.finish();
+            
+            System.out.println("Barcode berhasil dibuat di: " + outputFile.getPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void setPanelEditFormData(ModelItem item) {
+        txt_kode1.setText(item.getKode());    // Contoh, asumsi txt_kode1 di panelEdit
+        txt_nama1.setText(item.getNama());
+        txt_harga1.setText(String.valueOf(item.getHarga()));
+        txt_stok1.setText(String.valueOf(item.getStok()));
+    }
+    
     private void showPanel() {
         panelMain.removeAll();
         panelMain.add(new TabDataBarang());
@@ -273,7 +381,6 @@ public class TabDataBarang extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-
     private void clearForm() {
         txt_gambar.setText("");
         txt_gambar1.setText("");
@@ -536,9 +643,9 @@ public class TabDataBarang extends javax.swing.JPanel {
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel6.setText("Tambah Data Barang");
-
         jLabel11.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
         jLabel11.setText("Kode Barang");
+
 
         jLabel12.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
         jLabel12.setText("Nama Barang");
@@ -869,7 +976,6 @@ public class TabDataBarang extends javax.swing.JPanel {
             pst.setBytes(5, gambarData);
             pst.executeUpdate();
             clearForm();
-
             JOptionPane.showMessageDialog(this, "Data berhasil disimpan.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
             Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, null, ex);
@@ -970,7 +1076,6 @@ public class TabDataBarang extends javax.swing.JPanel {
     private void btnPilihGambar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilihGambar1ActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Gambar", "jpg", "png", "jpeg", "gif"));
-
         int result = fileChooser.showOpenDialog(this);  // this = panel atau parent component
         if (result == JFileChooser.APPROVE_OPTION) {
             selectedImageFile = fileChooser.getSelectedFile();
