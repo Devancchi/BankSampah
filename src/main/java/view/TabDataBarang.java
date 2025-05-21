@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.logging.*;
 import main.DBconnect;
 import java.awt.image.BufferedImage;
@@ -22,66 +24,197 @@ import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
  * @author devan
  */
 public class TabDataBarang extends javax.swing.JPanel {
-    
+
     private final Connection conn = DBconnect.getConnection();
     private File selectedImageFile;
-    private ModelItem selectedItem;  // menyimpan item yang dipilih
+    private List<Item> itemPanels = new ArrayList<>();
+    private ModelItem selectedItem = null;  // menyimpan item yang dipilih
 
     public TabDataBarang() {
         initComponents();
-        
+
+
         scrollBarang.setViewportView(panelBarang);
         scrollBarang.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         // Hapus isi panel sebelum load data
         panelBarang.removeAll();
         panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
-        
+        ////////// get data barang  saat item di klik //////////
         try {
             String sql = "SELECT * FROM data_barang";
             PreparedStatement pst = conn.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
-            
             while (rs.next()) {
                 int id = rs.getInt("id_barang"); // sesuaikan nama kolomnya
-                String nama = rs.getString("nama");
+                String nama = rs.getString("nama_barang");
                 String kode = rs.getString("kode_barang");
                 double harga = rs.getDouble("harga");
                 int stok = rs.getInt("stok");
-                
                 byte[] gambarBytes = rs.getBytes("gambar"); // jika gambar disimpan sebagai BLOB
                 Icon icon = null;
                 if (gambarBytes != null) {
                     icon = new ImageIcon(gambarBytes);
                 }
-                
+                // Di dalam method pembuatan item
                 ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
                 Item itemPanel = new Item();
                 itemPanel.setData(model);
-                //mouselistener jika data diklik
                 itemPanel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        // hanya buat enable tombol
-                        selectedItem = itemPanel.getData();
+                        // 1. Reset semua item
+                        for (Item panel : itemPanels) {
+                            if (panel != itemPanel) { // Skip item yang sedang dipilih
+                                panel.setSelected(false);
+                                panel.repaint(); // Tambahkan ini
+                            }
+                        }
+
+                        // 2. Pilih item baru
+                        itemPanel.setSelected(true);
+                        itemPanel.repaint();
+
+                        // 3. Update state
+                        selectedItem = model;
                         btnEdit.setEnabled(true);
                         btnHapus.setEnabled(true);
-                        System.out.println("card diklik" + selectedItem.getNama());
                     }
                 });
-                
+                itemPanels.add(itemPanel); // Simpan ke list
+
                 panelBarang.add(itemPanel);
             }
-            
+
             rs.close();
             pst.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
         panelBarang.revalidate();
         panelBarang.repaint();
-        
+
+    }
+
+    ////////// mencari data barang //////////
+    private void searchDataBarang(String keyword) {
+        try {
+            panelBarang.removeAll();
+            panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
+
+            String sql = "SELECT * FROM data_barang WHERE nama LIKE ? OR kode_barang LIKE ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            String likeKeyword = "%" + keyword + "%";
+            pst.setString(1, likeKeyword);
+            pst.setString(2, likeKeyword);
+
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("id_barang");
+                String nama = rs.getString("nama_barang");
+                String kode = rs.getString("kode_barang");
+                double harga = rs.getDouble("harga");
+                int stok = rs.getInt("stok");
+                byte[] gambarBytes = rs.getBytes("gambar");
+
+                Icon icon = null;
+                if (gambarBytes != null) {
+                    icon = new ImageIcon(gambarBytes);
+                }
+
+                ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
+                Item itemPanel = new Item();
+                itemPanel.setData(model);
+                itemPanel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        selectedItem = model;
+                        btnEdit.setEnabled(true);
+                        btnHapus.setEnabled(true);
+                    }
+                });
+
+                panelBarang.add(itemPanel);
+            }
+
+            rs.close();
+            pst.close();
+
+            panelBarang.revalidate();
+            panelBarang.repaint();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    ////////// generate random number untuk barcode //////////
+    public String getRandomNumberString() {
+        Random rnd = new Random();
+        StringBuilder sb = new StringBuilder();
+        // Digit pertama tidak boleh 0 agar tetap 12 digit signifikan
+        sb.append(rnd.nextInt(9) + 1); // 1-9
+        // Tambahan 11 digit acak lainnya (0-9)
+        for (int i = 0; i < 11; i++) {
+            sb.append(rnd.nextInt(10));
+        }
+
+        return sb.toString(); // Total 12 digit
+    }
+
+    ////////// generate barcode //////////
+    public void generate(String kode) {
+        String namaBarang = txt_nama.getText().trim();
+        try {
+            Code128Bean barcode = new Code128Bean();
+            final int dpi = 160;
+
+            int length = kode.length();
+
+            // Menyesuaikan module width berdasarkan panjang kode
+            double moduleWidth;
+            if (length <= 8) {
+                moduleWidth = 0.6; // mm
+            } else if (length <= 15) {
+                moduleWidth = 0.45;
+            } else {
+                moduleWidth = 0.30;
+            }
+
+            barcode.setModuleWidth(moduleWidth); // Lebar tiap garis barcode (mm)
+            barcode.setBarHeight(15); // Tinggi barcode (mm)
+            barcode.setFontSize(4); // Ukuran font
+            barcode.setQuietZone(2); // Margin samping (mm)
+            barcode.doQuietZone(true);
+
+            // Sanitasi nama barang untuk nama file
+            String cleanName = namaBarang
+                    .replaceAll("[\\\\/:*?\"<>|]", "") // Hapus karakter ilegal
+                    .replace(" ", "_"); // Ganti spasi dengan underscore
+
+            // Output file ke folder resources/barcode
+            File outputFile = new File("C:/Users/33/Downloads/" + kode + "_" + cleanName + ".png");
+            outputFile.getParentFile().mkdirs();
+
+            BitmapCanvasProvider canvas = new BitmapCanvasProvider(
+                    new FileOutputStream(outputFile),
+                    "image/x-png", dpi, BufferedImage.TYPE_BYTE_BINARY, false, 0);
+
+            barcode.generateBarcode(canvas, kode);
+            canvas.finish();
+
+            System.out.println("Barcode berhasil dibuat di: " + outputFile.getPath());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setPanelEditFormData(ModelItem item) {
+        txt_kode1.setText(item.getKode());    // Contoh, asumsi txt_kode1 di panelEdit
+        txt_nama1.setText(item.getNama());
+        txt_harga1.setText(String.valueOf(item.getHarga()));
+        txt_stok1.setText(String.valueOf(item.getStok()));
     }
     
     private void searchDataBarang(String keyword) {
@@ -201,29 +334,29 @@ public class TabDataBarang extends javax.swing.JPanel {
         panelMain.repaint();
         panelMain.revalidate();
     }
-    
+
     private void loadDataBarang() {
         try {
             panelBarang.removeAll();
             panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
-            
+
             String sql = "SELECT * FROM data_barang";
             PreparedStatement pst = conn.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
-            
+
             while (rs.next()) {
                 int id = rs.getInt("id_barang");
-                String nama = rs.getString("nama");
+                String nama = rs.getString("nama_barang");
                 String kode = rs.getString("kode_barang");
                 double harga = rs.getDouble("harga");
                 int stok = rs.getInt("stok");
                 byte[] gambarBytes = rs.getBytes("gambar");
-                
+
                 Icon icon = null;
                 if (gambarBytes != null) {
                     icon = new ImageIcon(gambarBytes);
                 }
-                
+
                 ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
                 Item itemPanel = new Item();
                 itemPanel.setData(model);
@@ -235,20 +368,19 @@ public class TabDataBarang extends javax.swing.JPanel {
                         btnHapus.setEnabled(true);
                     }
                 });
-                
+
                 panelBarang.add(itemPanel);
             }
-            
+
             rs.close();
             pst.close();
-            
+
             panelBarang.revalidate();
             panelBarang.repaint();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
     private void clearForm() {
         txt_gambar.setText("");
         txt_gambar1.setText("");
@@ -260,7 +392,7 @@ public class TabDataBarang extends javax.swing.JPanel {
         txt_stok.setText("");
         txt_stok1.setText("");
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -413,8 +545,8 @@ public class TabDataBarang extends javax.swing.JPanel {
             ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowSearchLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jLabel1)
+                .addContainerGap(14, Short.MAX_VALUE))
             .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(ShadowSearchLayout.createSequentialGroup()
                     .addContainerGap()
@@ -435,12 +567,12 @@ public class TabDataBarang extends javax.swing.JPanel {
                 .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(86, Short.MAX_VALUE))
             .addGroup(shadowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(shadowPanelLayout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 533, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(565, Short.MAX_VALUE)))
+                    .addContainerGap(623, Short.MAX_VALUE)))
         );
         shadowPanelLayout.setVerticalGroup(
             shadowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -451,7 +583,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                     .addComponent(btnKembali, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
                     .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnTambah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
             .addGroup(shadowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(shadowPanelLayout.createSequentialGroup()
                     .addGap(8, 8, 8)
@@ -473,11 +605,11 @@ public class TabDataBarang extends javax.swing.JPanel {
         panelBarang.setLayout(panelBarangLayout);
         panelBarangLayout.setHorizontalGroup(
             panelBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1110, Short.MAX_VALUE)
+            .addGap(0, 1168, Short.MAX_VALUE)
         );
         panelBarangLayout.setVerticalGroup(
             panelBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 610, Short.MAX_VALUE)
+            .addGap(0, 826, Short.MAX_VALUE)
         );
 
         scrollBarang.setViewportView(panelBarang);
@@ -486,12 +618,12 @@ public class TabDataBarang extends javax.swing.JPanel {
         ShadowUtama.setLayout(ShadowUtamaLayout);
         ShadowUtamaLayout.setHorizontalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowUtamaLayout.createSequentialGroup()
-                .addContainerGap(67, Short.MAX_VALUE)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(shadowPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(scrollBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(32, 32, 32))
+            .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scrollBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(shadowPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         ShadowUtamaLayout.setVerticalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -499,8 +631,8 @@ public class TabDataBarang extends javax.swing.JPanel {
                 .addGap(17, 17, 17)
                 .addComponent(shadowPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(scrollBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 610, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addComponent(scrollBarang, javax.swing.GroupLayout.DEFAULT_SIZE, 826, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         panelView.add(ShadowUtama, "card2");
@@ -511,9 +643,9 @@ public class TabDataBarang extends javax.swing.JPanel {
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel6.setText("Tambah Data Barang");
-
         jLabel11.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
         jLabel11.setText("Kode Barang");
+
 
         jLabel12.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
         jLabel12.setText("Nama Barang");
@@ -833,7 +965,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             }
         }
         try {
-            String sql = "INSERT INTO data_barang (kode_barang, nama, harga, stok, gambar) "
+            String sql = "INSERT INTO data_barang (kode_barang, nama_barang, harga, stok, gambar) "
                     + "VALUES (?, ?, ?, ?, ?)";
             PreparedStatement pst = conn.prepareStatement(sql);
             generate(kodeBrg);
@@ -844,18 +976,17 @@ public class TabDataBarang extends javax.swing.JPanel {
             pst.setBytes(5, gambarData);
             pst.executeUpdate();
             clearForm();
-            
             JOptionPane.showMessageDialog(this, "Data berhasil disimpan.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
             Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Gagal menyimpan data.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan data : " + ex.getMessage());
         }
     }//GEN-LAST:event_btn_SaveAddActionPerformed
 
     private void btnPilihGambarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilihGambarActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Gambar", "jpg", "png", "jpeg", "gif"));
-        
+
         int result = fileChooser.showOpenDialog(this);  // this = panel atau parent component
         if (result == JFileChooser.APPROVE_OPTION) {
             selectedImageFile = fileChooser.getSelectedFile();
@@ -880,7 +1011,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                     pst.setInt(1, selectedItem.getId());
                     int rowsAffected = pst.executeUpdate();
                     pst.close();
-                    
+
                     if (rowsAffected > 0) {
                         JOptionPane.showMessageDialog(this, "Barang berhasil dihapus.");
                         loadDataBarang();
@@ -892,7 +1023,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat menghapus barang.");
+                    JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat menghapus barang :" + ex.getMessage());
                 }
             }
         } else {
@@ -914,12 +1045,12 @@ public class TabDataBarang extends javax.swing.JPanel {
                 try (FileInputStream fis = new FileInputStream(selectedImageFile)) {
                     gambarData = fis.readAllBytes();
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "Gagal membaca file gambar.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Gagal membaca file gambar : " + ex.getMessage());
                     return;
                 }
             }
-            
-            String sql = "UPDATE data_barang SET kode_barang = ?, nama = ?, harga = ?, stok = ?, gambar = ? WHERE id_barang = ?";
+
+            String sql = "UPDATE data_barang SET kode_barang = ?, nama_barang = ?, harga = ?, stok = ?, gambar = ? WHERE id_barang = ?";
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, kodeBrg);
             pst.setString(2, namaBrg);
@@ -929,11 +1060,11 @@ public class TabDataBarang extends javax.swing.JPanel {
             pst.setInt(6, id);
             pst.executeUpdate();
             clearForm();
-            
+
             JOptionPane.showMessageDialog(this, "Data berhasil diupdate.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
             Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Gagal mengupdate data.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Gagal mengupdate data : " + ex.getMessage());
         }
 
     }//GEN-LAST:event_btn_SaveEditActionPerformed
@@ -945,7 +1076,6 @@ public class TabDataBarang extends javax.swing.JPanel {
     private void btnPilihGambar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilihGambar1ActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Gambar", "jpg", "png", "jpeg", "gif"));
-        
         int result = fileChooser.showOpenDialog(this);  // this = panel atau parent component
         if (result == JFileChooser.APPROVE_OPTION) {
             selectedImageFile = fileChooser.getSelectedFile();
