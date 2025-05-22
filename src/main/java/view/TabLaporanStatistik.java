@@ -21,16 +21,19 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         loadData("");
         
         chart.setTitle("Chart Data");
-        chart.addLegend("Amount", Color.decode("#7b4397"), Color.decode("#dc2430"));
-        //chart.addLegend("Cost", Color.decode("#e65c00"), Color.decode("#F9D423"));
-        chart.addLegend("Profit", Color.decode("#0099F7"), Color.decode("#F11712"));
-        test();
+
+// Harus ADA 3 legend sesuai urutan data
+chart.addLegend("Amount", Color.decode("#7b4397"), Color.decode("#dc2430"));
+chart.addLegend("Cost", Color.decode("#e65c00"), Color.decode("#F9D423"));
+chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
+
+        setdata();
     }
     
     private void test() {
         chart.clear();
-        chart.addData(new ModelChart("January", new double[]{500, 50, 100}));
-        chart.addData(new ModelChart("February", new double[]{600, 300, 150}));
+        chart.addData(new ModelChart("Jan", new double[]{500, 50, 100}));
+        chart.addData(new ModelChart("Feb", new double[]{600, 300, 150}));
         chart.addData(new ModelChart("March", new double[]{200, 50, 900}));
         chart.addData(new ModelChart("April", new double[]{480, 700, 100}));
         chart.addData(new ModelChart("May", new double[]{350, 540, 500}));
@@ -38,34 +41,47 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         chart.start();
     }
     
-    private void setdata(){
-        try {
-            List<ModelData> lists = new ArrayList<>();
+   private void setdata() {
+    try {
+        List<ModelData>lists=new ArrayList<>();
         DBconnect.getInstance().getConnection();
-        String sql="SELECT DATE_FORMAT(tanggal,'%m') AS 'Month', SUM(total_jumlah) AS 'Amount', SUM(total_harga) AS 'Profit' FROM `transaksi` GROUP BY DATE_FORMAT(tanggal,'%m%Y') ORDER BY tanggal DESC LIMIT 7";
+        String sql = "SELECT DATE_FORMAT(t.tanggal, '%M') AS 'Month', " +
+                     "SUM(t.total_harga) AS Amount, " +
+                     "SUM(s.harga_jual) AS Cost, " +
+                     "SUM(t.total_harga) - SUM(s.harga_jual) AS Profit " +
+                     "FROM laporan_pemasukan lplpm " +
+                     "JOIN transaksi t ON lplpm.id_transaksi = t.id_transaksi " +
+                     "JOIN jual_sampah s ON lplpm.id_jual_sampah = s.id_jual_sampah " +
+                     "GROUP BY DATE_FORMAT(t.tanggal,'%m%Y') " +
+                     "ORDER BY t.tanggal DESC " +
+                     "LIMIT 7;";
         PreparedStatement p = DBconnect.getInstance().getConn().prepareStatement(sql);
         ResultSet r = p.executeQuery();
-            while (r.next()) {
-                String month = r.getString("Month");
-                double amount = r.getDouble("Amount");  
-                double profit = r.getDouble("Profit");
-                lists.add(new ModelData(month, amount, profit));
-            }
-            r.close();
-            p.close();
-            //  Add Data to chart
-            for (int i = lists.size() - 1; i >= 0; i--) {
+        while(r.next()){
+            String month=r.getString("Month");
+            double amount=r.getDouble("Amount");
+            double cost=r.getDouble("Cost");
+            double profit=r.getDouble("Profit");
+            lists.add(new ModelData(month, amount, cost, profit));
+        }
+        p.close();
+        r.close();
+        
+        for (int i = lists.size() - 1; i >= 0; i--) {
                 ModelData d = lists.get(i);
-                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getAmount(), d.getProfit()}));
+                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getAmount(), d.getCost(), d.getProfit()}));
             }
-            //  Start to show data with animation
-            chart.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        
+
+        chart.start();
+    } catch (Exception e) {
+        e.printStackTrace();
     }
-        
-    }
+}
+
+
+
+
+
     
        private void loadData(String filterJenis) {
      DefaultTableModel model = new DefaultTableModel() {
@@ -418,7 +434,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                 .addGroup(card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
                     .addComponent(lb_pemasukan))
-                .addContainerGap(146, Short.MAX_VALUE))
+                .addGap(89, 89, 89))
         );
         card1Layout.setVerticalGroup(
             card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -473,7 +489,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                 .addGroup(card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel16)
                     .addComponent(lb_pengeluaran))
-                .addContainerGap(159, Short.MAX_VALUE))
+                .addGap(137, 137, 137))
         );
         card2Layout.setVerticalGroup(
             card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -486,7 +502,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lb_pengeluaran)
                         .addGap(6, 6, 6)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         card3.setFillColor(new java.awt.Color(255, 255, 255));
@@ -527,7 +543,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                 .addGroup(card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel19)
                     .addComponent(lb_total))
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addGap(163, 163, 163))
         );
         card3Layout.setVerticalGroup(
             card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -541,7 +557,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                     .addGroup(card3Layout.createSequentialGroup()
                         .addGap(15, 15, 15)
                         .addComponent(jLabel18)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         card4.setFillColor(new java.awt.Color(255, 255, 255));
@@ -693,12 +709,11 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                 .addGap(27, 27, 27)
                 .addComponent(card4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(card2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
+                    .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(card2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(22, 22, 22)
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 593, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(card5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
