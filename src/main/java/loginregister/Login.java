@@ -115,6 +115,7 @@ public class Login extends JPanel {
                         // Login berhasil
                         SwingUtilities.getWindowAncestor(this).dispose();  // Tutup form login
 
+
                         int idUser = rs.getInt("id_user");
                         String nama = rs.getString("nama_user");
                         String level = rs.getString("level");
