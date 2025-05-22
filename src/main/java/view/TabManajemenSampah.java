@@ -69,51 +69,51 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         }
     }
 
-    private void clearPanelAdd() {
-        txt_JenisAdd.setText("");
-        txt_KategoriAdd.setText("");
-        txt_HargaAdd.setText("");
-    }
+//    private void clearPanelAdd() {
+//        txt_JenisAdd.setText("");
+//        txt_KategoriAdd.setText("");
+//        txt_HargaAdd.setText("");
+//    }
+//
+//    private void clearPanelEdit() {
+//        txt_HargaEdit.setText("");
+//        txt_JenisEdit.setText("");
+//        txt_KategoriEdit.setText("");
+//    }
 
-    private void clearPanelEdit() {
-        txt_HargaEdit.setText("");
-        txt_JenisEdit.setText("");
-        txt_KategoriEdit.setText("");
-    }
+//    private void setPanelEditFormData(int selectedRow) {
+//        txt_JenisEdit.setText(tblSampah.getValueAt(selectedRow, 1).toString());
+//        txt_KategoriEdit.setText(tblSampah.getValueAt(selectedRow, 2).toString());
+//        txt_HargaEdit.setText(tblSampah.getValueAt(selectedRow, 3).toString());
+//
+//        selectedIdSampah = Integer.parseInt(tblSampah.getValueAt(selectedRow, 0).toString());
+//    }
 
-    private void setPanelEditFormData(int selectedRow) {
-        txt_JenisEdit.setText(tblSampah.getValueAt(selectedRow, 1).toString());
-        txt_KategoriEdit.setText(tblSampah.getValueAt(selectedRow, 2).toString());
-        txt_HargaEdit.setText(tblSampah.getValueAt(selectedRow, 3).toString());
-
-        selectedIdSampah = Integer.parseInt(tblSampah.getValueAt(selectedRow, 0).toString());
-    }
-
-    private void inisialisasiTabel() {
-        // Mengatur model tabel
-        tblModel = new DefaultTableModel(new String[]{"ID Sampah", "Jenis Sampah", "Kategori Sampah", "Harga/Kg", "Tanggal"}, 0);
-        tblSampah.setModel(tblModel);
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT s.id_sampah, s.harga_sampah, s.tanggal,  k.nama_kategori,  j.nama_jenis "
-                + "FROM sampah s "
-                + "JOIN jenis_sampah j ON s.id_jenis = j.id_jenis "
-                + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
-                + "ORDER BY s.id_sampah")) {
-            while (rs.next()) {
-                Object[] row = {
-                    rs.getString("id_sampah"),
-                    rs.getString("nama_jenis"),
-                    rs.getString("nama_kategori"),
-                    rs.getInt("harga_sampah"),
-                    rs.getDate("tanggal")
-                };
-                tblModel.addRow(row);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
-        }
-
-    }
+//    private void inisialisasiTabel() {
+//        // Mengatur model tabel
+//        tblModel = new DefaultTableModel(new String[]{"ID Sampah", "Jenis Sampah", "Kategori Sampah", "Harga/Kg", "Tanggal"}, 0);
+//        tblSampah.setModel(tblModel);
+//        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT s.id_sampah, s.harga_sampah, s.tanggal,  k.nama_kategori,  j.nama_jenis "
+//                + "FROM sampah s "
+//                + "JOIN jenis_sampah j ON s.id_jenis = j.id_jenis "
+//                + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
+//                + "ORDER BY s.id_sampah")) {
+//            while (rs.next()) {
+//                Object[] row = {
+//                    rs.getString("id_sampah"),
+//                    rs.getString("nama_jenis"),
+//                    rs.getString("nama_kategori"),
+//                    rs.getInt("harga_sampah"),
+//                    rs.getDate("tanggal")
+//                };
+//                tblModel.addRow(row);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+//        }
+//
+//    }
 
     private void loadTabelKategori() {
         // Mengatur model tabel
@@ -173,11 +173,11 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         cbxKategori_pnView.addItem("-- Pilih Kategori --");
     }
 
-    private void setPanelEditFormData(int selectedRow) {
-        txt_HargaEdit.setText(tblSampah.getValueAt(selectedRow, 3).toString());
-
-        selectedIdSampah = Integer.parseInt(tblSampah.getValueAt(selectedRow, 0).toString());
-    }
+//    private void setPanelEditFormData(int selectedRow) {
+//        txt_HargaEdit.setText(tblSampah.getValueAt(selectedRow, 3).toString());
+//
+//        selectedIdSampah = Integer.parseInt(tblSampah.getValueAt(selectedRow, 0).toString());
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -206,7 +206,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         lblTotal = new javax.swing.JLabel();
         txt_Kode = new javax.swing.JTextField();
         jLabel17 = new javax.swing.JLabel();
-
         btn_SampahKeluar = new component.Jbutton();
         shadowPanel2 = new component.ShadowPanel();
         jLabel15 = new javax.swing.JLabel();
@@ -219,22 +218,18 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblSampah = new component.Table();
         btnEditHarga = new component.Jbutton();
-
         btnKelola_JK = new component.Jbutton();
         jLabel2 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
-
         panelAdd = new javax.swing.JPanel();
         ShadowUtama1 = new component.ShadowPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-
         jLabel13 = new javax.swing.JLabel();
         txt_HargaAdd = new javax.swing.JTextField();
         btnSimpanHarga = new component.Jbutton();
         btnKembaliT = new component.Jbutton();
-
         jLabel21 = new javax.swing.JLabel();
         cbxJenis_pnAdd = new javax.swing.JComboBox<>();
         cbxKategori_pnAdd = new javax.swing.JComboBox<>();
@@ -253,7 +248,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         cbxPage = new javax.swing.JComboBox<>();
         btnNext = new javax.swing.JButton();
         btnLastPage = new javax.swing.JButton();
-
         panelJK = new javax.swing.JPanel();
         ShadowUtama4 = new component.ShadowPanel();
         jLabel24 = new javax.swing.JLabel();
@@ -284,7 +278,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         cbxJenis_pnEdit = new javax.swing.JComboBox<>();
         cbxKategori_pnEdit = new javax.swing.JComboBox<>();
 
-
         setPreferredSize(new java.awt.Dimension(1200, 716));
         setLayout(new java.awt.CardLayout());
 
@@ -297,42 +290,46 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         shadowPanel1.setMaximumSize(new java.awt.Dimension(1206, 400));
         shadowPanel1.setPreferredSize(new java.awt.Dimension(1206, 400));
 
-
         panelTransaksiSampah.setMaximumSize(new java.awt.Dimension(1206, 343));
 
         jLabel1.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel1.setText("Kode Nasabah");
-
+        panelTransaksiSampah.add(jLabel1);
 
         txt_Nama.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_NamaActionPerformed(evt);
             }
         });
+        panelTransaksiSampah.add(txt_Nama);
 
         jLabel3.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel3.setText("Jenis Sampah");
+        panelTransaksiSampah.add(jLabel3);
 
         jLabel4.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel4.setText("Kategori");
-
+        panelTransaksiSampah.add(jLabel4);
 
         cbxJenis_pnView.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbxJenis_pnViewActionPerformed(evt);
             }
         });
+        panelTransaksiSampah.add(cbxJenis_pnView);
+
+        panelTransaksiSampah.add(cbxKategori_pnView);
 
         jLabel5.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel5.setText("Berat Sampah");
-
+        panelTransaksiSampah.add(jLabel5);
 
         txt_Berat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_BeratActionPerformed(evt);
             }
         });
-
+        panelTransaksiSampah.add(txt_Berat);
 
         btn_SampahMasuk.setBackground(new java.awt.Color(255, 255, 51));
         btn_SampahMasuk.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_masuk.png"))); // NOI18N
@@ -344,15 +341,17 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         btn_SampahMasuk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_SampahMasukActionPerformed(evt);
-
             }
         });
+        panelTransaksiSampah.add(btn_SampahMasuk);
 
         jLabel10.setFont(new java.awt.Font("NSimSun", 0, 20)); // NOI18N
         jLabel10.setText("Rp.");
+        panelTransaksiSampah.add(jLabel10);
 
         lblTotal.setFont(new java.awt.Font("NSimSun", 0, 48)); // NOI18N
         lblTotal.setText("0");
+        panelTransaksiSampah.add(lblTotal);
 
         txt_Kode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -364,10 +363,11 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 txt_KodeKeyPressed(evt);
             }
         });
+        panelTransaksiSampah.add(txt_Kode);
 
         jLabel17.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel17.setText("Nama Nasabah");
-
+        panelTransaksiSampah.add(jLabel17);
 
         btn_SampahKeluar.setBackground(new java.awt.Color(255, 255, 51));
         btn_SampahKeluar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_keluar.png"))); // NOI18N
@@ -381,98 +381,19 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 btn_SampahKeluarActionPerformed(evt);
             }
         });
-
-        javax.swing.GroupLayout panelTransaksiSampahLayout = new javax.swing.GroupLayout(panelTransaksiSampah);
-        panelTransaksiSampah.setLayout(panelTransaksiSampahLayout);
-        panelTransaksiSampahLayout.setHorizontalGroup(
-            panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addComponent(btn_SampahMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_SampahKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTransaksiSampahLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(136, 136, 136))
-            .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
-                    .addGap(36, 36, 36)
-                    .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel3)
-                        .addComponent(jLabel5)
-                        .addComponent(txt_Berat)
-                        .addComponent(cbxKategori_pnView, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTransaksiSampahLayout.createSequentialGroup()
-                            .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
-                                    .addComponent(txt_Kode)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                                .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
-                                    .addComponent(jLabel1)
-                                    .addGap(119, 119, 119)))
-                            .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel17)
-                                .addComponent(txt_Nama, javax.swing.GroupLayout.PREFERRED_SIZE, 525, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addComponent(jLabel4)
-                        .addComponent(cbxJenis_pnView, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addContainerGap(456, Short.MAX_VALUE)))
-        );
-        panelTransaksiSampahLayout.setVerticalGroup(
-            panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
-                .addGap(49, 49, 49)
-                .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblTotal)
-                    .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addGap(51, 51, 51)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
-                .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_SampahKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_SampahMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(73, 73, 73))
-            .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
-                    .addGap(31, 31, 31)
-                    .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(jLabel17))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txt_Nama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txt_Kode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jLabel3)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(cbxJenis_pnView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jLabel4)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(cbxKategori_pnView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jLabel5)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(txt_Berat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(134, Short.MAX_VALUE)))
-        );
-
+        panelTransaksiSampah.add(btn_SampahKeluar);
 
         javax.swing.GroupLayout shadowPanel1Layout = new javax.swing.GroupLayout(shadowPanel1);
         shadowPanel1.setLayout(shadowPanel1Layout);
         shadowPanel1Layout.setHorizontalGroup(
             shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panelTransaksiSampah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-
         );
         shadowPanel1Layout.setVerticalGroup(
             shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shadowPanel1Layout.createSequentialGroup()
                 .addComponent(panelTransaksiSampah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 34, Short.MAX_VALUE))
+                .addGap(0, 100, Short.MAX_VALUE))
         );
 
         jLabel15.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
@@ -521,7 +442,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         btnTambahHarga.setFillOver(new java.awt.Color(69, 160, 75));
         btnTambahHarga.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnTambahHarga.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTambahHargaActionPerformed(evt);
             }
@@ -565,7 +485,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         ) {
             Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false
@@ -589,13 +508,11 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         if (tblSampah.getColumnModel().getColumnCount() > 0) {
             tblSampah.getColumnModel().getColumn(0).setResizable(false);
             tblSampah.getColumnModel().getColumn(1).setResizable(false);
-
             tblSampah.getColumnModel().getColumn(1).setHeaderValue("Jenis Sampah");
             tblSampah.getColumnModel().getColumn(2).setResizable(false);
             tblSampah.getColumnModel().getColumn(3).setResizable(false);
             tblSampah.getColumnModel().getColumn(4).setResizable(false);
             tblSampah.getColumnModel().getColumn(4).setHeaderValue("Tanggal");
-
         }
 
         btnEditHarga.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_edit.png"))); // NOI18N
@@ -610,7 +527,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 btnEditHargaActionPerformed(evt);
             }
         });
-
 
         btnKelola_JK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_edit.png"))); // NOI18N
         btnKelola_JK.setText("Jenis dan Kategori");
@@ -630,7 +546,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         jLabel20.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel20.setText("Kelola Harga :");
 
-
         javax.swing.GroupLayout shadowPanel3Layout = new javax.swing.GroupLayout(shadowPanel3);
         shadowPanel3.setLayout(shadowPanel3Layout);
         shadowPanel3Layout.setHorizontalGroup(
@@ -644,30 +559,25 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     .addGroup(shadowPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel16)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnKelola_JK, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(75, 75, 75)
                         .addComponent(jLabel20)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-
                         .addComponent(btnTambahHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEditHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnHapusHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-
                         .addComponent(btnBatalHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(37, 37, 37))))
-
         );
         shadowPanel3Layout.setVerticalGroup(
             shadowPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shadowPanel3Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-
                 .addGroup(shadowPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnHapusHarga, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnBatalHarga, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -678,7 +588,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     .addGroup(shadowPanel3Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-
                     .addComponent(btnTambahHarga, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -712,18 +621,22 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel6.setText("Tambah Harga Sampah");
+        ShadowUtama1.add(jLabel6);
 
         jLabel11.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
         jLabel11.setText("Jenis Sampah");
+        ShadowUtama1.add(jLabel11);
 
         jLabel12.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
         jLabel12.setText("Kategori");
-
+        ShadowUtama1.add(jLabel12);
 
         jLabel13.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
         jLabel13.setText("Harga Setor/Kg");
+        ShadowUtama1.add(jLabel13);
 
         txt_HargaAdd.setPreferredSize(new java.awt.Dimension(20, 22));
+        ShadowUtama1.add(txt_HargaAdd);
 
         btnSimpanHarga.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_simpan.png"))); // NOI18N
         btnSimpanHarga.setText("Simpan");
@@ -736,6 +649,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 btnSimpanHargaActionPerformed(evt);
             }
         });
+        ShadowUtama1.add(btnSimpanHarga);
 
         btnKembaliT.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
         btnKembaliT.setText("Kembali");
@@ -748,188 +662,30 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 btnKembaliTActionPerformed(evt);
             }
         });
+        ShadowUtama1.add(btnKembaliT);
 
         jLabel21.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
         jLabel21.setText("Tanggal");
+        ShadowUtama1.add(jLabel21);
 
         cbxJenis_pnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbxJenis_pnAddActionPerformed(evt);
             }
         });
+        ShadowUtama1.add(cbxJenis_pnAdd);
+
+        ShadowUtama1.add(cbxKategori_pnAdd);
 
         jLabel23.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
         jLabel23.setText("Harga Jual/Kg");
+        ShadowUtama1.add(jLabel23);
 
         txt_HargaAdd1.setEditable(false);
         txt_HargaAdd1.setPreferredSize(new java.awt.Dimension(20, 22));
-
-
-        javax.swing.GroupLayout ShadowUtama1Layout = new javax.swing.GroupLayout(ShadowUtama1);
-        ShadowUtama1.setLayout(ShadowUtama1Layout);
-        ShadowUtama1Layout.setHorizontalGroup(
-            ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(ShadowUtama1Layout.createSequentialGroup()
-
-                        .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                                .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnSimpanHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnKembaliT, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                                .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(cbxJenis_pnAdd, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(cbxKategori_pnAdd, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txt_HargaAdd, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel23, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txt_HargaAdd1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                                        .addComponent(jLabel21)
-                                        .addGap(913, 913, 913)))
-                                .addGap(169, 169, 169)))
-                        .addGap(0, 181, Short.MAX_VALUE))))
-
-        );
-        ShadowUtama1Layout.setVerticalGroup(
-            ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnSimpanHarga, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
-                    .addComponent(btnKembaliT, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel11)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-
-                .addComponent(cbxJenis_pnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25)
-                .addComponent(jLabel12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbxKategori_pnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25)
-                .addComponent(jLabel13)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_HargaAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel23)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_HargaAdd1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel21)
-                .addContainerGap(656, Short.MAX_VALUE))
-
-        );
+        ShadowUtama1.add(txt_HargaAdd1);
 
         panelAdd.add(ShadowUtama1, "card2");
-
-        panelEdit.setLayout(new java.awt.CardLayout());
-
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
-        jLabel8.setText("Edit Harga Sampah");
-
-        jLabel14.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
-        jLabel14.setText("Jenis Sampah");
-
-        jLabel18.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
-        jLabel18.setText("Kategori");
-
-        txt_KategoriEdit.setPreferredSize(new java.awt.Dimension(20, 22));
-
-        jLabel19.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
-        jLabel19.setText("Harga/Kg");
-
-        txt_HargaEdit.setPreferredSize(new java.awt.Dimension(20, 22));
-
-        btnSimpanEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_simpan.png"))); // NOI18N
-        btnSimpanEdit.setText("Simpan");
-        btnSimpanEdit.setFillClick(new java.awt.Color(30, 100, 150));
-        btnSimpanEdit.setFillOriginal(new java.awt.Color(41, 128, 185));
-        btnSimpanEdit.setFillOver(new java.awt.Color(36, 116, 170));
-        btnSimpanEdit.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnSimpanEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSimpanEditActionPerformed(evt);
-            }
-        });
-
-        btnKembaliE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
-        btnKembaliE.setText("Kembali");
-        btnKembaliE.setFillClick(new java.awt.Color(200, 125, 0));
-        btnKembaliE.setFillOriginal(new java.awt.Color(243, 156, 18));
-        btnKembaliE.setFillOver(new java.awt.Color(230, 145, 10));
-        btnKembaliE.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnKembaliE.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnKembaliEActionPerformed(evt);
-            }
-        });
-
-        txt_JenisEdit.setPreferredSize(new java.awt.Dimension(20, 22));
-
-        javax.swing.GroupLayout ShadowUtama3Layout = new javax.swing.GroupLayout(ShadowUtama3);
-        ShadowUtama3.setLayout(ShadowUtama3Layout);
-        ShadowUtama3Layout.setHorizontalGroup(
-            ShadowUtama3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowUtama3Layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(ShadowUtama3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ShadowUtama3Layout.createSequentialGroup()
-                        .addComponent(jLabel19)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(ShadowUtama3Layout.createSequentialGroup()
-                        .addGroup(ShadowUtama3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_KategoriEdit, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txt_HargaEdit, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(ShadowUtama3Layout.createSequentialGroup()
-                                .addComponent(jLabel8)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 720, Short.MAX_VALUE)
-                                .addComponent(btnSimpanEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnKembaliE, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txt_JenisEdit, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 83, Short.MAX_VALUE))))
-        );
-        ShadowUtama3Layout.setVerticalGroup(
-            ShadowUtama3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowUtama3Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(ShadowUtama3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnKembaliE, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
-                    .addComponent(btnSimpanEdit, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel14)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_JenisEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(13, 13, 13)
-                .addComponent(jLabel18)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_KategoriEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel19)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_HargaEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(730, Short.MAX_VALUE))
-        );
-
-        panelEdit.add(ShadowUtama3, "card2");
-
-        panelAdd.add(panelEdit, "card2");
 
         panelMain.add(panelAdd, "card2");
 
@@ -984,7 +740,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowSearch1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1524,16 +1280,16 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     }//GEN-LAST:event_btnHapusHargaActionPerformed
 
     private void btnEditHargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditHargaActionPerformed
-        int selectedRow = tblSampah.getSelectedRow();
-        if (selectedRow != -1) {
-            setPanelEditFormData(selectedRow);
-        }
-
-        panelMain.removeAll();
-        panelMain.add(panelEdit);
-        panelMain.repaint();
-        panelMain.revalidate();
-
+//        int selectedRow = tblSampah.getSelectedRow();
+//        if (selectedRow != -1) {
+//            setPanelEditFormData(selectedRow);
+//        }
+//
+//        panelMain.removeAll();
+//        panelMain.add(panelEdit);
+//        panelMain.repaint();
+//        panelMain.revalidate();
+//
 
     }//GEN-LAST:event_btnEditHargaActionPerformed
 
@@ -1823,7 +1579,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     private component.ShadowPanel ShadowUtama1;
     private component.ShadowPanel ShadowUtama2;
     private component.ShadowPanel ShadowUtama3;
-
     private component.ShadowPanel ShadowUtama4;
     private component.Jbutton btnBatalHarga;
     private component.Jbutton btnEditHarga;
