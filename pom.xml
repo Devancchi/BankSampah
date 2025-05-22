@@ -94,10 +94,5 @@
             <version>1.0</version>
             <type>jar</type>
         </dependency>
-        <dependency>
-    <groupId>net.java.timingframework</groupId>
-    <artifactId>timingframework-core</artifactId>
-    <version>6.0.0</version>
-</dependency>
     </dependencies>
 </project>
