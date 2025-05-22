@@ -9,9 +9,9 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import main.DBconnect;
 
-public class TabLaporanStatistik1 extends javax.swing.JPanel {
+public class TabLaporanStatistik111 extends javax.swing.JPanel {
     
-    public TabLaporanStatistik1() {
+    public TabLaporanStatistik111() {
          initComponents();
          loadDashboardData();
         loadData("");
@@ -252,7 +252,7 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
 
             private void showPanel() {
                 panelMain.removeAll();
-                panelMain.add(new TabLaporanStatistik1());
+                panelMain.add(new TabLaporanStatistik111());
                 panelMain.repaint();
                 panelMain.revalidate();
             }
@@ -261,17 +261,9 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
     private void initComponents() {
 
         dateChooser1 = new datechooser.Main.DateChooser();
-        dateBetween1 = new datechooser.Main.DateBetween();
-        defaultDateChooserRender1 = new datechooser.render.DefaultDateChooserRender();
         panelMain = new javax.swing.JPanel();
         panelView = new javax.swing.JPanel();
         ShadowUtama = new component.ShadowPanel();
-        shadowPanel1 = new component.ShadowPanel();
-        jButton2 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jButton4 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tb_laporan = new component.Table();
         card1 = new component.Card();
@@ -286,110 +278,53 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         lb_total = new javax.swing.JLabel();
+        card5 = new component.Card();
         card4 = new component.Card();
         ShadowSearch = new component.ShadowPanel();
         jLabel7 = new javax.swing.JLabel();
-        txt_search = new swing.TextField();
         ShadowSearch1 = new component.ShadowPanel();
         t_date = new javax.swing.JTextField();
         pilihtanggal = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
-
-        dateChooser1.setDateChooserRender(defaultDateChooserRender1);
-        dateChooser1.setDateSelectable(null);
-        dateChooser1.setDateSelectionMode(datechooser.Main.DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
-        dateChooser1.setTextField(t_date);
 
         setPreferredSize(new java.awt.Dimension(1200, 716));
         setLayout(new java.awt.CardLayout());
 
         panelMain.setBackground(new java.awt.Color(255, 255, 255));
         panelMain.setLayout(new java.awt.CardLayout());
+        add(panelMain, "card2");
 
         panelView.setBackground(new java.awt.Color(255, 255, 255));
         panelView.setLayout(new java.awt.CardLayout());
 
         ShadowUtama.setBackground(new java.awt.Color(248, 248, 248));
 
-        jButton2.setText("First Page");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jButton1.setText("<");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jButton4.setText(">");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
-        jButton3.setText("Last Page");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout shadowPanel1Layout = new javax.swing.GroupLayout(shadowPanel1);
-        shadowPanel1.setLayout(shadowPanel1Layout);
-        shadowPanel1Layout.setHorizontalGroup(
-            shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(shadowPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        shadowPanel1Layout.setVerticalGroup(
-            shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
-        );
-
         tb_laporan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Nama Admin", "Nama Nasabah", "Nama Barang", "Harga", "Riwayat"
+                "ID", "Nama Admin", "Nama Nasabah", "Jenis Transaksi", "Nama Barang/Sampah", "Harga", "Riwayat"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jScrollPane1.setViewportView(tb_laporan);
@@ -433,22 +368,24 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
                 .addGroup(card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
                     .addComponent(lb_pemasukan))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(107, Short.MAX_VALUE))
         );
         card1Layout.setVerticalGroup(
             card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(card1Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(card1Layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
                         .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lb_pemasukan))
-                    .addComponent(jLabel5))
-                .addContainerGap(23, Short.MAX_VALUE))
+                    .addGroup(card1Layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(jLabel5)))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
-        card2.setFillColor(new java.awt.Color(239, 100, 100));
+        card2.setFillColor(new java.awt.Color(255, 255, 255));
         card2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 card2MouseClicked(evt);
@@ -486,21 +423,23 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
                 .addGroup(card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel16)
                     .addComponent(lb_pengeluaran))
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(100, Short.MAX_VALUE))
         );
         card2Layout.setVerticalGroup(
             card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(card2Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGap(17, 17, 17)
+                .addGroup(card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel15)
                     .addGroup(card2Layout.createSequentialGroup()
                         .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lb_pengeluaran))
-                    .addComponent(jLabel15))
-                .addContainerGap(19, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lb_pengeluaran)
+                        .addGap(6, 6, 6)))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
+        card3.setFillColor(new java.awt.Color(255, 255, 255));
         card3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 card3MouseClicked(evt);
@@ -519,7 +458,7 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
             }
         });
 
-        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_total_tabungan.png"))); // NOI18N
+        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Jumlah.png"))); // NOI18N
 
         jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel19.setText("Jumlah Transaksi");
@@ -538,39 +477,38 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
                 .addGroup(card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel19)
                     .addComponent(lb_total))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(119, Short.MAX_VALUE))
         );
         card3Layout.setVerticalGroup(
             card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(card3Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(card3Layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
                         .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lb_total))
-                    .addComponent(jLabel18))
+                    .addGroup(card3Layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(jLabel18)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        card5.setBackground(new java.awt.Color(255, 255, 255));
+        card5.setFillColor(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout card5Layout = new javax.swing.GroupLayout(card5);
+        card5.setLayout(card5Layout);
+        card5Layout.setHorizontalGroup(
+            card5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 226, Short.MAX_VALUE)
+        );
+        card5Layout.setVerticalGroup(
+            card5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 944, Short.MAX_VALUE)
+        );
+
         card4.setFillColor(new java.awt.Color(255, 255, 255));
-        card4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                card4MouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                card4MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                card4MouseExited(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                card4MousePressed(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                card4MouseReleased(evt);
-            }
-        });
 
         ShadowSearch.setBackground(new java.awt.Color(249, 251, 255));
         ShadowSearch.setPreferredSize(new java.awt.Dimension(259, 43));
@@ -578,22 +516,6 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
         jLabel7.setBackground(new java.awt.Color(204, 204, 204));
         jLabel7.setForeground(new java.awt.Color(204, 204, 204));
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_search.png"))); // NOI18N
-
-        txt_search.setBorder(null);
-        txt_search.setForeground(new java.awt.Color(0, 0, 0));
-        txt_search.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        txt_search.setHint("  Filter Laporan");
-        txt_search.setSelectionColor(new java.awt.Color(255, 255, 255));
-        txt_search.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_searchActionPerformed(evt);
-            }
-        });
-        txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txt_searchKeyTyped(evt);
-            }
-        });
 
         javax.swing.GroupLayout ShadowSearchLayout = new javax.swing.GroupLayout(ShadowSearch);
         ShadowSearch.setLayout(ShadowSearchLayout);
@@ -603,11 +525,6 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
                 .addGap(21, 21, 21)
                 .addComponent(jLabel7)
                 .addContainerGap(434, Short.MAX_VALUE))
-            .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(ShadowSearchLayout.createSequentialGroup()
-                    .addGap(42, 42, 42)
-                    .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(20, Short.MAX_VALUE)))
         );
         ShadowSearchLayout.setVerticalGroup(
             ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -615,17 +532,16 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(ShadowSearchLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-                    .addContainerGap()))
         );
 
         ShadowSearch1.setBackground(new java.awt.Color(249, 251, 255));
         ShadowSearch1.setPreferredSize(new java.awt.Dimension(259, 43));
 
+        t_date.setBackground(new java.awt.Color(230, 245, 241));
+        t_date.setBorder(null);
+
         pilihtanggal.setText("...");
+        pilihtanggal.setBorder(null);
         pilihtanggal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pilihtanggalActionPerformed(evt);
@@ -634,7 +550,7 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
 
         jLabel8.setBackground(new java.awt.Color(204, 204, 204));
         jLabel8.setForeground(new java.awt.Color(204, 204, 204));
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_search.png"))); // NOI18N
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Calendar.png"))); // NOI18N
 
         javax.swing.GroupLayout ShadowSearch1Layout = new javax.swing.GroupLayout(ShadowSearch1);
         ShadowSearch1.setLayout(ShadowSearch1Layout);
@@ -649,8 +565,8 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
                     .addGap(50, 50, 50)
                     .addComponent(pilihtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(t_date, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(50, Short.MAX_VALUE)))
+                    .addComponent(t_date, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(23, Short.MAX_VALUE)))
         );
         ShadowSearch1Layout.setVerticalGroup(
             ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -676,7 +592,7 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
                 .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
                 .addComponent(ShadowSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(356, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         card4Layout.setVerticalGroup(
             card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -692,59 +608,47 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
         ShadowUtama.setLayout(ShadowUtamaLayout);
         ShadowUtamaLayout.setHorizontalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowUtamaLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(shadowPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                .addGap(32, 32, 32)
+                .addGap(15, 15, 15)
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, ShadowUtamaLayout.createSequentialGroup()
-                            .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(41, 41, 41)
-                            .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(43, 43, 43)
-                            .addComponent(card3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(card4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                        .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(56, 56, 56)
+                        .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(58, 58, 58)
+                        .addComponent(card3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                        .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(card4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1))
+                        .addGap(40, 40, 40)))
+                .addComponent(card5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         ShadowUtamaLayout.setVerticalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(25, 25, 25)
                 .addComponent(card4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(34, 34, 34)
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(card3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(card2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(113, 113, 113)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(shadowPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(38, 38, 38)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 581, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(card5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         panelView.add(ShadowUtama, "card2");
 
-        panelMain.add(panelView, "card2");
-
-        add(panelMain, "card2");
+        add(panelView, "card2");
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
 
     private void card1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseClicked
         loadData("Pemasukan");
@@ -760,105 +664,81 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
 
     private void card1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseEntered
         card1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        card1.setFillColor(new Color(129, 199, 132)); // Warna hover (lebih terang)
+        card1.setFillColor(new Color(240, 240, 240)); // Warna hover (lebih terang)
         card1.repaint(); // Pastikan komponen direfresh
     }//GEN-LAST:event_card1MouseEntered
 
     private void card1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseExited
         card1.setCursor(Cursor.getDefaultCursor());
-        card1.setFillColor(new Color(76, 175, 80)); // Warna normal
+        card1.setFillColor(new Color(255, 255, 255)); // Warna normal
         card1.repaint();
     }//GEN-LAST:event_card1MouseExited
 
     private void card2MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MouseEntered
         card2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        card2.setFillColor(new Color(255, 138, 138)); // Warna hover (lebih terang)
+        card2.setFillColor(new Color(240, 240, 240)); // Warna hover (lebih terang)
         card2.repaint();
     }//GEN-LAST:event_card2MouseEntered
 
     private void card2MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MouseExited
         card2.setCursor(Cursor.getDefaultCursor());
-        card2.setFillColor(new Color(239, 100, 100)); // Warna normal (hijau)
+        card2.setFillColor(new Color(255, 255, 255)); // Warna normal (hijau)
         card2.repaint();
     }//GEN-LAST:event_card2MouseExited
 
     private void card3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card3MouseEntered
        card3.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        card3.setFillColor(new Color(255, 255, 150)); // Warna hover (lebih terang)
+        card3.setFillColor(new Color(240, 240, 240)); // Warna hover (lebih terang)
         card3.repaint();
     }//GEN-LAST:event_card3MouseEntered
 
     private void card3MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card3MouseExited
         card3.setCursor(Cursor.getDefaultCursor());
-        card3.setFillColor(new Color(255, 254, 84)); // Normal: kuning utama
+        card3.setFillColor(new Color(255, 255, 255)); // Normal: kuning utama
         card3.repaint();
         
     }//GEN-LAST:event_card3MouseExited
 
     private void card1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MousePressed
-         animateClick(new Color(129, 199, 132), new Color(76, 175, 80));
+         animateClick(new Color(224, 224, 224), new Color(158, 158, 158));
     
         loadData("Pemasukan");
     }//GEN-LAST:event_card1MousePressed
 
     private void card2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MousePressed
-   
-    animateClickCard2(new Color(255, 138, 138), new Color(211, 47, 47));
-    loadData("Pengeluaran"); // atau aksi lain sesuai card2
+        
+        animateClickCard2(new Color(224, 224, 224), new Color(158, 158, 158));
+        loadData("Pengeluaran"); // atau aksi lain sesuai card2
     }//GEN-LAST:event_card2MousePressed
 
     private void card3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card3MousePressed
-        animateClickCard3(new Color(255, 255, 150), new Color(255, 235, 59));
+        animateClickCard3(new Color(224, 224, 224), new Color(158, 158, 158));
         loadData("");
     }//GEN-LAST:event_card3MousePressed
 
     private void card1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseReleased
-        animateClick(new Color(76, 175, 80), new Color(129, 199, 132));
+        animateClick(new Color(158, 158, 158), new Color(224, 224, 224));
     }//GEN-LAST:event_card1MouseReleased
 
     private void card2MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MouseReleased
-        animateClickCard2(new Color(211, 47, 47), new Color(255, 138, 138));
+        animateClickCard2(new Color(158, 158, 158), new Color(224, 224, 224));
     }//GEN-LAST:event_card2MouseReleased
 
     private void card3MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card3MouseReleased
-        animateClickCard3(new Color(255, 235, 59), new Color(255, 255, 150));
+        animateClickCard3(new Color(158, 158, 158), new Color(224, 224, 224));
     }//GEN-LAST:event_card3MouseReleased
-
-    private void pilihtanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pilihtanggalActionPerformed
-       dateChooser1.showPopup();
-    }//GEN-LAST:event_pilihtanggalActionPerformed
-
-    private void card4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card4MouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_card4MouseClicked
-
-    private void card4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card4MouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_card4MouseEntered
-
-    private void card4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card4MouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_card4MouseExited
-
-    private void card4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card4MousePressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_card4MousePressed
-
-    private void card4MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card4MouseReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_card4MouseReleased
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
 
     private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_searchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_searchActionPerformed
 
     private void txt_searchKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyTyped
-       
+
     }//GEN-LAST:event_txt_searchKeyTyped
+
+    private void pilihtanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pilihtanggalActionPerformed
+        dateChooser1.showPopup();
+    }//GEN-LAST:event_pilihtanggalActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -869,14 +749,8 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
     private component.Card card2;
     private component.Card card3;
     private component.Card card4;
-    private datechooser.Main.DateBetween dateBetween1;
+    private component.Card card5;
     private datechooser.Main.DateChooser dateChooser1;
-    private datechooser.render.DefaultDateChooserRender defaultDateChooserRender1;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
@@ -892,10 +766,8 @@ public class TabLaporanStatistik1 extends javax.swing.JPanel {
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
     private javax.swing.JButton pilihtanggal;
-    private component.ShadowPanel shadowPanel1;
     private javax.swing.JTextField t_date;
     private component.Table tb_laporan;
-    private swing.TextField txt_search;
     // End of variables declaration//GEN-END:variables
 }
 
