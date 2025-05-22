@@ -245,6 +245,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         cbxKategori_pnAdd = new javax.swing.JComboBox<>();
         jLabel23 = new javax.swing.JLabel();
         txt_HargaAdd2 = new javax.swing.JTextField();
+        tgl_Add = new datechooser.beans.DateChooserCombo();
         panelRiwayat = new javax.swing.JPanel();
         ShadowUtama2 = new component.ShadowPanel();
         jLabel7 = new javax.swing.JLabel();
@@ -290,6 +291,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         txt_HargaEdit2 = new javax.swing.JTextField();
         jLabel27 = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
+        tgl_Edit = new datechooser.beans.DateChooserCombo();
 
         setPreferredSize(new java.awt.Dimension(1200, 716));
         setLayout(new java.awt.CardLayout());
@@ -726,27 +728,29 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                         .addComponent(jLabel13)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                        .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                                .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnSimpanHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnKembaliT, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                                .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(cbxJenis_pnAdd, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(cbxKategori_pnAdd, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txt_HargaAdd, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel23, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txt_HargaAdd2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(ShadowUtama1Layout.createSequentialGroup()
-                                        .addComponent(jLabel21)
-                                        .addGap(913, 913, 913)))
-                                .addGap(169, 169, 169)))
+                        .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tgl_Add, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(ShadowUtama1Layout.createSequentialGroup()
+                                    .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel6))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnSimpanHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(btnKembaliT, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(ShadowUtama1Layout.createSequentialGroup()
+                                    .addGroup(ShadowUtama1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(cbxJenis_pnAdd, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(cbxKategori_pnAdd, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txt_HargaAdd, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel23, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(txt_HargaAdd2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(ShadowUtama1Layout.createSequentialGroup()
+                                            .addComponent(jLabel21)
+                                            .addGap(913, 913, 913)))
+                                    .addGap(169, 169, 169))))
                         .addGap(0, 181, Short.MAX_VALUE))))
         );
         ShadowUtama1Layout.setVerticalGroup(
@@ -776,7 +780,9 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 .addComponent(txt_HargaAdd2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel21)
-                .addContainerGap(664, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tgl_Add, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(636, Short.MAX_VALUE))
         );
 
         panelAdd.add(ShadowUtama1, "card2");
@@ -1230,6 +1236,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(ShadowUtama3Layout.createSequentialGroup()
                         .addGroup(ShadowUtama3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tgl_Edit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(ShadowUtama3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING)
@@ -1276,7 +1283,9 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 .addComponent(txt_HargaEdit2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel28)
-                .addContainerGap(664, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tgl_Edit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(636, Short.MAX_VALUE))
         );
 
         panelEdit.add(ShadowUtama3, "card2");
@@ -1293,9 +1302,9 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         String harga = txt_HargaAdd.getText();
         String harga2 = txt_HargaAdd2.getText();
 
-//        Date date = tgl_Add.getSelectedDate().getTime();// ini ambil tanggal dari komponen
+        Date date = tgl_Add.getSelectedDate().getTime();// ini ambil tanggal dari komponen
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//        String tgl = sdf.format(date);
+        String tgl = sdf.format(date);
 
         if (jenis.isEmpty() || kategori.isEmpty() || harga.isEmpty() || harga2.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
@@ -1306,7 +1315,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, harga);
             pst.setString(2, harga2);
-//            pst.setString(3, tgl);
+            pst.setString(3, tgl);
             pst.setString(4, kategori);
             pst.setString(5, jenis);
             pst.executeUpdate();
@@ -1404,9 +1413,9 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         String harga = txt_HargaEdit.getText();
         String harga2 = txt_HargaEdit2.getText();
 
-//        Date date = tgl_Edit.getSelectedDate().getTime();// ini ambil tanggal dari komponen
+        Date date = tgl_Edit.getSelectedDate().getTime();// ini ambil tanggal dari komponen
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//        String tgl = sdf.format(date);
+        String tgl = sdf.format(date);
 
         if (jenis.isEmpty() || kategori.isEmpty() || harga.isEmpty() || harga2.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
@@ -1425,7 +1434,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
             pst.setString(1, harga);
             pst.setString(2, harga2);
-//            pst.setString(3, tgl);
+            pst.setString(3, tgl);
             pst.setString(4, kategori);
             pst.setString(5, jenis);
             pst.setInt(6, selectedIdSampah);
@@ -1766,6 +1775,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     private component.Table tblJenis;
     private component.Table tblKategori;
     private component.Table tblSampah;
+    private datechooser.beans.DateChooserCombo tgl_Add;
+    private datechooser.beans.DateChooserCombo tgl_Edit;
     private javax.swing.JTextField txt_Berat;
     private javax.swing.JTextField txt_HargaAdd;
     private javax.swing.JTextField txt_HargaAdd2;
