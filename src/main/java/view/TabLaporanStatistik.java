@@ -1,13 +1,17 @@
 package view;
 
+import grafik.main.ModelChart;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import main.DBconnect;
+import main.ModelData;
 
 public class TabLaporanStatistik extends javax.swing.JPanel {
     
@@ -15,7 +19,69 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
          initComponents();
          loadDashboardData();
         loadData("");
+        
+        chart.setTitle("Chart Data");
+
+// Harus ADA 3 legend sesuai urutan data
+chart.addLegend("Amount", Color.decode("#7b4397"), Color.decode("#dc2430"));
+chart.addLegend("Cost", Color.decode("#e65c00"), Color.decode("#F9D423"));
+chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
+
+        setdata();
     }
+    
+    private void test() {
+        chart.clear();
+        chart.addData(new ModelChart("Jan", new double[]{500, 50, 100}));
+        chart.addData(new ModelChart("Feb", new double[]{600, 300, 150}));
+        chart.addData(new ModelChart("March", new double[]{200, 50, 900}));
+        chart.addData(new ModelChart("April", new double[]{480, 700, 100}));
+        chart.addData(new ModelChart("May", new double[]{350, 540, 500}));
+        chart.addData(new ModelChart("June", new double[]{450, 800, 100}));
+        chart.start();
+    }
+    
+   private void setdata() {
+    try {
+        List<ModelData>lists=new ArrayList<>();
+        DBconnect.getInstance().getConnection();
+        String sql = "SELECT DATE_FORMAT(t.tanggal, '%M') AS 'Month', " +
+                     "SUM(t.total_harga) AS Amount, " +
+                     "SUM(s.harga_jual) AS Cost, " +
+                     "SUM(t.total_harga) - SUM(s.harga_jual) AS Profit " +
+                     "FROM laporan_pemasukan lplpm " +
+                     "JOIN transaksi t ON lplpm.id_transaksi = t.id_transaksi " +
+                     "JOIN jual_sampah s ON lplpm.id_jual_sampah = s.id_jual_sampah " +
+                     "GROUP BY DATE_FORMAT(t.tanggal,'%m%Y') " +
+                     "ORDER BY t.tanggal DESC " +
+                     "LIMIT 7;";
+        PreparedStatement p = DBconnect.getInstance().getConn().prepareStatement(sql);
+        ResultSet r = p.executeQuery();
+        while(r.next()){
+            String month=r.getString("Month");
+            double amount=r.getDouble("Amount");
+            double cost=r.getDouble("Cost");
+            double profit=r.getDouble("Profit");
+            lists.add(new ModelData(month, amount, cost, profit));
+        }
+        p.close();
+        r.close();
+        
+        for (int i = lists.size() - 1; i >= 0; i--) {
+                ModelData d = lists.get(i);
+                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getAmount(), d.getCost(), d.getProfit()}));
+            }
+
+        chart.start();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+
+
+
+
     
        private void loadData(String filterJenis) {
      DefaultTableModel model = new DefaultTableModel() {
@@ -280,11 +346,20 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         lb_total = new javax.swing.JLabel();
+        card4 = new component.Card();
+        ShadowSearch = new component.ShadowPanel();
+        jLabel7 = new javax.swing.JLabel();
+        ShadowSearch1 = new component.ShadowPanel();
+        t_date = new javax.swing.JTextField();
+        pilihtanggal = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
         card5 = new component.Card();
+        chart = new grafik.main.CurveLineChart();
 
         dateChooser1.setDateChooserRender(defaultDateChooserRender1);
         dateChooser1.setDateSelectable(null);
         dateChooser1.setDateSelectionMode(datechooser.Main.DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
+        dateChooser1.setTextField(t_date);
 
         setPreferredSize(new java.awt.Dimension(1200, 716));
         setLayout(new java.awt.CardLayout());
@@ -359,7 +434,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                 .addGroup(card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
                     .addComponent(lb_pemasukan))
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addGap(89, 89, 89))
         );
         card1Layout.setVerticalGroup(
             card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -376,7 +451,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
-        card2.setFillColor(new java.awt.Color(239, 100, 100));
+        card2.setFillColor(new java.awt.Color(255, 255, 255));
         card2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 card2MouseClicked(evt);
@@ -414,21 +489,23 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                 .addGroup(card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel16)
                     .addComponent(lb_pengeluaran))
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addGap(137, 137, 137))
         );
         card2Layout.setVerticalGroup(
             card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(card2Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGap(17, 17, 17)
+                .addGroup(card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel15)
                     .addGroup(card2Layout.createSequentialGroup()
                         .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lb_pengeluaran))
-                    .addComponent(jLabel15))
-                .addContainerGap(19, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lb_pengeluaran)
+                        .addGap(6, 6, 6)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        card3.setFillColor(new java.awt.Color(255, 255, 255));
         card3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 card3MouseClicked(evt);
@@ -447,7 +524,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
             }
         });
 
-        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_total_tabungan.png"))); // NOI18N
+        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Jumlah.png"))); // NOI18N
 
         jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel19.setText("Jumlah Transaksi");
@@ -466,33 +543,141 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                 .addGroup(card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel19)
                     .addComponent(lb_total))
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addGap(163, 163, 163))
         );
         card3Layout.setVerticalGroup(
             card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(card3Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(card3Layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
                         .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lb_total))
-                    .addComponent(jLabel18))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(card3Layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(jLabel18)))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
-        card5.setBackground(new java.awt.Color(255, 255, 255));
+        card4.setFillColor(new java.awt.Color(255, 255, 255));
+
+        ShadowSearch.setBackground(new java.awt.Color(249, 251, 255));
+        ShadowSearch.setPreferredSize(new java.awt.Dimension(259, 43));
+
+        jLabel7.setBackground(new java.awt.Color(204, 204, 204));
+        jLabel7.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_search.png"))); // NOI18N
+
+        javax.swing.GroupLayout ShadowSearchLayout = new javax.swing.GroupLayout(ShadowSearch);
+        ShadowSearch.setLayout(ShadowSearchLayout);
+        ShadowSearchLayout.setHorizontalGroup(
+            ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearchLayout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(jLabel7)
+                .addContainerGap(434, Short.MAX_VALUE))
+        );
+        ShadowSearchLayout.setVerticalGroup(
+            ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearchLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        ShadowSearch1.setBackground(new java.awt.Color(249, 251, 255));
+        ShadowSearch1.setPreferredSize(new java.awt.Dimension(259, 43));
+
+        t_date.setBackground(new java.awt.Color(230, 245, 241));
+        t_date.setBorder(null);
+
+        pilihtanggal.setText("...");
+        pilihtanggal.setBorder(null);
+        pilihtanggal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pilihtanggalActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setBackground(new java.awt.Color(204, 204, 204));
+        jLabel8.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Calendar.png"))); // NOI18N
+
+        javax.swing.GroupLayout ShadowSearch1Layout = new javax.swing.GroupLayout(ShadowSearch1);
+        ShadowSearch1.setLayout(ShadowSearch1Layout);
+        ShadowSearch1Layout.setHorizontalGroup(
+            ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearch1Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(jLabel8)
+                .addContainerGap(434, Short.MAX_VALUE))
+            .addGroup(ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ShadowSearch1Layout.createSequentialGroup()
+                    .addGap(50, 50, 50)
+                    .addComponent(pilihtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(t_date, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(23, Short.MAX_VALUE)))
+        );
+        ShadowSearch1Layout.setVerticalGroup(
+            ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearch1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ShadowSearch1Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(t_date, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(pilihtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+
+        javax.swing.GroupLayout card4Layout = new javax.swing.GroupLayout(card4);
+        card4.setLayout(card4Layout);
+        card4Layout.setHorizontalGroup(
+            card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(card4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
+                .addComponent(ShadowSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(175, Short.MAX_VALUE))
+        );
+        card4Layout.setVerticalGroup(
+            card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(card4Layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addGroup(card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(ShadowSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(25, Short.MAX_VALUE))
+        );
+
+        card5.setBackground(new java.awt.Color(204, 204, 204));
         card5.setFillColor(new java.awt.Color(255, 255, 255));
+
+        chart.setBackground(new java.awt.Color(0, 0, 0));
+        chart.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        chart.setForeground(new java.awt.Color(0, 0, 0));
 
         javax.swing.GroupLayout card5Layout = new javax.swing.GroupLayout(card5);
         card5.setLayout(card5Layout);
         card5Layout.setHorizontalGroup(
             card5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 330, Short.MAX_VALUE)
+            .addGroup(card5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         card5Layout.setVerticalGroup(
             card5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(card5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chart, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout ShadowUtamaLayout = new javax.swing.GroupLayout(ShadowUtama);
@@ -500,33 +685,39 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         ShadowUtamaLayout.setHorizontalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                .addGap(23, 23, 23)
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addComponent(jScrollPane1))
-                    .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
-                        .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(48, 48, 48)
-                        .addComponent(card3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(card5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(card4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowUtamaLayout.createSequentialGroup()
+                        .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                                .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1))
+                        .addGap(66, 66, 66)
+                        .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(card5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(27, 27, 27))))
         );
         ShadowUtamaLayout.setVerticalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                .addGap(121, 121, 121)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(27, 27, 27)
+                .addComponent(card4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(card3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(card2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(38, 38, 38)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 581, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(113, Short.MAX_VALUE))
-            .addComponent(card5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(card2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(22, 22, 22)
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 593, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(card5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(91, Short.MAX_VALUE))
         );
 
         panelView.add(ShadowUtama, "card2");
@@ -540,87 +731,95 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         loadData("Pemasukan");
     }//GEN-LAST:event_card1MouseClicked
 
-    private void card2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MouseClicked
-        loadData("Pengeluaran");
-    }//GEN-LAST:event_card2MouseClicked
-
-    private void card3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card3MouseClicked
-        loadData("");
-    }//GEN-LAST:event_card3MouseClicked
-
     private void card1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseEntered
         card1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        card1.setFillColor(new Color(129, 199, 132)); // Warna hover (lebih terang)
+        card1.setFillColor(new Color(240, 240, 240)); // Warna hover (lebih terang)
         card1.repaint(); // Pastikan komponen direfresh
     }//GEN-LAST:event_card1MouseEntered
 
     private void card1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseExited
         card1.setCursor(Cursor.getDefaultCursor());
-        card1.setFillColor(new Color(76, 175, 80)); // Warna normal
+        card1.setFillColor(new Color(255, 255, 255)); // Warna normal
         card1.repaint();
     }//GEN-LAST:event_card1MouseExited
 
+    private void card1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MousePressed
+        animateClick(new Color(224, 224, 224), new Color(158, 158, 158));
+
+        loadData("Pemasukan");
+    }//GEN-LAST:event_card1MousePressed
+
+    private void card1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseReleased
+        animateClick(new Color(158, 158, 158), new Color(224, 224, 224));
+    }//GEN-LAST:event_card1MouseReleased
+
+    private void card2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MouseClicked
+        loadData("Pengeluaran");
+    }//GEN-LAST:event_card2MouseClicked
+
     private void card2MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MouseEntered
         card2.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        card2.setFillColor(new Color(255, 138, 138)); // Warna hover (lebih terang)
+        card2.setFillColor(new Color(240, 240, 240)); // Warna hover (lebih terang)
         card2.repaint();
     }//GEN-LAST:event_card2MouseEntered
 
     private void card2MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MouseExited
         card2.setCursor(Cursor.getDefaultCursor());
-        card2.setFillColor(new Color(239, 100, 100)); // Warna normal (hijau)
+        card2.setFillColor(new Color(255, 255, 255)); // Warna normal (hijau)
         card2.repaint();
     }//GEN-LAST:event_card2MouseExited
 
+    private void card2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MousePressed
+
+        animateClickCard2(new Color(224, 224, 224), new Color(158, 158, 158));
+        loadData("Pengeluaran"); // atau aksi lain sesuai card2
+    }//GEN-LAST:event_card2MousePressed
+
+    private void card2MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MouseReleased
+        animateClickCard2(new Color(158, 158, 158), new Color(224, 224, 224));
+    }//GEN-LAST:event_card2MouseReleased
+
+    private void card3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card3MouseClicked
+        loadData("");
+    }//GEN-LAST:event_card3MouseClicked
+
     private void card3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card3MouseEntered
-       card3.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        card3.setFillColor(new Color(255, 255, 150)); // Warna hover (lebih terang)
+        card3.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        card3.setFillColor(new Color(240, 240, 240)); // Warna hover (lebih terang)
         card3.repaint();
     }//GEN-LAST:event_card3MouseEntered
 
     private void card3MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card3MouseExited
         card3.setCursor(Cursor.getDefaultCursor());
-        card3.setFillColor(new Color(255, 254, 84)); // Normal: kuning utama
+        card3.setFillColor(new Color(255, 255, 255)); // Normal: kuning utama
         card3.repaint();
-        
+
     }//GEN-LAST:event_card3MouseExited
 
-    private void card1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MousePressed
-         animateClick(new Color(129, 199, 132), new Color(76, 175, 80));
-    
-        loadData("Pemasukan");
-    }//GEN-LAST:event_card1MousePressed
-
-    private void card2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MousePressed
-   
-    animateClickCard2(new Color(255, 138, 138), new Color(211, 47, 47));
-    loadData("Pengeluaran"); // atau aksi lain sesuai card2
-    }//GEN-LAST:event_card2MousePressed
-
     private void card3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card3MousePressed
-        animateClickCard3(new Color(255, 255, 150), new Color(255, 235, 59));
+        animateClickCard3(new Color(224, 224, 224), new Color(158, 158, 158));
         loadData("");
     }//GEN-LAST:event_card3MousePressed
 
-    private void card1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseReleased
-        animateClick(new Color(76, 175, 80), new Color(129, 199, 132));
-    }//GEN-LAST:event_card1MouseReleased
-
-    private void card2MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MouseReleased
-        animateClickCard2(new Color(211, 47, 47), new Color(255, 138, 138));
-    }//GEN-LAST:event_card2MouseReleased
-
     private void card3MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card3MouseReleased
-        animateClickCard3(new Color(255, 235, 59), new Color(255, 255, 150));
+        animateClickCard3(new Color(158, 158, 158), new Color(224, 224, 224));
     }//GEN-LAST:event_card3MouseReleased
+
+    private void pilihtanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pilihtanggalActionPerformed
+        dateChooser1.showPopup();
+    }//GEN-LAST:event_pilihtanggalActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private component.ShadowPanel ShadowSearch;
+    private component.ShadowPanel ShadowSearch1;
     private component.ShadowPanel ShadowUtama;
     private component.Card card1;
     private component.Card card2;
     private component.Card card3;
+    private component.Card card4;
     private component.Card card5;
+    private grafik.main.CurveLineChart chart;
     private datechooser.Main.DateBetween dateBetween1;
     private datechooser.Main.DateChooser dateChooser1;
     private datechooser.render.DefaultDateChooserRender defaultDateChooserRender1;
@@ -630,12 +829,16 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lb_pemasukan;
     private javax.swing.JLabel lb_pengeluaran;
     private javax.swing.JLabel lb_total;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
+    private javax.swing.JButton pilihtanggal;
+    private javax.swing.JTextField t_date;
     private component.Table tb_laporan;
     // End of variables declaration//GEN-END:variables
 }

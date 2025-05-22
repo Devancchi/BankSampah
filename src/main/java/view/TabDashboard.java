@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
 import chart.ModelPolarAreaChart;
+import chart.PolarAreaChart;
 
 /**
  *
@@ -131,7 +132,7 @@ public class TabDashboard extends javax.swing.JPanel {
         CardTotalSampah.setFillColor(new java.awt.Color(31, 179, 148));
         CardTotalSampah.setPreferredSize(new java.awt.Dimension(315, 99));
 
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_total_sampah.png"))); // NOI18N
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Trash.png"))); // NOI18N
 
         jLabel9.setForeground(new java.awt.Color(204, 204, 204));
         jLabel9.setText("Total berat sampah");
