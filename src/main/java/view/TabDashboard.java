@@ -66,7 +66,7 @@ public class TabDashboard extends javax.swing.JPanel {
         jLabel9 = new javax.swing.JLabel();
         lb_totalSampah = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        CardLaba = new component.Card();
+        CardSaldoTabungan = new component.Card();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         lb_laba = new javax.swing.JLabel();
@@ -85,19 +85,21 @@ public class TabDashboard extends javax.swing.JPanel {
         btn_nextLog = new javax.swing.JButton();
         btn_lastLog = new javax.swing.JButton();
 
-        setBackground(new java.awt.Color(250, 250, 250));
+        setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(1192, 944));
 
         panelCard.setPreferredSize(new java.awt.Dimension(1182, 126));
 
+        CardTotalNasabah.setFillColor(new java.awt.Color(31, 179, 148));
         CardTotalNasabah.setPreferredSize(new java.awt.Dimension(315, 99));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_total_nasabah.png"))); // NOI18N
 
-        jLabel6.setForeground(new java.awt.Color(153, 153, 153));
+        jLabel6.setForeground(new java.awt.Color(204, 204, 204));
         jLabel6.setText("Total nasabah");
 
         lb_totalNasabah.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lb_totalNasabah.setForeground(new java.awt.Color(255, 255, 255));
         lb_totalNasabah.setText("1.000");
 
         javax.swing.GroupLayout CardTotalNasabahLayout = new javax.swing.GroupLayout(CardTotalNasabah);
@@ -126,17 +128,20 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        CardTotalSampah.setFillColor(new java.awt.Color(31, 179, 148));
         CardTotalSampah.setPreferredSize(new java.awt.Dimension(315, 99));
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_total_sampah.png"))); // NOI18N
 
-        jLabel9.setForeground(new java.awt.Color(153, 153, 153));
+        jLabel9.setForeground(new java.awt.Color(204, 204, 204));
         jLabel9.setText("Total berat sampah");
 
         lb_totalSampah.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lb_totalSampah.setForeground(new java.awt.Color(255, 255, 255));
         lb_totalSampah.setText("1.000");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("KG");
 
         javax.swing.GroupLayout CardTotalSampahLayout = new javax.swing.GroupLayout(CardTotalSampah);
@@ -170,35 +175,37 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        CardLaba.setPreferredSize(new java.awt.Dimension(315, 99));
+        CardSaldoTabungan.setFillColor(new java.awt.Color(31, 179, 148));
+        CardSaldoTabungan.setPreferredSize(new java.awt.Dimension(315, 99));
 
-        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_laba.png"))); // NOI18N
+        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_total_tabungan.png"))); // NOI18N
 
-        jLabel12.setForeground(new java.awt.Color(153, 153, 153));
+        jLabel12.setForeground(new java.awt.Color(204, 204, 204));
         jLabel12.setText("Laba");
 
         lb_laba.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lb_laba.setForeground(new java.awt.Color(255, 255, 255));
         lb_laba.setText("Rp 1.000");
 
-        javax.swing.GroupLayout CardLabaLayout = new javax.swing.GroupLayout(CardLaba);
-        CardLaba.setLayout(CardLabaLayout);
-        CardLabaLayout.setHorizontalGroup(
-            CardLabaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CardLabaLayout.createSequentialGroup()
+        javax.swing.GroupLayout CardSaldoTabunganLayout = new javax.swing.GroupLayout(CardSaldoTabungan);
+        CardSaldoTabungan.setLayout(CardSaldoTabunganLayout);
+        CardSaldoTabunganLayout.setHorizontalGroup(
+            CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CardSaldoTabunganLayout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(CardLabaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel12)
                     .addComponent(lb_laba))
                 .addGap(0, 0, 0))
         );
-        CardLabaLayout.setVerticalGroup(
-            CardLabaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CardLabaLayout.createSequentialGroup()
+        CardSaldoTabunganLayout.setVerticalGroup(
+            CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CardSaldoTabunganLayout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addGroup(CardLabaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(CardLabaLayout.createSequentialGroup()
+                .addGroup(CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(CardSaldoTabunganLayout.createSequentialGroup()
                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lb_laba))
@@ -216,7 +223,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addGap(42, 42, 42)
                 .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
                 .addGap(42, 42, 42)
-                .addComponent(CardLaba, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+                .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
         panelCardLayout.setVerticalGroup(
@@ -224,7 +231,7 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCardLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(CardLaba, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -409,7 +416,7 @@ public class TabDashboard extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private component.Card CardLaba;
+    private component.Card CardSaldoTabungan;
     private component.Card CardTotalNasabah;
     private component.Card CardTotalSampah;
     private chart.PolarAreaChart ChartBarangTerjualVsBarangSisa;
@@ -587,7 +594,7 @@ public class TabDashboard extends javax.swing.JPanel {
 
             double saldo = pemasukan - pengeluaran;
             lb_laba.setText("Rp " + String.format("%,.0f", saldo));
-            
+
             lb_laba.setText("Rp " + String.format("%,.0f", saldo));
 
             conn.close();
