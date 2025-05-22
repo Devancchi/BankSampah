@@ -72,6 +72,11 @@
             <version>SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>com.toedter</groupId>
+            <artifactId>jcalendar</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
             <groupId>io.github.dj-raven</groupId>
             <artifactId>swing-datetime-picker</artifactId>
             <version>1.4.0</version> <!-- contoh versi stabil -->
@@ -93,6 +98,16 @@
             <artifactId>timingframework</artifactId>
             <version>1.0</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>unknown.binary</groupId>
+            <artifactId>DateChooser</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>unknown.binary</groupId>
+            <artifactId>DateChooser-SNAPSHOT</artifactId>
+            <version>SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
