@@ -7,9 +7,17 @@ import java.sql.SQLException;
 
 public class DBconnect {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/revisi2";
+    private static final String URL = "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
+    private static DBconnect instance;
+    
+    public static DBconnect getInstance() {
+        if (instance == null) {
+            instance = new DBconnect();
+        }
+        return instance;
+    }
 
     public static Connection getConnection() {
         Connection connection = null;
@@ -24,6 +32,10 @@ public class DBconnect {
             System.out.println("Koneksi ke database gagal: " + e.getMessage());
         }
         return connection;
+    }
+    
+    public Connection getConn() {
+        return getConnection();
     }
 
     public static void main(String[] args) {
