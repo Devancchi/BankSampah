@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
+import static org.apache.commons.math3.fitting.leastsquares.LeastSquaresFactory.model;
 
 public class TabManajemenSampah extends javax.swing.JPanel {
 
@@ -34,7 +35,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         panelMain.add(new TabManajemenSampah());
         panelMain.repaint();
         panelMain.revalidate();
-        loadTabelSampah();
     }
 
     private void inisialisasiTabel() {
@@ -55,7 +55,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     rs.getInt("harga_jual"),
                     rs.getDate("tanggal")
                 };
-                model.addRow(row);
+                tblModel.addRow(row);
             }
 
         } catch (SQLException e) {
