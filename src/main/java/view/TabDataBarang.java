@@ -1,6 +1,7 @@
 package view;
 
 import component.Item;
+import component.Jbutton;
 import component.ModelItem;
 import java.awt.*;
 import java.awt.event.*;
@@ -32,32 +33,29 @@ public class TabDataBarang extends javax.swing.JPanel {
     public TabDataBarang() {
         initComponents();
 
+
         scrollBarang.setViewportView(panelBarang);
         scrollBarang.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         // Hapus isi panel sebelum load data
         panelBarang.removeAll();
         panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
-
         ////////// get data barang  saat item di klik //////////
         try {
             String sql = "SELECT * FROM data_barang";
             PreparedStatement pst = conn.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
-
             while (rs.next()) {
                 int id = rs.getInt("id_barang"); // sesuaikan nama kolomnya
                 String nama = rs.getString("nama_barang");
                 String kode = rs.getString("kode_barang");
                 double harga = rs.getDouble("harga");
                 int stok = rs.getInt("stok");
-
                 byte[] gambarBytes = rs.getBytes("gambar"); // jika gambar disimpan sebagai BLOB
                 Icon icon = null;
                 if (gambarBytes != null) {
                     icon = new ImageIcon(gambarBytes);
                 }
-
                 // Di dalam method pembuatan item
                 ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
                 Item itemPanel = new Item();
@@ -93,7 +91,6 @@ public class TabDataBarang extends javax.swing.JPanel {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         panelBarang.revalidate();
         panelBarang.repaint();
 
@@ -219,7 +216,7 @@ public class TabDataBarang extends javax.swing.JPanel {
         txt_harga1.setText(String.valueOf(item.getHarga()));
         txt_stok1.setText(String.valueOf(item.getStok()));
     }
-
+    
     private void showPanel() {
         panelMain.removeAll();
         panelMain.add(new TabDataBarang());
@@ -273,7 +270,6 @@ public class TabDataBarang extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-
     private void clearForm() {
         txt_gambar.setText("");
         txt_gambar1.setText("");
@@ -427,24 +423,20 @@ public class TabDataBarang extends javax.swing.JPanel {
             .addGroup(ShadowSearchLayout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(jLabel1)
-                .addContainerGap(493, Short.MAX_VALUE))
-            .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(ShadowSearchLayout.createSequentialGroup()
-                    .addGap(42, 42, 42)
-                    .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(36, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         ShadowSearchLayout.setVerticalGroup(
             ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowSearchLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(14, Short.MAX_VALUE))
-            .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(ShadowSearchLayout.createSequentialGroup()
-                    .addContainerGap()
+                .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-                    .addContainerGap()))
+                    .addGroup(ShadowSearchLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 15, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout shadowPanelLayout = new javax.swing.GroupLayout(shadowPanel);
@@ -476,7 +468,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                     .addComponent(btnKembali, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
                     .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnTambah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
             .addGroup(shadowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(shadowPanelLayout.createSequentialGroup()
                     .addGap(8, 8, 8)
@@ -869,7 +861,6 @@ public class TabDataBarang extends javax.swing.JPanel {
             pst.setBytes(5, gambarData);
             pst.executeUpdate();
             clearForm();
-
             JOptionPane.showMessageDialog(this, "Data berhasil disimpan.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
             Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, null, ex);
@@ -970,7 +961,6 @@ public class TabDataBarang extends javax.swing.JPanel {
     private void btnPilihGambar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilihGambar1ActionPerformed
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Gambar", "jpg", "png", "jpeg", "gif"));
-
         int result = fileChooser.showOpenDialog(this);  // this = panel atau parent component
         if (result == JFileChooser.APPROVE_OPTION) {
             selectedImageFile = fileChooser.getSelectedFile();
