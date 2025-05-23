@@ -2,6 +2,7 @@ package view;
 
 import grafik.main.ModelChart;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.sql.*;
 import javax.swing.*;
@@ -13,32 +14,29 @@ import java.util.Locale;
 import main.DBconnect;
 import main.ModelData;
 
+
 public class TabLaporanStatistik extends javax.swing.JPanel {
-    
-    public TabLaporanStatistik() {
+
+public TabLaporanStatistik() {
          initComponents();
          loadDashboardData();
         loadData("");
         
         chart.setTitle("Chart Data");
 
-// Harus ADA 3 legend sesuai urutan data
-chart.addLegend("Amount", Color.decode("#7b4397"), Color.decode("#dc2430"));
-chart.addLegend("Cost", Color.decode("#e65c00"), Color.decode("#F9D423"));
-chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
+        // Harus ADA 3 legend sesuai urutan data
+        chart.addLegend("Amount", Color.decode("#7b4397"), Color.decode("#dc2430"));
+        chart.addLegend("Cost", Color.decode("#e65c00"), Color.decode("#F9D423"));
+        chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
 
         setdata();
     }
     
-    private void test() {
-        chart.clear();
-        chart.addData(new ModelChart("Jan", new double[]{500, 50, 100}));
-        chart.addData(new ModelChart("Feb", new double[]{600, 300, 150}));
-        chart.addData(new ModelChart("March", new double[]{200, 50, 900}));
-        chart.addData(new ModelChart("April", new double[]{480, 700, 100}));
-        chart.addData(new ModelChart("May", new double[]{350, 540, 500}));
-        chart.addData(new ModelChart("June", new double[]{450, 800, 100}));
-        chart.start();
+        private void showForm(Component com) {
+        panelMain.removeAll();
+        panelMain.add(com);
+        panelMain.revalidate();
+        panelMain.repaint();
     }
     
    private void setdata() {
@@ -47,15 +45,15 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         DBconnect.getInstance().getConnection();
         String sql = "SELECT DATE_FORMAT(t.tanggal, '%M') AS 'Month', " +
                      "SUM(t.total_harga) AS Amount, " +
-                     "SUM(s.harga_jual) AS Cost, " +
-                     "SUM(t.total_harga) - SUM(s.harga_jual) AS Profit " +
+                     "SUM(s.harga) AS Cost, " +
+                     "SUM(t.total_harga) - SUM(s.harga) AS Profit " +
                      "FROM laporan_pemasukan lplpm " +
                      "JOIN transaksi t ON lplpm.id_transaksi = t.id_transaksi " +
                      "JOIN jual_sampah s ON lplpm.id_jual_sampah = s.id_jual_sampah " +
                      "GROUP BY DATE_FORMAT(t.tanggal,'%m%Y') " +
                      "ORDER BY t.tanggal DESC " +
                      "LIMIT 7;";
-        PreparedStatement p = DBconnect.getInstance().getConn().prepareStatement(sql);
+        PreparedStatement p = DBconnect.getInstance().getConnection().prepareStatement(sql);
         ResultSet r = p.executeQuery();
         while(r.next()){
             String month=r.getString("Month");
@@ -77,40 +75,51 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         e.printStackTrace();
     }
 }
-
-
-
-
-
-    
        private void loadData(String filterJenis) {
-     DefaultTableModel model = new DefaultTableModel() {
+    DefaultTableModel model = new DefaultTableModel() {
         @Override
         public boolean isCellEditable(int row, int column) {
-            return false; // Membuat semua sel tidak bisa diedit
+            return false;
         }
     };
+
     model.setColumnIdentifiers(new String[]{
-        "ID", "Nama Admin", "Nama", "Nama Barang", "Kategori Sampah",
-        "Total Berat Sampah", "Harga", "Jenis Transaksi", "Riwayat"
+        "ID", "No", "Nama Admin", "Nama Nasabah", "Nama Barang/Sampah", "Jenis Transaksi",
+        "Harga", "Riwayat"
     });
 
     String baseQuery =
-        "SELECT id, nama_admin, nama_nasabah, nama_barang, kategori, total_berat, harga, jenis, riwayat FROM (" +
+        "SELECT id, nama_admin, nama_nasabah, nama_barang_sampah, jenis_transaksi, harga, riwayat FROM (" +
         "   SELECT " +
         "       lp.id_laporan_pemasukan AS id, " +
         "       u.nama_user AS nama_admin, " +
         "       COALESCE(n.nama_nasabah, '-') AS nama_nasabah, " +
-        "       db.nama_barang, " +
-        "       '-' AS kategori, " +
-        "       '-' AS total_berat, " +
-        "       db.harga, " +
-        "       'Pemasukan' AS jenis, " +
+        "       db.nama_barang AS nama_barang_sampah, " +
+        "       'Pemasukan' AS jenis_transaksi, " +
+        "       db.harga AS harga, " +
         "       lp.riwayat AS riwayat " +
         "   FROM laporan_pemasukan lp " +
         "   JOIN login u ON lp.id_user = u.id_user " +
         "   LEFT JOIN data_barang db ON lp.id_barang = db.id_barang " +
         "   LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah " +
+        "   WHERE lp.id_barang IS NOT NULL " +
+
+        "   UNION ALL " +
+
+        "   SELECT " +
+        "       lp.id_laporan_pemasukan AS id, " +
+        "       u.nama_user AS nama_admin, " +
+        "       '-' AS nama_nasabah, " +
+        "       kate.nama_kategori AS nama_barang_sampah, " +
+        "       'Pemasukan' AS jenis_transaksi, " +
+        "       js.harga AS harga, " +
+        "       lp.riwayat AS riwayat " +
+        "   FROM laporan_pemasukan lp " +
+        "   JOIN login u ON lp.id_user = u.id_user " +
+        "   LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah " +
+        "   JOIN sampah sa ON js.id_sampah = sa.id_sampah " +
+        "   JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori " +
+        "   WHERE lp.id_jual_sampah IS NOT NULL " +
 
         "   UNION ALL " +
 
@@ -118,21 +127,20 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         "       lpl.id_laporan_pengeluaran AS id, " +
         "       u.nama_user AS nama_admin, " +
         "       n.nama_nasabah AS nama_nasabah, " +
-        "       '-' AS nama_barang, " +
-        "       s.kategori_sampah, " +
-        "       s.berat_sampah, " +
-        "       s.harga, " +
-        "       'Pengeluaran' AS jenis, " +
+        "       kate.nama_kategori AS nama_barang_sampah, " +
+        "       'Pengeluaran' AS jenis_transaksi, " +
+        "       s.harga AS harga, " +
         "       lpl.riwayat AS riwayat " +
         "   FROM laporan_pengeluaran lpl " +
         "   JOIN login u ON lpl.id_user = u.id_user " +
         "   JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran " +
-        "   JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah" +
+        "   JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah " +
+        "   JOIN sampah sa ON s.id_sampah = sa.id_sampah " +
+        "   JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori " +
         ") AS combined ";
 
-    // Tambah WHERE jika ada filter
     if (filterJenis != null && !filterJenis.isEmpty()) {
-        baseQuery += "WHERE jenis = ? ";
+        baseQuery += "WHERE jenis_transaksi = ? ";
     }
 
     baseQuery += "ORDER BY riwayat DESC";
@@ -145,33 +153,40 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         }
 
         try (ResultSet rs = pst.executeQuery()) {
+            int no = 1;
             while (rs.next()) {
                 String harga = rs.getString("harga");
-                if (!harga.equals("-")) {
+                if (harga != null && !harga.equals("-")) {
                     try {
                         double nominal = Double.parseDouble(harga);
                         NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
                         harga = formatRupiah.format(nominal);
                     } catch (NumberFormatException e) {
-                        // Do nothing
+                        // skip
                     }
                 }
 
                 model.addRow(new Object[]{
-                    rs.getString("id"),
+                    rs.getString("id"), // hidden column
+                    no++,
                     rs.getString("nama_admin"),
                     rs.getString("nama_nasabah"),
-                    rs.getString("nama_barang"),
-                    rs.getString("kategori"),
-                    rs.getString("total_berat"),
+                    rs.getString("nama_barang_sampah"),
+                    rs.getString("jenis_transaksi"),
                     harga,
-                    rs.getString("jenis"),
                     rs.getString("riwayat")
                 });
             }
         }
 
         tb_laporan.setModel(model);
+
+        // Hide ID column
+        if (tb_laporan.getColumnModel().getColumnCount() > 0) {
+            tb_laporan.getColumnModel().getColumn(0).setMinWidth(0);
+            tb_laporan.getColumnModel().getColumn(0).setMaxWidth(0);
+            tb_laporan.getColumnModel().getColumn(0).setWidth(0);
+        }
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Gagal memuat data laporan: " + e.getMessage());
@@ -315,13 +330,6 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
             animationTimer3.start();
         }
 
-
-            private void showPanel() {
-                panelMain.removeAll();
-                panelMain.add(new TabLaporanStatistik());
-                panelMain.repaint();
-                panelMain.revalidate();
-            }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -332,7 +340,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         panelMain = new javax.swing.JPanel();
         panelView = new javax.swing.JPanel();
         ShadowUtama = new component.ShadowPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        scrollPaneWin111 = new table.scroll.win11.ScrollPaneWin11();
         tb_laporan = new component.Table();
         card1 = new component.Card();
         jLabel5 = new javax.swing.JLabel();
@@ -353,14 +361,20 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         t_date = new javax.swing.JTextField();
         pilihtanggal = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         card5 = new component.Card();
         chart = new grafik.main.CurveLineChart();
-        floatingActionButton2 = new floatingbtn.FloatingActionButton();
+        card6 = new component.Card();
 
         dateChooser1.setDateChooserRender(defaultDateChooserRender1);
         dateChooser1.setDateSelectable(null);
         dateChooser1.setDateSelectionMode(datechooser.Main.DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
         dateChooser1.setTextField(t_date);
+        dateChooser1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                dateChooser1FocusGained(evt);
+            }
+        });
 
         setPreferredSize(new java.awt.Dimension(1200, 716));
         setLayout(new java.awt.CardLayout());
@@ -380,21 +394,57 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Nama Admin", "Nama Nasabah", "Nama Barang/Sampah", "Jenis Transaksi", "Harga", "Riwayat"
+                "No", "Nama Admin", "Nama Nasabah", "Nama Barang/Sampah", "Jenis Transaksi", "Harga", "Riwayat"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(tb_laporan);
+        ));
+        scrollPaneWin111.setViewportView(tb_laporan);
 
         card1.setFillColor(new java.awt.Color(255, 255, 255));
         card1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -435,7 +485,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 .addGroup(card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
                     .addComponent(lb_pemasukan))
-                .addGap(89, 89, 89))
+                .addContainerGap(159, Short.MAX_VALUE))
         );
         card1Layout.setVerticalGroup(
             card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -449,7 +499,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                     .addGroup(card1Layout.createSequentialGroup()
                         .addGap(15, 15, 15)
                         .addComponent(jLabel5)))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         card2.setFillColor(new java.awt.Color(255, 255, 255));
@@ -490,7 +540,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 .addGroup(card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel16)
                     .addComponent(lb_pengeluaran))
-                .addGap(137, 137, 137))
+                .addContainerGap(211, Short.MAX_VALUE))
         );
         card2Layout.setVerticalGroup(
             card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -544,7 +594,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 .addGroup(card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel19)
                     .addComponent(lb_total))
-                .addGap(163, 163, 163))
+                .addContainerGap(142, Short.MAX_VALUE))
         );
         card3Layout.setVerticalGroup(
             card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -558,7 +608,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                     .addGroup(card3Layout.createSequentialGroup()
                         .addGap(15, 15, 15)
                         .addComponent(jLabel18)))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         card4.setFillColor(new java.awt.Color(255, 255, 255));
@@ -636,6 +686,13 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
+        jButton1.setText("Tampilkan");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout card4Layout = new javax.swing.GroupLayout(card4);
         card4.setLayout(card4Layout);
         card4Layout.setHorizontalGroup(
@@ -645,15 +702,22 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
                 .addComponent(ShadowSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(175, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         card4Layout.setVerticalGroup(
             card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(card4Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
                 .addGroup(card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(ShadowSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(card4Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, card4Layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addGroup(card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(ShadowSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
 
@@ -668,9 +732,9 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         card5.setLayout(card5Layout);
         card5Layout.setHorizontalGroup(
             card5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(card5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, card5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(chart, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         card5Layout.setVerticalGroup(
@@ -681,32 +745,40 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        card6.setFillColor(new java.awt.Color(0, 204, 204));
+
+        javax.swing.GroupLayout card6Layout = new javax.swing.GroupLayout(card6);
+        card6.setLayout(card6Layout);
+        card6Layout.setHorizontalGroup(
+            card6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        card6Layout.setVerticalGroup(
+            card6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout ShadowUtamaLayout = new javax.swing.GroupLayout(ShadowUtama);
         ShadowUtama.setLayout(ShadowUtamaLayout);
         ShadowUtamaLayout.setHorizontalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(card4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                        .addComponent(card4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowUtamaLayout.createSequentialGroup()
-                        .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(66, 66, 66)
                         .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(card5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(27, 27, 27))
-                    .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addGap(461, 461, 461))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowUtamaLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(floatingActionButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                            .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                                .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(44, 44, 44)
+                                .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(scrollPaneWin111, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(card5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(card3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(card6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(30, 30, 30))
         );
         ShadowUtamaLayout.setVerticalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -715,16 +787,17 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 .addComponent(card4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(card2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(22, 22, 22)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(card5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 593, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
-                .addComponent(floatingActionButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                    .addComponent(card1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(card2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                        .addComponent(card5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(card6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(scrollPaneWin111, javax.swing.GroupLayout.PREFERRED_SIZE, 588, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(103, Short.MAX_VALUE))
         );
 
         panelView.add(ShadowUtama, "card2");
@@ -735,7 +808,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
     }// </editor-fold>//GEN-END:initComponents
 
     private void card1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseClicked
-        loadData("Pemasukan");
+      loadData("Pemasukan");
     }//GEN-LAST:event_card1MouseClicked
 
     private void card1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseEntered
@@ -751,7 +824,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
     }//GEN-LAST:event_card1MouseExited
 
     private void card1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MousePressed
-        animateClick(new Color(224, 224, 224), new Color(158, 158, 158));
+         animateClick(new Color(224, 224, 224), new Color(158, 158, 158));
 
         loadData("Pemasukan");
     }//GEN-LAST:event_card1MousePressed
@@ -777,9 +850,8 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
     }//GEN-LAST:event_card2MouseExited
 
     private void card2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MousePressed
-
-        animateClickCard2(new Color(224, 224, 224), new Color(158, 158, 158));
-        loadData("Pengeluaran"); // atau aksi lain sesuai card2
+animateClickCard2(new Color(224, 224, 224), new Color(158, 158, 158));
+    
     }//GEN-LAST:event_card2MousePressed
 
     private void card2MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MouseReleased
@@ -816,6 +888,14 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         dateChooser1.showPopup();
     }//GEN-LAST:event_pilihtanggalActionPerformed
 
+    private void dateChooser1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_dateChooser1FocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dateChooser1FocusGained
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.ShadowPanel ShadowSearch;
@@ -826,11 +906,12 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
     private component.Card card3;
     private component.Card card4;
     private component.Card card5;
+    private component.Card card6;
     private grafik.main.CurveLineChart chart;
     private datechooser.Main.DateBetween dateBetween1;
     private datechooser.Main.DateChooser dateChooser1;
     private datechooser.render.DefaultDateChooserRender defaultDateChooserRender1;
-    private floatingbtn.FloatingActionButton floatingActionButton2;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
@@ -846,9 +927,11 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
     private javax.swing.JButton pilihtanggal;
+    private table.scroll.win11.ScrollPaneWin11 scrollPaneWin111;
     private javax.swing.JTextField t_date;
     private component.Table tb_laporan;
     // End of variables declaration//GEN-END:variables
 }
+
 
 
