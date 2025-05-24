@@ -34,7 +34,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         panelMain.add(new TabManajemenSampah());
         panelMain.repaint();
         panelMain.revalidate();
-        loadTabelSampah();
     }
 
     private void inisialisasiTabel() {
@@ -55,7 +54,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     rs.getInt("harga_jual"),
                     rs.getDate("tanggal")
                 };
-                model.addRow(row);
+                tblModel.addRow(row);
             }
 
         } catch (SQLException e) {
@@ -841,7 +840,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             .addGroup(ShadowSearch1Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(jLabel9)
-                .addContainerGap(180, Short.MAX_VALUE))
+                .addContainerGap(179, Short.MAX_VALUE))
         );
         ShadowSearch1Layout.setVerticalGroup(
             ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
