@@ -44,25 +44,8 @@ public class Dashboard extends javax.swing.JFrame {
     public Dashboard(UserSession user) {
         this.user = user;
         initComponents();
-        
-        TabLaporanStatistik laporans=new TabLaporanStatistik();
-        TabTransaksi_laporan laporantr=new TabTransaksi_laporan();
-        
-        panelmain.init(laporans,laporantr);
-        panelmain.setAnimate(15);
-        
-        laporans.addEventTablaporantransaksi(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                panelmain.show(1);
-            }
 
-        });
         
-        
-        
-        
-
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setSidebarLabelEffect(dashboard);
         setSidebarLabelEffect(nasabah);
@@ -71,16 +54,16 @@ public class Dashboard extends javax.swing.JFrame {
         setSidebarLabelEffect(transaksi);
         setSidebarLabelEffect(data_barang);
         setSidebarLabelEffect(logout);
-        panelmain.setLayout(new BorderLayout());
+        panelMain.setLayout(new BorderLayout());
         lb_user.setText(user.getNama());
         lb_level.setText(user.getLevel());
-        panelmain.setOpaque(false);
-        panelmain.removeAll();
-        panelmain.add(new TabDashboard());
-        panelmain.repaint();
-        panelmain.revalidate();
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabDashboard());
+        panelMain.repaint();
+        panelMain.revalidate();
         
-        panelmain.setLayout(new BorderLayout());
+        panelMain.setLayout(new BorderLayout());
         lb_user.setText(user.getNama());
         lb_level.setText(user.getLevel());
 
@@ -90,12 +73,12 @@ public class Dashboard extends javax.swing.JFrame {
  
     
     private void gantiHalaman(JPanel panel, String namaHalaman) {
-        panelmain.setOpaque(false);
-        panelmain.removeAll();
-        panelmain.add(panel);
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(panel);
         halaman.setText(namaHalaman); // ini label judul halaman
-        panelmain.repaint();
-        panelmain.revalidate();
+        panelMain.repaint();
+        panelMain.revalidate();
     }
     
 
@@ -122,7 +105,7 @@ public class Dashboard extends javax.swing.JFrame {
         shadowLogout = new component.ShadowPanel();
         logout = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        panelmain = new component.PanelSlide();
+        panelMain = new component.PanelSlide();
         pn_header = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         lb_level = new javax.swing.JLabel();
@@ -409,16 +392,16 @@ public class Dashboard extends javax.swing.JFrame {
                 .addGap(20, 20, 20))
         );
 
-        panelmain.setBackground(new java.awt.Color(231, 231, 231));
+        panelMain.setBackground(new java.awt.Color(231, 231, 231));
 
-        javax.swing.GroupLayout panelmainLayout = new javax.swing.GroupLayout(panelmain);
-        panelmain.setLayout(panelmainLayout);
-        panelmainLayout.setHorizontalGroup(
-            panelmainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout panelMainLayout = new javax.swing.GroupLayout(panelMain);
+        panelMain.setLayout(panelMainLayout);
+        panelMainLayout.setHorizontalGroup(
+            panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 966, Short.MAX_VALUE)
         );
-        panelmainLayout.setVerticalGroup(
-            panelmainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panelMainLayout.setVerticalGroup(
+            panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 884, Short.MAX_VALUE)
         );
 
@@ -483,7 +466,7 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addGap(0, 238, Short.MAX_VALUE)
-                    .addComponent(panelmain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(panelMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -497,7 +480,7 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addGap(0, 84, Short.MAX_VALUE)
-                    .addComponent(panelmain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(panelMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         pack();
@@ -522,61 +505,61 @@ public class Dashboard extends javax.swing.JFrame {
 
     private void data_barangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_data_barangMouseClicked
         changeTabColor(shadowDataBarang);
-        panelmain.setOpaque(false);
-        panelmain.removeAll();
-        panelmain.add(new TabDataBarang());
-        panelmain.repaint();
-        panelmain.revalidate();
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabDataBarang());
+        panelMain.repaint();
+        panelMain.revalidate();
         gantiHalaman(new TabDataBarang(), "Halaman Data Barang");
     }//GEN-LAST:event_data_barangMouseClicked
 
     private void transaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_transaksiMouseClicked
         changeTabColor(shadowTransaksi);
-        panelmain.setOpaque(false);
-        panelmain.removeAll();
-        panelmain.add(new TabTransaksi());
-        panelmain.repaint();
-        panelmain.revalidate();
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabTransaksi());
+        panelMain.repaint();
+        panelMain.revalidate();
         gantiHalaman(new TabTransaksi(), "Halaman Transaksi");
     }//GEN-LAST:event_transaksiMouseClicked
 
     private void laporan_statistikMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laporan_statistikMouseClicked
         changeTabColor(shadowLaporan);
-        panelmain.setOpaque(false);
-        panelmain.removeAll();
-        panelmain.add(new TabLaporanStatistik());
-        panelmain.repaint();
-        panelmain.revalidate();
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabLaporanStatistik());
+        panelMain.repaint();
+        panelMain.revalidate();
         gantiHalaman(new TabLaporanStatistik(), "Laporan & Statistik");
     }//GEN-LAST:event_laporan_statistikMouseClicked
 
     private void manajemen_sampahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_manajemen_sampahMouseClicked
         changeTabColor(shadowSampah);
-        panelmain.setOpaque(false);
-        panelmain.removeAll();
-        panelmain.add(new TabManajemenSampah());
-        panelmain.repaint();
-        panelmain.revalidate();
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabManajemenSampah());
+        panelMain.repaint();
+        panelMain.revalidate();
         gantiHalaman(new TabManajemenSampah(), "Manajemen Sampah");
     }//GEN-LAST:event_manajemen_sampahMouseClicked
 
     private void nasabahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nasabahMouseClicked
         changeTabColor(shadowNasabah);
-        panelmain.setOpaque(false);
-        panelmain.removeAll();
-        panelmain.add(new TabManajemenNasabah(user));
-        panelmain.repaint();
-        panelmain.revalidate();
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabManajemenNasabah(user));
+        panelMain.repaint();
+        panelMain.revalidate();
         gantiHalaman(new TabManajemenNasabah(user), "Manajemen Nasabah");
     }//GEN-LAST:event_nasabahMouseClicked
 
     private void dashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dashboardMouseClicked
         changeTabColor(shadowDashboard);
-        panelmain.setOpaque(false);
-        panelmain.removeAll();
-        panelmain.add(new TabDashboard());
-        panelmain.repaint();
-        panelmain.revalidate();
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabDashboard());
+        panelMain.repaint();
+        panelMain.revalidate();
         gantiHalaman(new TabDashboard(), "Dashboard");
     }//GEN-LAST:event_dashboardMouseClicked
 
@@ -806,7 +789,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JLabel logout;
     private javax.swing.JLabel manajemen_sampah;
     private javax.swing.JLabel nasabah;
-    private component.PanelSlide panelmain;
+    private component.PanelSlide panelMain;
     private javax.swing.JPanel pn_header;
     private javax.swing.JPanel pn_sidebar;
     private component.ShadowPanel shadowDashboard;
