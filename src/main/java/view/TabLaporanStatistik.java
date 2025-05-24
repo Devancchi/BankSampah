@@ -48,9 +48,6 @@ public TabLaporanStatistik() {
         setdata();
     }
 
-    public void addEventTablaporantransaksi(ActionListener event) {
-        pindahhalaman1.addActionListener(event);
-    }
 
     
    private void setdata() {
@@ -352,7 +349,7 @@ private String formatRupiah(double amount) {
         dateChooser1 = new datechooser.Main.DateChooser();
         dateBetween1 = new datechooser.Main.DateBetween();
         defaultDateChooserRender1 = new datechooser.render.DefaultDateChooserRender();
-        panelMain = new component.PanelSlide();
+        panelMain = new javax.swing.JPanel();
         panelView = new javax.swing.JPanel();
         ShadowUtama = new component.ShadowPanel();
         scrollPaneWin111 = new table.scroll.win11.ScrollPaneWin11();
@@ -400,6 +397,9 @@ private String formatRupiah(double amount) {
 
         setPreferredSize(new java.awt.Dimension(1200, 716));
         setLayout(new java.awt.CardLayout());
+
+        panelMain.setBackground(new java.awt.Color(255, 255, 255));
+        panelMain.setLayout(new java.awt.CardLayout());
 
         panelView.setBackground(new java.awt.Color(255, 255, 255));
         panelView.setLayout(new java.awt.CardLayout());
@@ -827,9 +827,7 @@ private String formatRupiah(double amount) {
                                 .addGap(44, 44, 44)
                                 .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(scrollPaneWin111, javax.swing.GroupLayout.PREFERRED_SIZE, 852, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                                .addComponent(pindahhalaman1)
-                                .addGap(40, 40, 40)))
+                            .addComponent(pindahhalaman1))
                         .addGap(18, 18, 18)
                         .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(card3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -850,9 +848,10 @@ private String formatRupiah(double amount) {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                        .addComponent(pindahhalaman1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(29, 29, 29)
                         .addComponent(scrollPaneWin111, javax.swing.GroupLayout.PREFERRED_SIZE, 588, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pindahhalaman1)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(ShadowUtamaLayout.createSequentialGroup()
                         .addComponent(card5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -863,28 +862,9 @@ private String formatRupiah(double amount) {
 
         panelView.add(ShadowUtama, "card2");
 
-        javax.swing.GroupLayout panelMainLayout = new javax.swing.GroupLayout(panelMain);
-        panelMain.setLayout(panelMainLayout);
-        panelMainLayout.setHorizontalGroup(
-            panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1194, Short.MAX_VALUE)
-            .addGroup(panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(panelMainLayout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(panelView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
-        panelMainLayout.setVerticalGroup(
-            panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 944, Short.MAX_VALUE)
-            .addGroup(panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(panelMainLayout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(panelView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
+        panelMain.add(panelView, "card2");
 
-        add(panelMain, "card3");
+        add(panelMain, "card2");
     }// </editor-fold>//GEN-END:initComponents
 
     private void card1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseClicked
@@ -1169,7 +1149,7 @@ animateClickCard2(new Color(224, 224, 224), new Color(158, 158, 158));
     private javax.swing.JLabel lb_pemasukan;
     private javax.swing.JLabel lb_pengeluaran;
     private javax.swing.JLabel lb_total;
-    private component.PanelSlide panelMain;
+    private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
     private javax.swing.JButton pilihtanggal;
     private javax.swing.JButton pindahhalaman1;
