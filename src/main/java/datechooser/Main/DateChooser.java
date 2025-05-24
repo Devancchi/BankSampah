@@ -39,12 +39,12 @@ public class DateChooser extends JPanel {
     private RDate[] selectedDateBetween = new RDate[2];
     private int selectedCount = 0;
     private Color themeColor = new Color(67, 127, 251);
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private DateSelectionMode dateSelectionMode = DateSelectionMode.SINGLE_DATE_SELECTED;
     private JPopupMenu popup;
     private JTextField textField;
     private JButton labelCurrentDate;
-    private String betweenCharacter = " to ";
+    private String betweenCharacter = " dari ";
     private DateChooserRender dateChooserRender = new DefaultDateChooserRender();
     private JSpinner spMonth;
     private JSpinner spYear;
@@ -71,6 +71,7 @@ public class DateChooser extends JPanel {
             return months;
         }
     }
+    
 
     private String[] getListDay() {
         String days[] = (String[]) UIManager.get("DateChooser.listDay");
