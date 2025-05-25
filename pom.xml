@@ -109,19 +109,5 @@
             <artifactId>DateChooser-SNAPSHOT</artifactId>
             <version>SNAPSHOT</version>
         </dependency>        
-    <dependency>
-        <groupId>com.raven</groupId>
-        <artifactId>raven-bean-pack</artifactId>
-        <version>2.0.0</version>
-        <scope>system</scope>
-        <systemPath>D:/Kuliah/Aplikasi/BankSampah/lib/raven-bean-pack-2.0.0.jar</systemPath>
-    </dependency>
-    <dependency>
-        <groupId>com.swing</groupId>
-        <artifactId>swing-crazy-panel</artifactId>
-        <version>1.0.0</version>
-        <scope>system</scope>
-        <systemPath>D:/Kuliah/Aplikasi/BankSampah/lib/swing-crazy-panel-1.0.0.jar</systemPath>
-    </dependency>
     </dependencies>
 </project>
