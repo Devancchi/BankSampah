@@ -5,6 +5,9 @@ import java.sql.*;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JLabel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
 
@@ -37,7 +40,12 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         // Mengatur model tabel
         tblModel = new DefaultTableModel(new String[]{"ID Sampah", "Jenis Sampah", "Kategori Sampah", "Harga Setor/Kg", "Harga Jual/Kg", "Tanggal"}, 0);
         tblSampah.setModel(tblModel);
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT s.id_sampah, s.harga_setor, s.harga_jual, s.tanggal, k.nama_kategori,  j.nama_jenis "
+        tblSampah.getColumnModel().getColumn(0).setMinWidth(0);
+        tblSampah.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblSampah.getColumnModel().getColumn(0).setWidth(0);
+        setTableCenter(tblSampah);
+
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT s.id_sampah, s.harga_setor, s.harga_jual, s.tanggal,  k.nama_kategori,  j.nama_jenis "
                 + "FROM sampah s "
                 + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
                 + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
@@ -53,17 +61,23 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 };
                 tblModel.addRow(row);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
-
     }
 
     private void loadTabelKategori() {
         // Mengatur model tabel
         tblModel = new DefaultTableModel(new String[]{"ID Kategori", "Kategori Sampah", "Jenis Sampah"}, 0);
         tblKategori.setModel(tblModel);
+        tblKategori.setModel(tblModel);
+        tblKategori.getColumnModel().getColumn(0).setMinWidth(0);
+        tblKategori.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblKategori.getColumnModel().getColumn(0).setWidth(0);
+        setTableCenter(tblKategori);
+
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT k.id_kategori, k.nama_kategori,  j.nama_jenis "
                 + "FROM kategori_sampah k "
                 + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
@@ -86,6 +100,12 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         // Mengatur model tabel
         tblModel = new DefaultTableModel(new String[]{"ID Jenis", "Jenis Sampah"}, 0);
         tblJenis.setModel(tblModel);
+        tblJenis.setModel(tblModel);
+        tblJenis.getColumnModel().getColumn(0).setMinWidth(0);
+        tblJenis.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblJenis.getColumnModel().getColumn(0).setWidth(0);
+        setTableCenter(tblJenis);
+
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT * FROM jenis_sampah")) {
             while (rs.next()) {
                 Object[] row = {
@@ -135,6 +155,20 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
         cbxKategori_pnView.removeAllItems();
         cbxKategori_pnView.addItem("-- Pilih Kategori --");
+    }
+
+    private void setTableCenter(JTable table) {
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+
+        // Center semua kolom
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        // Center header kolom
+        ((DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(JLabel.CENTER);
     }
 
     /**
@@ -1588,7 +1622,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             pstmt.setString(2, jenis);
 
             pstmt.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Data berhasil ditambahkan!");
+            JOptionPane.showMessageDialog(null, "Kategori berhasil ditambahkan!");
 
             clearForm();  // Bersihkan form
             loadTabelKategori();
@@ -1612,7 +1646,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             pstmt.setString(2, jenis);
 
             pstmt.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Data berhasil dihapus!");
+            JOptionPane.showMessageDialog(null, "Kategori berhasil dihapus!");
 
             clearForm();  // Bersihkan form
             loadTabelKategori();
@@ -1659,11 +1693,11 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             String strBerat = txt_Berat.getText();
             double berat = Double.parseDouble(strBerat);
 
-                    if (kode.isEmpty() || namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-                    
+            if (kode.isEmpty() || namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             // Ambil ID Kategori
             String idKategori = "";
             String queryKategori = "SELECT id_kategori FROM kategori_sampah WHERE nama_kategori = ?";
