@@ -15,9 +15,9 @@ import java.util.logging.Logger;
 import main.DBconnect;
 import main.ModelData;
 
-public class TabLaporanStatistik extends javax.swing.JPanel {
+public class TabLaporanStatistik11 extends javax.swing.JPanel {
     
-    public TabLaporanStatistik() {
+    public TabLaporanStatistik11() {
          initComponents();
          loadDashboardData();
         loadData("");
@@ -334,7 +334,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
 
             private void showPanel() {
                 panelMain.removeAll();
-                panelMain.add(new TabLaporanStatistik());
+                panelMain.add(new TabLaporanStatistik11());
                 panelMain.repaint();
                 panelMain.revalidate();
             }
@@ -631,7 +631,6 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         ShadowSearch1.setPreferredSize(new java.awt.Dimension(259, 43));
 
         txt_date.setBackground(new java.awt.Color(230, 245, 241));
-        txt_date.setText("");
         txt_date.setBorder(null);
         txt_date.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {

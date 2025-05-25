@@ -4,7 +4,6 @@ import com.formdev.flatlaf.*;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
-import com.formdev.flatlaf.extras.FlatSVGIcon;
 import component.LoggerUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -12,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import view.TabDashboard;
 import view.TabDataBarang;
-import view.TabLaporanStatistik;
+import view.TabLaporanStatistik1;
 import view.TabManajemenSampah;
 import view.TabTransaksi;
 import java.awt.EventQueue;
@@ -20,17 +19,12 @@ import java.awt.Font;
 import javax.swing.UIManager;
 import loginregister.loginregister;
 import component.UserSession;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.Area;
-import java.awt.geom.RoundRectangle2D;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import loginregister.Login;
+import view.TabLaporanStatistik;
 import view.TabManajemenNasabah;
-import view.TabTransaksi_laporan;
+
 
 
 
