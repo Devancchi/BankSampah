@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
 import chart.ModelPolarAreaChart;
+import chart.PolarAreaChart;
 
 /**
  *
@@ -40,10 +41,8 @@ public class TabDashboard extends javax.swing.JPanel {
         setTabelModel();
         loadLogData();
         paginationLog();
-        loadDataChart();
-        ChartSampahMasukVsBarangKeluar.addItem(new ModelPolarAreaChart(new Color(76, 175, 80), "Sampah Jual", 80)); // Hijau
-        ChartSampahMasukVsBarangKeluar.addItem(new ModelPolarAreaChart(new Color(244, 67, 54), "Sampah Beli", 45)); // Merah
-        ChartSampahMasukVsBarangKeluar.start();
+        loadDataChartBarang();
+        loadDataChartSampah();
 
     }
 
@@ -85,7 +84,7 @@ public class TabDashboard extends javax.swing.JPanel {
         btn_nextLog = new javax.swing.JButton();
         btn_lastLog = new javax.swing.JButton();
 
-        setBackground(new java.awt.Color(255, 255, 255));
+        setBackground(new java.awt.Color(250, 250, 250));
         setPreferredSize(new java.awt.Dimension(1192, 944));
 
         panelCard.setPreferredSize(new java.awt.Dimension(1182, 126));
@@ -131,7 +130,7 @@ public class TabDashboard extends javax.swing.JPanel {
         CardTotalSampah.setFillColor(new java.awt.Color(31, 179, 148));
         CardTotalSampah.setPreferredSize(new java.awt.Dimension(315, 99));
 
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_total_sampah.png"))); // NOI18N
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Trash.png"))); // NOI18N
 
         jLabel9.setForeground(new java.awt.Color(204, 204, 204));
         jLabel9.setText("Total berat sampah");
@@ -298,7 +297,7 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(panelBawahLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 209, Short.MAX_VALUE)
                 .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -339,11 +338,11 @@ public class TabDashboard extends javax.swing.JPanel {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(panelTabelLayout.createSequentialGroup()
                         .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
+                            .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, 851, Short.MAX_VALUE)
                             .addComponent(jScrollPane1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(ChartSampahMasukVsBarangKeluar, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                            .addComponent(ChartSampahMasukVsBarangKeluar, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
                             .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
         );
         panelTabelLayout.setVerticalGroup(
@@ -655,7 +654,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     + "ORDER BY log_aktivitas.id_log DESC";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 ResultSet rs = st.executeQuery();
-                
+
                 while (rs.next()) {
                     String idLog = rs.getString("id_log");
                     String admin = rs.getString("nama_user");
@@ -671,7 +670,7 @@ public class TabDashboard extends javax.swing.JPanel {
         }
     }
 
-    private void loadDataChart() {
+    private void loadDataChartBarang() {
         int totalStok = 0;
         int totalTerjual = 0;
 
@@ -696,7 +695,45 @@ public class TabDashboard extends javax.swing.JPanel {
             ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(Color.RED, "Barang Terjual", totalTerjual));
             ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(Color.GREEN, "Barang Tersisa", totalStok));
             ChartBarangTerjualVsBarangSisa.start();
-            
+
+            rsStok.close();
+            rsTerjual.close();
+            psStok.close();
+            psTerjual.close();
+            conn.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadDataChartSampah() {
+        int totalStok = 0;
+        int totalTerjual = 0;
+
+        String queryStok = "SELECT SUM(stok) AS total_stok FROM data_barang";
+        String queryTerjual = "SELECT SUM(qty) AS total_terjual FROM transaksi";
+
+        try {
+            Connection conn = DBconnect.getConnection();
+            PreparedStatement psStok = conn.prepareStatement(queryStok);
+            ResultSet rsStok = psStok.executeQuery();
+            if (rsStok.next()) {
+                totalStok = rsStok.getInt("total_stok");
+            }
+
+            PreparedStatement psTerjual = conn.prepareStatement(queryTerjual);
+            ResultSet rsTerjual = psTerjual.executeQuery();
+            if (rsTerjual.next()) {
+                totalTerjual = rsTerjual.getInt("total_terjual");
+            }
+
+            ChartBarangTerjualVsBarangSisa.clear();
+            ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(new Color(72, 202, 164), "Barang Terjual", totalTerjual));
+            ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(new Color(96, 125, 117), "Barang Tersisa", totalStok));
+
+            ChartBarangTerjualVsBarangSisa.start();
+
             rsStok.close();
             rsTerjual.close();
             psStok.close();
