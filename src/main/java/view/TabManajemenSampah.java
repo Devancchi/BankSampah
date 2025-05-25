@@ -1,9 +1,11 @@
 package view;
 
+
 import java.awt.event.KeyEvent;
 import java.sql.*;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JLabel;
@@ -27,6 +29,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         /// load tabel ////
         loadTabelKategori();
         loadTabelJenis();
+
     }
 
     private void showPanel() {
@@ -67,6 +70,52 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
     }
+
+//    private void clearPanelAdd() {
+//        txt_JenisAdd.setText("");
+//        txt_KategoriAdd.setText("");
+//        txt_HargaAdd.setText("");
+//    }
+//
+//    private void clearPanelEdit() {
+//        txt_HargaEdit.setText("");
+//        txt_JenisEdit.setText("");
+//        txt_KategoriEdit.setText("");
+//    }
+
+//    private void setPanelEditFormData(int selectedRow) {
+//        txt_JenisEdit.setText(tblSampah.getValueAt(selectedRow, 1).toString());
+//        txt_KategoriEdit.setText(tblSampah.getValueAt(selectedRow, 2).toString());
+//        txt_HargaEdit.setText(tblSampah.getValueAt(selectedRow, 3).toString());
+//
+//        selectedIdSampah = Integer.parseInt(tblSampah.getValueAt(selectedRow, 0).toString());
+//    }
+
+//    private void inisialisasiTabel() {
+//        // Mengatur model tabel
+//        tblModel = new DefaultTableModel(new String[]{"ID Sampah", "Jenis Sampah", "Kategori Sampah", "Harga/Kg", "Tanggal"}, 0);
+//        tblSampah.setModel(tblModel);
+//        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT s.id_sampah, s.harga_sampah, s.tanggal,  k.nama_kategori,  j.nama_jenis "
+//                + "FROM sampah s "
+//                + "JOIN jenis_sampah j ON s.id_jenis = j.id_jenis "
+//                + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
+//                + "ORDER BY s.id_sampah")) {
+//            while (rs.next()) {
+//                Object[] row = {
+//                    rs.getString("id_sampah"),
+//                    rs.getString("nama_jenis"),
+//                    rs.getString("nama_kategori"),
+//                    rs.getInt("harga_sampah"),
+//                    rs.getDate("tanggal")
+//                };
+//                tblModel.addRow(row);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+//        }
+//
+//    }
 
     private void loadTabelKategori() {
         // Mengatur model tabel
@@ -823,13 +872,13 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             .addGroup(ShadowSearch1Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(jLabel9)
-                .addContainerGap(180, Short.MAX_VALUE))
+                .addContainerGap(179, Short.MAX_VALUE))
         );
         ShadowSearch1Layout.setVerticalGroup(
             ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowSearch1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1244,7 +1293,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                                 .addGroup(ShadowUtama3Layout.createSequentialGroup()
                                     .addComponent(jLabel28)
                                     .addGap(913, 913, 913))))
-                        .addGap(0, 224, Short.MAX_VALUE))))
+                        .addGap(0, 225, Short.MAX_VALUE))))
         );
         ShadowUtama3Layout.setVerticalGroup(
             ShadowUtama3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1285,6 +1334,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSimpanHargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanHargaActionPerformed
+
         String jenis = cbxJenis_pnAdd.getSelectedItem().toString();
         String kategori = cbxKategori_pnAdd.getSelectedItem().toString();
         String hargaS = txt_HargaAdd.getText();
@@ -1313,6 +1363,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Gagal Menambahkan Data harga Sampah: " + e.getMessage());
         }
+
     }//GEN-LAST:event_btnSimpanHargaActionPerformed
 
     private void btnKembaliTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKembaliTActionPerformed
@@ -1764,6 +1815,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "Terjadi kesalahan: " + e.getMessage());
         }
     }//GEN-LAST:event_btn_ProsesSampahActionPerformed
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
