@@ -43,8 +43,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         tblSampah.setModel(tblModel);
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT s.id_sampah, s.harga_setor, s.harga_jual, s.tanggal,  k.nama_kategori,  j.nama_jenis "
                 + "FROM sampah s "
-                + "JOIN jenis_sampah j ON s.id_jenis = j.id_jenis "
                 + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
+                + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
                 + "ORDER BY s.id_sampah")) {
             while (rs.next()) {
                 Object[] row = {
