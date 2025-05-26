@@ -212,8 +212,8 @@ public TabLaporanStatistik() {
 
     private void loadDashboardData() {
     String queryPemasukan = "SELECT SUM(sa.harga)+SUM(t.total_harga) FROM laporan_pemasukan lpl\n" +
-"JOIN jual_sampah sa ON lpl.id_jual_sampah=sa.id_jual_sampah\n" +
-"JOIN transaksi t ON lpl.id_transaksi=t.id_transaksi";
+"JOIN jual_sampah sa ON lpl.id_jual_sampah = sa.id_jual_sampah\n" +
+"JOIN transaksi t ON lpl.id_transaksi = t.id_transaksi";
     String queryPengeluaran = "SELECT SUM(harga) FROM setor_sampah";
 
     try (Connection conn = DBconnect.getConnection();
