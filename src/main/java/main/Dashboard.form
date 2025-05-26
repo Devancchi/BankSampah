@@ -28,7 +28,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="pn_header" max="32767" attributes="0"/>
-                  <Component id="panelmain" max="32767" attributes="0"/>
+                  <Component id="panelMain" max="32767" attributes="0"/>
               </Group>
           </Group>
       </Group>
@@ -38,7 +38,7 @@
           <Group type="102" alignment="0" attributes="0">
               <Component id="pn_header" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="panelmain" max="32767" attributes="0"/>
+              <Component id="panelMain" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
           <Component id="pn_sidebar" alignment="0" pref="979" max="32767" attributes="0"/>
@@ -609,7 +609,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="component.PanelSlide" name="panelmain">
+    <Container class="component.PanelSlide" name="panelMain">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="e7" green="e7" red="e7" type="rgb"/>
