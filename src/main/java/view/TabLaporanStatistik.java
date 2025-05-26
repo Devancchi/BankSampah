@@ -97,7 +97,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
             harga, 
             riwayat
         FROM (
-            -- Data dari laporan_pemasukan (data_barang)
+            
             SELECT 
                 u.nama_user AS nama_admin,
                 COALESCE(n.nama_nasabah, '-') AS nama_nasabah,
@@ -113,7 +113,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
 
             UNION ALL
 
-            -- Data dari laporan_pemasukan (jual_sampah)
+            
             SELECT 
                 u.nama_user AS nama_admin,
                 '-' AS nama_nasabah,
@@ -130,7 +130,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
 
             UNION ALL
 
-            -- Data dari laporan_pengeluaran
+          
             SELECT 
                 u.nama_user AS nama_admin,
                 n.nama_nasabah AS nama_nasabah,
@@ -373,6 +373,12 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         jButton1 = new javax.swing.JButton();
         card5 = new component.Card();
         chart = new grafik.main.CurveLineChart();
+        card6 = new component.Card();
+        button1 = new ripple.button.Button();
+        button2 = new ripple.button.Button();
+        button3 = new ripple.button.Button();
+        button4 = new ripple.button.Button();
+        jLabel1 = new javax.swing.JLabel();
 
         dateChooser1.setDateChooserRender(defaultDateChooserRender1);
         dateChooser1.setDateSelectable(null);
@@ -507,7 +513,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 .addGroup(card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel16)
                     .addComponent(lb_pengeluaran))
-                .addContainerGap(106, Short.MAX_VALUE))
+                .addContainerGap(159, Short.MAX_VALUE))
         );
         card2Layout.setVerticalGroup(
             card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -599,7 +605,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
             }
         });
 
-        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Nasabah" }));
+        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Nasabah", "Nama Barang/Sampah" }));
         box_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 box_pilihActionPerformed(evt);
@@ -611,19 +617,19 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         ShadowSearchLayout.setHorizontalGroup(
             ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowSearchLayout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(box_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(box_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
+                .addContainerGap())
         );
         ShadowSearchLayout.setVerticalGroup(
             ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowSearchLayout.createSequentialGroup()
-                .addGap(8, 8, 8)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowSearchLayout.createSequentialGroup()
+                .addGap(7, 7, 7)
                 .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(box_pilih))
+                    .addComponent(box_pilih, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -645,7 +651,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         });
 
         pilihtanggal.setText("...");
-        pilihtanggal.setBorder(null);
+        pilihtanggal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         pilihtanggal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pilihtanggalActionPerformed(evt);
@@ -700,8 +706,8 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
             card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(card4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
+                .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 502, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -742,6 +748,81 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        card6.setFillColor(new java.awt.Color(255, 255, 255));
+
+        button1.setBackground(new java.awt.Color(0, 204, 204));
+        button1.setText("Laporan Detail Pemasukan");
+        button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        button1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button1ActionPerformed(evt);
+            }
+        });
+
+        button2.setBackground(new java.awt.Color(0, 204, 204));
+        button2.setText("Laporan Transaksi");
+        button2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        button2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button2ActionPerformed(evt);
+            }
+        });
+
+        button3.setBackground(new java.awt.Color(0, 204, 204));
+        button3.setText("Laporan Jual Sampah");
+        button3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        button3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button3ActionPerformed(evt);
+            }
+        });
+
+        button4.setBackground(new java.awt.Color(0, 204, 204));
+        button4.setText("Laporan Detsil Pengeluaran");
+        button4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        button4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button4ActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel1.setText("Halaman Laporan");
+
+        javax.swing.GroupLayout card6Layout = new javax.swing.GroupLayout(card6);
+        card6.setLayout(card6Layout);
+        card6Layout.setHorizontalGroup(
+            card6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(card6Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(card6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, card6Layout.createSequentialGroup()
+                        .addGroup(card6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(button4, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(button3, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, card6Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(118, 118, 118))))
+        );
+        card6Layout.setVerticalGroup(
+            card6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, card6Layout.createSequentialGroup()
+                .addContainerGap(19, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(button3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(button4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40))
+        );
+
         javax.swing.GroupLayout ShadowUtamaLayout = new javax.swing.GroupLayout(ShadowUtama);
         ShadowUtama.setLayout(ShadowUtamaLayout);
         ShadowUtamaLayout.setHorizontalGroup(
@@ -751,17 +832,17 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ShadowUtamaLayout.createSequentialGroup()
                         .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
-                        .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(53, 53, 53))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1))
                 .addGap(66, 66, 66)
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(card5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(card5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(card6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(27, 27, 27))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowUtamaLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 27, Short.MAX_VALUE)
                 .addComponent(card4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         ShadowUtamaLayout.setVerticalGroup(
@@ -777,9 +858,12 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                         .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 593, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(card5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(98, Short.MAX_VALUE))
+                    .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                        .addComponent(card5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(card6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 634, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(53, 53, 53))
         );
 
         panelView.add(ShadowUtama, "card2");
@@ -894,6 +978,22 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         txt_date.setText("");
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_button1ActionPerformed
+
+    private void button2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_button2ActionPerformed
+
+    private void button3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_button3ActionPerformed
+
+    private void button4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_button4ActionPerformed
     
     private void searchByKeywordAndDate() {
     String kataKunci = txt_search.getText().trim();
@@ -973,15 +1073,23 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         boolean whereAdded = false;
 
         if (!kataKunci.isEmpty()) {
-            if (filter.equals("Default")) {
-                sql.append("WHERE (nama_admin LIKE ? OR nama_nasabah LIKE ?) ");
-                whereAdded = true;
-            } else if (filter.equals("Nama Admin")) {
-                sql.append("WHERE (nama_admin LIKE ?) ");
-                whereAdded = true;
-            } else if (filter.equals("Nama Nasabah")) {
-                sql.append("WHERE (nama_nasabah LIKE ?) ");
-                whereAdded = true;
+            switch (filter) {
+                case "Default":
+                    sql.append("WHERE (nama_admin LIKE ? OR nama_nasabah LIKE ? OR nama_barang_sampah LIKE ?) ");
+                    whereAdded = true;
+                    break;
+                case "Nama Admin":
+                    sql.append("WHERE (nama_admin LIKE ?) ");
+                    whereAdded = true;
+                    break;
+                case "Nama Nasabah":
+                    sql.append("WHERE (nama_nasabah LIKE ?) ");
+                    whereAdded = true;
+                    break;
+                case "Nama Barang/Sampah":
+                    sql.append("WHERE (nama_barang_sampah LIKE ?) ");
+                    whereAdded = true;
+                    break;
             }
         }
 
@@ -1000,11 +1108,15 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
 
         if (!kataKunci.isEmpty()) {
             String searchPattern = "%" + kataKunci + "%";
-            if (filter.equals("Default")) {
-                st.setString(paramIndex++, searchPattern);
-                st.setString(paramIndex++, searchPattern);
-            } else {
-                st.setString(paramIndex++, searchPattern);
+            switch (filter) {
+                case "Default":
+                    st.setString(paramIndex++, searchPattern);
+                    st.setString(paramIndex++, searchPattern);
+                    st.setString(paramIndex++, searchPattern);
+                    break;
+                default:
+                    st.setString(paramIndex++, searchPattern);
+                    break;
             }
         }
 
@@ -1055,21 +1167,29 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
 }
 
 
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.ShadowPanel ShadowSearch;
     private component.ShadowPanel ShadowSearch1;
     private component.ShadowPanel ShadowUtama;
     private javax.swing.JComboBox<String> box_pilih;
+    private ripple.button.Button button1;
+    private ripple.button.Button button2;
+    private ripple.button.Button button3;
+    private ripple.button.Button button4;
     private component.Card card1;
     private component.Card card2;
     private component.Card card3;
     private component.Card card4;
     private component.Card card5;
+    private component.Card card6;
     private grafik.main.CurveLineChart chart;
     private datechooser.Main.DateBetween dateBetween1;
     private datechooser.Main.DateChooser dateChooser1;
     private datechooser.render.DefaultDateChooserRender defaultDateChooserRender1;
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;

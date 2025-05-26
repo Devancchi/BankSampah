@@ -11,7 +11,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import view.TabDashboard;
 import view.TabDataBarang;
-import view.TabLaporanStatistik1;
 import view.TabManajemenSampah;
 import view.TabTransaksi;
 import java.awt.EventQueue;
