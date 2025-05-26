@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
+import static org.apache.commons.math3.fitting.leastsquares.LeastSquaresFactory.model;
 
 public class TabManajemenSampah extends javax.swing.JPanel {
 
