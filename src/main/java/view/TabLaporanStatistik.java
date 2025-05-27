@@ -193,7 +193,6 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
     }
 }
 
-
     private void loadDashboardData() {
     try {
         Connection conn = DBconnect.getConnection();
