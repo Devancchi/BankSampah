@@ -2,7 +2,9 @@ package view;
 
 import grafik.main.ModelChart;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.event.ActionListener;
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,144 +16,156 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.DBconnect;
 import main.ModelData;
+import javax.swing.Timer;
 
-public class TabLaporanStatistik extends javax.swing.JPanel {
+
+
+
+public class TabLaporanStatistik1 extends javax.swing.JPanel {
     
-    public TabLaporanStatistik() {
+    
+    private final Connection conn = DBconnect.getConnection();
+    
+    
+public TabLaporanStatistik1() {
+        
          initComponents();
+         
+         
+         
          loadDashboardData();
-        loadData("");
+         loadData("");
+       
+        
         
         chart.setTitle("Chart Data");
 
-// Harus ADA 3 legend sesuai urutan data
-chart.addLegend("Amount", Color.decode("#7b4397"), Color.decode("#dc2430"));
-chart.addLegend("Cost", Color.decode("#e65c00"), Color.decode("#F9D423"));
-chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
+        // Harus ADA 3 legend sesuai urutan data
+        chart.addLegend("Amount", Color.decode("#7b4397"), Color.decode("#dc2430"));
+        chart.addLegend("Cost", Color.decode("#e65c00"), Color.decode("#F9D423"));
+        chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
 
         setdata();
     }
-    
-    
    private void setdata() {
-    try {
-        List<ModelData>lists=new ArrayList<>();
-        DBconnect.getInstance().getConnection();
-        String sql = "SELECT DATE_FORMAT(t.tanggal, '%M') AS 'Month', " +
-                     "SUM(t.total_harga) AS Amount, " +
-                     "SUM(s.harga) AS Cost, " +
-                     "SUM(t.total_harga) - SUM(s.harga) AS Profit " +
-                     "FROM laporan_pemasukan lplpm " +
-                     "JOIN transaksi t ON lplpm.id_transaksi = t.id_transaksi " +
-                     "JOIN jual_sampah s ON lplpm.id_jual_sampah = s.id_jual_sampah " +
-                     "GROUP BY DATE_FORMAT(t.tanggal,'%m%Y') " +
-                     "ORDER BY t.tanggal DESC " +
-                     "LIMIT 7;";
-        PreparedStatement p = DBconnect.getInstance().getConnection().prepareStatement(sql);
-        ResultSet r = p.executeQuery();
-        while(r.next()){
-            String month=r.getString("Month");
-            double amount=r.getDouble("Amount");
-            double cost=r.getDouble("Cost");
-            double profit=r.getDouble("Profit");
+    List<ModelData> lists = new ArrayList<>();
+    String sql = "SELECT DATE_FORMAT(t.tanggal, '%M') AS 'Month', " +
+                 "SUM(t.total_harga) AS Amount, " +
+                 "SUM(s.harga) AS Cost, " +
+                 "SUM(t.total_harga) - SUM(s.harga) AS Profit " +
+                 "FROM laporan_pemasukan lplpm " +
+                 "JOIN transaksi t ON lplpm.id_transaksi = t.id_transaksi " +
+                 "JOIN jual_sampah s ON lplpm.id_jual_sampah = s.id_jual_sampah " +
+                 "GROUP BY DATE_FORMAT(t.tanggal,'%m%Y') " +
+                 "ORDER BY t.tanggal DESC " +
+                 "LIMIT 7;";
+
+    try (
+        Connection conn = DBconnect.getInstance().getConnection();
+        PreparedStatement p = conn.prepareStatement(sql);
+        ResultSet r = p.executeQuery()
+    ) {
+        while (r.next()) {
+            String month = r.getString("Month");
+            double amount = r.getDouble("Amount");
+            double cost = r.getDouble("Cost");
+            double profit = r.getDouble("Profit");
             lists.add(new ModelData(month, amount, cost, profit));
         }
-        p.close();
-        r.close();
-        
+
+        // Tambahkan data ke chart (dibalik urutannya agar data terbaru di kanan)
         for (int i = lists.size() - 1; i >= 0; i--) {
-                ModelData d = lists.get(i);
-                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getAmount(), d.getCost(), d.getProfit()}));
-            }
+            ModelData d = lists.get(i);
+            chart.addData(new ModelChart(d.getMonth(), new double[]{d.getAmount(), d.getCost(), d.getProfit()}));
+        }
 
         chart.start();
+
     } catch (Exception e) {
         e.printStackTrace();
     }
 }
-
-
-
-
-
-    
-      private void loadData(String filterJenis) {
-    DefaultTableModel model = new DefaultTableModel() {
+    private void loadData(String filterJenis) {
+     DefaultTableModel model = new DefaultTableModel() {
         @Override
         public boolean isCellEditable(int row, int column) {
-            return false;
+            return false; // Membuat semua sel tidak bisa diedit
         }
     };
-
-    // Kolom tanpa ID
     model.setColumnIdentifiers(new String[]{
-        "No", "Nama Admin", "Nama", "Nama Barang", "Harga", "Jenis Transaksi", "Riwayat"
+        "ID", "Nama Admin", "Nama", "Nama Barang/Sampah", "Harga", "Jenis Transaksi", "Riwayat"
     });
 
-    String baseQuery = """
+    String baseQuery =
+         """
+    SELECT 
+        id, 
+        nama_admin, 
+        nama_nasabah, 
+        nama_barang_sampah, 
+        jenis_transaksi, 
+        harga, 
+        riwayat
+    FROM (
+        -- Data dari laporan_pemasukan (data_barang)
         SELECT 
-            nama_admin, 
-            nama_nasabah, 
-            nama_barang_sampah, 
-            jenis_transaksi, 
-            harga, 
-            riwayat
-        FROM (
-            
-            SELECT 
-                u.nama_user AS nama_admin,
-                COALESCE(n.nama_nasabah, '-') AS nama_nasabah,
-                db.nama_barang AS nama_barang_sampah,
-                'Pemasukan' AS jenis_transaksi,
-                db.harga AS harga,
-                lp.riwayat AS riwayat
-            FROM laporan_pemasukan lp
-            JOIN login u ON lp.id_user = u.id_user
-            LEFT JOIN data_barang db ON lp.id_barang = db.id_barang
-            LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah
-            WHERE lp.id_barang IS NOT NULL
+            lp.id_laporan_pemasukan AS id,
+            u.nama_user AS nama_admin,
+            COALESCE(n.nama_nasabah, '-') AS nama_nasabah,
+            db.nama_barang AS nama_barang_sampah,
+            'Pemasukan' AS jenis_transaksi,
+            db.harga AS harga,
+            lp.riwayat AS riwayat
+        FROM laporan_pemasukan lp
+        JOIN login u ON lp.id_user = u.id_user
+        LEFT JOIN data_barang db ON lp.id_barang = db.id_barang
+        LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah
+        WHERE lp.id_barang IS NOT NULL
 
-            UNION ALL
+        UNION ALL
 
-            
-            SELECT 
-                u.nama_user AS nama_admin,
-                '-' AS nama_nasabah,
-                kate.nama_kategori AS nama_barang_sampah,
-                'Pemasukan' AS jenis_transaksi,
-                js.harga AS harga,
-                lp.riwayat AS riwayat
-            FROM laporan_pemasukan lp
-            JOIN login u ON lp.id_user = u.id_user
-            LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
-            JOIN sampah sa ON js.id_sampah = sa.id_sampah
-            JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
-            WHERE lp.id_jual_sampah IS NOT NULL
+        -- Data dari laporan_pemasukan (jual_sampah)
+        SELECT 
+            lp.id_laporan_pemasukan AS id,
+            u.nama_user AS nama_admin,
+            '-' AS nama_nasabah,
+            kate.nama_kategori AS nama_barang_sampah,
+            'Pemasukan' AS jenis_transaksi,
+            js.harga AS harga,
+            lp.riwayat AS riwayat
+        FROM laporan_pemasukan lp
+        JOIN login u ON lp.id_user = u.id_user
+        LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
+        JOIN sampah sa ON js.id_sampah = sa.id_sampah
+        JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
+        WHERE lp.id_jual_sampah IS NOT NULL
 
-            UNION ALL
+        UNION ALL
 
-          
-            SELECT 
-                u.nama_user AS nama_admin,
-                n.nama_nasabah AS nama_nasabah,
-                kate.nama_kategori AS nama_barang_sampah,
-                'Pengeluaran' AS jenis_transaksi,
-                s.harga AS harga,
-                lpl.riwayat AS riwayat
-            FROM laporan_pengeluaran lpl
-            JOIN login u ON lpl.id_user = u.id_user
-            JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran
-            JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah
-            JOIN sampah sa ON s.id_sampah = sa.id_sampah
-            JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
-        ) AS combined
-    """;
+        -- Data dari laporan_pengeluaran
+        SELECT 
+            lpl.id_laporan_pengeluaran AS id,
+            u.nama_user AS nama_admin,
+            n.nama_nasabah AS nama_nasabah,
+            kate.nama_kategori AS nama_barang_sampah,
+            'Pengeluaran' AS jenis_transaksi,
+            s.harga AS harga,
+            lpl.riwayat AS riwayat
+        FROM laporan_pengeluaran lpl
+        JOIN login u ON lpl.id_user = u.id_user
+        JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran
+        JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah
+        JOIN sampah sa ON s.id_sampah = sa.id_sampah
+        JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
+    ) AS combined
+""";
 
+    // Tambah WHERE jika ada filter
     if (filterJenis != null && !filterJenis.isEmpty()) {
-        baseQuery += " WHERE jenis_transaksi = ? ";
+        baseQuery += "WHERE jenis = ? ";
     }
 
-    baseQuery += " ORDER BY riwayat DESC";
+    baseQuery += "ORDER BY riwayat DESC";
 
     try (Connection conn = DBconnect.getConnection();
          PreparedStatement pst = conn.prepareStatement(baseQuery)) {
@@ -161,7 +175,6 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         }
 
         try (ResultSet rs = pst.executeQuery()) {
-            int no = 1;
             while (rs.next()) {
                 String harga = rs.getString("harga");
                 if (!harga.equals("-")) {
@@ -170,12 +183,12 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                         NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
                         harga = formatRupiah.format(nominal);
                     } catch (NumberFormatException e) {
-                        // Biarkan harga tetap apa adanya jika gagal format
+                        // Do nothing
                     }
                 }
 
                 model.addRow(new Object[]{
-                    no++,
+                    rs.getString("id"),
                     rs.getString("nama_admin"),
                     rs.getString("nama_nasabah"),
                     rs.getString("nama_barang_sampah"),
@@ -192,50 +205,46 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         JOptionPane.showMessageDialog(this, "Gagal memuat data laporan: " + e.getMessage());
     }
 }
-
     private void loadDashboardData() {
-    try {
-        Connection conn = DBconnect.getConnection();
-        Statement stmt = conn.createStatement();
+    String queryPemasukan = "SELECT SUM(sa.harga)+SUM(t.total_harga) FROM laporan_pemasukan lpl\n" +
+"JOIN jual_sampah sa ON lpl.id_jual_sampah=sa.id_jual_sampah\n" +
+"JOIN transaksi t ON lpl.id_transaksi=t.id_transaksi";
+    String queryPengeluaran = "SELECT SUM(harga) FROM setor_sampah";
 
-        // Ambil total pemasukan
+    try (Connection conn = DBconnect.getConnection();
+         Statement stmt = conn.createStatement();
+         ResultSet rspemasukan = stmt.executeQuery(queryPemasukan)) {
+
         double totalpemasukan = 0;
-        ResultSet rspemasukan = stmt.executeQuery("SELECT SUM(harga) FROM data_barang");
         if (rspemasukan.next()) {
             totalpemasukan = rspemasukan.getDouble(1);
-            String formatted = String.format("Rp %,.2f", totalpemasukan)
-                                  .replace(',', 'X')   // sementara ubah koma jadi X
-                                  .replace('.', ',')   // titik jadi koma
-                                  .replace('X', '.');  // X (yang tadi koma) jadi titik
-            lb_pemasukan.setText(formatted);
         }
 
-        // Ambil total pengeluaran
         double totalpengeluaran = 0;
-        ResultSet rspengeluaran = stmt.executeQuery("SELECT SUM(harga) FROM setor_sampah");
-        if (rspengeluaran.next()) {
-            totalpengeluaran = rspengeluaran.getDouble(1);
-            String formatted = String.format("Rp %,.2f", totalpengeluaran)
-                                  .replace(',', 'X')
-                                  .replace('.', ',')
-                                  .replace('X', '.');
-            lb_pengeluaran.setText(formatted);
+        try (ResultSet rspengeluaran = stmt.executeQuery(queryPengeluaran)) {
+            if (rspengeluaran.next()) {
+                totalpengeluaran = rspengeluaran.getDouble(1);
+            }
         }
 
-        // Hitung total akhir (pemasukan - pengeluaran)
-        double totalakhir = totalpemasukan - totalpengeluaran;
-        String formattedTotal = String.format("Rp %,.2f", totalakhir)
-                                 .replace(',', 'X')
-                                 .replace('.', ',')
-                                 .replace('X', '.');
-        lb_total.setText(formattedTotal);
-
-        conn.close();
+        // Format dan tampilkan ke label
+        lb_pemasukan.setText(formatRupiah(totalpemasukan));
+        lb_pengeluaran.setText(formatRupiah(totalpengeluaran));
+        lb_total.setText(formatRupiah(totalpemasukan - totalpengeluaran));
 
     } catch (SQLException e) {
         JOptionPane.showMessageDialog(this, "Gagal memuat data dashboard: " + e.getMessage());
     }
 }
+
+private String formatRupiah(double amount) {
+    String formatted = String.format("Rp %,.2f", amount)
+        .replace(',', 'X')   // sementara ubah koma jadi X
+        .replace('.', ',')   // titik jadi koma
+        .replace('X', '.');  // X (yang tadinya koma) jadi titik
+    return formatted;
+}
+
 
             private Timer animationTimer;
           private Color startColor;
@@ -329,14 +338,8 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
             });
             animationTimer3.start();
         }
-
-
-            private void showPanel() {
-                panelMain.removeAll();
-                panelMain.add(new TabLaporanStatistik());
-                panelMain.repaint();
-                panelMain.revalidate();
-            }
+        
+ 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -347,7 +350,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         panelMain = new javax.swing.JPanel();
         panelView = new javax.swing.JPanel();
         ShadowUtama = new component.ShadowPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
         tb_laporan = new component.Table();
         card1 = new component.Card();
         jLabel5 = new javax.swing.JLabel();
@@ -373,16 +376,22 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         card5 = new component.Card();
         chart = new grafik.main.CurveLineChart();
         card6 = new component.Card();
-        button1 = new ripple.button.Button();
-        button2 = new ripple.button.Button();
-        button3 = new ripple.button.Button();
-        button4 = new ripple.button.Button();
-        jLabel1 = new javax.swing.JLabel();
+        pindahhalaman1 = new javax.swing.JButton();
 
         dateChooser1.setDateChooserRender(defaultDateChooserRender1);
         dateChooser1.setDateSelectable(null);
         dateChooser1.setDateSelectionMode(datechooser.Main.DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
         dateChooser1.setTextField(txt_date);
+        dateChooser1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                dateChooser1FocusGained(evt);
+            }
+        });
+        dateChooser1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                dateChooser1KeyTyped(evt);
+            }
+        });
 
         setPreferredSize(new java.awt.Dimension(1200, 716));
         setLayout(new java.awt.CardLayout());
@@ -405,7 +414,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "No", "Nama Admin", "Nama Nasabah", "Nama Barang/Sampah", "Harga", "Riwayat"
+                "ID", "Nama Admin", "Nama Nasabah", "Nama Barang", "Harga", "Riwayat"
             }
         ) {
             Class[] types = new Class [] {
@@ -416,7 +425,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(tb_laporan);
+        jScrollPane2.setViewportView(tb_laporan);
 
         card1.setFillColor(new java.awt.Color(255, 255, 255));
         card1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -457,7 +466,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 .addGroup(card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10)
                     .addComponent(lb_pemasukan))
-                .addContainerGap(89, Short.MAX_VALUE))
+                .addContainerGap(239, Short.MAX_VALUE))
         );
         card1Layout.setVerticalGroup(
             card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -471,7 +480,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                     .addGroup(card1Layout.createSequentialGroup()
                         .addGap(15, 15, 15)
                         .addComponent(jLabel5)))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         card2.setFillColor(new java.awt.Color(255, 255, 255));
@@ -512,7 +521,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 .addGroup(card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel16)
                     .addComponent(lb_pengeluaran))
-                .addContainerGap(159, Short.MAX_VALUE))
+                .addContainerGap(211, Short.MAX_VALUE))
         );
         card2Layout.setVerticalGroup(
             card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -525,7 +534,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lb_pengeluaran)
                         .addGap(6, 6, 6)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
 
         card3.setFillColor(new java.awt.Color(255, 255, 255));
@@ -566,7 +575,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
                 .addGroup(card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel19)
                     .addComponent(lb_total))
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addContainerGap(110, Short.MAX_VALUE))
         );
         card3Layout.setVerticalGroup(
             card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -604,7 +613,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
             }
         });
 
-        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Nasabah", "Nama Barang/Sampah" }));
+        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Nasabah" }));
         box_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 box_pilihActionPerformed(evt);
@@ -616,19 +625,19 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         ShadowSearchLayout.setHorizontalGroup(
             ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowSearchLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(box_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addComponent(box_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         ShadowSearchLayout.setVerticalGroup(
             ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowSearchLayout.createSequentialGroup()
-                .addGap(7, 7, 7)
+            .addGroup(ShadowSearchLayout.createSequentialGroup()
+                .addGap(8, 8, 8)
                 .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(box_pilih, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
-                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(box_pilih))
                 .addContainerGap())
         );
 
@@ -636,7 +645,6 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         ShadowSearch1.setPreferredSize(new java.awt.Dimension(259, 43));
 
         txt_date.setBackground(new java.awt.Color(230, 245, 241));
-        txt_date.setText("");
         txt_date.setBorder(null);
         txt_date.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -650,7 +658,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         });
 
         pilihtanggal.setText("...");
-        pilihtanggal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pilihtanggal.setBorder(null);
         pilihtanggal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 pilihtanggalActionPerformed(evt);
@@ -705,8 +713,8 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
             card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(card4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 502, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
                 .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -736,91 +744,35 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
             card5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(card5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
                 .addContainerGap())
         );
         card5Layout.setVerticalGroup(
             card5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(card5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(chart, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(chart, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        card6.setFillColor(new java.awt.Color(255, 255, 255));
-
-        button1.setBackground(new java.awt.Color(0, 204, 204));
-        button1.setText("Laporan Detail Pemasukan");
-        button1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        button1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button1ActionPerformed(evt);
-            }
-        });
-
-        button2.setBackground(new java.awt.Color(0, 204, 204));
-        button2.setText("Laporan Transaksi");
-        button2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        button2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button2ActionPerformed(evt);
-            }
-        });
-
-        button3.setBackground(new java.awt.Color(0, 204, 204));
-        button3.setText("Laporan Jual Sampah");
-        button3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        button3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button3ActionPerformed(evt);
-            }
-        });
-
-        button4.setBackground(new java.awt.Color(0, 204, 204));
-        button4.setText("Laporan Detsil Pengeluaran");
-        button4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        button4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button4ActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel1.setText("Halaman Laporan");
+        card6.setFillColor(new java.awt.Color(0, 204, 204));
 
         javax.swing.GroupLayout card6Layout = new javax.swing.GroupLayout(card6);
         card6.setLayout(card6Layout);
         card6Layout.setHorizontalGroup(
             card6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(card6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(card6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, card6Layout.createSequentialGroup()
-                        .addGroup(card6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(button4, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(button3, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, card6Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(118, 118, 118))))
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         card6Layout.setVerticalGroup(
             card6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, card6Layout.createSequentialGroup()
-                .addContainerGap(19, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(button3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(button4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40))
+            .addGap(0, 265, Short.MAX_VALUE)
         );
+
+        pindahhalaman1.setText("Halaman Laporan Transaksi");
+        pindahhalaman1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pindahhalaman1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout ShadowUtamaLayout = new javax.swing.GroupLayout(ShadowUtama);
         ShadowUtama.setLayout(ShadowUtamaLayout);
@@ -828,41 +780,45 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(card4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                        .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1))
-                .addGap(66, 66, 66)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(card5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(card6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(27, 27, 27))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowUtamaLayout.createSequentialGroup()
-                .addGap(0, 27, Short.MAX_VALUE)
-                .addComponent(card4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                                .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(44, 44, 44)
+                                .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(pindahhalaman1)
+                            .addComponent(jScrollPane2))
+                        .addGap(18, 18, 18)
+                        .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(card3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(card5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(card6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         ShadowUtamaLayout.setVerticalGroup(
             ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                .addGap(17, 17, 17)
+                .addContainerGap()
                 .addComponent(card4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
-                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(card2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(card3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(card3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ShadowUtamaLayout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 593, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addComponent(pindahhalaman1)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(ShadowUtamaLayout.createSequentialGroup()
                         .addComponent(card5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(card6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 634, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(53, 53, 53))
+                        .addGap(18, 18, 18)
+                        .addComponent(card6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(66, Short.MAX_VALUE))
         );
 
         panelView.add(ShadowUtama, "card2");
@@ -873,7 +829,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
     }// </editor-fold>//GEN-END:initComponents
 
     private void card1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseClicked
-        loadData("Pemasukan");
+      loadData("Pemasukan");
     }//GEN-LAST:event_card1MouseClicked
 
     private void card1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MouseEntered
@@ -889,7 +845,7 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
     }//GEN-LAST:event_card1MouseExited
 
     private void card1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card1MousePressed
-        animateClick(new Color(224, 224, 224), new Color(158, 158, 158));
+         animateClick(new Color(224, 224, 224), new Color(158, 158, 158));
 
         loadData("Pemasukan");
     }//GEN-LAST:event_card1MousePressed
@@ -915,9 +871,8 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
     }//GEN-LAST:event_card2MouseExited
 
     private void card2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MousePressed
-
-        animateClickCard2(new Color(224, 224, 224), new Color(158, 158, 158));
-        loadData("Pengeluaran"); // atau aksi lain sesuai card2
+animateClickCard2(new Color(224, 224, 224), new Color(158, 158, 158));
+    
     }//GEN-LAST:event_card2MousePressed
 
     private void card2MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_card2MouseReleased
@@ -950,6 +905,18 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         animateClickCard3(new Color(158, 158, 158), new Color(224, 224, 224));
     }//GEN-LAST:event_card3MouseReleased
 
+    private void pilihtanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pilihtanggalActionPerformed
+        dateChooser1.showPopup();
+    }//GEN-LAST:event_pilihtanggalActionPerformed
+
+    private void dateChooser1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_dateChooser1FocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dateChooser1FocusGained
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        txt_date.setText("");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_searchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_searchActionPerformed
@@ -958,43 +925,26 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         searchByKeywordAndDate();
     }//GEN-LAST:event_txt_searchKeyTyped
 
-    private void box_pilihActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_box_pilihActionPerformed
-        searchByKeywordAndDate();
-    }//GEN-LAST:event_box_pilihActionPerformed
+    private void txt_dateKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_dateKeyTyped
+       
+    }//GEN-LAST:event_txt_dateKeyTyped
+
+    private void dateChooser1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dateChooser1KeyTyped
+
+    }//GEN-LAST:event_dateChooser1KeyTyped
 
     private void txt_datePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txt_datePropertyChange
         searchByKeywordAndDate();
     }//GEN-LAST:event_txt_datePropertyChange
 
-    private void txt_dateKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_dateKeyTyped
+    private void box_pilihActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_box_pilihActionPerformed
+       searchByKeywordAndDate();
+    }//GEN-LAST:event_box_pilihActionPerformed
 
-    }//GEN-LAST:event_txt_dateKeyTyped
+    private void pindahhalaman1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pindahhalaman1ActionPerformed
 
-    private void pilihtanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pilihtanggalActionPerformed
-        dateChooser1.showPopup();
-    }//GEN-LAST:event_pilihtanggalActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        txt_date.setText("");
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_button1ActionPerformed
-
-    private void button2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_button2ActionPerformed
-
-    private void button3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_button3ActionPerformed
-
-    private void button4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_button4ActionPerformed
-    
-    private void searchByKeywordAndDate() {
+    }//GEN-LAST:event_pindahhalaman1ActionPerformed
+private void searchByKeywordAndDate() {
     String kataKunci = txt_search.getText().trim();
     String tanggalRange = txt_date.getText().trim();
     String filter = box_pilih.getSelectedItem().toString();
@@ -1018,77 +968,37 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
         }
     }
 
-    DefaultTableModel model = new DefaultTableModel() {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-    };
-
-    model.setColumnIdentifiers(new Object[]{
-        "No", "Nama Admin", "Nama", "Nama Barang", "Harga", "Jenis Transaksi", "Riwayat"
-    });
+    DefaultTableModel model = (DefaultTableModel) tb_laporan.getModel();
+    model.setRowCount(0);
 
     Connection conn = null;
     PreparedStatement st = null;
     ResultSet rs = null;
 
     try {
-        conn = DBconnect.getConnection();
+        conn = DBconnect.getConnection();  // Panggil koneksi di sini
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT nama_admin, nama_nasabah, nama_barang_sampah, jenis_transaksi, harga, riwayat FROM (")
-           .append(" SELECT u.nama_user AS nama_admin, COALESCE(n.nama_nasabah, '-') AS nama_nasabah, db.nama_barang AS nama_barang_sampah, ")
-           .append(" 'Pemasukan' AS jenis_transaksi, db.harga AS harga, lp.riwayat AS riwayat ")
-           .append(" FROM laporan_pemasukan lp ")
-           .append(" JOIN login u ON lp.id_user = u.id_user ")
-           .append(" LEFT JOIN data_barang db ON lp.id_barang = db.id_barang ")
-           .append(" LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah ")
-           .append(" WHERE lp.id_barang IS NOT NULL ")
-
-           .append(" UNION ALL ")
-
-           .append(" SELECT u.nama_user AS nama_admin, '-' AS nama_nasabah, kate.nama_kategori AS nama_barang_sampah, ")
-           .append(" 'Pemasukan' AS jenis_transaksi, js.harga AS harga, lp.riwayat AS riwayat ")
-           .append(" FROM laporan_pemasukan lp ")
-           .append(" JOIN login u ON lp.id_user = u.id_user ")
-           .append(" LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah ")
-           .append(" JOIN sampah sa ON js.id_sampah = sa.id_sampah ")
-           .append(" JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori ")
-           .append(" WHERE lp.id_jual_sampah IS NOT NULL ")
-
-           .append(" UNION ALL ")
-
-           .append(" SELECT u.nama_user AS nama_admin, n.nama_nasabah AS nama_nasabah, kate.nama_kategori AS nama_barang_sampah, ")
-           .append(" 'Pengeluaran' AS jenis_transaksi, s.harga AS harga, lpl.riwayat AS riwayat ")
-           .append(" FROM laporan_pengeluaran lpl ")
-           .append(" JOIN login u ON lpl.id_user = u.id_user ")
-           .append(" JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran ")
-           .append(" JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah ")
-           .append(" JOIN sampah sa ON s.id_sampah = sa.id_sampah ")
-           .append(" JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori ")
-           .append(") AS combined ");
+        sql.append("SELECT id, nama_admin, nama_nasabah, nama_barang_sampah, jenis_transaksi, harga, riwayat FROM (")
+            .append(" SELECT lp.id_laporan_pemasukan AS id, u.nama_user AS nama_admin, COALESCE(n.nama_nasabah, '-') AS nama_nasabah, db.nama_barang AS nama_barang_sampah, 'Pemasukan' AS jenis_transaksi, db.harga AS harga, lp.riwayat AS riwayat FROM laporan_pemasukan lp JOIN login u ON lp.id_user = u.id_user LEFT JOIN data_barang db ON lp.id_barang = db.id_barang LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah WHERE lp.id_barang IS NOT NULL")
+            .append(" UNION ALL ")
+            .append(" SELECT lp.id_laporan_pemasukan AS id, u.nama_user AS nama_admin, '-' AS nama_nasabah, kate.nama_kategori AS nama_barang_sampah, 'Pemasukan' AS jenis_transaksi, js.harga AS harga, lp.riwayat AS riwayat FROM laporan_pemasukan lp JOIN login u ON lp.id_user = u.id_user LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah JOIN sampah sa ON js.id_sampah = sa.id_sampah JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori WHERE lp.id_jual_sampah IS NOT NULL")
+            .append(" UNION ALL ")
+            .append(" SELECT lpl.id_laporan_pengeluaran AS id, u.nama_user AS nama_admin, n.nama_nasabah AS nama_nasabah, kate.nama_kategori AS nama_barang_sampah, 'Pengeluaran' AS jenis_transaksi, s.harga AS harga, lpl.riwayat AS riwayat FROM laporan_pengeluaran lpl JOIN login u ON lpl.id_user = u.id_user JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah JOIN sampah sa ON s.id_sampah = sa.id_sampah JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori ")
+            .append(") AS combined ");
 
         boolean whereAdded = false;
 
         if (!kataKunci.isEmpty()) {
-            switch (filter) {
-                case "Default":
-                    sql.append("WHERE (nama_admin LIKE ? OR nama_nasabah LIKE ? OR nama_barang_sampah LIKE ?) ");
-                    whereAdded = true;
-                    break;
-                case "Nama Admin":
-                    sql.append("WHERE (nama_admin LIKE ?) ");
-                    whereAdded = true;
-                    break;
-                case "Nama Nasabah":
-                    sql.append("WHERE (nama_nasabah LIKE ?) ");
-                    whereAdded = true;
-                    break;
-                case "Nama Barang/Sampah":
-                    sql.append("WHERE (nama_barang_sampah LIKE ?) ");
-                    whereAdded = true;
-                    break;
+            if (filter.equals("Default")) {
+                sql.append("WHERE (nama_admin LIKE ? OR nama_nasabah LIKE ?) ");
+                whereAdded = true;
+            } else if (filter.equals("Nama Admin")) {
+                sql.append("WHERE (nama_admin LIKE ?) ");
+                whereAdded = true;
+            } else if (filter.equals("Nama Nasabah")) {
+                sql.append("WHERE (nama_nasabah LIKE ?) ");
+                whereAdded = true;
             }
         }
 
@@ -1107,15 +1017,11 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
 
         if (!kataKunci.isEmpty()) {
             String searchPattern = "%" + kataKunci + "%";
-            switch (filter) {
-                case "Default":
-                    st.setString(paramIndex++, searchPattern);
-                    st.setString(paramIndex++, searchPattern);
-                    st.setString(paramIndex++, searchPattern);
-                    break;
-                default:
-                    st.setString(paramIndex++, searchPattern);
-                    break;
+            if (filter.equals("Default")) {
+                st.setString(paramIndex++, searchPattern);
+                st.setString(paramIndex++, searchPattern);
+            } else {
+                st.setString(paramIndex++, searchPattern);
             }
         }
 
@@ -1142,18 +1048,18 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
             }
 
             Object[] rowData = {
+                rs.getString("id"),
                 no++,
                 rs.getString("nama_admin"),
                 rs.getString("nama_nasabah"),
                 rs.getString("nama_barang_sampah"),
-                harga,
                 rs.getString("jenis_transaksi"),
+                harga,
                 rs.getString("riwayat")
             };
             model.addRow(rowData);
         }
 
-        tb_laporan.setModel(model);
         tb_laporan.clearSelection();
 
     } catch (SQLException e) {
@@ -1168,15 +1074,17 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
 
 
 
+
+
+
+    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.ShadowPanel ShadowSearch;
     private component.ShadowPanel ShadowSearch1;
     private component.ShadowPanel ShadowUtama;
     private javax.swing.JComboBox<String> box_pilih;
-    private ripple.button.Button button1;
-    private ripple.button.Button button2;
-    private ripple.button.Button button3;
-    private ripple.button.Button button4;
     private component.Card card1;
     private component.Card card2;
     private component.Card card3;
@@ -1188,7 +1096,6 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
     private datechooser.Main.DateChooser dateChooser1;
     private datechooser.render.DefaultDateChooserRender defaultDateChooserRender1;
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
@@ -1197,16 +1104,19 @@ chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lb_pemasukan;
     private javax.swing.JLabel lb_pengeluaran;
     private javax.swing.JLabel lb_total;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
     private javax.swing.JButton pilihtanggal;
+    private javax.swing.JButton pindahhalaman1;
     private component.Table tb_laporan;
     private javax.swing.JTextField txt_date;
     private swing.TextField txt_search;
     // End of variables declaration//GEN-END:variables
 }
+
 
 
