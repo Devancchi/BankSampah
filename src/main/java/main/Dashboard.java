@@ -18,6 +18,7 @@ import java.awt.Font;
 import javax.swing.UIManager;
 import loginregister.loginregister;
 import component.UserSession;
+import component.text_bergerak_atas;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import loginregister.Login;
@@ -37,6 +38,9 @@ public class Dashboard extends javax.swing.JFrame {
     public Dashboard(UserSession user) {
         this.user = user;
         initComponents();
+        
+        panelSlide1.init(new text_bergerak_atas("DASHBOARD", new Color(255,255,255)), new text_bergerak_atas("MANAJEMEN NASABAH", new Color(255,255,255)),new text_bergerak_atas("MANAJEMEN SAMPAH", new Color(255,255,255)),new text_bergerak_atas("LAPORAN & STATISTIK", new Color(255,255,255)),new text_bergerak_atas("TRANSAKSI", new Color(255,255,255)),new text_bergerak_atas("DATA BARANG", new Color(255,255,255)));
+        panelSlide1.setAnimate(10);
 
         
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -59,7 +63,7 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.setLayout(new BorderLayout());
         lb_user.setText(user.getNama());
         lb_level.setText(user.getLevel());
-
+        
         gantiHalaman(new TabDashboard(), "Dashboard");
            
     }
@@ -69,7 +73,6 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.setOpaque(false);
         panelMain.removeAll();
         panelMain.add(panel);
-        halaman.setText(namaHalaman); // ini label judul halaman
         panelMain.repaint();
         panelMain.revalidate();
     }
@@ -102,7 +105,8 @@ public class Dashboard extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         lb_level = new javax.swing.JLabel();
         lb_user = new javax.swing.JLabel();
-        halaman = new javax.swing.JLabel();
+        panelSlide1 = new component.PanelSlide();
+        panelGradient1 = new grafik.panel.PanelGradient();
         panelMain = new component.PanelSlide();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -157,6 +161,11 @@ public class Dashboard extends javax.swing.JFrame {
         );
 
         shadowNasabah.setBackground(new java.awt.Color(24, 58, 51));
+        shadowNasabah.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                shadowNasabahMouseClicked(evt);
+            }
+        });
 
         nasabah.setFont(new java.awt.Font("Poppins", 1, 14)); // NOI18N
         nasabah.setForeground(new java.awt.Color(255, 255, 255));
@@ -166,6 +175,9 @@ public class Dashboard extends javax.swing.JFrame {
         nasabah.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 nasabahMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                nasabahMouseEntered(evt);
             }
         });
 
@@ -381,7 +393,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(shadowTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(shadowDataBarang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 280, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 303, Short.MAX_VALUE)
                 .addComponent(shadowLogout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20))
         );
@@ -398,20 +410,37 @@ public class Dashboard extends javax.swing.JFrame {
         lb_user.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         lb_user.setText("User");
 
-        halaman.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        halaman.setText("Halaman");
+        panelSlide1.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout panelSlide1Layout = new javax.swing.GroupLayout(panelSlide1);
+        panelSlide1.setLayout(panelSlide1Layout);
+        panelSlide1Layout.setHorizontalGroup(
+            panelSlide1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 347, Short.MAX_VALUE)
+        );
+        panelSlide1Layout.setVerticalGroup(
+            panelSlide1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        panelGradient1.setBackground(new java.awt.Color(0, 204, 204));
+        panelGradient1.setColorGradient(new java.awt.Color(0, 255, 204));
 
         javax.swing.GroupLayout pn_headerLayout = new javax.swing.GroupLayout(pn_header);
         pn_header.setLayout(pn_headerLayout);
         pn_headerLayout.setHorizontalGroup(
             pn_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pn_headerLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 499, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 341, Short.MAX_VALUE)
+                .addGap(19, 19, 19)
+                .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(3, 3, 3)
+                .addComponent(panelSlide1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pn_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lb_user, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lb_level, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addGroup(pn_headerLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lb_user))
+                    .addComponent(lb_level))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addGap(11, 11, 11))
@@ -419,20 +448,20 @@ public class Dashboard extends javax.swing.JFrame {
         pn_headerLayout.setVerticalGroup(
             pn_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pn_headerLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(pn_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelSlide1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pn_headerLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(pn_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(pn_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
                             .addGroup(pn_headerLayout.createSequentialGroup()
-                                .addGroup(pn_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(halaman)
-                                    .addComponent(lb_level, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(3, 3, 3))
-                            .addComponent(jLabel5)))
-                    .addGroup(pn_headerLayout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(lb_user)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                                .addGap(14, 14, 14)
+                                .addComponent(lb_user)
+                                .addGap(5, 5, 5)
+                                .addComponent(lb_level, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 15, Short.MAX_VALUE))
+                    .addComponent(panelGradient1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         panelMain.setBackground(new java.awt.Color(231, 231, 231));
@@ -441,11 +470,11 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.setLayout(panelMainLayout);
         panelMainLayout.setHorizontalGroup(
             panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 966, Short.MAX_VALUE)
+            .addGap(0, 2406, Short.MAX_VALUE)
         );
         panelMainLayout.setVerticalGroup(
             panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 884, Short.MAX_VALUE)
+            .addGap(0, 906, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -466,7 +495,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(pn_sidebar, javax.swing.GroupLayout.DEFAULT_SIZE, 979, Short.MAX_VALUE)
+            .addComponent(pn_sidebar, javax.swing.GroupLayout.DEFAULT_SIZE, 1002, Short.MAX_VALUE)
         );
 
         pack();
@@ -496,7 +525,7 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.add(new TabDataBarang());
         panelMain.repaint();
         panelMain.revalidate();
-        gantiHalaman(new TabDataBarang(), "Halaman Data Barang");
+        panelSlide1.show(5);
     }//GEN-LAST:event_data_barangMouseClicked
 
     private void transaksiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_transaksiMouseClicked
@@ -506,7 +535,7 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.add(new TabTransaksi());
         panelMain.repaint();
         panelMain.revalidate();
-        gantiHalaman(new TabTransaksi(), "Halaman Transaksi");
+        panelSlide1.show(4);
     }//GEN-LAST:event_transaksiMouseClicked
 
     private void laporan_statistikMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laporan_statistikMouseClicked
@@ -516,7 +545,7 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.add(new TabLaporanStatistik());
         panelMain.repaint();
         panelMain.revalidate();
-        gantiHalaman(new TabLaporanStatistik(), "Laporan & Statistik");
+        panelSlide1.show(3);
     }//GEN-LAST:event_laporan_statistikMouseClicked
 
     private void manajemen_sampahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_manajemen_sampahMouseClicked
@@ -526,7 +555,7 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.add(new TabManajemenSampah());
         panelMain.repaint();
         panelMain.revalidate();
-        gantiHalaman(new TabManajemenSampah(), "Manajemen Sampah");
+         panelSlide1.show(2);
     }//GEN-LAST:event_manajemen_sampahMouseClicked
 
     private void nasabahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nasabahMouseClicked
@@ -536,8 +565,12 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.add(new TabManajemenNasabah(user));
         panelMain.repaint();
         panelMain.revalidate();
-        gantiHalaman(new TabManajemenNasabah(user), "Manajemen Nasabah");
+        panelSlide1.show(1);
     }//GEN-LAST:event_nasabahMouseClicked
+
+    private void shadowNasabahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_shadowNasabahMouseClicked
+
+    }//GEN-LAST:event_shadowNasabahMouseClicked
 
     private void dashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dashboardMouseClicked
         changeTabColor(shadowDashboard);
@@ -546,8 +579,12 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.add(new TabDashboard());
         panelMain.repaint();
         panelMain.revalidate();
-        gantiHalaman(new TabDashboard(), "Dashboard");
+        panelSlide1.show(0);
     }//GEN-LAST:event_dashboardMouseClicked
+
+    private void nasabahMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nasabahMouseEntered
+       
+    }//GEN-LAST:event_nasabahMouseEntered
 
     private void setSidebarLabelEffect(JLabel label) {
         Color defaultColor = new Color(24, 58, 51);
@@ -891,7 +928,6 @@ public class Dashboard extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel dashboard;
     private javax.swing.JLabel data_barang;
-    private javax.swing.JLabel halaman;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -903,7 +939,9 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JLabel logout;
     private javax.swing.JLabel manajemen_sampah;
     private javax.swing.JLabel nasabah;
+    private grafik.panel.PanelGradient panelGradient1;
     private component.PanelSlide panelMain;
+    private component.PanelSlide panelSlide1;
     private javax.swing.JPanel pn_header;
     private javax.swing.JPanel pn_sidebar;
     private component.ShadowPanel shadowDashboard;

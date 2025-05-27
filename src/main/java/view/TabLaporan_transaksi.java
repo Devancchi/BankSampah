@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.DBconnect;
+import notification.toast.Notifications;
 
 
 public class TabLaporan_transaksi extends javax.swing.JPanel {
@@ -440,10 +441,10 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                 .addGap(0, 27, Short.MAX_VALUE)
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(ShadowUtamaLayout.createSequentialGroup()
-                            .addComponent(jScrollPane1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowUtamaLayout.createSequentialGroup()
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 799, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(card6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(card1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -455,15 +456,15 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
             .addGroup(ShadowUtamaLayout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(card4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ShadowUtamaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE)
                     .addGroup(ShadowUtamaLayout.createSequentialGroup()
                         .addComponent(card6, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(5, 5, 5)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -504,7 +505,12 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btn_detail_pemasukanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_detail_pemasukanActionPerformed
-        // TODO add your handling code here:
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabLaporan_setor_sampah());
+        panelMain.repaint();
+        panelMain.revalidate();
+        notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Laporan Setor Sampah");
     }//GEN-LAST:event_btn_detail_pemasukanActionPerformed
 
     private void btn_laporan_transaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_laporan_transaksiActionPerformed
@@ -513,6 +519,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         panelMain.add(new TabLaporanStatistik());
         panelMain.repaint();
         panelMain.revalidate();
+        notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Laporan Statistika");
     }//GEN-LAST:event_btn_laporan_transaksiActionPerformed
 
     private void btn_laporan_jual_sampahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_laporan_jual_sampahActionPerformed
@@ -521,6 +528,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         panelMain.add(new TabLaporan_jual_sampah());
         panelMain.repaint();
         panelMain.revalidate();
+        notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Laporan Jual Sampah");
     }//GEN-LAST:event_btn_laporan_jual_sampahActionPerformed
 
     private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
