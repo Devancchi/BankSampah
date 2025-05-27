@@ -1693,17 +1693,18 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
     private void btn_ProsesSampahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ProsesSampahActionPerformed
         try {
-            String kode = txt_Kode.getText(); // id_nasabah
+            String kode = txt_Kode.getText().trim(); // id_nasabah
             String namaJenis = cbxJenis_pnView.getSelectedItem().toString();
             String namaKategori = cbxKategori_pnView.getSelectedItem().toString();
-            String strBerat = txt_Berat.getText();
+            String strBerat = txt_Berat.getText().trim();
+
+            if (kode.isEmpty() || namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
             double berat = Double.parseDouble(strBerat);
 
-                    if (kode.isEmpty() || namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-                    
             // Ambil ID Kategori
             String idKategori = "";
             String queryKategori = "SELECT id_kategori FROM kategori_sampah WHERE nama_kategori = ?";
@@ -1717,100 +1718,66 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 return;
             }
 
-            if (lastButtonClicked.equals("setor")) {
-                // QUERY UNTUK SETOR
-                if (kode.isEmpty() || namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            // Ambil info sampah dan harga
+            // Pastikan jenis transaksi dipilih
+            if (!lastButtonClicked.equals("setor") && !lastButtonClicked.equals("jual")) {
+                JOptionPane.showMessageDialog(null, "Pilih dulu jenis transaksi: Setor atau Jual!");
+                return;
+            }
+
+            // Ambil info sampah dan harga berdasarkan transaksi
             String id_sampah = "";
             int hargaPerKg = 0;
             String querySampah = lastButtonClicked.equals("setor")
                     ? "SELECT id_sampah, harga_setor FROM sampah WHERE id_kategori = ?"
-                    : "SELECT id_sampah, harga_jual FROM sampah WHERE  id_kategori = ?";
+                    : "SELECT id_sampah, harga_jual FROM sampah WHERE id_kategori = ?";
 
-            PreparedStatement ps1 = conn.prepareStatement(querySampah);
-            ps1.setString(1, idKategori);
-            ResultSet rs = ps1.executeQuery();
+            PreparedStatement psSampah = conn.prepareStatement(querySampah);
+            psSampah.setString(1, idKategori);
+            ResultSet rsSampah = psSampah.executeQuery();
 
-            if (rs.next()) {
-                id_sampah = rs.getString("id_sampah");
-                hargaPerKg = lastButtonClicked.equals("setor") ? rs.getInt("harga_setor") : rs.getInt("harga_jual");
+            if (rsSampah.next()) {
+                id_sampah = rsSampah.getString("id_sampah");
+                hargaPerKg = lastButtonClicked.equals("setor")
+                        ? rsSampah.getInt("harga_setor")
+                        : rsSampah.getInt("harga_jual");
             } else {
                 JOptionPane.showMessageDialog(null, "Data sampah tidak ditemukan.");
                 return;
             }
-                
-                String querySampah = "SELECT id_sampah, harga_setor FROM sampah WHERE id_kategori = ?";
-                PreparedStatement ps = conn.prepareStatement(querySampah);
-                ps.setString(1, idKategori);
-                ResultSet rs = ps.executeQuery();
 
-                if (rs.next()) {
-                    String id_sampah = rs.getString("id_sampah");
-                    int harga = rs.getInt("harga_setor");
-                    double total = harga * berat;
+            // Hitung total harga
+            double total = berat * hargaPerKg;
 
-                    String insert = "INSERT INTO setor_sampah (id_nasabah, id_sampah, berat_sampah, harga, tanggal) VALUES (?, ?, ?, ?, CURRENT_DATE())";
-                    PreparedStatement insertPs = conn.prepareStatement(insert);
-                    insertPs.setString(1, kode);
-                    insertPs.setString(2, id_sampah);
-                    insertPs.setDouble(3, berat);
-                    insertPs.setDouble(4, total);
-                    insertPs.executeUpdate();
+            if (lastButtonClicked.equals("setor")) {
+                String insert = "INSERT INTO setor_sampah (id_nasabah, id_sampah, berat_sampah, harga, tanggal) VALUES (?, ?, ?, ?, CURRENT_DATE())";
+                PreparedStatement insertPs = conn.prepareStatement(insert);
+                insertPs.setString(1, kode);
+                insertPs.setString(2, id_sampah);
+                insertPs.setDouble(3, berat);
+                insertPs.setDouble(4, total);
+                insertPs.executeUpdate();
 
-                   lblTotal.setText("Rp " + String.format("%,.2f", total));
-                    int result = JOptionPane.showConfirmDialog(null, "SETOR SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.2f", total), "Sukses", JOptionPane.DEFAULT_OPTION);
-                    if (result == JOptionPane.OK_OPTION) {
-                        lblTotal.setText("0");
-                        clearForm();
-                        loadJenisSampah();
-                    }
-
-                } else {
-                    JOptionPane.showMessageDialog(null, "Data sampah tidak ditemukan untuk setor.");
-                }
-
-            } else if (lastButtonClicked.equals("jual")) {
-                // QUERY UNTUK JUAL
-                if (namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-                
-                String querySampah = "SELECT id_sampah, harga_jual FROM sampah WHERE id_kategori = ?";
-                PreparedStatement ps = conn.prepareStatement(querySampah);
-                ps.setString(1, idKategori);
-                ResultSet rs = ps.executeQuery();
-
-                if (rs.next()) {
-                    String id_sampah = rs.getString("id_sampah");
-                    int harga = rs.getInt("harga_jual");
-                    double total = harga * berat;
-
-                    String insert = "INSERT INTO jual_sampah (id_sampah, berat_sampah, harga, tanggal) VALUES (?, ?, ?, CURRENT_DATE())";
-                    PreparedStatement insertPs = conn.prepareStatement(insert);
-                    insertPs.setString(1, id_sampah);
-                    insertPs.setDouble(2, berat);
-                    insertPs.setDouble(3, total);
-                    insertPs.executeUpdate();
-
-                    lblTotal.setText("Rp " + String.format("%,.2f", total));
-                    int result = JOptionPane.showConfirmDialog(null, "TRANSAKSI JUAL SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.2f", total), "Sukses", JOptionPane.DEFAULT_OPTION);
-                    if (result == JOptionPane.OK_OPTION) {
-                        lblTotal.setText("0");
-                        clearForm();
-                        loadJenisSampah();
-                    }
-
-                } else {
-                    JOptionPane.showMessageDialog(null, "Data sampah tidak ditemukan untuk jual.");
-                }
-
+                lblTotal.setText("Rp " + String.format("%,.2f", total));
+                JOptionPane.showMessageDialog(null, "SETOR SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.2f", total));
             } else {
-                // BELUM PILIH TRANSAKSI
-                JOptionPane.showMessageDialog(null, "Pilih dulu jenis transaksi: Setor atau Jual!");
+                String insert = "INSERT INTO jual_sampah (id_sampah, berat_sampah, harga, tanggal) VALUES (?, ?, ?, CURRENT_DATE())";
+                PreparedStatement insertPs = conn.prepareStatement(insert);
+                insertPs.setString(1, id_sampah);
+                insertPs.setDouble(2, berat);
+                insertPs.setDouble(3, total);
+                insertPs.executeUpdate();
+
+                lblTotal.setText("Rp " + String.format("%,.2f", total));
+                JOptionPane.showMessageDialog(null, "TRANSAKSI JUAL SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.2f", total));
             }
 
+            // Reset form
+            lblTotal.setText("0");
+            clearForm();
+            loadJenisSampah();
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Berat harus berupa angka!", "Kesalahan", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Terjadi kesalahan: " + ex.getMessage());
         }
