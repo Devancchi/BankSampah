@@ -565,24 +565,83 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_searchKeyTyped
 
     private void btn_ExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ExportActionPerformed
+        try {
+        // Siapkan model dan ambil data nasabah
         DefaultTableModel model = new DefaultTableModel(
-                new String[]{"ID", "Nama", "Alamat", "Telepon", "Email", "Saldo"}, 0
+            new String[]{"ID", "Nama", "Alamat", "Telepon", "Email", "Saldo"}, 0
         );
-        getAllNasabahData(model);
+        getAllNasabahData(model); // Ambil data dari DB ke model
 
+        // Cek jika tidak ada data
+        if (model.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Tidak ada data untuk diekspor!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Pilih lokasi penyimpanan file
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Simpan file Excel");
-        int option = chooser.showSaveDialog(null);
+        chooser.setSelectedFile(new File("data_nasabah.xls")); // Nama default
 
+        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
+            }
+
+            @Override
+            public String getDescription() {
+                return "Excel Files (*.xls, *.xlsx)";
+            }
+        });
+
+        int option = chooser.showSaveDialog(this);
         if (option == JFileChooser.APPROVE_OPTION) {
             File fileToSave = chooser.getSelectedFile();
-            if (!fileToSave.getName().endsWith(".xls")) {
+
+            // Tambahkan ekstensi jika tidak ada
+            String fileName = fileToSave.getName().toLowerCase();
+            if (!fileName.endsWith(".xls") && !fileName.endsWith(".xlsx")) {
                 fileToSave = new File(fileToSave.getAbsolutePath() + ".xls");
             }
 
-            ExcelExporter.exportTableModelToExcel(model, fileToSave);
-            JOptionPane.showMessageDialog(null, "Export berhasil!");
+            // Konfirmasi jika file sudah ada
+            if (fileToSave.exists()) {
+                int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "File sudah ada. Apakah Anda ingin menimpanya?",
+                    "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION
+                );
+                if (confirm != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
+
+            // Ekspor data ke Excel
+            try {
+                ExcelExporter.exportTableModelToExcel(model, fileToSave);
+
+                JOptionPane.showMessageDialog(this,
+                    "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
+                    "Sukses",
+                    JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this,
+                    "Gagal mengekspor file: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
         }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this,
+            "Terjadi kesalahan: " + e.getMessage(),
+            "Error",
+            JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
     }//GEN-LAST:event_btn_ExportActionPerformed
 
     private void btn_ImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ImportActionPerformed

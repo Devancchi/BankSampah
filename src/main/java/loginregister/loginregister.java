@@ -13,8 +13,6 @@ import java.awt.*;
 
 public class loginregister extends JFrame {
 
-    private JPanel contentPanel;
-
     public loginregister() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(new Dimension(1366, 768));
