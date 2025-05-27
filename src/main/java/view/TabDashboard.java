@@ -42,8 +42,7 @@ public class TabDashboard extends javax.swing.JPanel {
         loadLogData();
         paginationLog();
         loadDataChartBarang();
-        loadDataChartSampah();
-
+        loadDataChartJenisSampah();
     }
 
     /**
@@ -73,8 +72,8 @@ public class TabDashboard extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_log = new component.Table();
         jLabel14 = new javax.swing.JLabel();
-        ChartSampahMasukVsBarangKeluar = new chart.PolarAreaChart();
         ChartBarangTerjualVsBarangSisa = new chart.PolarAreaChart();
+        ChartDistribusiSampah = new chart.PolarAreaChart();
         panelBawah = new component.ShadowPanel();
         btn_add = new component.Jbutton();
         lb_halaman = new javax.swing.JLabel();
@@ -342,7 +341,7 @@ public class TabDashboard extends javax.swing.JPanel {
                             .addComponent(jScrollPane1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(ChartSampahMasukVsBarangKeluar, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
+                            .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
                             .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
         );
         panelTabelLayout.setVerticalGroup(
@@ -354,7 +353,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     .addGroup(panelTabelLayout.createSequentialGroup()
                         .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ChartSampahMasukVsBarangKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -419,7 +418,7 @@ public class TabDashboard extends javax.swing.JPanel {
     private component.Card CardTotalNasabah;
     private component.Card CardTotalSampah;
     private chart.PolarAreaChart ChartBarangTerjualVsBarangSisa;
-    private chart.PolarAreaChart ChartSampahMasukVsBarangKeluar;
+    private chart.PolarAreaChart ChartDistribusiSampah;
     private component.Jbutton btn_add;
     private javax.swing.JButton btn_beforeLog;
     private javax.swing.JButton btn_firstLog;
@@ -670,44 +669,64 @@ public class TabDashboard extends javax.swing.JPanel {
         }
     }
 
-    private void loadDataChartBarang() {
-        int totalStok = 0;
-        int totalTerjual = 0;
-
-        String queryStok = "SELECT SUM(stok) AS total_stok FROM data_barang";
-        String queryTerjual = "SELECT SUM(qty) AS total_terjual FROM transaksi";
+    private void loadDataChartJenisSampah() {
+        String query = """
+        SELECT js.nama_jenis, COUNT(ks.id_kategori) as jumlah_kategori
+        FROM jenis_sampah js 
+        LEFT JOIN kategori_sampah ks ON js.id_jenis = ks.id_jenis 
+        GROUP BY js.id_jenis, js.nama_jenis
+        ORDER BY js.id_jenis
+        """;
 
         try {
             Connection conn = DBconnect.getConnection();
-            PreparedStatement psStok = conn.prepareStatement(queryStok);
-            ResultSet rsStok = psStok.executeQuery();
-            if (rsStok.next()) {
-                totalStok = rsStok.getInt("total_stok");
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            // Clear chart sebelum menambah data baru
+            ChartDistribusiSampah.clear();
+
+            // Array warna yang sesuai dengan tema
+            Color[] colors = {
+                new Color(72, 202, 164), // Hijau mint untuk Organik
+                new Color(96, 125, 117), // Hijau gelap untuk Anorganik  
+                new Color(239, 68, 68), // Merah untuk B3
+                new Color(59, 130, 246) // Biru untuk Daur Ulang
+            };
+
+            int colorIndex = 0;
+
+            while (rs.next()) {
+                String namaJenis = rs.getString("nama_jenis");
+                int jumlahKategori = rs.getInt("jumlah_kategori");
+
+                // Gunakan warna sesuai urutan, jika lebih dari 4 jenis akan mengulang
+                Color warna = colors[colorIndex % colors.length];
+
+                ChartDistribusiSampah.addItem(new ModelPolarAreaChart(
+                        warna,
+                        namaJenis,
+                        jumlahKategori
+                ));
+
+                colorIndex++;
             }
 
-            PreparedStatement psTerjual = conn.prepareStatement(queryTerjual);
-            ResultSet rsTerjual = psTerjual.executeQuery();
-            if (rsTerjual.next()) {
-                totalTerjual = rsTerjual.getInt("total_terjual");
-            }
+            // Start chart setelah semua data ditambahkan
+            ChartDistribusiSampah.start();
 
-            ChartBarangTerjualVsBarangSisa.clear();
-            ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(Color.RED, "Barang Terjual", totalTerjual));
-            ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(Color.GREEN, "Barang Tersisa", totalStok));
-            ChartBarangTerjualVsBarangSisa.start();
-
-            rsStok.close();
-            rsTerjual.close();
-            psStok.close();
-            psTerjual.close();
+            // Tutup koneksi
+            rs.close();
+            ps.close();
             conn.close();
 
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Error loading chart jenis sampah: " + e.getMessage());
         }
     }
 
-    private void loadDataChartSampah() {
+    private void loadDataChartBarang() {
         int totalStok = 0;
         int totalTerjual = 0;
 
