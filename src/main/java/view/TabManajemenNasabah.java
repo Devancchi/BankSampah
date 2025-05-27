@@ -38,6 +38,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.math.BigDecimal;
+import notification.toast.Notifications;
 
 /**
  *
@@ -260,6 +261,11 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 btn_deleteMouseClicked(evt);
             }
         });
+        btn_delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_deleteActionPerformed(evt);
+            }
+        });
 
         btn_cancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
         btn_cancel.setText("Batal");
@@ -280,12 +286,12 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             .addGroup(panelActionLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 778, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(106, 106, 106)
-                .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
+                .addGap(216, 216, 216)
+                .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(16, 16, 16)
+                .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelActionLayout.setVerticalGroup(
             panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -297,8 +303,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                         .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(25, 25, 25))
         );
 
@@ -399,7 +405,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                     .addComponent(txt_alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
                     .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap(83, Short.MAX_VALUE))
             .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panelFormLayout.createSequentialGroup()
                     .addGap(970, 970, 970)
@@ -565,24 +571,83 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_searchKeyTyped
 
     private void btn_ExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ExportActionPerformed
+        try {
+        // Siapkan model dan ambil data nasabah
         DefaultTableModel model = new DefaultTableModel(
-                new String[]{"ID", "Nama", "Alamat", "Telepon", "Email", "Saldo"}, 0
+            new String[]{"ID", "Nama", "Alamat", "Telepon", "Email", "Saldo"}, 0
         );
-        getAllNasabahData(model);
+        getAllNasabahData(model); // Ambil data dari DB ke model
 
+        // Cek jika tidak ada data
+        if (model.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Tidak ada data untuk diekspor!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Pilih lokasi penyimpanan file
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Simpan file Excel");
-        int option = chooser.showSaveDialog(null);
+        chooser.setSelectedFile(new File("data_nasabah.xls")); // Nama default
 
+        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
+            }
+
+            @Override
+            public String getDescription() {
+                return "Excel Files (*.xls, *.xlsx)";
+            }
+        });
+
+        int option = chooser.showSaveDialog(this);
         if (option == JFileChooser.APPROVE_OPTION) {
             File fileToSave = chooser.getSelectedFile();
-            if (!fileToSave.getName().endsWith(".xls")) {
+
+            // Tambahkan ekstensi jika tidak ada
+            String fileName = fileToSave.getName().toLowerCase();
+            if (!fileName.endsWith(".xls") && !fileName.endsWith(".xlsx")) {
                 fileToSave = new File(fileToSave.getAbsolutePath() + ".xls");
             }
 
-            ExcelExporter.exportTableModelToExcel(model, fileToSave);
-            JOptionPane.showMessageDialog(null, "Export berhasil!");
+            // Konfirmasi jika file sudah ada
+            if (fileToSave.exists()) {
+                int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "File sudah ada. Apakah Anda ingin menimpanya?",
+                    "Konfirmasi",
+                    JOptionPane.YES_NO_OPTION
+                );
+                if (confirm != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
+
+            // Ekspor data ke Excel
+            try {
+                ExcelExporter.exportTableModelToExcel(model, fileToSave);
+
+                JOptionPane.showMessageDialog(this,
+                    "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
+                    "Sukses",
+                    JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this,
+                    "Gagal mengekspor file: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
         }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this,
+            "Terjadi kesalahan: " + e.getMessage(),
+            "Error",
+            JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
     }//GEN-LAST:event_btn_ExportActionPerformed
 
     private void btn_ImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ImportActionPerformed
@@ -594,6 +659,10 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             importExcelToDatabase(selectedFile);
         }
     }//GEN-LAST:event_btn_ImportActionPerformed
+
+    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+        notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Berhasil Menghapus Nasabah.");
+    }//GEN-LAST:event_btn_deleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
