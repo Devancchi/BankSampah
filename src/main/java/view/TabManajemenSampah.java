@@ -41,7 +41,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         // Mengatur model tabel
         tblModel = new DefaultTableModel(new String[]{"ID Sampah", "Jenis Sampah", "Kategori Sampah", "Harga Setor/Kg", "Harga Jual/Kg", "Tanggal"}, 0);
         tblSampah.setModel(tblModel);
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT s.id_sampah, s.harga_setor, s.harga_jual, s.tanggal,  k.nama_kategori,  j.nama_jenis "
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT s.id_sampah, s.harga_setor, s.harga_jual, s.tanggal, k.nama_kategori,  j.nama_jenis "
                 + "FROM sampah s "
                 + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
                 + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
@@ -380,8 +380,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         });
 
         btn_ProsesSampah.setBackground(new java.awt.Color(255, 255, 51));
-        btn_ProsesSampah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
-        btn_ProsesSampah.setText("Sampah Masuk");
+        btn_ProsesSampah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_addcollection.png"))); // NOI18N
+        btn_ProsesSampah.setText("Proses Sampah");
         btn_ProsesSampah.setFillClick(new java.awt.Color(51, 0, 204));
         btn_ProsesSampah.setFillOriginal(new java.awt.Color(51, 51, 255));
         btn_ProsesSampah.setFillOver(new java.awt.Color(51, 153, 255));
@@ -612,15 +612,12 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 .addGap(35, 35, 35)
                 .addGroup(shadowPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(shadowPanel3Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())
-                    .addGroup(shadowPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel16)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 266, Short.MAX_VALUE)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnKelola_JK, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(75, 75, 75)
+                        .addGap(77, 77, 77)
                         .addComponent(jLabel20)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnTambahHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -629,8 +626,9 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnHapusHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBatalHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(37, 37, 37))))
+                        .addComponent(btnBatalHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1))
+                .addGap(35, 35, 35))
         );
         shadowPanel3Layout.setVerticalGroup(
             shadowPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1306,25 +1304,24 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
         String jenis = cbxJenis_pnAdd.getSelectedItem().toString();
         String kategori = cbxKategori_pnAdd.getSelectedItem().toString();
-        String harga = txt_HargaAdd.getText();
-        String harga2 = txt_HargaAdd2.getText();
+        String hargaS = txt_HargaAdd.getText();
+        String hargaJ = txt_HargaAdd2.getText();
 
         Date date = tgl_Add.getSelectedDate().getTime();// ini ambil tanggal dari komponen
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String tgl = sdf.format(date);
 
-        if (jenis.isEmpty() || kategori.isEmpty() || harga.isEmpty() || harga2.isEmpty()) {
+        if (jenis.isEmpty() || kategori.isEmpty() || hargaS.isEmpty() || hargaJ.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
         }
         try {
-            String sql = "INSERT INTO sampah (harga_setor, harga_jual, tanggal, id_kategori, id_jenis) "
-                    + "VALUES (?, ?, (SELECT id_kategori FROM kategori_sampah WHERE nama_kategori = ?), (SELECT id_jenis FROM jenis_sampah WHERE nama_jenis = ?))";
+            String sql = "INSERT INTO sampah (harga_setor, harga_jual, tanggal, id_kategori) "
+                    + "VALUES (?, ?, ?, (SELECT id_kategori FROM kategori_sampah WHERE nama_kategori = ?))";
             PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setString(1, harga);
-            pst.setString(2, harga2);
+            pst.setString(1, hargaS);
+            pst.setString(2, hargaJ);
             pst.setString(3, tgl);
             pst.setString(4, kategori);
-            pst.setString(5, jenis);
             pst.executeUpdate();
 
             JOptionPane.showMessageDialog(this, "Harga Sampah Berhasil di Tambahkan!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
@@ -1434,8 +1431,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         }
         try {
             String sql = "UPDATE sampah SET  harga_setor = ?, harga_jual = ?, tanggal = ?, "
-                    + "id_kategori = (SELECT id_kategori FROM kategori_sampah WHERE nama_kategori = ?),  "
-                    + "id_jenis = (SELECT id_jenis FROM jenis_sampah WHERE nama_jenis = ?)  WHERE id_sampah = ?";
+                    + "id_kategori = (SELECT id_kategori FROM kategori_sampah WHERE nama_kategori = ?) WHERE id_sampah = ?";
 
             PreparedStatement pst = conn.prepareStatement(sql);
 
@@ -1443,8 +1439,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             pst.setString(2, harga2);
             pst.setString(3, tgl);
             pst.setString(4, kategori);
-            pst.setString(5, jenis);
-            pst.setInt(6, selectedIdSampah);
+            pst.setInt(5, selectedIdSampah);
             // Eksekusi update
             System.out.println("Harga yang akan diupdate: " + harga);
 
@@ -1713,21 +1708,14 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             String kode = txt_Kode.getText(); // untuk setor
             String namaJenis = cbxJenis_pnView.getSelectedItem().toString();
             String namaKategori = cbxKategori_pnView.getSelectedItem().toString();
-            double berat = Double.parseDouble(txt_Berat.getText());
+            String strBerat = txt_Berat.getText();
+            double berat = Double.parseDouble(strBerat);
 
-            // Ambil ID Jenis
-            String idJenis = "";
-            String queryJenis = "SELECT id_jenis FROM jenis_sampah WHERE nama_jenis = ?";
-            PreparedStatement psJenis = conn.prepareStatement(queryJenis);
-            psJenis.setString(1, namaJenis);
-            ResultSet rsJenis = psJenis.executeQuery();
-            if (rsJenis.next()) {
-                idJenis = rsJenis.getString("id_jenis");
-            } else {
-                JOptionPane.showMessageDialog(null, "Jenis tidak ditemukan.");
-                return;
-            }
-
+                    if (kode.isEmpty() || namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+                    
             // Ambil ID Kategori
             String idKategori = "";
             String queryKategori = "SELECT id_kategori FROM kategori_sampah WHERE nama_kategori = ?";
@@ -1745,12 +1733,11 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             String id_sampah = "";
             int hargaPerKg = 0;
             String querySampah = lastButtonClicked.equals("setor")
-                    ? "SELECT id_sampah, harga_setor FROM sampah WHERE id_jenis = ? AND id_kategori = ?"
-                    : "SELECT id_sampah, harga_jual FROM sampah WHERE id_jenis = ? AND id_kategori = ?";
+                    ? "SELECT id_sampah, harga_setor FROM sampah WHERE id_kategori = ?"
+                    : "SELECT id_sampah, harga_jual FROM sampah WHERE  id_kategori = ?";
 
             PreparedStatement ps1 = conn.prepareStatement(querySampah);
-            ps1.setString(1, idJenis);
-            ps1.setString(2, idKategori);
+            ps1.setString(1, idKategori);
             ResultSet rs = ps1.executeQuery();
 
             if (rs.next()) {
