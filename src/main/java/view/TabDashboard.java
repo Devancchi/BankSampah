@@ -41,11 +41,8 @@ public class TabDashboard extends javax.swing.JPanel {
         setTabelModel();
         loadLogData();
         paginationLog();
-        loadDataChart();
-        ChartSampahMasukVsBarangKeluar.addItem(new ModelPolarAreaChart(new Color(76, 175, 80), "Sampah Jual", 80)); // Hijau
-        ChartSampahMasukVsBarangKeluar.addItem(new ModelPolarAreaChart(new Color(244, 67, 54), "Sampah Beli", 45)); // Merah
-        ChartSampahMasukVsBarangKeluar.start();
-
+        loadDataChartBarang();
+        loadDataChartJenisSampah();
     }
 
     /**
@@ -75,8 +72,8 @@ public class TabDashboard extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_log = new component.Table();
         jLabel14 = new javax.swing.JLabel();
-        ChartSampahMasukVsBarangKeluar = new chart.PolarAreaChart();
         ChartBarangTerjualVsBarangSisa = new chart.PolarAreaChart();
+        ChartDistribusiSampah = new chart.PolarAreaChart();
         panelBawah = new component.ShadowPanel();
         btn_add = new component.Jbutton();
         lb_halaman = new javax.swing.JLabel();
@@ -86,7 +83,7 @@ public class TabDashboard extends javax.swing.JPanel {
         btn_nextLog = new javax.swing.JButton();
         btn_lastLog = new javax.swing.JButton();
 
-        setBackground(new java.awt.Color(255, 255, 255));
+        setBackground(new java.awt.Color(250, 250, 250));
         setPreferredSize(new java.awt.Dimension(1192, 944));
 
         panelCard.setPreferredSize(new java.awt.Dimension(1182, 126));
@@ -299,7 +296,7 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(panelBawahLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 209, Short.MAX_VALUE)
                 .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -340,11 +337,11 @@ public class TabDashboard extends javax.swing.JPanel {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(panelTabelLayout.createSequentialGroup()
                         .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, 839, Short.MAX_VALUE)
+                            .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, 851, Short.MAX_VALUE)
                             .addComponent(jScrollPane1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(ChartSampahMasukVsBarangKeluar, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                            .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
                             .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
         );
         panelTabelLayout.setVerticalGroup(
@@ -356,7 +353,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     .addGroup(panelTabelLayout.createSequentialGroup()
                         .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ChartSampahMasukVsBarangKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -421,7 +418,7 @@ public class TabDashboard extends javax.swing.JPanel {
     private component.Card CardTotalNasabah;
     private component.Card CardTotalSampah;
     private chart.PolarAreaChart ChartBarangTerjualVsBarangSisa;
-    private chart.PolarAreaChart ChartSampahMasukVsBarangKeluar;
+    private chart.PolarAreaChart ChartDistribusiSampah;
     private component.Jbutton btn_add;
     private javax.swing.JButton btn_beforeLog;
     private javax.swing.JButton btn_firstLog;
@@ -656,7 +653,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     + "ORDER BY log_aktivitas.id_log DESC";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 ResultSet rs = st.executeQuery();
-                
+
                 while (rs.next()) {
                     String idLog = rs.getString("id_log");
                     String admin = rs.getString("nama_user");
@@ -672,7 +669,64 @@ public class TabDashboard extends javax.swing.JPanel {
         }
     }
 
-    private void loadDataChart() {
+    private void loadDataChartJenisSampah() {
+        String query = """
+        SELECT js.nama_jenis, COUNT(ks.id_kategori) as jumlah_kategori
+        FROM jenis_sampah js 
+        LEFT JOIN kategori_sampah ks ON js.id_jenis = ks.id_jenis 
+        GROUP BY js.id_jenis, js.nama_jenis
+        ORDER BY js.id_jenis
+        """;
+
+        try {
+            Connection conn = DBconnect.getConnection();
+            PreparedStatement ps = conn.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            // Clear chart sebelum menambah data baru
+            ChartDistribusiSampah.clear();
+
+            // Array warna yang sesuai dengan tema
+            Color[] colors = {
+                new Color(72, 202, 164), // Hijau mint untuk Organik
+                new Color(96, 125, 117), // Hijau gelap untuk Anorganik  
+                new Color(239, 68, 68), // Merah untuk B3
+                new Color(59, 130, 246) // Biru untuk Daur Ulang
+            };
+
+            int colorIndex = 0;
+
+            while (rs.next()) {
+                String namaJenis = rs.getString("nama_jenis");
+                int jumlahKategori = rs.getInt("jumlah_kategori");
+
+                // Gunakan warna sesuai urutan, jika lebih dari 4 jenis akan mengulang
+                Color warna = colors[colorIndex % colors.length];
+
+                ChartDistribusiSampah.addItem(new ModelPolarAreaChart(
+                        warna,
+                        namaJenis,
+                        jumlahKategori
+                ));
+
+                colorIndex++;
+            }
+
+            // Start chart setelah semua data ditambahkan
+            ChartDistribusiSampah.start();
+
+            // Tutup koneksi
+            rs.close();
+            ps.close();
+            conn.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error loading chart jenis sampah: " + e.getMessage());
+        }
+    }
+
+    private void loadDataChartBarang() {
         int totalStok = 0;
         int totalTerjual = 0;
 
@@ -694,10 +748,11 @@ public class TabDashboard extends javax.swing.JPanel {
             }
 
             ChartBarangTerjualVsBarangSisa.clear();
-            ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(Color.RED, "Barang Terjual", totalTerjual));
-            ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(Color.GREEN, "Barang Tersisa", totalStok));
+            ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(new Color(72, 202, 164), "Barang Terjual", totalTerjual));
+            ChartBarangTerjualVsBarangSisa.addItem(new ModelPolarAreaChart(new Color(96, 125, 117), "Barang Tersisa", totalStok));
+
             ChartBarangTerjualVsBarangSisa.start();
-            
+
             rsStok.close();
             rsTerjual.close();
             psStok.close();

@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
+import static org.apache.commons.math3.fitting.leastsquares.LeastSquaresFactory.model;
 
 public class TabManajemenSampah extends javax.swing.JPanel {
 
@@ -600,7 +601,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 .addGroup(shadowPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(shadowPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel16)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 266, Short.MAX_VALUE)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnKelola_JK, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1696,9 +1697,13 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             String namaJenis = cbxJenis_pnView.getSelectedItem().toString();
             String namaKategori = cbxKategori_pnView.getSelectedItem().toString();
             String strBerat = txt_Berat.getText();
-
             double berat = Double.parseDouble(strBerat);
 
+                    if (kode.isEmpty() || namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+                    
             // Ambil ID Kategori
             String idKategori = "";
             String queryKategori = "SELECT id_kategori FROM kategori_sampah WHERE nama_kategori = ?";
@@ -1716,6 +1721,22 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 // QUERY UNTUK SETOR
                 if (kode.isEmpty() || namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            // Ambil info sampah dan harga
+            String id_sampah = "";
+            int hargaPerKg = 0;
+            String querySampah = lastButtonClicked.equals("setor")
+                    ? "SELECT id_sampah, harga_setor FROM sampah WHERE id_kategori = ?"
+                    : "SELECT id_sampah, harga_jual FROM sampah WHERE  id_kategori = ?";
+
+            PreparedStatement ps1 = conn.prepareStatement(querySampah);
+            ps1.setString(1, idKategori);
+            ResultSet rs = ps1.executeQuery();
+
+            if (rs.next()) {
+                id_sampah = rs.getString("id_sampah");
+                hargaPerKg = lastButtonClicked.equals("setor") ? rs.getInt("harga_setor") : rs.getInt("harga_jual");
+            } else {
+                JOptionPane.showMessageDialog(null, "Data sampah tidak ditemukan.");
                 return;
             }
                 
