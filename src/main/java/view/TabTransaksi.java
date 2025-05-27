@@ -207,6 +207,64 @@ public class Print {
     
     tabletransaksi.setModel(model);
 }
+    private void prosesPembayaranNasabah(String id_nasabah) {
+    try {
+        Connection conn = DriverManager.getConnection(
+            "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
+
+        String sql = "SELECT * FROM manajemen_nasabah WHERE id_nasabah = ?";
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, id_nasabah);
+        ResultSet rs = pst.executeQuery();
+
+        if (rs.next()) {
+            String nama = rs.getString("nama_nasabah");
+            double saldo = rs.getDouble("saldo");
+
+            // Tampilkan input pembayaran
+            String inputBayar = JOptionPane.showInputDialog(this,
+                "Nama: " + nama + "\nSaldo saat ini: Rp" + saldo +
+                "\n\nMasukkan jumlah pembayaran:");
+
+            if (inputBayar != null && !inputBayar.isEmpty()) {
+                try {
+                    double jumlahBayar = Double.parseDouble(inputBayar);
+
+                    if (jumlahBayar > saldo) {
+                        JOptionPane.showMessageDialog(this,
+                            "Saldo tidak mencukupi!", "Gagal", JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        double saldoBaru = saldo - jumlahBayar;
+
+                        // Update saldo di database
+                        String updateSql = "UPDATE manajemen_nasabah SET saldo = ? WHERE id_nasabah = ?";
+                        PreparedStatement updatePst = conn.prepareStatement(updateSql);
+                        updatePst.setDouble(1, saldoBaru);
+                        updatePst.setString(2, id_nasabah);
+                        updatePst.executeUpdate();
+                        updatePst.close();
+
+                        // Tampilkan saldo baru di txttunai
+                        txttunai.setText(String.valueOf((int) jumlahBayar));
+
+                        JOptionPane.showMessageDialog(this,
+                            "Pembayaran berhasil!\nSisa Saldo: Rp" + saldoBaru);
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Input tidak valid!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Nasabah tidak ditemukan.");
+        }
+
+        rs.close();
+        pst.close();
+        conn.close();
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage());
+    }
+}
     private void hitungTotal() {
     DefaultTableModel model = (DefaultTableModel) tabletransaksi.getModel();
     int total = 0;
@@ -782,6 +840,7 @@ public class Print {
 
     private void txtnasabahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtnasabahActionPerformed
         // TODO add your handling code here:
+        prosesPembayaranNasabah(txtnasabah.getText());
     }//GEN-LAST:event_txtnasabahActionPerformed
 
     private void txtnasabahKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtnasabahKeyPressed
