@@ -333,12 +333,13 @@ public class TabDataBarang extends javax.swing.JPanel {
         btnPilihGambar1 = new component.Jbutton();
         txt_kode1 = new javax.swing.JTextField();
 
-        setPreferredSize(new java.awt.Dimension(1206, 743));
+        setPreferredSize(new java.awt.Dimension(1192, 944));
         setLayout(new java.awt.CardLayout());
 
-        panelMain.setPreferredSize(new java.awt.Dimension(1206, 743));
+        panelMain.setPreferredSize(new java.awt.Dimension(1192, 944));
         panelMain.setLayout(new java.awt.CardLayout());
 
+        panelView.setPreferredSize(new java.awt.Dimension(1192, 944));
         panelView.setLayout(new java.awt.CardLayout());
 
         ShadowUtama.setBackground(new java.awt.Color(250, 250, 250));
@@ -424,18 +425,16 @@ public class TabDataBarang extends javax.swing.JPanel {
                 .addGap(21, 21, 21)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, 607, Short.MAX_VALUE)
+                .addContainerGap())
         );
         ShadowSearchLayout.setVerticalGroup(
             ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ShadowSearchLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-                    .addGroup(ShadowSearchLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 15, Short.MAX_VALUE)))
+                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -452,12 +451,12 @@ public class TabDataBarang extends javax.swing.JPanel {
                 .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addContainerGap(100, Short.MAX_VALUE))
             .addGroup(shadowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(shadowPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 533, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(623, Short.MAX_VALUE)))
+                    .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 664, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(506, Short.MAX_VALUE)))
         );
         shadowPanelLayout.setVerticalGroup(
             shadowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -472,7 +471,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             .addGroup(shadowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(shadowPanelLayout.createSequentialGroup()
                     .addGap(8, 8, 8)
-                    .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
+                    .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
                     .addGap(8, 8, 8)))
         );
 
@@ -524,6 +523,7 @@ public class TabDataBarang extends javax.swing.JPanel {
 
         panelMain.add(panelView, "card2");
 
+        panelAdd.setPreferredSize(new java.awt.Dimension(1192, 944));
         panelAdd.setLayout(new java.awt.CardLayout());
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
@@ -675,6 +675,7 @@ public class TabDataBarang extends javax.swing.JPanel {
 
         panelMain.add(panelAdd, "card2");
 
+        panelEdit.setPreferredSize(new java.awt.Dimension(1192, 944));
         panelEdit.setLayout(new java.awt.CardLayout());
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
