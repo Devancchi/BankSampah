@@ -8,6 +8,7 @@ import javax.swing.table.DefaultTableModel;
 import java.text.NumberFormat;
 import java.util.Locale;
 import main.DBconnect;
+import notification.toast.Notifications;
 
 
 public class TabLaporan_setor_sampah extends javax.swing.JPanel {
@@ -461,6 +462,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         panelMain.add(new TabLaporan_jual_sampah());
         panelMain.repaint();
         panelMain.revalidate();
+        notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Laporan Jual Sampah");
     }//GEN-LAST:event_btn_detail_pemasukanActionPerformed
 
     private void btn_laporan_transaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_laporan_transaksiActionPerformed
@@ -469,6 +471,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         panelMain.add(new TabLaporanStatistik());
         panelMain.repaint();
         panelMain.revalidate();
+        notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Laporan Statistika");
     }//GEN-LAST:event_btn_laporan_transaksiActionPerformed
 
     private void btn_laporan_jual_sampahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_laporan_jual_sampahActionPerformed
@@ -477,6 +480,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         panelMain.add(new TabLaporan_transaksi());
         panelMain.repaint();
         panelMain.revalidate();
+        notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Laporan Transaksi");
     }//GEN-LAST:event_btn_laporan_jual_sampahActionPerformed
 
     private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
