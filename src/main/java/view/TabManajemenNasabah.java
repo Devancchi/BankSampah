@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,10 +34,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import java.text.NumberFormat;
-import java.util.Locale;
-import java.math.BigDecimal;
-import notification.toast.Notifications;
 
 /**
  *
@@ -59,7 +54,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         setTabelModel();
         loadData();
         paginationNasabah();
-        ((AbstractDocument) txt_telepon.getDocument()).setDocumentFilter(new NumberOnlyFilter());
+        ((AbstractDocument) txt_id.getDocument()).setDocumentFilter(new NumberOnlyFilter());
     }
 
     /**
@@ -95,6 +90,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         panelForm = new component.ShadowPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
+        txt_id = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -105,7 +101,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         txt_alamat = new component.PlaceholderTextField();
         txt_telepon = new component.PlaceholderTextField();
         txt_email = new component.PlaceholderTextField();
-        txt_id = new component.PlaceholderTextField();
 
         setPreferredSize(new java.awt.Dimension(1200, 716));
         setLayout(new java.awt.CardLayout());
@@ -163,7 +158,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_Import.setText("Import From Excel");
         btn_Import.setFillClick(new java.awt.Color(30, 100, 180));
         btn_Import.setFillOriginal(new java.awt.Color(66, 133, 244));
-        btn_Import.setFillOver(new java.awt.Color(42, 125, 190));
+        btn_Import.setFillOver(new java.awt.Color(69, 160, 75));
         btn_Import.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btn_Import.setRoundedCorner(40);
         btn_Import.addActionListener(new java.awt.event.ActionListener() {
@@ -261,11 +256,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 btn_deleteMouseClicked(evt);
             }
         });
-        btn_delete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_deleteActionPerformed(evt);
-            }
-        });
 
         btn_cancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
         btn_cancel.setText("Batal");
@@ -286,12 +276,12 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             .addGroup(panelActionLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 778, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(216, 216, 216)
-                .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(16, 16, 16)
-                .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(106, 106, 106)
+                .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
         );
         panelActionLayout.setVerticalGroup(
             panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -303,8 +293,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                         .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(25, 25, 25))
         );
 
@@ -336,6 +326,11 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         jLabel11.setFont(new java.awt.Font("Mongolian Baiti", 1, 21)); // NOI18N
         jLabel11.setText("ID");
+
+        txt_id.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        txt_id.setFocusable(false);
+        txt_id.setPreferredSize(new java.awt.Dimension(20, 22));
+        txt_id.setVerifyInputWhenFocusTarget(false);
 
         jLabel12.setFont(new java.awt.Font("Mongolian Baiti", 1, 22)); // NOI18N
         jLabel12.setText("Nama");
@@ -381,8 +376,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         txt_email.setPlaceholder("Email");
 
-        txt_id.setPlaceholder("ID");
-
         javax.swing.GroupLayout panelFormLayout = new javax.swing.GroupLayout(panelForm);
         panelForm.setLayout(panelFormLayout);
         panelFormLayout.setHorizontalGroup(
@@ -394,18 +387,16 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                     .addComponent(jLabel8)
                     .addComponent(jLabel13)
                     .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(panelFormLayout.createSequentialGroup()
-                            .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel12)
-                                .addComponent(jLabel11))
-                            .addGap(1072, 1072, 1072))
+                        .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel11)
+                            .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(txt_nama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(txt_email, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txt_telepon, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txt_alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(83, Short.MAX_VALUE))
+                    .addComponent(jLabel6))
+                .addContainerGap(18, Short.MAX_VALUE))
             .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panelFormLayout.createSequentialGroup()
                     .addGap(970, 970, 970)
@@ -477,22 +468,14 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         panelMain.repaint();
         panelMain.revalidate();
 
-//        txt_id.setText(setIDAnggota());
+        txt_id.setText(setIDAnggota());
         if (btn_add.getText().equals("Ubah")) {
             dataTabel();
             btn_save.setText("Perbarui");
         }
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                txt_id.requestFocusInWindow();
-            }
-        });
-
-        txt_id.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-                    txt_nama.requestFocus();
-                }
+                txt_nama.requestFocusInWindow();
             }
         });
 
@@ -571,83 +554,28 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_searchKeyTyped
 
     private void btn_ExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ExportActionPerformed
-        try {
-        // Siapkan model dan ambil data nasabah
         DefaultTableModel model = new DefaultTableModel(
-            new String[]{"ID", "Nama", "Alamat", "Telepon", "Email", "Saldo"}, 0
+                new String[]{"ID", "Nama", "Alamat", "Telepon", "Email", "Kode"}, 0
         );
-        getAllNasabahData(model); // Ambil data dari DB ke model
+        getAllNasabahData(model);
 
-        // Cek jika tidak ada data
-        if (model.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "Tidak ada data untuk diekspor!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        // Pilih lokasi penyimpanan file
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Simpan file Excel");
-        chooser.setSelectedFile(new File("data_nasabah.xls")); // Nama default
+        int option = chooser.showSaveDialog(null);
 
-        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
-            }
-
-            @Override
-            public String getDescription() {
-                return "Excel Files (*.xls, *.xlsx)";
-            }
-        });
-
-        int option = chooser.showSaveDialog(this);
         if (option == JFileChooser.APPROVE_OPTION) {
             File fileToSave = chooser.getSelectedFile();
-
-            // Tambahkan ekstensi jika tidak ada
-            String fileName = fileToSave.getName().toLowerCase();
-            if (!fileName.endsWith(".xls") && !fileName.endsWith(".xlsx")) {
+            if (!fileToSave.getName().endsWith(".xls")) {
                 fileToSave = new File(fileToSave.getAbsolutePath() + ".xls");
             }
 
-            // Konfirmasi jika file sudah ada
-            if (fileToSave.exists()) {
-                int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "File sudah ada. Apakah Anda ingin menimpanya?",
-                    "Konfirmasi",
-                    JOptionPane.YES_NO_OPTION
-                );
-                if (confirm != JOptionPane.YES_OPTION) {
-                    return;
-                }
-            }
-
-            // Ekspor data ke Excel
             try {
                 ExcelExporter.exportTableModelToExcel(model, fileToSave);
-
-                JOptionPane.showMessageDialog(this,
-                    "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
-                    "Sukses",
-                    JOptionPane.INFORMATION_MESSAGE);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this,
-                    "Gagal mengekspor file: " + e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+            } catch (IOException ex) {
+                Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, ex);
             }
+            JOptionPane.showMessageDialog(null, "Export berhasil!");
         }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this,
-            "Terjadi kesalahan: " + e.getMessage(),
-            "Error",
-            JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-    }
     }//GEN-LAST:event_btn_ExportActionPerformed
 
     private void btn_ImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ImportActionPerformed
@@ -659,10 +587,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             importExcelToDatabase(selectedFile);
         }
     }//GEN-LAST:event_btn_ImportActionPerformed
-
-    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
-        notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Berhasil Menghapus Nasabah.");
-    }//GEN-LAST:event_btn_deleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -697,7 +621,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private component.Table tbl_data;
     private component.PlaceholderTextField txt_alamat;
     private component.PlaceholderTextField txt_email;
-    private component.PlaceholderTextField txt_id;
+    private javax.swing.JTextField txt_id;
     private component.PlaceholderTextField txt_nama;
     private component.PlaceholderTextField txt_search;
     private component.PlaceholderTextField txt_telepon;
@@ -769,7 +693,6 @@ private void paginationNasabah() {
         model.addColumn("Alamat");
         model.addColumn("Telepon");
         model.addColumn("Email");
-        model.addColumn("Saldo");
     }
 
     /////////////////////////////////buat setup awal/////////////////////////////////
@@ -803,22 +726,16 @@ private void paginationNasabah() {
                 st.setInt(2, entriesPage);
                 ResultSet rs = st.executeQuery();
 
-                // Format angka sesuai locale Indonesia
-                NumberFormat formatRupiah = NumberFormat.getInstance(new Locale("id", "ID"));
-
                 while (rs.next()) {
                     String idNasabah = rs.getString("id_nasabah");
                     String namaNasabah = rs.getString("nama_nasabah");
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    BigDecimal saldo = rs.getBigDecimal("saldo");
 
-                    // Format saldo menjadi string dengan titik ribuan
-                    String saldoFormatted = "Rp " + formatRupiah.format(saldo);
-
-                    Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, saldoFormatted};
+                    Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email};
                     model.addRow(rowData);
+
                 }
             }
         } catch (SQLException e) {
@@ -843,7 +760,8 @@ private void paginationNasabah() {
 
         int row = tbl_data.getSelectedRow();
 
-//        txt_id.setEnabled(false);
+        txt_id.setEnabled(false);
+
         txt_id.setText(tbl_data.getValueAt(row, 0).toString());
         txt_nama.setText(tbl_data.getValueAt(row, 1).toString());
         txt_alamat.setText(tbl_data.getValueAt(row, 2).toString());
@@ -857,14 +775,12 @@ private void paginationNasabah() {
         model.setRowCount(0);
 
         try {
-            String sql = "SELECT * FROM manajemen_nasabah WHERE id_nasabah LIKE ? OR nama_nasabah LIKE ? OR email LIKE ? OR no_telpon LIKE ?";
+            String sql = "SELECT * FROM manajemen_nasabah WHERE nama_nasabah LIKE ? OR email LIKE ? OR no_telpon LIKE ?";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setString(1, "%" + kataKunci + "%");
                 st.setString(2, "%" + kataKunci + "%");
                 st.setString(3, "%" + kataKunci + "%");
-                st.setString(4, "%" + kataKunci + "%");
                 ResultSet rs = st.executeQuery();
-                NumberFormat formatRupiah = NumberFormat.getInstance(new Locale("id", "ID"));
 
                 while (rs.next()) {
                     String idNasabah = rs.getString("id_nasabah");
@@ -872,11 +788,8 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    BigDecimal saldo = rs.getBigDecimal("saldo");
 
-                    String saldoFormatted = "Rp " + formatRupiah.format(saldo);
-
-                    Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, saldoFormatted};
+                    Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email};
                     model.addRow(rowData);
                 }
             }
@@ -908,7 +821,7 @@ private void paginationNasabah() {
         }
 
         try {
-            String sql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email) VALUES (?,?,?,?,?)";
+            String sql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email) VALUES (?,?,?,?,?,?)";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setString(1, idNasabah);
                 st.setString(2, namaNasabah);
@@ -921,18 +834,13 @@ private void paginationNasabah() {
                     JOptionPane.showMessageDialog(this, "data berhasil ditambahkan");
                     LoggerUtil.insert(users.getId(), "Menambah data nasabah ID: " + idNasabah);
                     resetForm();
-//                    txt_id.setText(setIDAnggota());
+                    txt_id.setText(setIDAnggota());
                     loadData();
                     showPanel();
                 }
             }
         } catch (SQLException e) {
-            // Cek jika error karena duplicate key
-            if (e.getSQLState().equals("23000")) { // SQLState 23000 = Integrity Constraint Violation
-                JOptionPane.showMessageDialog(this, "ID Nasabah sudah digunakan!", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
-            }
+            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -1016,9 +924,8 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    BigDecimal saldo = rs.getBigDecimal("saldo");
 
-                    Object[] rowData = {id, nama, alamat, telepon, email, saldo};
+                    Object[] rowData = {id, nama, alamat, telepon, email};
                     model.addRow(rowData);
                 }
             }
@@ -1074,7 +981,7 @@ private String setIDAnggota() {
                 rowIterator.next();
             }
 
-            String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, saldo) VALUES (?, ?, ?, ?, ?, ?)";
+            String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement insertPs = conn.prepareStatement(insertSql);
 
             String checkSql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telpon = ? OR email = ?";
@@ -1091,7 +998,6 @@ private String setIDAnggota() {
                 String alamat = row.getCell(2).getStringCellValue();
                 String telepon = row.getCell(3).toString();
                 String email = row.getCell(4).getStringCellValue();
-                String saldo = row.getCell(5).getStringCellValue();
 
                 checkPs.setString(1, telepon);
                 checkPs.setString(2, email);
@@ -1105,7 +1011,6 @@ private String setIDAnggota() {
                     insertPs.setString(3, alamat);
                     insertPs.setString(4, telepon);
                     insertPs.setString(5, email);
-                    insertPs.setString(6, saldo);
                     insertPs.addBatch();
                     successCount++;
                 } else {
