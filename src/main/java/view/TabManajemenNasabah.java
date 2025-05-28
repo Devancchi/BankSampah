@@ -812,7 +812,7 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    BigDecimal saldo = rs.getBigDecimal("saldo");
+                    BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     // Format saldo menjadi string dengan titik ribuan
                     String saldoFormatted = "Rp " + formatRupiah.format(saldo);
@@ -872,7 +872,7 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    BigDecimal saldo = rs.getBigDecimal("saldo");
+                    BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     String saldoFormatted = "Rp " + formatRupiah.format(saldo);
 
@@ -1016,7 +1016,7 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    BigDecimal saldo = rs.getBigDecimal("saldo");
+                    BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     Object[] rowData = {id, nama, alamat, telepon, email, saldo};
                     model.addRow(rowData);
