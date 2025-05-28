@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
+import static org.apache.commons.math3.fitting.leastsquares.LeastSquaresFactory.model;
 
 public class TabManajemenSampah extends javax.swing.JPanel {
 
@@ -593,7 +594,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 .addGroup(shadowPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(shadowPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel16)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 266, Short.MAX_VALUE)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnKelola_JK, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1685,10 +1686,15 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
     private void btn_ProsesSampahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ProsesSampahActionPerformed
         try {
-            String kode = txt_Kode.getText(); // id_nasabah
+            String kode = txt_Kode.getText().trim(); // id_nasabah
             String namaJenis = cbxJenis_pnView.getSelectedItem().toString();
             String namaKategori = cbxKategori_pnView.getSelectedItem().toString();
-            String strBerat = txt_Berat.getText();
+            String strBerat = txt_Berat.getText().trim();
+
+            if (kode.isEmpty() || namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Harap lengkapi semua data!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
             double berat = Double.parseDouble(strBerat);
 
@@ -1811,11 +1817,39 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(null, "Data sampah tidak ditemukan untuk jual.");
                 }
 
+            // Hitung total harga
+            double total = berat * hargaPerKg;
+
+            if (lastButtonClicked.equals("setor")) {
+                String insert = "INSERT INTO setor_sampah (id_nasabah, id_sampah, berat_sampah, harga, tanggal) VALUES (?, ?, ?, ?, CURRENT_DATE())";
+                PreparedStatement insertPs = conn.prepareStatement(insert);
+                insertPs.setString(1, kode);
+                insertPs.setString(2, id_sampah);
+                insertPs.setDouble(3, berat);
+                insertPs.setDouble(4, total);
+                insertPs.executeUpdate();
+
+                lblTotal.setText("Rp " + String.format("%,.2f", total));
+                JOptionPane.showMessageDialog(null, "SETOR SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.2f", total));
             } else {
-                // BELUM PILIH TRANSAKSI
-                JOptionPane.showMessageDialog(null, "Pilih dulu jenis transaksi: Setor atau Jual!");
+                String insert = "INSERT INTO jual_sampah (id_sampah, berat_sampah, harga, tanggal) VALUES (?, ?, ?, CURRENT_DATE())";
+                PreparedStatement insertPs = conn.prepareStatement(insert);
+                insertPs.setString(1, id_sampah);
+                insertPs.setDouble(2, berat);
+                insertPs.setDouble(3, total);
+                insertPs.executeUpdate();
+
+                lblTotal.setText("Rp " + String.format("%,.2f", total));
+                JOptionPane.showMessageDialog(null, "TRANSAKSI JUAL SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.2f", total));
             }
 
+            // Reset form
+            lblTotal.setText("0");
+            clearForm();
+            loadJenisSampah();
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Berat harus berupa angka!", "Kesalahan", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Terjadi kesalahan: " + ex.getMessage());
         }
