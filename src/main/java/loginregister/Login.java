@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import main.DBconnect;
 import main.Dashboard;
+import notification.toast.Notifications;
 
 public class Login extends JPanel {
 
@@ -95,7 +96,7 @@ public class Login extends JPanel {
             String password = new String(txtPassword.getPassword()).trim();
 
             if (username.isEmpty() || password.isEmpty()) {
-                lbNote.setText("Username atau password tidak boleh kosong.");
+                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Username atau password tidak boleh kosong.");
                 return;
             }
 
@@ -122,15 +123,17 @@ public class Login extends JPanel {
                         UserSession user = new UserSession(idUser, nama, level);
                         Dashboard dashboard = new Dashboard(user);
                         dashboard.setVisible(true);
+                        
+                        notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Berhasil Login.");
 
                     } else {
-                        lbNote.setText("Username atau password salah.");
+                        notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Username atau password salah.");
                     }
                 } else {
-                    lbNote.setText("Username atau password salah.");
+                    notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Username atau password salah.");
                 }
             } catch (Exception ex) {
-                lbNote.setText("Terjadi kesalahan koneksi.");
+                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan koneksi.");
                 ex.printStackTrace();
             }
         });

@@ -22,6 +22,7 @@ import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
 import chart.ModelPolarAreaChart;
 import chart.PolarAreaChart;
+import notification.toast.Notifications;
 
 /**
  *
@@ -444,11 +445,13 @@ public class TabDashboard extends javax.swing.JPanel {
                     "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
                     "Sukses",
                     JOptionPane.INFORMATION_MESSAGE);
+                notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Export berhasil");
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this,
                     "Gagal mengekspor file: " + e.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
+                notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING, "Gagal mengekspor file");
                 e.printStackTrace();
             }
         }
@@ -458,6 +461,7 @@ public class TabDashboard extends javax.swing.JPanel {
             "Terjadi kesalahan: " + e.getMessage(),
             "Error",
             JOptionPane.ERROR_MESSAGE);
+        notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan");
         e.printStackTrace();
     }
     }//GEN-LAST:event_btn_addActionPerformed

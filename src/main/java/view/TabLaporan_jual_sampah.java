@@ -8,6 +8,7 @@ import javax.swing.table.DefaultTableModel;
 import java.text.NumberFormat;
 import java.util.Locale;
 import main.DBconnect;
+import notification.toast.Notifications;
 
 
 public class TabLaporan_jual_sampah extends javax.swing.JPanel {
@@ -219,6 +220,11 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
         txt_date.setBackground(new java.awt.Color(230, 245, 241));
         txt_date.setText("");
         txt_date.setBorder(null);
+        txt_date.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_dateActionPerformed(evt);
+            }
+        });
         txt_date.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 txt_datePropertyChange(evt);
@@ -453,6 +459,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
         panelMain.add(new TabLaporan_setor_sampah());
         panelMain.repaint();
         panelMain.revalidate();
+        notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Laporan Setor Sampah");
     }//GEN-LAST:event_btn_detail_pemasukanActionPerformed
 
     private void btn_laporan_transaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_laporan_transaksiActionPerformed
@@ -461,6 +468,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
         panelMain.add(new TabLaporanStatistik());
         panelMain.repaint();
         panelMain.revalidate();
+        notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Laporan Stastitika");
     }//GEN-LAST:event_btn_laporan_transaksiActionPerformed
 
     private void btn_laporan_jual_sampahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_laporan_jual_sampahActionPerformed
@@ -469,6 +477,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
         panelMain.add(new TabLaporan_transaksi());
         panelMain.repaint();
         panelMain.revalidate();
+        notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Laporan Transaksi");
     }//GEN-LAST:event_btn_laporan_jual_sampahActionPerformed
 
     private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
@@ -547,6 +556,10 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }//GEN-LAST:event_btn_addActionPerformed
+
+    private void txt_dateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_dateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_dateActionPerformed
     
    private void searchByKeywordAndDate() {
     String kataKunci = txt_search.getText().trim();

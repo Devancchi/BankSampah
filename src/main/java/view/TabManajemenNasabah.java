@@ -38,6 +38,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.math.BigDecimal;
+import notification.toast.Notifications;
 
 /**
  *
@@ -260,6 +261,11 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 btn_deleteMouseClicked(evt);
             }
         });
+        btn_delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_deleteActionPerformed(evt);
+            }
+        });
 
         btn_cancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
         btn_cancel.setText("Batal");
@@ -280,12 +286,12 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             .addGroup(panelActionLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 778, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(106, 106, 106)
-                .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
+                .addGap(216, 216, 216)
+                .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(16, 16, 16)
+                .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelActionLayout.setVerticalGroup(
             panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -297,8 +303,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                         .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(25, 25, 25))
         );
 
@@ -399,7 +405,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                     .addComponent(txt_alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
                     .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap(83, Short.MAX_VALUE))
             .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panelFormLayout.createSequentialGroup()
                     .addGap(970, 970, 970)
@@ -654,6 +660,10 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btn_ImportActionPerformed
 
+    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+        notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Berhasil Menghapus Nasabah.");
+    }//GEN-LAST:event_btn_deleteActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.Jbutton btn_Export;
@@ -802,7 +812,7 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    BigDecimal saldo = rs.getBigDecimal("saldo");
+                    BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     // Format saldo menjadi string dengan titik ribuan
                     String saldoFormatted = "Rp " + formatRupiah.format(saldo);
@@ -862,7 +872,7 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    BigDecimal saldo = rs.getBigDecimal("saldo");
+                    BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     String saldoFormatted = "Rp " + formatRupiah.format(saldo);
 
@@ -1006,7 +1016,7 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    BigDecimal saldo = rs.getBigDecimal("saldo");
+                    BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     Object[] rowData = {id, nama, alamat, telepon, email, saldo};
                     model.addRow(rowData);

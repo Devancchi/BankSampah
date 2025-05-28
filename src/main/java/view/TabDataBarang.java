@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.logging.*;
 import main.DBconnect;
 import java.awt.image.BufferedImage;
+import notification.toast.Notifications;
 import org.krysalis.barcode4j.impl.code128.Code128Bean;
 import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 
@@ -861,10 +862,10 @@ public class TabDataBarang extends javax.swing.JPanel {
             pst.setBytes(5, gambarData);
             pst.executeUpdate();
             clearForm();
-            JOptionPane.showMessageDialog(this, "Data berhasil disimpan.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Data berhasil disimpan.");
         } catch (SQLException ex) {
             Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Gagal menyimpan data : " + ex.getMessage());
+            notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING, "Gagal menyimpan data: " + ex.getMessage());
         }
     }//GEN-LAST:event_btn_SaveAddActionPerformed
 
@@ -898,13 +899,13 @@ public class TabDataBarang extends javax.swing.JPanel {
                     pst.close();
 
                     if (rowsAffected > 0) {
-                        JOptionPane.showMessageDialog(this, "Barang berhasil dihapus.");
+                        notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Berhasil Menghapus Barang.");
                         loadDataBarang();
                         selectedItem = null;
                         btnEdit.setEnabled(false);
                         btnHapus.setEnabled(false);
                     } else {
-                        JOptionPane.showMessageDialog(this, "Gagal menghapus barang.");
+                        notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING, "Gagal menghapus barang.");
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
@@ -912,7 +913,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                 }
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Pilih dulu barang yang ingin dihapus.");
+            notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING, "Pilih dulu barang yang ingin dihapus.");
         }
     }//GEN-LAST:event_btnHapusActionPerformed
 
