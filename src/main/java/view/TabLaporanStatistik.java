@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.DBconnect;
 import main.ModelData;
+import notification.toast.Notifications;
 
 public class TabLaporanStatistik extends javax.swing.JPanel {
     
@@ -1002,6 +1003,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         panelMain.add(new TabLaporan_transaksi());
         panelMain.repaint();
         panelMain.revalidate();
+        notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Transaksi");
     }//GEN-LAST:event_btn_laporan_transaksiActionPerformed
 
     private void btn_laporan_jual_sampahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_laporan_jual_sampahActionPerformed
