@@ -9,7 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import org.apache.poi.hssf.util.HSSFColor;
+
 
 public class ExcelExporter {
     
@@ -29,7 +29,7 @@ public class ExcelExporter {
         // Add title
         HSSFRow titleRow = sheet.createRow(currentRow++);
         HSSFCell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("LAPORAN DATA TRANSAKSI");
+        titleCell.setCellValue("LAPORAN DATA");
         titleCell.setCellStyle(titleStyle);
         
         // Merge title cells
