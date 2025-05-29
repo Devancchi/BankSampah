@@ -57,15 +57,18 @@ public class TabDashboard extends javax.swing.JPanel {
 
         panelCard = new component.ShadowPanel();
         CardTotalNasabah = new component.Card();
+        panelGradient1 = new grafik.panel.PanelGradient();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         lb_totalNasabah = new javax.swing.JLabel();
         CardTotalSampah = new component.Card();
+        panelGradient2 = new grafik.panel.PanelGradient();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         lb_totalSampah = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         CardSaldoTabungan = new component.Card();
+        panelGradient3 = new grafik.panel.PanelGradient();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         lb_laba = new javax.swing.JLabel();
@@ -92,124 +95,110 @@ public class TabDashboard extends javax.swing.JPanel {
         CardTotalNasabah.setFillColor(new java.awt.Color(31, 179, 148));
         CardTotalNasabah.setPreferredSize(new java.awt.Dimension(315, 99));
 
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_total_nasabah.png"))); // NOI18N
+        panelGradient1.setBackground(new java.awt.Color(38, 147, 142));
+        panelGradient1.setColorGradient(new java.awt.Color(133, 213, 210));
 
-        jLabel6.setForeground(new java.awt.Color(204, 204, 204));
-        jLabel6.setText("Total nasabah");
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/account_nasabah.png"))); // NOI18N
+        panelGradient1.add(jLabel5);
+        jLabel5.setBounds(20, 40, 49, 53);
 
-        lb_totalNasabah.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Total Nasabah");
+        panelGradient1.add(jLabel6);
+        jLabel6.setBounds(20, 20, 90, 10);
+
+        lb_totalNasabah.setFont(new java.awt.Font("Arial Black", 1, 24)); // NOI18N
         lb_totalNasabah.setForeground(new java.awt.Color(255, 255, 255));
-        lb_totalNasabah.setText("1.000");
+        lb_totalNasabah.setText("14");
+        panelGradient1.add(lb_totalNasabah);
+        lb_totalNasabah.setBounds(310, 60, 80, 32);
 
         javax.swing.GroupLayout CardTotalNasabahLayout = new javax.swing.GroupLayout(CardTotalNasabah);
         CardTotalNasabah.setLayout(CardTotalNasabahLayout);
         CardTotalNasabahLayout.setHorizontalGroup(
             CardTotalNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CardTotalNasabahLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(CardTotalNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(lb_totalNasabah))
-                .addGap(0, 0, 0))
+            .addComponent(panelGradient1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         CardTotalNasabahLayout.setVerticalGroup(
             CardTotalNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CardTotalNasabahLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(CardTotalNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(CardTotalNasabahLayout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lb_totalNasabah))
-                    .addComponent(jLabel5))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(panelGradient1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         CardTotalSampah.setFillColor(new java.awt.Color(31, 179, 148));
         CardTotalSampah.setPreferredSize(new java.awt.Dimension(315, 99));
 
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Trash.png"))); // NOI18N
+        panelGradient2.setBackground(new java.awt.Color(38, 147, 142));
+        panelGradient2.setColorGradient(new java.awt.Color(133, 213, 210));
 
-        jLabel9.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/sampah_nasabah.png"))); // NOI18N
+        panelGradient2.add(jLabel8);
+        jLabel8.setBounds(20, 40, 49, 53);
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("Total berat sampah");
+        panelGradient2.add(jLabel9);
+        jLabel9.setBounds(20, 20, 140, 10);
 
-        lb_totalSampah.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lb_totalSampah.setFont(new java.awt.Font("Arial Black", 1, 24)); // NOI18N
         lb_totalSampah.setForeground(new java.awt.Color(255, 255, 255));
         lb_totalSampah.setText("1.000");
+        panelGradient2.add(lb_totalSampah);
+        lb_totalSampah.setBounds(230, 60, 120, 32);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("KG");
+        panelGradient2.add(jLabel1);
+        jLabel1.setBounds(310, 60, 33, 32);
 
         javax.swing.GroupLayout CardTotalSampahLayout = new javax.swing.GroupLayout(CardTotalSampah);
         CardTotalSampah.setLayout(CardTotalSampahLayout);
         CardTotalSampahLayout.setHorizontalGroup(
             CardTotalSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CardTotalSampahLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(CardTotalSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9)
-                    .addGroup(CardTotalSampahLayout.createSequentialGroup()
-                        .addComponent(lb_totalSampah)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1)))
-                .addGap(0, 0, 0))
+            .addComponent(panelGradient2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         CardTotalSampahLayout.setVerticalGroup(
             CardTotalSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CardTotalSampahLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(CardTotalSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(CardTotalSampahLayout.createSequentialGroup()
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(CardTotalSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lb_totalSampah)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jLabel8))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(panelGradient2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         CardSaldoTabungan.setFillColor(new java.awt.Color(31, 179, 148));
         CardSaldoTabungan.setPreferredSize(new java.awt.Dimension(315, 99));
 
-        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_total_tabungan.png"))); // NOI18N
+        panelGradient3.setBackground(new java.awt.Color(38, 147, 142));
+        panelGradient3.setColorGradient(new java.awt.Color(133, 213, 210));
 
-        jLabel12.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/laba_nasabah.png"))); // NOI18N
+        panelGradient3.add(jLabel11);
+        jLabel11.setBounds(20, 40, 49, 53);
+
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(255, 255, 255));
         jLabel12.setText("Laba");
+        panelGradient3.add(jLabel12);
+        jLabel12.setBounds(30, 20, 50, 16);
 
         lb_laba.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lb_laba.setForeground(new java.awt.Color(255, 255, 255));
         lb_laba.setText("Rp 1.000");
+        panelGradient3.add(lb_laba);
+        lb_laba.setBounds(230, 60, 120, 32);
 
         javax.swing.GroupLayout CardSaldoTabunganLayout = new javax.swing.GroupLayout(CardSaldoTabungan);
         CardSaldoTabungan.setLayout(CardSaldoTabunganLayout);
         CardSaldoTabunganLayout.setHorizontalGroup(
             CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CardSaldoTabunganLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jLabel11)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel12)
-                    .addComponent(lb_laba))
-                .addGap(0, 0, 0))
+            .addComponent(panelGradient3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         CardSaldoTabunganLayout.setVerticalGroup(
             CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CardSaldoTabunganLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(CardSaldoTabunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(CardSaldoTabunganLayout.createSequentialGroup()
-                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lb_laba))
-                    .addComponent(jLabel11))
-                .addContainerGap(27, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CardSaldoTabunganLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(panelGradient3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout panelCardLayout = new javax.swing.GroupLayout(panelCard);
@@ -230,9 +219,9 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCardLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                    .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                    .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -502,6 +491,9 @@ public class TabDashboard extends javax.swing.JPanel {
     private javax.swing.JLabel lb_totalSampah;
     private component.ShadowPanel panelBawah;
     private component.ShadowPanel panelCard;
+    private grafik.panel.PanelGradient panelGradient1;
+    private grafik.panel.PanelGradient panelGradient2;
+    private grafik.panel.PanelGradient panelGradient3;
     private component.ShadowPanel panelTabel;
     private component.Table tbl_log;
     // End of variables declaration//GEN-END:variables
