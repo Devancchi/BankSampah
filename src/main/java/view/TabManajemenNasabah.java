@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -732,6 +733,7 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
+                    BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email};
                     model.addRow(rowData);
@@ -788,6 +790,7 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
+                    BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email};
                     model.addRow(rowData);
@@ -924,6 +927,7 @@ private void paginationNasabah() {
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
+                    BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     Object[] rowData = {id, nama, alamat, telepon, email};
                     model.addRow(rowData);
