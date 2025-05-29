@@ -90,8 +90,8 @@ public class PanelShadow extends JPanel {
         Graphics2D g = img.createGraphics();
         g.setColor(getBackground());
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.fillRoundRect(0, 0, width, height, 10, 10);
-        //g.fillOval(0, 0, width, width);
+        //  g.fillRoundRect(0, 0, width, height, 10, 10);
+        g.fillOval(0, 0, width, width);
         //  Create Shadow
         ShadowRenderer render = new ShadowRenderer(shadowSize, shadowOpacity, shadowColor);
         g2.drawImage(render.createShadow(img), 0, 0, null);
