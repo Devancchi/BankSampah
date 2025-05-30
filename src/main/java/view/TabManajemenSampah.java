@@ -1393,7 +1393,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             try (PreparedStatement pstmtDeleteFromPembelian = conn.prepareStatement(deleteHargaSampah)) {
                 pstmtDeleteFromPembelian.setString(1, idSampah);
                 pstmtDeleteFromPembelian.executeUpdate();
-                inisialisasiTabel();
             } catch (SQLException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Error saat menghapus data harga sampah: " + e.getMessage());
