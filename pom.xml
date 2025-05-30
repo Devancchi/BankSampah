@@ -119,6 +119,5 @@
             <artifactId>swing-crazy-panel-1.0.0</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
-
     </dependencies>
 </project>
