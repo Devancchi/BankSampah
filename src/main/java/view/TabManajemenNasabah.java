@@ -922,7 +922,6 @@ private void paginationNasabah() {
                     JOptionPane.showMessageDialog(this, "data berhasil ditambahkan");
                     LoggerUtil.insert(users.getId(), "Menambah data nasabah ID: " + idNasabah);
                     resetForm();
-//                    txt_id.setText(setIDAnggota());
                     loadData();
                     showPanel();
                 }
