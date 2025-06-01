@@ -555,8 +555,7 @@ public class Dashboard extends javax.swing.JFrame {
         changeTabColor(shadowSampah);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        TabManajemenSampah panelS = new TabManajemenSampah();
-        panelS.setId(user.getId());
+        TabManajemenSampah panelS = new TabManajemenSampah(user);
         panelMain.add(panelS);
         panelMain.repaint();
         panelMain.revalidate();

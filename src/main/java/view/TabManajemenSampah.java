@@ -24,8 +24,10 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     private DefaultTableModel tblModel;
     private int selectedIdSampah = -1; // default -1 berarti belum ada yang dipilih
     private String lastButtonClicked = ""; // global di luar method, misalnya di class kamu
+    UserSession users;
 
-    public TabManajemenSampah() {
+    public TabManajemenSampah(UserSession user) {
+                this.users = user;
         initComponents();
         /// load tabel utama ///
         inisialisasiTabel();
@@ -39,13 +41,9 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         btnBatalProses.setVisible(false);
     }
 
-    public void setId(int x){
-        this.id_user = x;
-    }
-    
     private void showPanel() {
         panelMain.removeAll();
-        panelMain.add(new TabManajemenSampah());
+        panelMain.add(new TabManajemenSampah(users));
         panelMain.repaint();
         panelMain.revalidate();
     }
@@ -1267,7 +1265,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 pstmtDeleteFromSampah.setString(1, idSampah);
                 pstmtDeleteFromSampah.executeUpdate();
 
-                inisialisasiTabel(); ///////tambah
+                inisialisasiTabel();
+             ///////tambah
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -1566,7 +1565,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     insertPs.setDouble(3, berat);
                     insertPs.setDouble(4, total);
                     insertPs.setDouble(5, saldoBaru);
-                    insertPs.setInt(6, id_user);
+                    insertPs.setInt(6, users.getId());
                     insertPs.executeUpdate();
 
                     String updateSaldo = "UPDATE manajemen_nasabah SET saldo_total = ? WHERE id_nasabah = ?";
