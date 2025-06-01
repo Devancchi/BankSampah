@@ -1623,7 +1623,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     insertPs.setString(1, id_sampah);
                     insertPs.setDouble(2, berat);
                     insertPs.setDouble(3, total);
-                    insertPs.setInt(4, id_user);
+                    insertPs.setInt(4, users.getId());
                     insertPs.executeUpdate();
 
                     lblTotal.setText("Rp " + String.format("%,.2f", total));
