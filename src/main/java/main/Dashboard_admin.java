@@ -24,10 +24,6 @@ import javax.swing.JPanel;
 import loginregister.Login;
 import view.TabLaporanStatistik;
 import view.TabManajemenNasabah;
-import view.admin.TabDashboard_admin;
-import view.admin.TabDataBarang_admin;
-import view.admin.TabManajemenNasabah_admin;
-import view.admin.TabManajemenSampah_admin;
 
 
 
@@ -362,7 +358,7 @@ public class Dashboard_admin extends javax.swing.JFrame {
                 .addComponent(shadowNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(shadowSampah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addGap(8, 8, 8)
                 .addComponent(shadowTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -497,7 +493,7 @@ public class Dashboard_admin extends javax.swing.JFrame {
         changeTabColor(shadowDataBarang);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabDataBarang_admin());
+        panelMain.add(new TabDataBarang());
         panelMain.repaint();
         panelMain.revalidate();
         panelSlide1.show(5);
@@ -517,17 +513,19 @@ public class Dashboard_admin extends javax.swing.JFrame {
         changeTabColor(shadowSampah);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabManajemenSampah_admin());
+        TabManajemenSampah panelS = new TabManajemenSampah();
+        panelS.setId(user.getId());
+        panelMain.add(panelS);
         panelMain.repaint();
         panelMain.revalidate();
-         panelSlide1.show(2);
+        gantiHalaman(panelS, "Manajemen Sampah");
     }//GEN-LAST:event_manajemen_sampahMouseClicked
 
     private void nasabahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nasabahMouseClicked
         changeTabColor(shadowNasabah);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabManajemenNasabah_admin(user));
+        panelMain.add(new TabManajemenNasabah(user));
         panelMain.repaint();
         panelMain.revalidate();
         panelSlide1.show(1);
@@ -541,7 +539,7 @@ public class Dashboard_admin extends javax.swing.JFrame {
         changeTabColor(shadowDashboard);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabDashboard_admin());
+        panelMain.add(new TabDashboard());
         panelMain.repaint();
         panelMain.revalidate();
         panelSlide1.show(0);
