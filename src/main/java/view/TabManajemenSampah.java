@@ -1,5 +1,6 @@
 package view;
 
+import component.UserSession;
 import java.awt.event.KeyEvent;
 import java.sql.*;
 import java.util.Date;
@@ -7,10 +8,10 @@ import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
-import static org.apache.commons.math3.fitting.leastsquares.LeastSquaresFactory.model;
 
 public class TabManajemenSampah extends javax.swing.JPanel {
 
+    private int id_user;
     private final Connection conn = DBconnect.getConnection();
     private DefaultTableModel tblModel;
     private int selectedIdSampah = -1; // default -1 berarti belum ada yang dipilih
@@ -28,6 +29,10 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
     }
 
+    public void setId(int x){
+        this.id_user = x;
+    }
+    
     private void showPanel() {
         panelMain.removeAll();
         panelMain.add(new TabManajemenSampah());
@@ -70,7 +75,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         // Mengatur model tabel
         tblModel = new DefaultTableModel(new String[]{"ID Kategori", "Kategori Sampah", "Jenis Sampah"}, 0);
         tblKategori.setModel(tblModel);
-        tblKategori.setModel(tblModel);
         tblKategori.getColumnModel().getColumn(0).setMinWidth(0);
         tblKategori.getColumnModel().getColumn(0).setMaxWidth(0);
         tblKategori.getColumnModel().getColumn(0).setWidth(0);
@@ -96,7 +100,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     private void loadTabelJenis() {
         // Mengatur model tabel
         tblModel = new DefaultTableModel(new String[]{"ID Jenis", "Jenis Sampah"}, 0);
-        tblJenis.setModel(tblModel);
         tblJenis.setModel(tblModel);
         tblJenis.getColumnModel().getColumn(0).setMinWidth(0);
         tblJenis.getColumnModel().getColumn(0).setMaxWidth(0);
@@ -1372,9 +1375,12 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             // Hapus data terkait terlebih dahulu dari tabel lain
             String deleteHargaSampah = "DELETE FROM sampah WHERE id_sampah = ?";
 
-            try (PreparedStatement pstmtDeleteFromPembelian = conn.prepareStatement(deleteHargaSampah)) {
-                pstmtDeleteFromPembelian.setString(1, idSampah);
-                pstmtDeleteFromPembelian.executeUpdate();
+            try (PreparedStatement pstmtDeleteFromSampah = conn.prepareStatement(deleteHargaSampah)) {
+                pstmtDeleteFromSampah.setString(1, idSampah);
+                pstmtDeleteFromSampah.executeUpdate();
+
+                inisialisasiTabel(); ///////tambah
+
             } catch (SQLException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Error saat menghapus data harga sampah: " + e.getMessage());
@@ -1734,13 +1740,14 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     double total = harga * berat;
                     double saldoBaru = saldoTerakhir + total;
 
-                    String insert = "INSERT INTO setor_sampah (id_nasabah, id_sampah, berat_sampah, harga, saldo_nasabah, tanggal ) VALUES (?, ?, ?, ?, ?, CURRENT_DATE())";
+                    String insert = "INSERT INTO setor_sampah (id_nasabah, id_sampah, berat_sampah, harga, saldo_nasabah, id_user, tanggal ) VALUES (?, ?, ?, ?, ?, ?, CURRENT_DATE())";
                     PreparedStatement insertPs = conn.prepareStatement(insert);
                     insertPs.setString(1, kode);
                     insertPs.setString(2, id_sampah);
                     insertPs.setDouble(3, berat);
                     insertPs.setDouble(4, total);
                     insertPs.setDouble(5, saldoBaru);
+                    insertPs.setInt(6, id_user);
                     insertPs.executeUpdate();
 
                     String updateSaldo = "UPDATE manajemen_nasabah SET saldo_total = ? WHERE id_nasabah = ?";
@@ -1793,11 +1800,12 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     int harga = rs.getInt("harga_jual");
                     double total = harga * berat;
 
-                    String insert = "INSERT INTO jual_sampah (id_sampah, berat_sampah, harga, tanggal) VALUES (?, ?, ?, CURRENT_DATE())";
+                    String insert = "INSERT INTO jual_sampah (id_sampah, berat_sampah, harga, id_user, tanggal) VALUES (?, ?, ?, ?, CURRENT_DATE())";
                     PreparedStatement insertPs = conn.prepareStatement(insert);
                     insertPs.setString(1, id_sampah);
                     insertPs.setDouble(2, berat);
                     insertPs.setDouble(3, total);
+                    insertPs.setInt(4, id_user);
                     insertPs.executeUpdate();
 
                     lblTotal.setText("Rp " + String.format("%,.2f", total));
