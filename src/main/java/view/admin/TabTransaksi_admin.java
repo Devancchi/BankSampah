@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package view;
+package view.admin;
 
+import view.*;
 import component.Jbutton;
 import component.Table;
 import java.awt.Color;
@@ -32,25 +33,19 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author zal
  */
-public class TabTransaksi extends javax.swing.JPanel {
+public class TabTransaksi_admin extends javax.swing.JPanel {
     private static final NumberFormat Rp = NumberFormat.getCurrencyInstance(new Locale ("id", "ID"));
     private int harga, total;
-    private int id_user;
     /**
      * Creates new form ManajemenNasabah
      */
-    public TabTransaksi() {
+    public TabTransaksi_admin() {
         initComponents();
-        
     }
-    
-    public void setId(int x){
-        this.id_user = x;
-    }
-    
+
     private void showPanel() {
         panelMain.removeAll();
-        panelMain.add(new TabTransaksi());
+        panelMain.add(new TabTransaksi_admin());
         panelMain.repaint();
         panelMain.revalidate();
     }
@@ -385,7 +380,7 @@ private void prosesPembayaranNasabah(String id_nasabah) {
 
             },
             new String [] {
-                "Kode_Barang", "Nama Barang", "Qty", "Harga", "Total_Harga"
+                "Kode_Barang", "Nama Barang", "Harga", "Qty", "Total_Harga"
             }
         ));
         jScrollPane2.setViewportView(tabletransaksi);
@@ -676,88 +671,86 @@ private void prosesPembayaranNasabah(String id_nasabah) {
 
         DefaultTableModel model = (DefaultTableModel) tabletransaksi.getModel();
 
-if (model.getRowCount() == 0) {
-    JOptionPane.showMessageDialog(this, "Tidak ada barang di keranjang.");
-    return;
-}
-
-String input = txttunai.getText().trim().replaceAll("[^\\d]", "");
-if (input.isEmpty()) {
-    JOptionPane.showMessageDialog(this, "Masukkan jumlah tunai yang valid.");
-    return;
-}
-
-int tunai = Integer.parseInt(input);
-if (tunai < total) {
-    JOptionPane.showMessageDialog(this, "Uang tunai tidak mencukupi.");
-    return;
-}
-
-int kembali = tunai - total;
-txtkembalian.setText(String.valueOf(kembali));
-
-String kodeTransaksi = "TRX" + System.currentTimeMillis();
-List<Object[]> pesanan = new ArrayList<>();
-try (Connection conn = DriverManager.getConnection(
-        "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
-     PreparedStatement ps = conn.prepareStatement(
-        "INSERT INTO transaksi (id_user, kode_transaksi, kode_barang, nama_barang, qty, harga, total_harga, bayar, kembalian, tanggal) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-     PreparedStatement pstUpdate = conn.prepareStatement(
-        "UPDATE data_barang SET stok = stok - ? WHERE kode_barang = ? AND stok >= ?")) {
-
-    for (int i = 0; i < model.getRowCount(); i++) {
-        String kodeBarang = model.getValueAt(i, 0).toString();
-        String namaBarang = model.getValueAt(i, 1).toString();
-        int qty = (int) model.getValueAt(i, 2);
-        int harga = (int) model.getValueAt(i, 3);
-        int totalHarga = (int) model.getValueAt(i, 4);
-
-        // Simpan transaksi
-        ps.setInt(1, id_user);
-        ps.setString(2, kodeTransaksi);
-        ps.setString(3, kodeBarang);
-        ps.setString(4, namaBarang);
-        ps.setInt(5, qty);
-        ps.setInt(6, harga);
-        ps.setInt(7, totalHarga);
-        ps.setInt(8, tunai);
-        ps.setInt(9, kembali);
-        ps.addBatch();
-
-        // Simpan data untuk cetak
-        pesanan.add(new Object[]{namaBarang, qty, harga});
-
-        // Update stok
-        pstUpdate.setInt(1, qty);
-        pstUpdate.setString(2, kodeBarang);
-        pstUpdate.setInt(3, qty);
-
-        int affected = pstUpdate.executeUpdate();
-        if (affected == 0) {
-            JOptionPane.showMessageDialog(this, "Stok tidak cukup untuk " + namaBarang);
+        if (model.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Tidak ada barang di keranjang.");
             return;
         }
-    }
 
-    ps.executeBatch();
+        String input = txttunai.getText().trim().replaceAll("[^\\d]", "");
+        if (input.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Masukkan jumlah tunai yang valid.");
+            return;
+        }
 
-    // Cetak struk
-    Print printer = new Print();
-    printer.cetakStruk(kodeTransaksi, pesanan, tunai);
+        int tunai = Integer.parseInt(input);
+        if (tunai < total) {
+            JOptionPane.showMessageDialog(this, "Uang tunai tidak mencukupi.");
+            return;
+        }
 
-    // Reset UI
-    model.setRowCount(0);
-    bersihkanForm();
-    bersihkanForm2();
-    
+        int kembali = tunai - total;
+        txtkembalian.setText(String.valueOf(kembali)); // Pastikan ditampilkan di tempat yang benar
 
-    JOptionPane.showMessageDialog(this, "Transaksi berhasil dan struk dicetak.");
+        String kodeTransaksi = "TRX" + System.currentTimeMillis();
+        List<Object[]> pesanan = new ArrayList<>();
 
-} catch (Exception e) {
-    JOptionPane.showMessageDialog(this, "Gagal menyimpan transaksi: " + e.getMessage());
-    e.printStackTrace();
-}
+        try (Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
+             PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO transaksi (kode_transaksi, kode_barang, nama_barang, qty, harga, total_harga, bayar, kembalian, tanggal) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+             PreparedStatement pstUpdate = conn.prepareStatement(
+                "UPDATE data_barang SET stok = stok - ? WHERE kode_barang = ? AND stok >= ?")) {
+
+            for (int i = 0; i < model.getRowCount(); i++) {
+                String kodeBarang = model.getValueAt(i, 0).toString();
+                String namaBarang = model.getValueAt(i, 1).toString();
+                int qty = (int) model.getValueAt(i, 2);
+                int harga = (int) model.getValueAt(i, 3);
+                int totalHarga = (int) model.getValueAt(i, 4);
+
+                // Simpan transaksi
+                ps.setString(1, kodeTransaksi);
+                ps.setString(2, kodeBarang);
+                ps.setString(3, namaBarang);
+                ps.setInt(4, qty);
+                ps.setInt(5, harga);
+                ps.setInt(6, totalHarga);
+                ps.setInt(7, tunai);
+                ps.setInt(8, kembali);
+                ps.addBatch();
+
+                // Simpan data untuk cetak
+                pesanan.add(new Object[]{namaBarang, qty, harga});
+
+                // Update stok
+                pstUpdate.setInt(1, qty);
+                pstUpdate.setString(2, kodeBarang);
+                pstUpdate.setInt(3, qty);
+
+                int affected = pstUpdate.executeUpdate();
+                if (affected == 0) {
+                    JOptionPane.showMessageDialog(this, "Stok tidak cukup untuk " + namaBarang);
+                    return;
+                }
+            }
+
+            ps.executeBatch();
+
+            // Cetak struk
+            Print printer = new Print();
+            printer.cetakStruk(kodeTransaksi, pesanan, tunai);
+
+            // Reset UI
+            model.setRowCount(0);
+            bersihkanForm();
+
+            JOptionPane.showMessageDialog(this, "Transaksi berhasil dan struk dicetak.");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan transaksi: " + e.getMessage());
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_btnbayarActionPerformed
 
 
