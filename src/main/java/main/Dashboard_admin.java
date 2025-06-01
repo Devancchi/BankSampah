@@ -24,18 +24,22 @@ import javax.swing.JPanel;
 import loginregister.Login;
 import view.TabLaporanStatistik;
 import view.TabManajemenNasabah;
+import view.admin.TabDashboard_admin;
+import view.admin.TabDataBarang_admin;
+import view.admin.TabManajemenNasabah_admin;
+import view.admin.TabManajemenSampah_admin;
 
 
 
 
 
-public class Dashboard extends javax.swing.JFrame {
+public class Dashboard_admin extends javax.swing.JFrame {
 
     private JPanel lastClickedPanel = null;
 
     private UserSession user;
 
-    public Dashboard(UserSession user) {
+    public Dashboard_admin(UserSession user) {
         this.user = user;
         initComponents();
         
@@ -47,7 +51,6 @@ public class Dashboard extends javax.swing.JFrame {
         setSidebarLabelEffect(dashboard);
         setSidebarLabelEffect(nasabah);
         setSidebarLabelEffect(manajemen_sampah);
-        setSidebarLabelEffect(laporan_statistik);
         setSidebarLabelEffect(transaksi);
         setSidebarLabelEffect(data_barang);
         setSidebarLabelEffect(logout);
@@ -92,8 +95,6 @@ public class Dashboard extends javax.swing.JFrame {
         nasabah = new javax.swing.JLabel();
         shadowSampah = new component.ShadowPanel();
         manajemen_sampah = new javax.swing.JLabel();
-        shadowLaporan = new component.ShadowPanel();
-        laporan_statistik = new javax.swing.JLabel();
         shadowTransaksi = new component.ShadowPanel();
         transaksi = new javax.swing.JLabel();
         shadowDataBarang = new component.ShadowPanel();
@@ -225,33 +226,6 @@ public class Dashboard extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        shadowLaporan.setBackground(new java.awt.Color(24, 58, 51));
-
-        laporan_statistik.setFont(new java.awt.Font("Poppins", 1, 14)); // NOI18N
-        laporan_statistik.setForeground(new java.awt.Color(255, 255, 255));
-        laporan_statistik.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_laporan_statistik.png"))); // NOI18N
-        laporan_statistik.setText("Laporan & Statistik");
-        laporan_statistik.setPreferredSize(new java.awt.Dimension(240, 48));
-        laporan_statistik.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                laporan_statistikMouseClicked(evt);
-            }
-        });
-
-        javax.swing.GroupLayout shadowLaporanLayout = new javax.swing.GroupLayout(shadowLaporan);
-        shadowLaporan.setLayout(shadowLaporanLayout);
-        shadowLaporanLayout.setHorizontalGroup(
-            shadowLaporanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(laporan_statistik, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-        );
-        shadowLaporanLayout.setVerticalGroup(
-            shadowLaporanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(shadowLaporanLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(laporan_statistik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         shadowTransaksi.setBackground(new java.awt.Color(24, 58, 51));
 
         transaksi.setFont(new java.awt.Font("Poppins", 1, 14)); // NOI18N
@@ -346,14 +320,9 @@ public class Dashboard extends javax.swing.JFrame {
             pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pn_sidebarLayout.createSequentialGroup()
                 .addGroup(pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(shadowTransaksi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(shadowDataBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pn_sidebarLayout.createSequentialGroup()
-                        .addGroup(pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pn_sidebarLayout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(pn_sidebarLayout.createSequentialGroup()
                         .addContainerGap()
@@ -361,7 +330,6 @@ public class Dashboard extends javax.swing.JFrame {
                             .addComponent(shadowDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(shadowLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(shadowNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(shadowLaporan, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(shadowSampah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(pn_sidebarLayout.createSequentialGroup()
                                 .addGroup(pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -369,6 +337,15 @@ public class Dashboard extends javax.swing.JFrame {
                                     .addComponent(jLabel4))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(958, 958, 958))
+            .addGroup(pn_sidebarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(shadowTransaksi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(shadowDataBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pn_sidebarLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         pn_sidebarLayout.setVerticalGroup(
             pn_sidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -385,15 +362,13 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(shadowNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(shadowSampah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(shadowLaporan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
                 .addGap(8, 8, 8)
                 .addComponent(shadowTransaksi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(shadowDataBarang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 303, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(shadowLogout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20))
         );
@@ -522,7 +497,7 @@ public class Dashboard extends javax.swing.JFrame {
         changeTabColor(shadowDataBarang);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabDataBarang());
+        panelMain.add(new TabDataBarang_admin());
         panelMain.repaint();
         panelMain.revalidate();
         panelSlide1.show(5);
@@ -532,41 +507,27 @@ public class Dashboard extends javax.swing.JFrame {
         changeTabColor(shadowTransaksi);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        TabTransaksi t = new TabTransaksi();
-        t.setId(user.getId());
-        panelMain.add(t);
+        panelMain.add(new TabTransaksi());
         panelMain.repaint();
         panelMain.revalidate();
         panelSlide1.show(4);
     }//GEN-LAST:event_transaksiMouseClicked
 
-    private void laporan_statistikMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_laporan_statistikMouseClicked
-        changeTabColor(shadowLaporan);
-        panelMain.setOpaque(false);
-        panelMain.removeAll();
-        panelMain.add(new TabLaporanStatistik());
-        panelMain.repaint();
-        panelMain.revalidate();
-        panelSlide1.show(3);
-    }//GEN-LAST:event_laporan_statistikMouseClicked
-
     private void manajemen_sampahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_manajemen_sampahMouseClicked
         changeTabColor(shadowSampah);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        TabManajemenSampah panelS = new TabManajemenSampah();
-        panelS.setId(user.getId());
-        panelMain.add(panelS);
+        panelMain.add(new TabManajemenSampah_admin());
         panelMain.repaint();
         panelMain.revalidate();
-        gantiHalaman(panelS, "Manajemen Sampah");
+         panelSlide1.show(2);
     }//GEN-LAST:event_manajemen_sampahMouseClicked
 
     private void nasabahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nasabahMouseClicked
         changeTabColor(shadowNasabah);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabManajemenNasabah(user));
+        panelMain.add(new TabManajemenNasabah_admin(user));
         panelMain.repaint();
         panelMain.revalidate();
         panelSlide1.show(1);
@@ -580,7 +541,7 @@ public class Dashboard extends javax.swing.JFrame {
         changeTabColor(shadowDashboard);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabDashboard());
+        panelMain.add(new TabDashboard_admin());
         panelMain.repaint();
         panelMain.revalidate();
         panelSlide1.show(0);
@@ -655,14 +616,270 @@ public class Dashboard extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Dashboard_admin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Dashboard_admin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Dashboard_admin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Dashboard_admin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -937,7 +1154,6 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel laporan_statistik;
     private javax.swing.JLabel lb_level;
     private javax.swing.JLabel lb_user;
     private javax.swing.JLabel logout;
@@ -950,7 +1166,6 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JPanel pn_sidebar;
     private component.ShadowPanel shadowDashboard;
     private component.ShadowPanel shadowDataBarang;
-    private component.ShadowPanel shadowLaporan;
     private component.ShadowPanel shadowLogout;
     private component.ShadowPanel shadowNasabah;
     private component.ShadowPanel shadowSampah;
