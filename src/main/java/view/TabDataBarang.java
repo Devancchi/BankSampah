@@ -103,7 +103,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             panelBarang.removeAll();
             panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
 
-            String sql = "SELECT * FROM data_barang WHERE nama LIKE ? OR kode_barang LIKE ?";
+            String sql = "SELECT * FROM data_barang WHERE nama_barang LIKE ? OR kode_barang LIKE ?";
             PreparedStatement pst = conn.prepareStatement(sql);
             String likeKeyword = "%" + keyword + "%";
             pst.setString(1, likeKeyword);
