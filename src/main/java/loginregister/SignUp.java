@@ -13,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import main.DBconnect;
+import notification.toast.Notifications;
 
 public class SignUp extends JPanel {
 
@@ -108,12 +109,14 @@ public class SignUp extends JPanel {
                     if (inserted > 0) {
                         JOptionPane.showMessageDialog(null, "Registrasi berhasil! Silakan login.");
                         ModalDialog.popModel(Login.ID);
+                        
+                        notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Berhasil Bikin Akun.");
                     } else {
-                        lbNote.setText("Registrasi gagal. Coba lagi.");
+                        notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Registrasi gagal. Coba lagi.");
                     }
 
                 } catch (Exception ex) {
-                    lbNote.setText("Gagal koneksi ke database!");
+                    notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Gagal koneksi ke database!");
                     ex.printStackTrace();
                 }
             }
