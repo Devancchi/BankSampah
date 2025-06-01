@@ -95,7 +95,6 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btnBatalHarga" min="-2" pref="79" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="panelBawah3" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -113,9 +112,7 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jScrollPane1" pref="354" max="32767" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="panelBawah3" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -284,141 +281,6 @@
                       </Properties>
                       <Events>
                         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblSampahMouseClicked"/>
-                      </Events>
-                    </Component>
-                  </SubComponents>
-                </Container>
-                <Container class="component.ShadowPanel" name="panelBawah3">
-
-                  <Layout>
-                    <DimensionLayout dim="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="btn_Export2" min="-2" pref="150" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_Import2" min="-2" pref="150" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="lb_halaman2" min="-2" pref="150" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_first2" min="-2" pref="90" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_before2" min="-2" pref="30" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="cbx_data2" min="-2" pref="80" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_next2" min="-2" pref="30" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_last2" min="-2" pref="90" max="-2" attributes="0"/>
-                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                    </DimensionLayout>
-                    <DimensionLayout dim="1">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="btn_Export2" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="btn_Import2" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="lb_halaman2" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="btn_first2" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="btn_before2" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="cbx_data2" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="btn_next2" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="btn_last2" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="32767" attributes="0"/>
-                          </Group>
-                      </Group>
-                    </DimensionLayout>
-                  </Layout>
-                  <SubComponents>
-                    <Component class="javax.swing.JLabel" name="lb_halaman2">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="hal"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="btn_before2">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="&lt;"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JComboBox" name="cbx_data2">
-                      <Properties>
-                        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                          <StringArray count="4">
-                            <StringItem index="0" value="20"/>
-                            <StringItem index="1" value="40"/>
-                            <StringItem index="2" value="60"/>
-                            <StringItem index="3" value="80"/>
-                          </StringArray>
-                        </Property>
-                      </Properties>
-                      <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-                      </AuxValues>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="btn_next2">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="&gt;"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="btn_last2">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Last Page"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="btn_first2">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="First Page"/>
-                      </Properties>
-                    </Component>
-                    <Component class="component.Jbutton" name="btn_Export2">
-                      <Properties>
-                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                          <Image iconType="3" name="/icon/icon_excel.png"/>
-                        </Property>
-                        <Property name="text" type="java.lang.String" value="Export To Excel"/>
-                        <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="3c" green="82" red="37" type="rgb"/>
-                        </Property>
-                        <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="50" green="af" red="4c" type="rgb"/>
-                        </Property>
-                        <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="4b" green="a0" red="45" type="rgb"/>
-                        </Property>
-                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Segoe UI" size="12" style="1"/>
-                        </Property>
-                        <Property name="roundedCorner" type="int" value="40"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_Export2ActionPerformed"/>
-                      </Events>
-                    </Component>
-                    <Component class="component.Jbutton" name="btn_Import2">
-                      <Properties>
-                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                          <Image iconType="3" name="/icon/icon_excel.png"/>
-                        </Property>
-                        <Property name="text" type="java.lang.String" value="Import From Excel"/>
-                        <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="b4" green="64" red="1e" type="rgb"/>
-                        </Property>
-                        <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="f4" green="85" red="42" type="rgb"/>
-                        </Property>
-                        <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="be" green="7d" red="2a" type="rgb"/>
-                        </Property>
-                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Segoe UI" size="12" style="1"/>
-                        </Property>
-                        <Property name="roundedCorner" type="int" value="40"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_Import2ActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
