@@ -554,10 +554,12 @@ public class Dashboard extends javax.swing.JFrame {
         changeTabColor(shadowSampah);
         panelmain.setOpaque(false);
         panelmain.removeAll();
-        panelmain.add(new TabManajemenSampah());
+        TabManajemenSampah panelS = new TabManajemenSampah();
+        panelS.setId(user.getId());
+        panelmain.add(panelS);
         panelmain.repaint();
         panelmain.revalidate();
-        gantiHalaman(new TabManajemenSampah(), "Manajemen Sampah");
+        gantiHalaman(panelS, "Manajemen Sampah");
     }//GEN-LAST:event_manajemen_sampahMouseClicked
 
     private void nasabahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nasabahMouseClicked
