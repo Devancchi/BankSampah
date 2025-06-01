@@ -25,10 +25,6 @@ import loginregister.Login;
 import view.TabLaporanStatistik;
 import view.TabManajemenNasabah;
 
-
-
-
-
 public class Dashboard_admin extends javax.swing.JFrame {
 
     private JPanel lastClickedPanel = null;
@@ -38,11 +34,10 @@ public class Dashboard_admin extends javax.swing.JFrame {
     public Dashboard_admin(UserSession user) {
         this.user = user;
         initComponents();
-        
-        panelSlide1.init(new text_bergerak_atas("DASHBOARD", new Color(255,255,255)), new text_bergerak_atas("MANAJEMEN NASABAH", new Color(255,255,255)),new text_bergerak_atas("MANAJEMEN SAMPAH", new Color(255,255,255)),new text_bergerak_atas("LAPORAN & STATISTIK", new Color(255,255,255)),new text_bergerak_atas("TRANSAKSI", new Color(255,255,255)),new text_bergerak_atas("DATA BARANG", new Color(255,255,255)));
+
+        panelSlide1.init(new text_bergerak_atas("DASHBOARD", new Color(255, 255, 255)), new text_bergerak_atas("MANAJEMEN NASABAH", new Color(255, 255, 255)), new text_bergerak_atas("MANAJEMEN SAMPAH", new Color(255, 255, 255)), new text_bergerak_atas("LAPORAN & STATISTIK", new Color(255, 255, 255)), new text_bergerak_atas("TRANSAKSI", new Color(255, 255, 255)), new text_bergerak_atas("DATA BARANG", new Color(255, 255, 255)));
         panelSlide1.setAnimate(10);
 
-        
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setSidebarLabelEffect(dashboard);
         setSidebarLabelEffect(nasabah);
@@ -58,16 +53,15 @@ public class Dashboard_admin extends javax.swing.JFrame {
         panelMain.add(new TabDashboard());
         panelMain.repaint();
         panelMain.revalidate();
-        
+
         panelMain.setLayout(new BorderLayout());
         lb_user.setText(user.getNama());
         lb_level.setText(user.getLevel());
-        
+
         gantiHalaman(new TabDashboard(), "Dashboard");
-           
+
     }
- 
-    
+
     private void gantiHalaman(JPanel panel, String namaHalaman) {
         panelMain.setOpaque(false);
         panelMain.removeAll();
@@ -75,7 +69,6 @@ public class Dashboard_admin extends javax.swing.JFrame {
         panelMain.repaint();
         panelMain.revalidate();
     }
-    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -475,9 +468,9 @@ public class Dashboard_admin extends javax.swing.JFrame {
 
     private void logoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutMouseClicked
         int confirm = JOptionPane.showConfirmDialog(this,
-            "Yakin ingin logout?",
-            "Konfirmasi Logout",
-            JOptionPane.YES_NO_OPTION);
+                "Yakin ingin logout?",
+                "Konfirmasi Logout",
+                JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
             LoggerUtil.insert(user.getId(), "Logout dari sistem");
@@ -513,12 +506,10 @@ public class Dashboard_admin extends javax.swing.JFrame {
         changeTabColor(shadowSampah);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        TabManajemenSampah panelS = new TabManajemenSampah();
-        panelS.setId(user.getId());
-        panelMain.add(panelS);
+        panelMain.add(new TabManajemenSampah(user));
         panelMain.repaint();
         panelMain.revalidate();
-        gantiHalaman(panelS, "Manajemen Sampah");
+        panelSlide1.show(2);
     }//GEN-LAST:event_manajemen_sampahMouseClicked
 
     private void nasabahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nasabahMouseClicked
@@ -546,7 +537,7 @@ public class Dashboard_admin extends javax.swing.JFrame {
     }//GEN-LAST:event_dashboardMouseClicked
 
     private void nasabahMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nasabahMouseEntered
-       
+
     }//GEN-LAST:event_nasabahMouseEntered
 
     private void setSidebarLabelEffect(JLabel label) {
