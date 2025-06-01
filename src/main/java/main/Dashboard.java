@@ -532,7 +532,9 @@ public class Dashboard extends javax.swing.JFrame {
         changeTabColor(shadowTransaksi);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabTransaksi());
+        TabTransaksi t = new TabTransaksi();
+        t.setId(user.getId());
+        panelMain.add(t);
         panelMain.repaint();
         panelMain.revalidate();
         panelSlide1.show(4);
