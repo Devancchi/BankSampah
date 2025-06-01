@@ -30,6 +30,5 @@ public class UserSession {
     public String getLevel() {
         return level;
     }
+
 }
-
-
