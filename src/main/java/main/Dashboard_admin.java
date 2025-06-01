@@ -507,7 +507,7 @@ public class Dashboard_admin extends javax.swing.JFrame {
         changeTabColor(shadowTransaksi);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabTransaksi());
+        panelMain.add(new TabTransaksi(user));
         panelMain.repaint();
         panelMain.revalidate();
         panelSlide1.show(4);
