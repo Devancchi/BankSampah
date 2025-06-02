@@ -251,6 +251,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         panelView.setBackground(new java.awt.Color(250, 250, 250));
         panelView.setPreferredSize(new java.awt.Dimension(1192, 944));
 
+        panelHarga.setFont(panelHarga.getFont());
+
         jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel16.setText("Daftar Harga Sampah/KG");
 
@@ -371,13 +373,13 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                         .addComponent(btnTambahHarga, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btnKelola_JK, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
                 .addGap(63, 63, 63))
         );
 
+        panelTransaksiSampah.setFont(panelTransaksiSampah.getFont());
         panelTransaksiSampah.setMaximumSize(new java.awt.Dimension(1206, 343));
 
-        jLabel1.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel1.setText("Kode Nasabah");
 
         txt_Nama.addActionListener(new java.awt.event.ActionListener() {
@@ -386,10 +388,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel3.setText("Jenis Sampah");
 
-        jLabel4.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel4.setText("Kategori");
 
         cbxJenis_pnView.addActionListener(new java.awt.event.ActionListener() {
@@ -398,7 +398,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel5.setText("Berat Sampah");
 
         txt_Berat.addActionListener(new java.awt.event.ActionListener() {
@@ -437,7 +436,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             }
         });
 
-        jLabel17.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel17.setText("Nama Nasabah");
 
         btn_SampahKeluar.setBackground(new java.awt.Color(255, 255, 51));

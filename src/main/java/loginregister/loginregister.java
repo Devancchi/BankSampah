@@ -31,24 +31,65 @@ public class loginregister extends JFrame {
     }
 
     private void showLogin() {
-         Option option = ModalDialog.createOption()
-            .setCloseOnPressedEscape(false)
-            .setBackgroundClickType(Option.BackgroundClickType.BLOCK)
-            .setAnimationEnabled(false)
-            .setOpacity(0.2f);
+        Option option = ModalDialog.createOption()
+                .setCloseOnPressedEscape(false)
+                .setBackgroundClickType(Option.BackgroundClickType.BLOCK)
+                .setAnimationEnabled(false)
+                .setOpacity(0.2f);
 
-    // Gunakan path yang benar untuk icon sahabat.svg
-    String icon = "icon/account.svg";
-    
-    // Gunakan CustomModalBorder dengan path icon
-    ModalDialog.showModal(this, new CustomModalBorder(new Login(), "Login", icon), option, Login.ID);
+        // Gunakan path yang benar untuk icon sahabat.svg
+        String icon = "icon/account.svg";
+
+        // Gunakan CustomModalBorder dengan path icon
+        ModalDialog.showModal(this, new CustomModalBorder(new Login(), "Login", icon), option, Login.ID);
     }
-   
+
     public static void main(String[] args) {
-        FlatRobotoFont.install();
+        // Load Poppins font
+        try {
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT,
+                    loginregister.class.getResourceAsStream("/fonts/Poppins-Regular.ttf")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Set Poppins font for all Swing components
+        Font poppinsFont = new Font("Poppins", Font.PLAIN, 13);
+        UIManager.put("Label.font", poppinsFont);
+        UIManager.put("Button.font", poppinsFont);
+        UIManager.put("ToggleButton.font", poppinsFont);
+        UIManager.put("RadioButton.font", poppinsFont);
+        UIManager.put("CheckBox.font", poppinsFont);
+        UIManager.put("ColorChooser.font", poppinsFont);
+        UIManager.put("ComboBox.font", poppinsFont);
+        UIManager.put("List.font", poppinsFont);
+        UIManager.put("MenuBar.font", poppinsFont);
+        UIManager.put("MenuItem.font", poppinsFont);
+        UIManager.put("RadioButtonMenuItem.font", poppinsFont);
+        UIManager.put("CheckBoxMenuItem.font", poppinsFont);
+        UIManager.put("Menu.font", poppinsFont);
+        UIManager.put("PopupMenu.font", poppinsFont);
+        UIManager.put("OptionPane.font", poppinsFont);
+        UIManager.put("Panel.font", poppinsFont);
+        UIManager.put("ProgressBar.font", poppinsFont);
+        UIManager.put("ScrollPane.font", poppinsFont);
+        UIManager.put("Viewport.font", poppinsFont);
+        UIManager.put("TabbedPane.font", poppinsFont);
+        UIManager.put("Table.font", poppinsFont);
+        UIManager.put("TableHeader.font", poppinsFont);
+        UIManager.put("TextField.font", poppinsFont);
+        UIManager.put("PasswordField.font", poppinsFont);
+        UIManager.put("TextArea.font", poppinsFont);
+        UIManager.put("TextPane.font", poppinsFont);
+        UIManager.put("EditorPane.font", poppinsFont);
+        UIManager.put("TitledBorder.font", poppinsFont);
+        UIManager.put("ToolBar.font", poppinsFont);
+        UIManager.put("ToolTip.font", poppinsFont);
+        UIManager.put("Tree.font", poppinsFont);
+        UIManager.put("defaultFont", poppinsFont);
+
         FlatLaf.registerCustomDefaultsSource("themes");
         FlatMacLightLaf.setup();
-        UIManager.put("defaultFont", new Font(FlatRobotoFont.FAMILY, Font.PLAIN, 13));
         EventQueue.invokeLater(() -> new loginregister().setVisible(true));
     }
 }
