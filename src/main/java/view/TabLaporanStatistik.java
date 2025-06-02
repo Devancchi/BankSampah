@@ -96,18 +96,18 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
             riwayat
         FROM (
             
-            SELECT 
-                u.nama_user AS nama_admin,
-                COALESCE(n.nama_nasabah, '-') AS nama_nasabah,
-                db.nama_barang AS nama_barang_sampah,
-                'Pemasukan' AS jenis_transaksi,
-                db.harga AS harga,
-                lp.riwayat AS riwayat
-            FROM laporan_pemasukan lp
-            JOIN login u ON lp.id_user = u.id_user
-            LEFT JOIN data_barang db ON lp.id_barang = db.id_barang
-            LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah
-            WHERE lp.id_barang IS NOT NULL
+SELECT 
+                            u.nama_user AS nama_admin,
+                            COALESCE(n.nama_nasabah, '-') AS nama_nasabah,
+                            tr.nama_barang AS nama_barang_sampah,
+                            'Pemasukan' AS jenis_transaksi,
+                            tr.harga AS harga,
+                            lp.riwayat AS riwayat
+                        FROM laporan_pemasukan lp
+                        JOIN login u ON lp.id_user = u.id_user
+                        LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
+                        LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah
+                        WHERE lp.id_transaksi IS NOT NULL
 
             UNION ALL
 
@@ -743,7 +743,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
             panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTableLayout.createSequentialGroup()
                 .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(427, 542, Short.MAX_VALUE))
+                .addGap(427, 558, Short.MAX_VALUE))
             .addGroup(panelTableLayout.createSequentialGroup()
                 .addComponent(jScrollPane1)
                 .addContainerGap())
@@ -826,7 +826,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                 .addComponent(btn_laporan_jual_sampah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_detail_pemasukan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(117, Short.MAX_VALUE))
+                .addContainerGap(81, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout panelViewLayout = new javax.swing.GroupLayout(panelView);
@@ -834,18 +834,14 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         panelViewLayout.setHorizontalGroup(
             panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelViewLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
                 .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(shadowDate, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelCard, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelViewLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(shadowDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(panelViewLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(panelCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(panelViewLayout.createSequentialGroup()
-                                .addComponent(panelTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(panelCurve, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addComponent(panelTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(panelCurve, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(20, 20, 20))
         );
         panelViewLayout.setVerticalGroup(
@@ -1241,7 +1237,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         };
 
         model.setColumnIdentifiers(new Object[]{
-            "No", "Nama Admin", "Nama", "Nama Barang", "Harga", "Jenis Transaksi", "Riwayat"
+            "No", "Nama Admin", "Nama", "Nama Barang/Sampah", "Harga", "Jenis Transaksi", "Riwayat"
         });
 
         Connection conn = null;
@@ -1426,19 +1422,19 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         };
 
         model.setColumnIdentifiers(new Object[]{
-            "No", "Nama Admin", "Nama", "Nama Barang", "Harga", "Jenis Transaksi", "Riwayat"
+            "No", "Nama Admin", "Nama", "Nama Barang/Sampah", "Harga", "Jenis Transaksi", "Riwayat"
         });
 
         try (Connection conn = DBconnect.getConnection()) {
             StringBuilder sql = new StringBuilder();
             sql.append("SELECT nama_admin, nama_nasabah, nama_barang_sampah, jenis_transaksi, harga, riwayat FROM (")
-                    .append("SELECT u.nama_user AS nama_admin, COALESCE(n.nama_nasabah, '-') AS nama_nasabah, db.nama_barang AS nama_barang_sampah, ")
-                    .append("'Pemasukan' AS jenis_transaksi, db.harga AS harga, lp.riwayat AS riwayat ")
-                    .append("FROM laporan_pemasukan lp ")
-                    .append("JOIN login u ON lp.id_user = u.id_user ")
-                    .append("LEFT JOIN data_barang db ON lp.id_barang = db.id_barang ")
-                    .append("LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah ")
-                    .append("WHERE lp.id_barang IS NOT NULL ")
+                    .append(" SELECT u.nama_user AS nama_admin, COALESCE(n.nama_nasabah, '-') AS nama_nasabah, tr.nama_barang AS nama_barang_sampah, ")
+                    .append(" 'Pemasukan' AS jenis_transaksi, tr.harga AS harga, lp.riwayat AS riwayat")
+                    .append(" FROM laporan_pemasukan lp ")
+                    .append(" JOIN login u ON lp.id_user = u.id_user ")
+                    .append(" LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi ")
+                    .append(" LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah ")
+                    .append("  WHERE lp.id_transaksi IS NOT NULL ")
                     .append("UNION ALL ")
                     .append("SELECT u.nama_user AS nama_admin, '-' AS nama_nasabah, kate.nama_kategori AS nama_barang_sampah, ")
                     .append("'Pemasukan' AS jenis_transaksi, js.harga AS harga, lp.riwayat AS riwayat ")
