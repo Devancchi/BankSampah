@@ -16,7 +16,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
 
     public TabLaporan_setor_sampah() {
         initComponents();
-
+        txt_date.setText("");
         loadData("");
 
     }

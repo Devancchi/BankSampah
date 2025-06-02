@@ -363,7 +363,7 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(panelBawahLayout.createSequentialGroup()
                 .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBawahLayout.createSequentialGroup()
-                        .addGap(0, 5, Short.MAX_VALUE)
+                        .addGap(6, 6, 6)
                         .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -436,85 +436,85 @@ public class TabDashboard extends javax.swing.JPanel {
 
     private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
         try {
-        
-        DefaultTableModel model = new DefaultTableModel(
-            new String[]{"ID", "Admin", "Aktivitas", "Tanggal"}, 0
-        );
-        getAllData(model); // Ambil data dari DB ke model
 
-        // Cek jika tidak ada data
-        if (model.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "Tidak ada data untuk diekspor!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+            DefaultTableModel model = new DefaultTableModel(
+                    new String[]{"ID", "Admin", "Aktivitas", "Tanggal"}, 0
+            );
+            getAllData(model); // Ambil data dari DB ke model
 
-        // Pilih lokasi penyimpanan file
-        JFileChooser chooser = new JFileChooser();
-        chooser.setDialogTitle("Simpan file Excel");
-        chooser.setSelectedFile(new File("log_aktivitas.xls")); // Nama default
-
-        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
+            // Cek jika tidak ada data
+            if (model.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "Tidak ada data untuk diekspor!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
             }
 
-            @Override
-            public String getDescription() {
-                return "Excel Files (*.xls, *.xlsx)";
-            }
-        });
+            // Pilih lokasi penyimpanan file
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogTitle("Simpan file Excel");
+            chooser.setSelectedFile(new File("log_aktivitas.xls")); // Nama default
 
-        int option = chooser.showSaveDialog(this);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = chooser.getSelectedFile();
+            chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
+                }
 
-            // Tambahkan ekstensi jika belum ada
-            String fileName = fileToSave.getName().toLowerCase();
-            if (!fileName.endsWith(".xls") && !fileName.endsWith(".xlsx")) {
-                fileToSave = new File(fileToSave.getAbsolutePath() + ".xls");
-            }
+                @Override
+                public String getDescription() {
+                    return "Excel Files (*.xls, *.xlsx)";
+                }
+            });
 
-            // Konfirmasi jika file sudah ada
-            if (fileToSave.exists()) {
-                int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "File sudah ada. Apakah Anda ingin menimpanya?",
-                    "Konfirmasi",
-                    JOptionPane.YES_NO_OPTION
-                );
-                if (confirm != JOptionPane.YES_OPTION) {
-                    return;
+            int option = chooser.showSaveDialog(this);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                File fileToSave = chooser.getSelectedFile();
+
+                // Tambahkan ekstensi jika belum ada
+                String fileName = fileToSave.getName().toLowerCase();
+                if (!fileName.endsWith(".xls") && !fileName.endsWith(".xlsx")) {
+                    fileToSave = new File(fileToSave.getAbsolutePath() + ".xls");
+                }
+
+                // Konfirmasi jika file sudah ada
+                if (fileToSave.exists()) {
+                    int confirm = JOptionPane.showConfirmDialog(
+                            this,
+                            "File sudah ada. Apakah Anda ingin menimpanya?",
+                            "Konfirmasi",
+                            JOptionPane.YES_NO_OPTION
+                    );
+                    if (confirm != JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+
+                // Lakukan ekspor
+                try {
+                    ExcelExporter.exportTableModelToExcel(model, fileToSave);
+
+                    JOptionPane.showMessageDialog(this,
+                            "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
+                            "Sukses",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Export berhasil");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this,
+                            "Gagal mengekspor file: " + e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING, "Gagal mengekspor file");
+                    e.printStackTrace();
                 }
             }
 
-            // Lakukan ekspor
-            try {
-                ExcelExporter.exportTableModelToExcel(model, fileToSave);
-
-                JOptionPane.showMessageDialog(this,
-                    "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
-                    "Sukses",
-                    JOptionPane.INFORMATION_MESSAGE);
-                notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Export berhasil");
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this,
-                    "Gagal mengekspor file: " + e.getMessage(),
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Terjadi kesalahan: " + e.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-                notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING, "Gagal mengekspor file");
-                e.printStackTrace();
-            }
+            notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan");
+            e.printStackTrace();
         }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this,
-            "Terjadi kesalahan: " + e.getMessage(),
-            "Error",
-            JOptionPane.ERROR_MESSAGE);
-        notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan");
-        e.printStackTrace();
-    }
     }//GEN-LAST:event_btn_addActionPerformed
 
     private void cbx_dataLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbx_dataLogActionPerformed
@@ -686,18 +686,19 @@ public class TabDashboard extends javax.swing.JPanel {
             ResultSet rsSampah = stmt.executeQuery("SELECT SUM(berat_sampah) FROM setor_sampah");
             if (rsSampah.next()) {
                 double totalSampah = rsSampah.getDouble(1);
-                lb_totalSampah.setText(String.valueOf(totalSampah)+ "KG");
+                lb_totalSampah.setText(String.valueOf(totalSampah) + "KG");
             }
 
-// Total Pemasukan
+            // Total Pemasukan
             ResultSet rsPemasukan = stmt.executeQuery(
-                    "SELECT SUM(db.harga) AS total_pemasukan "
+                    "SELECT SUM(db.harga) + SUM(sp.harga) AS total_pemasukan "
                     + "FROM laporan_pemasukan lp "
-                    + "JOIN data_barang db ON lp.id_barang = db.id_barang"
+                    + "JOIN data_barang db ON lp.id_barang = db.id_barang "
+                    + "JOIN jual_sampah sp ON lp.id_jual_sampah = sp.id_jual_sampah"
             );
             double pemasukan = rsPemasukan.next() ? rsPemasukan.getDouble("total_pemasukan") : 0;
 
-// Total Pengeluaran
+            // Total Pengeluaran
             ResultSet rsPengeluaran = stmt.executeQuery(
                     "SELECT SUM(s.harga) AS total_pengeluaran "
                     + "FROM laporan_pengeluaran lp "
