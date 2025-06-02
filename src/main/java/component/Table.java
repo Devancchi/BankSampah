@@ -1,4 +1,5 @@
 package component;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -72,14 +73,14 @@ public class Table extends JTable {
         DefaultTableModel model = (DefaultTableModel) getModel();
         model.addRow(row);
     }
-    
+
     private class TablezHeader extends JLabel {
 
         public TablezHeader(String text) {
             super(text);
             setOpaque(true);
             setBackground(Color.WHITE);
-            setFont(new Font("sansserif", 1, 12));
+            setFont(new Font("Poppins", Font.PLAIN, 13));
             setForeground(new Color(102, 102, 102));
             setBorder(new EmptyBorder(10, 5, 10, 5));
         }

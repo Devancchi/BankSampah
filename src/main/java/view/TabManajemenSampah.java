@@ -39,7 +39,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         loadTabelJenis();
         btnHapusHarga.setVisible(false);
         btnBatalHarga.setVisible(false);
-        btnBatalProses.setVisible(true);
+        btnBatalProses.setVisible(false);
     }
 
     private void showPanel() {
@@ -230,6 +230,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         jLabel24 = new javax.swing.JLabel();
         btnTambahJenis = new component.Jbutton();
         btnHapusJenis = new component.Jbutton();
+        jLabel22 = new javax.swing.JLabel();
+        btnKembaliJK = new component.Jbutton();
         shadowKategori = new component.ShadowPanel();
         jLabel25 = new javax.swing.JLabel();
         cbxJenis_pnJK = new javax.swing.JComboBox<>();
@@ -239,8 +241,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         btnHapusKategori = new component.Jbutton();
         jScrollPane4 = new javax.swing.JScrollPane();
         tblKategori = new component.Table();
-        jLabel22 = new javax.swing.JLabel();
-        btnKembaliJK = new component.Jbutton();
 
         setPreferredSize(new java.awt.Dimension(1192, 944));
         setLayout(new java.awt.CardLayout());
@@ -250,6 +250,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
         panelView.setBackground(new java.awt.Color(250, 250, 250));
         panelView.setPreferredSize(new java.awt.Dimension(1192, 944));
+
+        panelHarga.setFont(panelHarga.getFont());
 
         jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel16.setText("Daftar Harga Sampah/KG");
@@ -352,7 +354,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             .addComponent(jScrollPane1)
             .addGroup(panelHargaLayout.createSequentialGroup()
                 .addComponent(btnKelola_JK, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 748, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnTambahHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnHapusHarga, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -371,13 +373,13 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                         .addComponent(btnTambahHarga, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btnKelola_JK, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
                 .addGap(63, 63, 63))
         );
 
+        panelTransaksiSampah.setFont(panelTransaksiSampah.getFont());
         panelTransaksiSampah.setMaximumSize(new java.awt.Dimension(1206, 343));
 
-        jLabel1.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel1.setText("Kode Nasabah");
 
         txt_Nama.addActionListener(new java.awt.event.ActionListener() {
@@ -386,10 +388,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel3.setText("Jenis Sampah");
 
-        jLabel4.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel4.setText("Kategori");
 
         cbxJenis_pnView.addActionListener(new java.awt.event.ActionListener() {
@@ -398,7 +398,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel5.setText("Berat Sampah");
 
         txt_Berat.addActionListener(new java.awt.event.ActionListener() {
@@ -437,7 +436,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             }
         });
 
-        jLabel17.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
         jLabel17.setText("Nama Nasabah");
 
         btn_SampahKeluar.setBackground(new java.awt.Color(255, 255, 51));
@@ -486,11 +484,14 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         panelTransaksiSampahLayout.setHorizontalGroup(
             panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
-                .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel3)
-                    .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
+                .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(txt_Berat, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbxKategori_pnView, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbxJenis_pnView, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelTransaksiSampahLayout.createSequentialGroup()
                         .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txt_Kode, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1))
@@ -498,22 +499,23 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                         .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel17)
                             .addComponent(txt_Nama)))
-                    .addComponent(jLabel18)
-                    .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
+                    .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelTransaksiSampahLayout.createSequentialGroup()
                         .addComponent(btn_SampahMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btn_SampahKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBatalProses, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cbxJenis_pnView, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cbxKategori_pnView, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txt_Berat)
+                        .addComponent(btn_SampahKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btn_ProsesSampah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(141, 141, 141)
-                .addComponent(jLabel10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnBatalProses, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
+                        .addGap(119, 119, 119)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
 
         panelTransaksiSampahLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btn_SampahKeluar, btn_SampahMasuk});
@@ -523,33 +525,31 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
                 .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(6, 6, 6)
+                .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_SampahKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_SampahMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBatalProses, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel17))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_Nama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_Kode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addGap(12, 12, 12)
                 .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
                         .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btn_SampahKeluar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_SampahMasuk, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnBatalProses, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cbxJenis_pnView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel10))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel17))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txt_Nama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_Kode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel3))
-                    .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
-                            .addComponent(jLabel10)
-                            .addGap(32, 32, 32))
-                        .addComponent(lblTotal, javax.swing.GroupLayout.Alignment.TRAILING)))
-                .addGap(14, 14, 14)
-                .addComponent(cbxJenis_pnView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbxKategori_pnView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbxKategori_pnView, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblTotal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -587,7 +587,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel6.setText("Tambah Harga Sampah");
 
-        jLabel11.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
+        jLabel11.setFont(jLabel11.getFont().deriveFont(jLabel11.getFont().getSize()+1f));
         jLabel11.setText("Jenis Sampah");
 
         cbxJenis_pnAdd.addActionListener(new java.awt.event.ActionListener() {
@@ -596,20 +596,20 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             }
         });
 
-        jLabel12.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
+        jLabel12.setFont(jLabel12.getFont().deriveFont(jLabel12.getFont().getSize()+1f));
         jLabel12.setText("Kategori");
 
-        jLabel13.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
+        jLabel13.setFont(jLabel13.getFont().deriveFont(jLabel13.getFont().getSize()+1f));
         jLabel13.setText("Harga Setor/Kg");
 
         txt_HargaAdd.setPreferredSize(new java.awt.Dimension(20, 22));
 
-        jLabel23.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
+        jLabel23.setFont(jLabel23.getFont().deriveFont(jLabel23.getFont().getSize()+1f));
         jLabel23.setText("Harga Jual/Kg");
 
         txt_HargaAdd2.setPreferredSize(new java.awt.Dimension(20, 22));
 
-        jLabel21.setFont(new java.awt.Font("Mongolian Baiti", 0, 14)); // NOI18N
+        jLabel21.setFont(jLabel21.getFont().deriveFont(jLabel21.getFont().getSize()+1f));
         jLabel21.setText("Tanggal");
 
         btnSimpanHarga.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_simpan.png"))); // NOI18N
@@ -712,7 +712,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             .addGroup(panelAddLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(shadowPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(475, Short.MAX_VALUE))
+                .addContainerGap(464, Short.MAX_VALUE))
         );
 
         panelMain.add(panelAdd, "card2");
@@ -909,7 +909,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             }
         });
 
-        jLabel24.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
+        jLabel24.setFont(jLabel24.getFont().deriveFont(jLabel24.getFont().getSize()+1f));
         jLabel24.setText("Jenis Sampah");
 
         btnTambahJenis.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_tambah.png"))); // NOI18N
@@ -936,46 +936,67 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             }
         });
 
+        jLabel22.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        jLabel22.setText("Kelola Jenis dan Kategori Sampah");
+
+        btnKembaliJK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
+        btnKembaliJK.setText("Kembali");
+        btnKembaliJK.setFillClick(new java.awt.Color(200, 125, 0));
+        btnKembaliJK.setFillOriginal(new java.awt.Color(243, 156, 18));
+        btnKembaliJK.setFillOver(new java.awt.Color(230, 145, 10));
+        btnKembaliJK.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnKembaliJK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnKembaliJKActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout shadowJenisLayout = new javax.swing.GroupLayout(shadowJenis);
         shadowJenis.setLayout(shadowJenisLayout);
         shadowJenisLayout.setHorizontalGroup(
             shadowJenisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shadowJenisLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
+                .addContainerGap()
                 .addGroup(shadowJenisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(shadowJenisLayout.createSequentialGroup()
-                        .addComponent(jLabel24)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(shadowJenisLayout.createSequentialGroup()
                         .addGroup(shadowJenisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel24)
                             .addGroup(shadowJenisLayout.createSequentialGroup()
                                 .addComponent(btnTambahJenis, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnHapusJenis, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 206, Short.MAX_VALUE))
-                            .addComponent(txt_Jenis))
+                                .addComponent(btnHapusJenis, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txt_Jenis, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(shadowJenisLayout.createSequentialGroup()
+                        .addComponent(jLabel22)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnKembaliJK, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         shadowJenisLayout.setVerticalGroup(
             shadowJenisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(shadowJenisLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel24)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowJenisLayout.createSequentialGroup()
+                .addGroup(shadowJenisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(shadowJenisLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnKembaliJK, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addGroup(shadowJenisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(shadowJenisLayout.createSequentialGroup()
+                        .addComponent(jLabel24)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_Jenis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(shadowJenisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnTambahJenis, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnHapusJenis, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
-        jLabel25.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
+        jLabel25.setFont(jLabel25.getFont().deriveFont(jLabel25.getFont().getSize()+1f));
         jLabel25.setText("Jenis Sampah");
 
         cbxJenis_pnJK.addActionListener(new java.awt.event.ActionListener() {
@@ -984,7 +1005,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             }
         });
 
-        jLabel26.setFont(new java.awt.Font("Mongolian Baiti", 0, 12)); // NOI18N
+        jLabel26.setFont(jLabel26.getFont().deriveFont(jLabel26.getFont().getSize()+1f));
         jLabel26.setText("Kategori Sampah");
 
         txt_Kategori.addActionListener(new java.awt.event.ActionListener() {
@@ -1053,55 +1074,34 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             tblKategori.getColumnModel().getColumn(2).setResizable(false);
         }
 
-        jLabel22.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
-        jLabel22.setText("Kelola Jenis dan Kategori Sampah");
-
-        btnKembaliJK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_batal.png"))); // NOI18N
-        btnKembaliJK.setText("Kembali");
-        btnKembaliJK.setFillClick(new java.awt.Color(200, 125, 0));
-        btnKembaliJK.setFillOriginal(new java.awt.Color(243, 156, 18));
-        btnKembaliJK.setFillOver(new java.awt.Color(230, 145, 10));
-        btnKembaliJK.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnKembaliJK.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnKembaliJKActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout shadowKategoriLayout = new javax.swing.GroupLayout(shadowKategori);
         shadowKategori.setLayout(shadowKategoriLayout);
         shadowKategoriLayout.setHorizontalGroup(
             shadowKategoriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shadowKategoriLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(shadowKategoriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_Kategori, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(shadowKategoriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel25)
                     .addComponent(jLabel26)
-                    .addComponent(cbxJenis_pnJK, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(shadowKategoriLayout.createSequentialGroup()
                         .addComponent(btnTambahKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnHapusKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(143, 143, 143)
+                        .addComponent(btnHapusKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_Kategori)
+                    .addComponent(cbxJenis_pnJK, 0, 372, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(shadowKategoriLayout.createSequentialGroup()
-                .addComponent(jLabel22)
-                .addGap(410, 410, 410)
-                .addComponent(btnKembaliJK, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         shadowKategoriLayout.setVerticalGroup(
             shadowKategoriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowKategoriLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(shadowKategoriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnKembaliJK, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(75, 75, 75)
                 .addGroup(shadowKategoriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(shadowKategoriLayout.createSequentialGroup()
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowKategoriLayout.createSequentialGroup()
                         .addComponent(jLabel25)
                         .addGap(1, 1, 1)
                         .addComponent(cbxJenis_pnJK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1113,10 +1113,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                         .addGroup(shadowKategoriLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnTambahKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnHapusKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(53, 53, 53))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowKategoriLayout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addGap(53, 53, 53))))
         );
 
         javax.swing.GroupLayout panelJKLayout = new javax.swing.GroupLayout(panelJK);
@@ -1134,10 +1131,10 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             panelJKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelJKLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(shadowKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(shadowJenis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(shadowKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(367, Short.MAX_VALUE))
         );
 
         panelMain.add(panelJK, "card2");
@@ -1286,10 +1283,27 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
     private void btnTambahJenisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahJenisActionPerformed
         try {
-            String jenis = txt_Jenis.getText();
+            String jenis = txt_Jenis.getText().trim();
 
-            String sql = "INSERT INTO jenis_sampah (nama_jenis) "
-                    + "VALUES (?)";
+            // Validasi input kosong
+            if (jenis.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Nama jenis sampah tidak boleh kosong!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Cek apakah jenis sudah ada
+            String checkSql = "SELECT COUNT(*) FROM jenis_sampah WHERE LOWER(nama_jenis) = LOWER(?)";
+            PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+            checkStmt.setString(1, jenis);
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                JOptionPane.showMessageDialog(this, "Jenis sampah '" + jenis + "' sudah ada dalam database!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Jika belum ada, lakukan insert
+            String sql = "INSERT INTO jenis_sampah (nama_jenis) VALUES (?)";
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, jenis);
             pst.executeUpdate();
@@ -1300,7 +1314,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             loadTabelKategori();
             loadJenisSampah();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Gagal Menyimpan Jenis Sampah.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Gagal Menyimpan Jenis Sampah: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnTambahJenisActionPerformed
 
@@ -1315,8 +1329,9 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
             JOptionPane.showMessageDialog(this, "Berhasil Menghapus Jenis Sampah!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
             clearForm();
+            loadTabelJenis();
+            loadTabelKategori();
             loadJenisSampah();
-            loadKategoriByJenis(jenis);
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Gagal Menghapus Jenis Sampah.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1369,6 +1384,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             String kode = txt_Kode.getText();
             cariNamaNasabah(kode);
+            btnBatalProses.setVisible(true);
         }
     }//GEN-LAST:event_txt_KodeKeyPressed
 
@@ -1405,21 +1421,47 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_KategoriActionPerformed
 
     private void btnTambahKategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahKategoriActionPerformed
-        String kategori = txt_Kategori.getText();
+        String kategori = txt_Kategori.getText().trim();
         String jenis = cbxJenis_pnJK.getSelectedItem().toString();
 
-        String query = "INSERT INTO kategori_sampah (nama_kategori, id_jenis) "
-                + "VALUES (?, (SELECT id_jenis FROM jenis_sampah WHERE nama_jenis = ?))";
+        // Validasi input kosong
+        if (kategori.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nama kategori sampah tidak boleh kosong!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+        // Validasi pilihan jenis
+        if (jenis.equals("-- Pilih Jenis --")) {
+            JOptionPane.showMessageDialog(this, "Pilih jenis sampah terlebih dahulu!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
+        try {
+            // Cek apakah kategori sudah ada untuk jenis yang sama
+            String checkSql = "SELECT COUNT(*) FROM kategori_sampah k "
+                    + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
+                    + "WHERE LOWER(k.nama_kategori) = LOWER(?) AND j.nama_jenis = ?";
+            PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+            checkStmt.setString(1, kategori);
+            checkStmt.setString(2, jenis);
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                JOptionPane.showMessageDialog(this, "Kategori '" + kategori + "' sudah ada untuk jenis " + jenis + "!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Jika belum ada, lakukan insert
+            String query = "INSERT INTO kategori_sampah (nama_kategori, id_jenis) "
+                    + "VALUES (?, (SELECT id_jenis FROM jenis_sampah WHERE nama_jenis = ?))";
+            PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setString(1, kategori);
             pstmt.setString(2, jenis);
-
             pstmt.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Kategori berhasil ditambahkan!");
 
-            clearForm();  // Bersihkan form
+            JOptionPane.showMessageDialog(null, "Kategori berhasil ditambahkan!");
+            clearForm();
+            loadTabelJenis();
             loadTabelKategori();
             loadJenisSampah();
 
@@ -1430,30 +1472,51 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     }//GEN-LAST:event_btnTambahKategoriActionPerformed
 
     private void btnHapusKategoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusKategoriActionPerformed
-        String kategori = txt_Kategori.getText();
+        String kategori = txt_Kategori.getText().trim();
         String jenis = cbxJenis_pnJK.getSelectedItem().toString();
 
-        String query = "DELETE FROM kategori_sampah "
-                + "WHERE nama_kategori = ? AND id_jenis = "
-                + "(SELECT id_jenis FROM jenis_sampah WHERE nama_jenis = ?)";
+        // Validasi input kosong
+        if (kategori.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Nama kategori sampah tidak boleh kosong!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, kategori);
-            pstmt.setString(2, jenis);
+        // Validasi pilihan jenis
+        if (jenis.equals("-- Pilih Jenis --")) {
+            JOptionPane.showMessageDialog(this, "Pilih jenis sampah terlebih dahulu!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-            int rowsAffected = pstmt.executeUpdate();
+        // Konfirmasi penghapusan
+        int confirm = JOptionPane.showConfirmDialog(null,
+                "Apakah Anda yakin ingin menghapus kategori '" + kategori + "' dari jenis " + jenis + "?",
+                "Konfirmasi Hapus",
+                JOptionPane.YES_NO_OPTION);
 
-            if (rowsAffected > 0) {
-                JOptionPane.showMessageDialog(null, "Kategori berhasil dihapus!");
-                clearForm();
-                loadJenisSampah();
-                loadKategoriByJenis(jenis);
-            } else {
-                JOptionPane.showMessageDialog(null, "Data tidak ditemukan!");
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                String query = "DELETE FROM kategori_sampah "
+                        + "WHERE nama_kategori = ? AND id_jenis = "
+                        + "(SELECT id_jenis FROM jenis_sampah WHERE nama_jenis = ?)";
+                PreparedStatement pstmt = conn.prepareStatement(query);
+                pstmt.setString(1, kategori);
+                pstmt.setString(2, jenis);
+
+                int rowsAffected = pstmt.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(null, "Kategori berhasil dihapus!");
+                    clearForm();
+                    loadTabelJenis();
+                    loadTabelKategori();
+                    loadJenisSampah();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Data tidak ditemukan!");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
     }//GEN-LAST:event_btnHapusKategoriActionPerformed
 
