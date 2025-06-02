@@ -730,6 +730,14 @@ public class TabDataBarang extends javax.swing.JPanel {
 
     private void btnPilihGambarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilihGambarActionPerformed
         JFileChooser fileChooser = new JFileChooser();
+        // Set initial directory to desktop/dataBarang
+        String userHome = System.getProperty("user.home");
+        File initialDir = new File(userHome + "/Desktop/dataBarang");
+        // Create directory if it doesn't exist
+        if (!initialDir.exists()) {
+            initialDir.mkdirs();
+        }
+        fileChooser.setCurrentDirectory(initialDir);
         fileChooser.setFileFilter(new FileNameExtensionFilter("Gambar", "jpg", "png", "jpeg", "gif"));
 
         int result = fileChooser.showOpenDialog(this);  // this = panel atau parent component

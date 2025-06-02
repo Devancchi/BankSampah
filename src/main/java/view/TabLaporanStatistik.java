@@ -26,7 +26,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         initComponents();
         loadDashboardData();
         loadData("");
-
+        txt_date.setText("");
         chart.setTitle("Chart Data");
 
         chart.addLegend("Amount", Color.decode("#7b4397"), Color.decode("#dc2430"));
@@ -439,8 +439,12 @@ SELECT
         ShadowSearch1.setBackground(new java.awt.Color(249, 251, 255));
         ShadowSearch1.setPreferredSize(new java.awt.Dimension(259, 43));
 
-        txt_date.setText("");
         txt_date.setBorder(null);
+        txt_date.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_dateActionPerformed(evt);
+            }
+        });
         txt_date.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 txt_datePropertyChange(evt);
@@ -1204,6 +1208,10 @@ SELECT
             e.printStackTrace();
         }
     }//GEN-LAST:event_btn_addActionPerformed
+
+    private void txt_dateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_dateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_dateActionPerformed
 
     private void searchByKeywordAndDate() {
         String kataKunci = txt_search.getText().trim();
