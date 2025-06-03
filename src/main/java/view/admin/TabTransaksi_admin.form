@@ -301,8 +301,8 @@
                               <Table columnCount="5" rowCount="0">
                                 <Column editable="true" title="Kode_Barang" type="java.lang.Object"/>
                                 <Column editable="true" title="Nama Barang" type="java.lang.Object"/>
-                                <Column editable="true" title="Qty" type="java.lang.Object"/>
                                 <Column editable="true" title="Harga" type="java.lang.Object"/>
+                                <Column editable="true" title="Qty" type="java.lang.Object"/>
                                 <Column editable="true" title="Total_Harga" type="java.lang.Object"/>
                               </Table>
                             </Property>
