@@ -124,12 +124,13 @@ public class TabDashboard extends javax.swing.JPanel {
         panelGradient1Layout.setVerticalGroup(
             panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelGradient1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
+                .addContainerGap()
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lb_totalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(lb_totalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout CardTotalNasabahLayout = new javax.swing.GroupLayout(CardTotalNasabah);
@@ -178,14 +179,14 @@ public class TabDashboard extends javax.swing.JPanel {
         panelGradient2Layout.setVerticalGroup(
             panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelGradient2Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelGradient2Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel8))
                     .addGroup(panelGradient2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(8, 8, 8)
                         .addComponent(lb_totalSampah, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -222,28 +223,26 @@ public class TabDashboard extends javax.swing.JPanel {
         panelGradient3Layout.setHorizontalGroup(
             panelGradient3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelGradient3Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
                 .addGroup(panelGradient3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelGradient3Layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(panelGradient3Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
                         .addComponent(jLabel11)
                         .addGap(18, 18, 18)
-                        .addComponent(lb_laba, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(lb_laba, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelGradient3Layout.setVerticalGroup(
             panelGradient3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelGradient3Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addContainerGap()
+                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelGradient3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lb_laba, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(panelGradient3Layout.createSequentialGroup()
-                        .addComponent(jLabel12)
-                        .addGap(4, 4, 4)
-                        .addComponent(jLabel11)))
+                    .addComponent(jLabel11))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -278,9 +277,9 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCardLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                    .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                    .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE))
+                    .addComponent(CardSaldoTabungan, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addComponent(CardTotalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addComponent(CardTotalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -345,8 +344,8 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(panelBawahLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 209, Short.MAX_VALUE)
-                .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 159, Short.MAX_VALUE)
+                .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -361,16 +360,20 @@ public class TabDashboard extends javax.swing.JPanel {
         );
         panelBawahLayout.setVerticalGroup(
             panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBawahLayout.createSequentialGroup()
-                .addGap(0, 5, Short.MAX_VALUE)
-                .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_beforeLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbx_dataLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_nextLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_lastLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(panelBawahLayout.createSequentialGroup()
+                .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBawahLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_beforeLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cbx_dataLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_nextLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_lastLog, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panelBawahLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(lb_halaman, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -433,85 +436,85 @@ public class TabDashboard extends javax.swing.JPanel {
 
     private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
         try {
-        
-        DefaultTableModel model = new DefaultTableModel(
-            new String[]{"ID", "Admin", "Aktivitas", "Tanggal"}, 0
-        );
-        getAllData(model); // Ambil data dari DB ke model
 
-        // Cek jika tidak ada data
-        if (model.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "Tidak ada data untuk diekspor!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+            DefaultTableModel model = new DefaultTableModel(
+                    new String[]{"ID", "Admin", "Aktivitas", "Tanggal"}, 0
+            );
+            getAllData(model); // Ambil data dari DB ke model
 
-        // Pilih lokasi penyimpanan file
-        JFileChooser chooser = new JFileChooser();
-        chooser.setDialogTitle("Simpan file Excel");
-        chooser.setSelectedFile(new File("log_aktivitas.xls")); // Nama default
-
-        chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
+            // Cek jika tidak ada data
+            if (model.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "Tidak ada data untuk diekspor!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
             }
 
-            @Override
-            public String getDescription() {
-                return "Excel Files (*.xls, *.xlsx)";
-            }
-        });
+            // Pilih lokasi penyimpanan file
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogTitle("Simpan file Excel");
+            chooser.setSelectedFile(new File("log_aktivitas.xls")); // Nama default
 
-        int option = chooser.showSaveDialog(this);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = chooser.getSelectedFile();
+            chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
+                }
 
-            // Tambahkan ekstensi jika belum ada
-            String fileName = fileToSave.getName().toLowerCase();
-            if (!fileName.endsWith(".xls") && !fileName.endsWith(".xlsx")) {
-                fileToSave = new File(fileToSave.getAbsolutePath() + ".xls");
-            }
+                @Override
+                public String getDescription() {
+                    return "Excel Files (*.xls, *.xlsx)";
+                }
+            });
 
-            // Konfirmasi jika file sudah ada
-            if (fileToSave.exists()) {
-                int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "File sudah ada. Apakah Anda ingin menimpanya?",
-                    "Konfirmasi",
-                    JOptionPane.YES_NO_OPTION
-                );
-                if (confirm != JOptionPane.YES_OPTION) {
-                    return;
+            int option = chooser.showSaveDialog(this);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                File fileToSave = chooser.getSelectedFile();
+
+                // Tambahkan ekstensi jika belum ada
+                String fileName = fileToSave.getName().toLowerCase();
+                if (!fileName.endsWith(".xls") && !fileName.endsWith(".xlsx")) {
+                    fileToSave = new File(fileToSave.getAbsolutePath() + ".xls");
+                }
+
+                // Konfirmasi jika file sudah ada
+                if (fileToSave.exists()) {
+                    int confirm = JOptionPane.showConfirmDialog(
+                            this,
+                            "File sudah ada. Apakah Anda ingin menimpanya?",
+                            "Konfirmasi",
+                            JOptionPane.YES_NO_OPTION
+                    );
+                    if (confirm != JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+
+                // Lakukan ekspor
+                try {
+                    ExcelExporter.exportTableModelToExcel(model, fileToSave);
+
+                    JOptionPane.showMessageDialog(this,
+                            "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
+                            "Sukses",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Export berhasil");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this,
+                            "Gagal mengekspor file: " + e.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING, "Gagal mengekspor file");
+                    e.printStackTrace();
                 }
             }
 
-            // Lakukan ekspor
-            try {
-                ExcelExporter.exportTableModelToExcel(model, fileToSave);
-
-                JOptionPane.showMessageDialog(this,
-                    "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
-                    "Sukses",
-                    JOptionPane.INFORMATION_MESSAGE);
-                notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Export berhasil");
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this,
-                    "Gagal mengekspor file: " + e.getMessage(),
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Terjadi kesalahan: " + e.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-                notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING, "Gagal mengekspor file");
-                e.printStackTrace();
-            }
+            notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan");
+            e.printStackTrace();
         }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this,
-            "Terjadi kesalahan: " + e.getMessage(),
-            "Error",
-            JOptionPane.ERROR_MESSAGE);
-        notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan");
-        e.printStackTrace();
-    }
     }//GEN-LAST:event_btn_addActionPerformed
 
     private void cbx_dataLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbx_dataLogActionPerformed
@@ -683,18 +686,19 @@ public class TabDashboard extends javax.swing.JPanel {
             ResultSet rsSampah = stmt.executeQuery("SELECT SUM(berat_sampah) FROM setor_sampah");
             if (rsSampah.next()) {
                 double totalSampah = rsSampah.getDouble(1);
-                lb_totalSampah.setText(String.valueOf(totalSampah)+ "KG");
+                lb_totalSampah.setText(String.valueOf(totalSampah) + "KG");
             }
 
-// Total Pemasukan
+            // Total Pemasukan
             ResultSet rsPemasukan = stmt.executeQuery(
-                    "SELECT SUM(db.harga) AS total_pemasukan "
+                    "SELECT SUM(db.harga) + SUM(sp.harga) AS total_pemasukan "
                     + "FROM laporan_pemasukan lp "
-                    + "JOIN data_barang db ON lp.id_barang = db.id_barang"
+                    + "JOIN data_barang db ON lp.id_barang = db.id_barang "
+                    + "JOIN jual_sampah sp ON lp.id_jual_sampah = sp.id_jual_sampah"
             );
             double pemasukan = rsPemasukan.next() ? rsPemasukan.getDouble("total_pemasukan") : 0;
 
-// Total Pengeluaran
+            // Total Pengeluaran
             ResultSet rsPengeluaran = stmt.executeQuery(
                     "SELECT SUM(s.harga) AS total_pengeluaran "
                     + "FROM laporan_pengeluaran lp "

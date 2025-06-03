@@ -494,9 +494,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(pn_header, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(pn_sidebar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+            .addComponent(pn_sidebar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -533,8 +531,7 @@ public class Dashboard extends javax.swing.JFrame {
         changeTabColor(shadowTransaksi);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        TabTransaksi t = new TabTransaksi(user);
-        panelMain.add(t);
+        panelMain.add(new TabTransaksi(user));
         panelMain.repaint();
         panelMain.revalidate();
         panelSlide1.show(4);
@@ -554,11 +551,10 @@ public class Dashboard extends javax.swing.JFrame {
         changeTabColor(shadowSampah);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        TabManajemenSampah panelS = new TabManajemenSampah(user);
-        panelMain.add(panelS);
+        panelMain.add(new TabManajemenSampah(user));
         panelMain.repaint();
         panelMain.revalidate();
-        gantiHalaman(panelS, "Manajemen Sampah");
+        panelSlide1.show(2);
     }//GEN-LAST:event_manajemen_sampahMouseClicked
 
     private void nasabahMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nasabahMouseClicked
