@@ -5,6 +5,7 @@
 package component;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -18,6 +19,7 @@ import javax.swing.JButton;
  * @author devan
  */
 public class Jbutton extends JButton {
+
     public Icon getIcon() {
         return icon;
     }
@@ -106,9 +108,10 @@ public class Jbutton extends JButton {
     private int roundedCorner;
 
     public Jbutton() {
-    fillOriginal = new Color(255, 193, 7); // Gold Elegan (#FFC107)
-    fillOver = new Color(245, 166, 0); // Amber Deep (#F5A600)
-    fillClick = new Color(230, 126, 34); // Orange Dark (#E67E22)
+        setFont(new Font("Poppins", Font.PLAIN, 13));
+        fillOriginal = new Color(255, 193, 7); // Gold Elegan (#FFC107)
+        fillOver = new Color(245, 166, 0); // Amber Deep (#F5A600)
+        fillClick = new Color(230, 126, 34); // Orange Dark (#E67E22)
         strokeWidth = 2;
         roundedCorner = 10;
         fill = fillOriginal;
