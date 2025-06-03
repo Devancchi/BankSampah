@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package view;
+package view.admin;
 
+import view.*;
 import component.ExcelExporter;
 import component.LoggerUtil;
 import component.NumberOnlyFilter;
@@ -44,7 +45,7 @@ import notification.toast.Notifications;
  *
  * @author devan
  */
-public class TabManajemenNasabah extends javax.swing.JPanel {
+public class TabManajemenNasabah_admin extends javax.swing.JPanel {
 
     private final Connection conn;
     private int halamanSaatIni = 1;
@@ -52,7 +53,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private int totalPages;
     private final UserSession users;
 
-    public TabManajemenNasabah(UserSession user) {
+    public TabManajemenNasabah_admin(UserSession user) {
         this.users = user;
         initComponents();
         conn = DBconnect.getConnection();
@@ -285,28 +286,26 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelActionLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 940, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 778, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(216, 216, 216)
                 .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(16, 16, 16)
                 .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelActionLayout.setVerticalGroup(
             panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelActionLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelActionLayout.createSequentialGroup()
+                .addGap(28, 28, 28)
                 .addGroup(panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelActionLayout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addGroup(panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(panelActionLayout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(4, 4, 4)
+                        .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(25, 25, 25))
         );
 
@@ -317,9 +316,9 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             .addGroup(panelViewLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelAction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(24, 24, 24))
+                    .addComponent(panelAction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(20, 20, 20))
         );
         panelViewLayout.setVerticalGroup(
             panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -407,7 +406,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                     .addComponent(txt_alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
                     .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(83, Short.MAX_VALUE))
             .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panelFormLayout.createSequentialGroup()
                     .addGap(970, 970, 970)
@@ -537,6 +536,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         } else if (btn_save.getText().equals("Simpan")) {
             insertData();
         } else if (btn_save.getText().equals("Perbarui")) {
+            System.out.println("test");
             updateData();
         }
     }//GEN-LAST:event_btn_saveActionPerformed
@@ -758,7 +758,7 @@ private void paginationNasabah() {
 
     private void showPanel() {
         panelMain.removeAll();
-        panelMain.add(new TabManajemenNasabah(users));
+        panelMain.add(new TabManajemenNasabah_admin(users));
         panelMain.repaint();
         panelMain.revalidate();
     }
@@ -789,7 +789,7 @@ private void paginationNasabah() {
             }
 
         } catch (Exception e) {
-            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(TabManajemenNasabah_admin.class.getName()).log(Level.SEVERE, null, e);
         }
         return totalData;
     }
@@ -823,7 +823,7 @@ private void paginationNasabah() {
                 }
             }
         } catch (SQLException e) {
-            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(TabManajemenNasabah_admin.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -885,7 +885,7 @@ private void paginationNasabah() {
             resetPagination();
             resetForm();
         } catch (SQLException e) {
-            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(TabManajemenNasabah_admin.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -922,6 +922,7 @@ private void paginationNasabah() {
                     JOptionPane.showMessageDialog(this, "data berhasil ditambahkan");
                     LoggerUtil.insert(users.getId(), "Menambah data nasabah ID: " + idNasabah);
                     resetForm();
+//                    txt_id.setText(setIDAnggota());
                     loadData();
                     showPanel();
                 }
@@ -931,7 +932,7 @@ private void paginationNasabah() {
             if (e.getSQLState().equals("23000")) { // SQLState 23000 = Integrity Constraint Violation
                 JOptionPane.showMessageDialog(this, "ID Nasabah sudah digunakan!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+                Logger.getLogger(TabManajemenNasabah_admin.class.getName()).log(Level.SEVERE, null, e);
             }
         }
     }
@@ -968,7 +969,7 @@ private void paginationNasabah() {
                 }
             }
         } catch (SQLException e) {
-            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(TabManajemenNasabah_admin.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -996,7 +997,7 @@ private void paginationNasabah() {
                     }
                 }
             } catch (SQLException e) {
-                Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+                Logger.getLogger(TabManajemenNasabah_admin.class.getName()).log(Level.SEVERE, null, e);
             }
 
         }
@@ -1042,7 +1043,7 @@ private String setIDAnggota() {
                 urutan = String.format("NSB%03d", nomor);
             }
         } catch (SQLException e) {
-            java.util.logging.Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+            java.util.logging.Logger.getLogger(TabManajemenNasabah_admin.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return urutan;

@@ -1,5 +1,6 @@
-package view;
+package view.admin;
 
+import view.*;
 import component.Item;
 import component.Jbutton;
 import component.ModelItem;
@@ -24,14 +25,14 @@ import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
  *
  * @author devan
  */
-public class TabDataBarang extends javax.swing.JPanel {
+public class TabDataBarang_admin extends javax.swing.JPanel {
 
     private final Connection conn = DBconnect.getConnection();
     private File selectedImageFile;
     private List<Item> itemPanels = new ArrayList<>();
     private ModelItem selectedItem = null;  // menyimpan item yang dipilih
 
-    public TabDataBarang() {
+    public TabDataBarang_admin() {
         initComponents();
 
 
@@ -103,7 +104,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             panelBarang.removeAll();
             panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
 
-            String sql = "SELECT * FROM data_barang WHERE nama_barang LIKE ? OR kode_barang LIKE ?";
+            String sql = "SELECT * FROM data_barang WHERE nama LIKE ? OR kode_barang LIKE ?";
             PreparedStatement pst = conn.prepareStatement(sql);
             String likeKeyword = "%" + keyword + "%";
             pst.setString(1, likeKeyword);
@@ -220,7 +221,7 @@ public class TabDataBarang extends javax.swing.JPanel {
     
     private void showPanel() {
         panelMain.removeAll();
-        panelMain.add(new TabDataBarang());
+        panelMain.add(new TabDataBarang_admin());
         panelMain.repaint();
         panelMain.revalidate();
     }
@@ -865,7 +866,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             clearForm();
             notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Data berhasil disimpan.");
         } catch (SQLException ex) {
-            Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TabDataBarang_admin.class.getName()).log(Level.SEVERE, null, ex);
             notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING, "Gagal menyimpan data: " + ex.getMessage());
         }
     }//GEN-LAST:event_btn_SaveAddActionPerformed
@@ -950,7 +951,7 @@ public class TabDataBarang extends javax.swing.JPanel {
 
             JOptionPane.showMessageDialog(this, "Data berhasil diupdate.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
-            Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TabDataBarang_admin.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Gagal mengupdate data : " + ex.getMessage());
         }
 
