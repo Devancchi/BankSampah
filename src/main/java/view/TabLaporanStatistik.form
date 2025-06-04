@@ -581,7 +581,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane1" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" pref="622" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_add" min="-2" pref="42" max="-2" attributes="0"/>
                       </Group>
@@ -681,21 +681,15 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                      </Group>
-                                      <Component id="btn_laporan_jual_sampah" alignment="1" max="32767" attributes="0"/>
-                                      <Component id="btn_detail_pemasukan" alignment="1" pref="436" max="32767" attributes="0"/>
-                                      <Component id="btn_laporan_transaksi" alignment="1" max="32767" attributes="0"/>
-                                  </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
-                              <Component id="chart" max="32767" attributes="0"/>
+                              <Component id="btn_laporan_jual_sampah" alignment="1" max="32767" attributes="0"/>
+                              <Component id="btn_detail_pemasukan" alignment="1" pref="436" max="32767" attributes="0"/>
+                              <Component id="btn_laporan_transaksi" alignment="1" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -705,8 +699,6 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="chart" min="-2" pref="420" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="btn_laporan_transaksi" min="-2" max="-2" attributes="0"/>
@@ -714,27 +706,12 @@
                           <Component id="btn_laporan_jual_sampah" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btn_detail_pemasukan" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="81" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="grafik.main.CurveLineChart" name="chart">
-                  <Properties>
-                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="0" green="0" red="0" type="rgb"/>
-                    </Property>
-                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                      <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
-                        <EmptyBorder bottom="10" left="10" right="10" top="10"/>
-                      </Border>
-                    </Property>
-                    <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="0" green="0" red="0" type="rgb"/>
-                    </Property>
-                  </Properties>
-                </Component>
                 <Component class="ripple.button.Button" name="btn_detail_pemasukan">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
