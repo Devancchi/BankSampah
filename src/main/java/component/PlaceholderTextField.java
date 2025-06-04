@@ -17,6 +17,7 @@ import javax.swing.Icon;
 import javax.swing.JTextField;
 
 public class PlaceholderTextField extends JTextField implements FocusListener {
+
     private String placeholder = "";
     private boolean showingPlaceholder = true;
     private Icon icon;
@@ -24,6 +25,7 @@ public class PlaceholderTextField extends JTextField implements FocusListener {
     public PlaceholderTextField() {
         super();
         addFocusListener(this);
+        setFont(new Font("Poppins", Font.PLAIN, 13));
     }
 
     public void setPlaceholder(String text) {
@@ -75,4 +77,3 @@ public class PlaceholderTextField extends JTextField implements FocusListener {
         repaint();
     }
 }
-

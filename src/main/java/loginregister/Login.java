@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import main.DBconnect;
 import main.Dashboard;
+import main.Dashboard_admin;
 import notification.toast.Notifications;
 
 public class Login extends JPanel {
@@ -113,18 +114,37 @@ public class Login extends JPanel {
 
                     // Bandingkan password yang di-hash
                     if (storedPasswordHash.equals(md5(password))) {
-                        // Login berhasil
-                        SwingUtilities.getWindowAncestor(this).dispose();  // Tutup form login
-
-
+                        // Login berhasil - ambil data user
                         int idUser = rs.getInt("id_user");
                         String nama = rs.getString("nama_user");
                         String level = rs.getString("level");
-                        UserSession user = new UserSession(idUser, nama, level);
-                        Dashboard dashboard = new Dashboard(user);
-                        dashboard.setVisible(true);
                         
-                        notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Berhasil Login.");
+                        // Tutup form login
+                        SwingUtilities.getWindowAncestor(this).dispose();
+                        
+                        // Buat user session
+                        UserSession user = new UserSession(idUser, nama, level);
+                        
+                        // Redirect berdasarkan level user
+                        if ("Owner".equalsIgnoreCase(level)) {
+                            // Jika level Owner, masuk ke Dashboard Owner
+                            Dashboard dashboard = new Dashboard(user);
+                            dashboard.setVisible(true);
+                            notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Selamat datang Owner " + nama + "!");
+                            
+                        } else if ("Admin".equalsIgnoreCase(level)) {
+                            // Jika level Admin, masuk ke Dashboard Admin
+                            Dashboard_admin dashboardAdmin = new Dashboard_admin(user);
+                            dashboardAdmin.setVisible(true);
+                            notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Selamat datang Admin " + nama + "!");
+                            
+                        } else {
+                            // Jika level tidak dikenali
+                            notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Level user tidak dikenali: " + level);
+                            // Tampilkan kembali form login jika level tidak valid
+                            SwingUtilities.getWindowAncestor(this).setVisible(true);
+                            return;
+                        }
 
                     } else {
                         notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Username atau password salah.");
@@ -133,7 +153,7 @@ public class Login extends JPanel {
                     notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Username atau password salah.");
                 }
             } catch (Exception ex) {
-                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan koneksi.");
+                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan koneksi: " + ex.getMessage());
                 ex.printStackTrace();
             }
         });
