@@ -85,7 +85,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_last = new javax.swing.JButton();
         btn_first = new javax.swing.JButton();
         btn_Export = new component.Jbutton();
-        btn_Import = new component.Jbutton();
         panelAction = new component.ShadowPanel();
         txt_search = new component.PlaceholderTextField();
         btn_add = new component.Jbutton();
@@ -159,27 +158,12 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             }
         });
 
-        btn_Import.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
-        btn_Import.setText("Import From Excel");
-        btn_Import.setFillClick(new java.awt.Color(30, 100, 180));
-        btn_Import.setFillOriginal(new java.awt.Color(66, 133, 244));
-        btn_Import.setFillOver(new java.awt.Color(42, 125, 190));
-        btn_Import.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_Import.setRoundedCorner(40);
-        btn_Import.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_ImportActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout panelBawahLayout = new javax.swing.GroupLayout(panelBawah);
         panelBawah.setLayout(panelBawahLayout);
         panelBawahLayout.setHorizontalGroup(
             panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBawahLayout.createSequentialGroup()
                 .addComponent(btn_Export, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_Import, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -200,7 +184,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(panelBawahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_Export, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_Import, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_first, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_before, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -651,16 +634,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     }
     }//GEN-LAST:event_btn_ExportActionPerformed
 
-    private void btn_ImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ImportActionPerformed
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileFilter(new FileNameExtensionFilter("Excel Files", "xlsx", "xls"));
-
-        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = chooser.getSelectedFile();
-            importExcelToDatabase(selectedFile);
-        }
-    }//GEN-LAST:event_btn_ImportActionPerformed
-
     private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
         notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Berhasil Menghapus Nasabah.");
     }//GEN-LAST:event_btn_deleteActionPerformed
@@ -668,7 +641,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.Jbutton btn_Export;
-    private component.Jbutton btn_Import;
     private component.Jbutton btn_add;
     private component.Jbutton btn_back;
     private javax.swing.JButton btn_before;
