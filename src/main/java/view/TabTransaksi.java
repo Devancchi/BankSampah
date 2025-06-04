@@ -400,6 +400,7 @@ public class TabTransaksi extends javax.swing.JPanel {
 
         txtnasabah.setBackground(new java.awt.Color(250, 250, 250));
         txtnasabah.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        txtnasabah.setText("NSB000");
         txtnasabah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtnasabahActionPerformed(evt);
