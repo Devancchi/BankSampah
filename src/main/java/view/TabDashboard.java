@@ -691,10 +691,7 @@ public class TabDashboard extends javax.swing.JPanel {
 
             // Total Pemasukan
             ResultSet rsPemasukan = stmt.executeQuery(
-                    "SELECT SUM(db.harga) + SUM(sp.harga) AS total_pemasukan "
-                    + "FROM laporan_pemasukan lp "
-                    + "JOIN data_barang db ON lp.id_barang = db.id_barang "
-                    + "JOIN jual_sampah sp ON lp.id_jual_sampah = sp.id_jual_sampah"
+                    "SELECT COALESCE(SUM(tr.total_harga), 0) + COALESCE(SUM(sp.harga), 0) AS total_pemasukan FROM laporan_pemasukan lp LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi LEFT JOIN jual_sampah sp ON lp.id_jual_sampah = sp.id_jual_sampah;"
             );
             double pemasukan = rsPemasukan.next() ? rsPemasukan.getDouble("total_pemasukan") : 0;
 
