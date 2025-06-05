@@ -184,63 +184,71 @@ public class TabTransaksi extends javax.swing.JPanel {
     }
 
     private void prosesPembayaranNasabah(String id_nasabah) {
-        try {
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
+    try {
+        Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
 
-            String sql = "SELECT * FROM manajemen_nasabah WHERE id_nasabah = ?";
-            PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setString(1, id_nasabah);
-            ResultSet rs = pst.executeQuery();
+        String sql = "SELECT * FROM manajemen_nasabah WHERE id_nasabah = ?";
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, id_nasabah);
+        ResultSet rs = pst.executeQuery();
 
-            if (rs.next()) {
-                String nama = rs.getString("nama_nasabah");
-                double saldo = rs.getDouble("saldo_total");
+        if (rs.next()) {
+            String nama = rs.getString("nama_nasabah");
+            double saldo = rs.getDouble("saldo_total");
 
-                // Tampilkan input pembayaran
-                String inputBayar = JOptionPane.showInputDialog(this,
-                        "Nama: " + nama + "\nSaldo saat ini: Rp" + saldo
-                        + "\n\nMasukkan jumlah pembayaran:");
+            // Hitung total transaksi
+            hitungTotal(); // pastikan method ini menghitung dan menyet nilai ke variabel `total`
+            double jumlahBayar = total;
 
-                if (inputBayar != null && !inputBayar.isEmpty()) {
-                    try {
-                        double jumlahBayar = Double.parseDouble(inputBayar);
+            // Format total dan saldo dalam Rupiah
+            NumberFormat Rp = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+            String totalFormatted = Rp.format(jumlahBayar);
 
-                        if (jumlahBayar > saldo) {
-                            JOptionPane.showMessageDialog(this,
-                                    "Saldo tidak mencukupi!", "Gagal", JOptionPane.WARNING_MESSAGE);
-                        } else {
-                            double saldoBaru = saldo - jumlahBayar;
+            // Tampilkan dialog konfirmasi
+            int konfirmasi = JOptionPane.showConfirmDialog(this,
+                    "Nama: " + nama +
+                    "\nSaldo saat ini: " + Rp.format(saldo) +
+                    "\nTotal transaksi: " + totalFormatted +
+                    "\n\nLanjutkan pembayaran?",
+                    "Konfirmasi Pembayaran",
+                    JOptionPane.YES_NO_OPTION);
 
-                            // Update saldo di database
-                            String updateSql = "UPDATE manajemen_nasabah SET saldo_total = ? WHERE id_nasabah = ?";
-                            PreparedStatement updatePst = conn.prepareStatement(updateSql);
-                            updatePst.setDouble(1, saldoBaru);
-                            updatePst.setString(2, id_nasabah);
-                            updatePst.executeUpdate();
-                            updatePst.close();
+            if (konfirmasi == JOptionPane.YES_OPTION) {
+                if (jumlahBayar > saldo) {
+                    JOptionPane.showMessageDialog(this,
+                            "Saldo tidak mencukupi!", "Gagal", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    double saldoBaru = saldo - jumlahBayar;
 
-                            // Tampilkan saldo baru di txttunai
-                            txttunai.setText(String.valueOf((int) jumlahBayar));
+                    // Update saldo di database
+                    String updateSql = "UPDATE manajemen_nasabah SET saldo_total = ? WHERE id_nasabah = ?";
+                    PreparedStatement updatePst = conn.prepareStatement(updateSql);
+                    updatePst.setDouble(1, saldoBaru);
+                    updatePst.setString(2, id_nasabah);
+                    updatePst.executeUpdate();
+                    updatePst.close();
 
-                            JOptionPane.showMessageDialog(this,
-                                    "Pembayaran berhasil!\nSisa Saldo: Rp" + saldoBaru);
-                        }
-                    } catch (NumberFormatException e) {
-                        JOptionPane.showMessageDialog(this, "Input tidak valid!", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
+                    // Set jumlah bayar ke txttunai
+                    txttunai.setText(String.valueOf((int) jumlahBayar));
+
+                    JOptionPane.showMessageDialog(this,
+                            "Pembayaran berhasil!\nSisa Saldo: " + Rp.format(saldoBaru));
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "Nasabah tidak ditemukan.");
             }
 
-            rs.close();
-            pst.close();
-            conn.close();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage());
+        } else {
+            JOptionPane.showMessageDialog(this, "Nasabah tidak ditemukan.");
         }
+
+        rs.close();
+        pst.close();
+        conn.close();
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage());
     }
+}
+
 
     private void tambahKeTabel(String kode, String nama, int hargaSatuan, int qty) {
         DefaultTableModel model = (DefaultTableModel) tabletransaksi.getModel();
@@ -392,6 +400,7 @@ public class TabTransaksi extends javax.swing.JPanel {
 
         txtnasabah.setBackground(new java.awt.Color(250, 250, 250));
         txtnasabah.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        txtnasabah.setText("NSB000");
         txtnasabah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtnasabahActionPerformed(evt);
@@ -479,7 +488,7 @@ public class TabTransaksi extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Kode Barang", "Nama Barang", "Qty", "Harga", "Total Harga"
+                "Kode Barang", "Nama Barang", "Qty", "Harga", "Total Harga", "Nasabah"
             }
         ));
         jScrollPane2.setViewportView(tabletransaksi);
@@ -612,6 +621,8 @@ public class TabTransaksi extends javax.swing.JPanel {
         String nama = txtbarang.getText().trim();
         String qtyStr = txtqty.getText().trim();
         String hargaStr = txtharga.getText().trim();
+        String idNasabah = txtnasabah.getText().trim();
+
 
         if (kode.isEmpty() || nama.isEmpty() || qtyStr.isEmpty() || hargaStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
@@ -652,7 +663,7 @@ public class TabTransaksi extends javax.swing.JPanel {
 
             if (!found) {
                 int totalHarga = qty * hargaParsed;
-                model.addRow(new Object[]{kode, nama, qty, hargaParsed, totalHarga});
+                model.addRow(new Object[]{kode, nama, qty, hargaParsed, totalHarga, idNasabah});
             }
 
             hitungTotal();
@@ -689,87 +700,92 @@ public class TabTransaksi extends javax.swing.JPanel {
 
     private void btnbayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbayarActionPerformed
 
-        DefaultTableModel model = (DefaultTableModel) tabletransaksi.getModel();
+    DefaultTableModel model = (DefaultTableModel) tabletransaksi.getModel();
 
-        if (model.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "Tidak ada barang di keranjang.");
-            return;
-        }
+    if (model.getRowCount() == 0) {
+        JOptionPane.showMessageDialog(this, "Tidak ada barang di keranjang.");
+        return;
+    }
 
-        String input = txttunai.getText().trim().replaceAll("[^\\d]", "");
-        if (input.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Masukkan jumlah tunai yang valid.");
-            return;
-        }
+    String input = txttunai.getText().trim().replaceAll("[^\\d]", "");
+    if (input.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Masukkan jumlah tunai yang valid.");
+        return;
+    }
 
-        int tunai = Integer.parseInt(input);
-        if (tunai < total) {
-            JOptionPane.showMessageDialog(this, "Uang tunai tidak mencukupi.");
-            return;
-        }
+    int tunai = Integer.parseInt(input);
+    if (tunai < total) {
+        JOptionPane.showMessageDialog(this, "Uang tunai tidak mencukupi.");
+        return;
+    }
 
-        int kembali = tunai - total;
-        txtkembalian.setText(String.valueOf(kembali));
+    int kembali = tunai - total;
+    txtkembalian.setText(String.valueOf(kembali));
 
-        String kodeTransaksi = "TRX" + System.currentTimeMillis();
-        List<Object[]> pesanan = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", ""); PreparedStatement ps = conn.prepareStatement(
-                        "INSERT INTO transaksi (id_user, kode_transaksi, kode_barang, nama_barang, qty, harga, total_harga, bayar, kembalian, tanggal) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"); PreparedStatement pstUpdate = conn.prepareStatement(
-                        "UPDATE data_barang SET stok = stok - ? WHERE kode_barang = ? AND stok >= ?")) {
+    String kodeTransaksi = "TRX" + System.currentTimeMillis();
+    String idNasabah = txtnasabah.getText().trim(); // Ambil id_nasabah
+    List<Object[]> pesanan = new ArrayList<>();
 
-            for (int i = 0; i < model.getRowCount(); i++) {
-                String kodeBarang = model.getValueAt(i, 0).toString();
-                String namaBarang = model.getValueAt(i, 1).toString();
-                int qty = (int) model.getValueAt(i, 2);
-                int harga = (int) model.getValueAt(i, 3);
-                int totalHarga = (int) model.getValueAt(i, 4);
+    try (Connection conn = DriverManager.getConnection(
+            "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
+         PreparedStatement ps = conn.prepareStatement(
+            "INSERT INTO transaksi (id_user, id_nasabah, kode_transaksi, kode_barang, nama_barang, qty, harga, total_harga, bayar, kembalian, tanggal) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+         PreparedStatement pstUpdate = conn.prepareStatement(
+            "UPDATE data_barang SET stok = stok - ? WHERE kode_barang = ? AND stok >= ?")) {
 
-                // Simpan transaksi
-                ps.setInt(1, users.getId());
-                ps.setString(2, kodeTransaksi);
-                ps.setString(3, kodeBarang);
-                ps.setString(4, namaBarang);
-                ps.setInt(5, qty);
-                ps.setInt(6, harga);
-                ps.setInt(7, totalHarga);
-                ps.setInt(8, tunai);
-                ps.setInt(9, kembali);
-                ps.addBatch();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String kodeBarang = model.getValueAt(i, 0).toString();
+            String namaBarang = model.getValueAt(i, 1).toString();
+            int qty = (int) model.getValueAt(i, 2);
+            int harga = (int) model.getValueAt(i, 3);
+            int totalHarga = (int) model.getValueAt(i, 4);
 
-                // Simpan data untuk cetak
-                pesanan.add(new Object[]{namaBarang, qty, harga});
+            // Simpan transaksi
+            ps.setInt(1, users.getId());           // id_user
+            ps.setString(2, idNasabah);            // id_nasabah
+            ps.setString(3, kodeTransaksi);        // kode_transaksi
+            ps.setString(4, kodeBarang);           // kode_barang
+            ps.setString(5, namaBarang);           // nama_barang
+            ps.setInt(6, qty);                     // qty
+            ps.setInt(7, harga);                   // harga
+            ps.setInt(8, totalHarga);              // total_harga
+            ps.setInt(9, tunai);                   // bayar
+            ps.setInt(10, kembali);                // kembalian
+            ps.addBatch();
 
-                // Update stok
-                pstUpdate.setInt(1, qty);
-                pstUpdate.setString(2, kodeBarang);
-                pstUpdate.setInt(3, qty);
+            // Simpan data untuk cetak
+            pesanan.add(new Object[]{namaBarang, qty, harga});
 
-                int affected = pstUpdate.executeUpdate();
-                if (affected == 0) {
-                    JOptionPane.showMessageDialog(this, "Stok tidak cukup untuk " + namaBarang);
-                    return;
-                }
+            // Update stok
+            pstUpdate.setInt(1, qty);
+            pstUpdate.setString(2, kodeBarang);
+            pstUpdate.setInt(3, qty);
+
+            int affected = pstUpdate.executeUpdate();
+            if (affected == 0) {
+                JOptionPane.showMessageDialog(this, "Stok tidak cukup untuk " + namaBarang);
+                return;
             }
-
-            ps.executeBatch();
-
-            // Cetak struk
-            Print printer = new Print();
-            printer.cetakStruk(kodeTransaksi, pesanan, tunai);
-
-            // Reset UI
-            model.setRowCount(0);
-            bersihkanForm();
-            bersihkanForm2();
-
-            JOptionPane.showMessageDialog(this, "Transaksi berhasil dan struk dicetak.");
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Gagal menyimpan transaksi: " + e.getMessage());
-            e.printStackTrace();
         }
+
+        ps.executeBatch();
+
+        // Cetak struk
+        Print printer = new Print();
+        printer.cetakStruk(kodeTransaksi, pesanan, tunai);
+
+        // Reset UI
+        model.setRowCount(0);
+        bersihkanForm();
+        bersihkanForm2();
+
+        JOptionPane.showMessageDialog(this, "Transaksi berhasil dan struk dicetak.");
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal menyimpan transaksi: " + e.getMessage());
+        e.printStackTrace();
+    }
     }//GEN-LAST:event_btnbayarActionPerformed
 
 
