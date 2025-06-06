@@ -683,7 +683,7 @@ public class TabDashboard extends javax.swing.JPanel {
             }
 
             // Total Sampah
-            ResultSet rsSampah = stmt.executeQuery("SELECT SUM(berat_sampah) FROM setor_sampah");
+            ResultSet rsSampah = stmt.executeQuery("SELECT SUM(stok_sampah) FROM sampah");
             if (rsSampah.next()) {
                 double totalSampah = rsSampah.getDouble(1);
                 lb_totalSampah.setText(String.valueOf(totalSampah) + "KG");
