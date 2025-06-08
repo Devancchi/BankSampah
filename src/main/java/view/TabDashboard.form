@@ -2,6 +2,10 @@
 
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
+    <Component class="datechooser.Main.DateBetween" name="dateBetween1">
+    </Component>
+    <Component class="datechooser.render.DefaultDateChooserRender" name="defaultDateChooserRender1">
+    </Component>
     <Component class="datechooser.Main.DateChooser" name="dateChooser1">
       <Properties>
         <Property name="dateSelectable" type="datechooser.Main.DateSelectable" editor="org.netbeans.modules.form.ComponentChooserEditor">
@@ -11,10 +15,6 @@
           <Value id="BETWEEN_DATE_SELECTED"/>
         </Property>
       </Properties>
-    </Component>
-    <Component class="datechooser.Main.DateBetween" name="dateBetween1">
-    </Component>
-    <Component class="datechooser.render.DefaultDateChooserRender" name="defaultDateChooserRender1">
     </Component>
   </NonVisualComponents>
   <Properties>
@@ -117,7 +117,10 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="panelGradient1" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="panelGradient1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -142,7 +145,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="lb_totalNasabah" max="32767" attributes="0"/>
+                                  <Component id="lb_totalNasabah" pref="263" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -216,7 +219,10 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="panelGradient2" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="panelGradient2" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -244,7 +250,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="lb_totalSampah" max="32767" attributes="0"/>
+                                  <Component id="lb_totalSampah" pref="263" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -420,13 +426,15 @@
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Component id="panelBawah" alignment="1" pref="864" max="32767" attributes="0"/>
-                      <Component id="jScrollPane1" alignment="1" max="32767" attributes="0"/>
                       <Component id="jLabel14" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="ShadowSearch" pref="396" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" pref="72" max="-2" attributes="0"/>
-                          <Component id="ShadowSearch1" pref="396" max="32767" attributes="0"/>
+                          <Component id="ShadowSearch" pref="390" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="ShadowSearch1" pref="390" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="btnReset" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
@@ -439,7 +447,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="103" groupAlignment="1" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
                           <Component id="ChartBarangTerjualVsBarangSisa" min="-2" pref="310" max="-2" attributes="0"/>
@@ -448,13 +456,14 @@
                       </Group>
                       <Group type="102" attributes="0">
                           <Component id="jLabel14" min="-2" pref="44" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="ShadowSearch" alignment="1" min="-2" pref="45" max="-2" attributes="0"/>
-                              <Component id="ShadowSearch1" alignment="1" min="-2" pref="45" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="ShadowSearch" alignment="1" pref="45" max="32767" attributes="0"/>
+                              <Component id="ShadowSearch1" alignment="1" pref="45" max="32767" attributes="0"/>
+                              <Component id="btnReset" alignment="1" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane1" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" min="-2" pref="622" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -687,11 +696,10 @@
             <Component class="javax.swing.JComboBox" name="box_pilih">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
+                  <StringArray count="3">
                     <StringItem index="0" value="Default"/>
                     <StringItem index="1" value="Nama Admin"/>
-                    <StringItem index="2" value="Nama Nasabah"/>
-                    <StringItem index="3" value="Nama Barang/Sampah"/>
+                    <StringItem index="2" value="Jenis Aktivitas"/>
                   </StringArray>
                 </Property>
               </Properties>
@@ -733,12 +741,9 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel10" alignment="0" max="32767" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="txt_date" min="-2" pref="32" max="-2" attributes="0"/>
-                              <EmptySpace min="0" pref="1" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="jLabel10" alignment="0" pref="33" max="32767" attributes="0"/>
                           <Component id="pilihtanggal" alignment="0" max="32767" attributes="0"/>
+                          <Component id="txt_date" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -769,6 +774,7 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pilihtanggalActionPerformed"/>
+                <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="pilihtanggalPropertyChange"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel10">
@@ -786,6 +792,14 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JButton" name="btnReset">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Reset"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnResetActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>
