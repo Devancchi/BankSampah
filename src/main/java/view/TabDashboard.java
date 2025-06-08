@@ -22,6 +22,7 @@ import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
 import chart.ModelPolarAreaChart;
 import chart.PolarAreaChart;
+import datechooser.Main.DateChooser;
 import java.text.NumberFormat;
 import java.util.Locale;
 import notification.toast.Notifications;
@@ -40,12 +41,14 @@ public class TabDashboard extends javax.swing.JPanel {
     public TabDashboard() {
         conn = DBconnect.getConnection();
         initComponents();
+        setupDateChooser();
         loadDashboardData();
         setTabelModel();
         loadLogData();
         paginationLog();
         loadDataChartBarang();
         loadDataChartJenisSampah();
+        txt_date.setText("");
     }
 
     /**
@@ -57,9 +60,9 @@ public class TabDashboard extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        dateChooser1 = new datechooser.Main.DateChooser();
         dateBetween1 = new datechooser.Main.DateBetween();
         defaultDateChooserRender1 = new datechooser.render.DefaultDateChooserRender();
+        dateChooser1 = new datechooser.Main.DateChooser();
         panelCard = new component.ShadowPanel();
         CardTotalNasabah = new component.Card();
         panelGradient1 = new grafik.panel.PanelGradient();
@@ -97,6 +100,7 @@ public class TabDashboard extends javax.swing.JPanel {
         txt_date = new javax.swing.JTextField();
         pilihtanggal = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
+        btnReset = new javax.swing.JButton();
 
         dateChooser1.setDateSelectable(null);
         dateChooser1.setDateSelectionMode(datechooser.Main.DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
@@ -133,7 +137,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     .addGroup(panelGradient1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addGap(18, 18, 18)
-                        .addComponent(lb_totalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(lb_totalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelGradient1Layout.setVerticalGroup(
@@ -156,7 +160,9 @@ public class TabDashboard extends javax.swing.JPanel {
         );
         CardTotalNasabahLayout.setVerticalGroup(
             CardTotalNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelGradient1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(CardTotalNasabahLayout.createSequentialGroup()
+                .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         CardTotalSampah.setFillColor(new java.awt.Color(31, 179, 148));
@@ -188,7 +194,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     .addGroup(panelGradient2Layout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addGap(18, 18, 18)
-                        .addComponent(lb_totalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lb_totalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
                         .addContainerGap())))
         );
         panelGradient2Layout.setVerticalGroup(
@@ -214,7 +220,9 @@ public class TabDashboard extends javax.swing.JPanel {
         );
         CardTotalSampahLayout.setVerticalGroup(
             CardTotalSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelGradient2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(CardTotalSampahLayout.createSequentialGroup()
+                .addComponent(panelGradient2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         CardSaldoTabungan.setFillColor(new java.awt.Color(31, 179, 148));
@@ -411,7 +419,7 @@ public class TabDashboard extends javax.swing.JPanel {
             }
         });
 
-        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Nasabah", "Nama Barang/Sampah" }));
+        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Jenis Aktivitas" }));
         box_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 box_pilihActionPerformed(evt);
@@ -466,6 +474,11 @@ public class TabDashboard extends javax.swing.JPanel {
                 pilihtanggalActionPerformed(evt);
             }
         });
+        pilihtanggal.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                pilihtanggalPropertyChange(evt);
+            }
+        });
 
         jLabel10.setBackground(new java.awt.Color(204, 204, 204));
         jLabel10.setForeground(new java.awt.Color(204, 204, 204));
@@ -489,13 +502,18 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(ShadowSearch1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(ShadowSearch1Layout.createSequentialGroup()
-                        .addComponent(txt_date, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 1, Short.MAX_VALUE))
-                    .addComponent(pilihtanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+                    .addComponent(pilihtanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txt_date))
                 .addContainerGap())
         );
+
+        btnReset.setText("Reset");
+        btnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelTabelLayout = new javax.swing.GroupLayout(panelTabel);
         panelTabel.setLayout(panelTabelLayout);
@@ -504,12 +522,14 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(panelTabelLayout.createSequentialGroup()
                 .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, 864, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1)
                     .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelTabelLayout.createSequentialGroup()
-                        .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
-                        .addGap(72, 72, 72)
-                        .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)))
+                        .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnReset))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
@@ -518,7 +538,7 @@ public class TabDashboard extends javax.swing.JPanel {
         panelTabelLayout.setVerticalGroup(
             panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTabelLayout.createSequentialGroup()
-                .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(panelTabelLayout.createSequentialGroup()
                         .addGap(44, 44, 44)
                         .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -527,11 +547,12 @@ public class TabDashboard extends javax.swing.JPanel {
                     .addGroup(panelTabelLayout.createSequentialGroup()
                         .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(ShadowSearch, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ShadowSearch1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                            .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                            .addComponent(btnReset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 622, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -678,6 +699,14 @@ public class TabDashboard extends javax.swing.JPanel {
         dateChooser1.showPopup();
     }//GEN-LAST:event_pilihtanggalActionPerformed
 
+    private void pilihtanggalPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_pilihtanggalPropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pilihtanggalPropertyChange
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        txt_date.setText("");
+    }//GEN-LAST:event_btnResetActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.Card CardSaldoTabungan;
@@ -688,6 +717,7 @@ public class TabDashboard extends javax.swing.JPanel {
     private component.ShadowPanel ShadowSearch;
     private component.ShadowPanel ShadowSearch1;
     private javax.swing.JComboBox<String> box_pilih;
+    private javax.swing.JButton btnReset;
     private component.Jbutton btn_add;
     private javax.swing.JButton btn_beforeLog;
     private javax.swing.JButton btn_firstLog;
@@ -721,7 +751,13 @@ public class TabDashboard extends javax.swing.JPanel {
     private javax.swing.JTextField txt_date;
     private swing.TextField txt_search;
     // End of variables declaration//GEN-END:variables
-            private void paginationLog() {
+
+    private void setupDateChooser() {
+        dateChooser1.setTextField(txt_date);
+        dateChooser1.setDateSelectionMode(DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
+    }
+
+    private void paginationLog() {
         btn_firstLog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1070,8 +1106,8 @@ public class TabDashboard extends javax.swing.JPanel {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("SELECT log_aktivitas.id_log, login.nama_user, log_aktivitas.aktivitas, log_aktivitas.tanggal ")
-               .append("FROM log_aktivitas ")
-               .append("JOIN login ON log_aktivitas.id_user = login.id_user ");
+                    .append("FROM log_aktivitas ")
+                    .append("JOIN login ON log_aktivitas.id_user = login.id_user ");
 
             boolean whereAdded = false;
 
@@ -1085,11 +1121,7 @@ public class TabDashboard extends javax.swing.JPanel {
                         sql.append("WHERE (login.nama_user LIKE ?) ");
                         whereAdded = true;
                         break;
-                    case "Nama Nasabah":
-                        sql.append("WHERE (log_aktivitas.aktivitas LIKE ?) ");
-                        whereAdded = true;
-                        break;
-                    case "Nama Barang/Sampah":
+                    case "Jenis Aktivitas":
                         sql.append("WHERE (log_aktivitas.aktivitas LIKE ?) ");
                         whereAdded = true;
                         break;
@@ -1150,4 +1182,3 @@ public class TabDashboard extends javax.swing.JPanel {
         }
     }
 }
-
