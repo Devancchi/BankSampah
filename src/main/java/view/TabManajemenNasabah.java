@@ -37,6 +37,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.math.BigDecimal;
 import notification.toast.Notifications;
+import org.apache.poi.ss.usermodel.Cell;
 
 /**
  *
@@ -653,7 +654,46 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     }//GEN-LAST:event_btn_deleteActionPerformed
 
     private void btn_importActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_importActionPerformed
-        // TODO add your handling code here:
+        try {
+            // Pilih file Excel yang akan diimport
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogTitle("Pilih file Excel");
+            chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Excel Files (*.xls, *.xlsx)";
+                }
+            });
+
+            int option = chooser.showOpenDialog(this);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = chooser.getSelectedFile();
+                
+                // Konfirmasi sebelum import
+                int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Apakah Anda yakin ingin mengimport data dari file ini?\n" +
+                    "Data yang sudah ada dengan ID yang sama akan diupdate.",
+                    "Konfirmasi Import",
+                    JOptionPane.YES_NO_OPTION
+                );
+                
+                if (confirm == JOptionPane.YES_OPTION) {
+                    importExcelToDatabase(selectedFile);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Terjadi kesalahan saat import: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_btn_importActionPerformed
 
 
@@ -814,8 +854,6 @@ private void paginationNasabah() {
                     Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, saldoFormatted};
                     model.addRow(rowData);
                 }
-                System.out.println("Mengambil data dari index: " + startIndex + ", sebanyak: " + entriesPage);
-                System.out.println("Jumlah baris dalam model setelah load: " + model.getRowCount());
             }
         } catch (SQLException e) {
             Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
@@ -1052,7 +1090,6 @@ private String setIDAnggota() {
 
     public void importExcelToDatabase(File excelFile) {
         try (FileInputStream fis = new FileInputStream(excelFile)) {
-
             Workbook workbook;
             if (excelFile.getName().endsWith(".xlsx")) {
                 workbook = new XSSFWorkbook(fis);
@@ -1065,57 +1102,103 @@ private String setIDAnggota() {
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
 
-            if (rowIterator.hasNext()) {
-                rowIterator.next();
+            // Skip header rows (title, date, empty row, column headers)
+            for (int i = 0; i < 4; i++) {
+                if (rowIterator.hasNext()) {
+                    rowIterator.next();
+                }
             }
 
-            String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, saldo) VALUES (?, ?, ?, ?, ?, ?)";
+            String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, saldo_total) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement insertPs = conn.prepareStatement(insertSql);
+            PreparedStatement checkPs = conn.prepareStatement("SELECT COUNT(*) FROM manajemen_nasabah WHERE id_nasabah = ?");
 
-            String checkSql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE no_telpon = ? OR email = ?";
-            PreparedStatement checkPs = conn.prepareStatement(checkSql);
-
-            int successCount = 0;
+            int insertCount = 0;
             int skippedCount = 0;
 
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
+                try {
+                    // Skip if row is empty
+                    if (row == null) continue;
 
-                String id = row.getCell(0).toString();
-                String nama = row.getCell(1).getStringCellValue();
-                String alamat = row.getCell(2).getStringCellValue();
-                String telepon = row.getCell(3).toString();
-                String email = row.getCell(4).getStringCellValue();
-                String saldo = row.getCell(5).getStringCellValue();
+                    // Get cell values with null checks
+                    Cell idCell = row.getCell(0);
+                    Cell namaCell = row.getCell(1);
+                    Cell alamatCell = row.getCell(2);
+                    Cell teleponCell = row.getCell(3);
+                    Cell emailCell = row.getCell(4);
+                    Cell saldoCell = row.getCell(5);
 
-                checkPs.setString(1, telepon);
-                checkPs.setString(2, email);
-                ResultSet rs = checkPs.executeQuery();
-                rs.next();
-                int count = rs.getInt(1);
+                    // Skip if any required cell is null
+                    if (idCell == null || namaCell == null || alamatCell == null || 
+                        teleponCell == null || emailCell == null || saldoCell == null) {
+                        continue;
+                    }
 
-                if (count == 0) {
-                    insertPs.setString(1, id);
-                    insertPs.setString(2, nama);
-                    insertPs.setString(3, alamat);
-                    insertPs.setString(4, telepon);
-                    insertPs.setString(5, email);
-                    insertPs.setString(6, saldo);
-                    insertPs.addBatch();
-                    successCount++;
-                } else {
-                    skippedCount++;
+                    String id = idCell.toString();
+                    String nama = namaCell.toString();
+                    String alamat = alamatCell.toString();
+                    String telepon = teleponCell.toString();
+                    String email = emailCell.toString();
+                    String saldoStr = saldoCell.toString().replace("Rp ", "").replace(".", "").replace(",", ".");
+                    BigDecimal saldo = new BigDecimal(saldoStr);
+
+                    // Check if record exists
+                    checkPs.setString(1, id);
+                    ResultSet rs = checkPs.executeQuery();
+                    rs.next();
+                    boolean exists = rs.getInt(1) > 0;
+
+                    if (!exists) {
+                        // Only insert if record doesn't exist
+                        insertPs.setString(1, id);
+                        insertPs.setString(2, nama);
+                        insertPs.setString(3, alamat);
+                        insertPs.setString(4, telepon);
+                        insertPs.setString(5, email);
+                        insertPs.setBigDecimal(6, saldo);
+                        insertPs.addBatch();
+                        insertCount++;
+                    } else {
+                        skippedCount++;
+                    }
+                } catch (Exception e) {
+                    // Silently skip problematic rows
+                    continue;
                 }
             }
 
-            insertPs.executeBatch();
+            // Execute batch if there are records to insert
+            if (insertCount > 0) {
+                insertPs.executeBatch();
+            }
+
+            // Close resources
+            insertPs.close();
+            checkPs.close();
+            workbook.close();
+
+            // Show results
+            String message = String.format(
+                "Import selesai!\n" +
+                "Data baru: %d\n" +
+                "Data dilewati (sudah ada): %d",
+                insertCount, skippedCount
+            );
+            
+            JOptionPane.showMessageDialog(this, message, "Hasil Import", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Refresh data
             loadData();
             LoggerUtil.insert(users.getId(), "Import data nasabah");
-            JOptionPane.showMessageDialog(null, "Import selesai!\nBerhasil: " + successCount + "\nDuplikat dilewati: " + skippedCount);
 
         } catch (IOException | SQLException | IllegalArgumentException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Import gagal: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, 
+                "Gagal import data: " + e.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
