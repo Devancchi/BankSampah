@@ -579,9 +579,6 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="First Page"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_firstLogActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btn_beforeLog">
               <Properties>
@@ -599,9 +596,6 @@
                   </StringArray>
                 </Property>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbx_dataLogActionPerformed"/>
-              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>

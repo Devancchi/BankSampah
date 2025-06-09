@@ -324,20 +324,10 @@ public class TabDashboard extends javax.swing.JPanel {
         lb_halaman.setText("hal");
 
         btn_firstLog.setText("First Page");
-        btn_firstLog.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_firstLogActionPerformed(evt);
-            }
-        });
 
         btn_beforeLog.setText("<");
 
         cbx_dataLog.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2", "4", "6", "8" }));
-        cbx_dataLog.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbx_dataLogActionPerformed(evt);
-            }
-        });
 
         btn_nextLog.setText(">");
 
@@ -656,14 +646,6 @@ public class TabDashboard extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }//GEN-LAST:event_btn_addActionPerformed
-
-    private void cbx_dataLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbx_dataLogActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbx_dataLogActionPerformed
-
-    private void btn_firstLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_firstLogActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_firstLogActionPerformed
 
     private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_searchActionPerformed
         // TODO add your handling code here:
@@ -1130,7 +1112,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 sql.append("log_aktivitas.tanggal = ? ");
             }
 
-            sql.append("ORDER BY log_aktivitas.id_log DESC");
+            sql.append("ORDER BY log_aktivitas.id_log DESC LIMIT ?,?");
 
             try (PreparedStatement st = conn.prepareStatement(sql.toString())) {
                 int paramIndex = 1;
@@ -1155,6 +1137,11 @@ public class TabDashboard extends javax.swing.JPanel {
                     st.setString(paramIndex++, tanggalMulai);
                 }
 
+                // Add pagination parameters
+                int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
+                st.setInt(paramIndex++, startIndex);
+                st.setInt(paramIndex++, dataPerHalaman);
+
                 ResultSet rs = st.executeQuery();
 
                 while (rs.next()) {
@@ -1170,6 +1157,11 @@ public class TabDashboard extends javax.swing.JPanel {
 
             tbl_log.setModel(model);
             tbl_log.clearSelection();
+
+            // Update pagination info
+            calculateTotalPage();
+            int totalData = getTotalData();
+            lb_halaman.setText(String.valueOf("Page " + halamanSaatIni + " Dari Total " + totalData + " Data"));
 
         } catch (SQLException e) {
             Logger.getLogger(TabDashboard.class.getName()).log(Level.SEVERE, null, e);
