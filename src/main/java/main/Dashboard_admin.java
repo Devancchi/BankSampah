@@ -486,7 +486,7 @@ public class Dashboard_admin extends javax.swing.JFrame {
         changeTabColor(shadowDataBarang);
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabDataBarang());
+        panelMain.add(new TabDataBarang(user));
         panelMain.repaint();
         panelMain.revalidate();
         panelSlide1.show(5);

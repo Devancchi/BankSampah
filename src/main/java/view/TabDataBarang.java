@@ -2,7 +2,9 @@ package view;
 
 import component.Item;
 import component.Jbutton;
+import component.LoggerUtil;
 import component.ModelItem;
+import component.UserSession;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -30,8 +32,10 @@ public class TabDataBarang extends javax.swing.JPanel {
     private File selectedImageFile;
     private List<Item> itemPanels = new ArrayList<>();
     private ModelItem selectedItem = null;  // menyimpan item yang dipilih
+    private final UserSession users;
 
-    public TabDataBarang() {
+    public TabDataBarang(UserSession user) {
+        this.users = user;
         initComponents();
         initializePanel();
     }
@@ -207,7 +211,7 @@ public class TabDataBarang extends javax.swing.JPanel {
 
     private void showPanel() {
         panelMain.removeAll();
-        panelMain.add(new TabDataBarang());
+        panelMain.add(new TabDataBarang(users));
         panelMain.repaint();
         panelMain.revalidate();
         btnHapus.setVisible(false);
@@ -684,6 +688,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             pst.executeUpdate();
             clearForm();
             notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Data berhasil disimpan.");
+            LoggerUtil.insert(users.getId(), "Menambah Data Barang ID: " + kodeBrg);
             showPanel();
         } catch (SQLException ex) {
             Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, null, ex);
@@ -721,6 +726,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             pst.executeUpdate();
             clearForm();
             notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Data berhasil diupdate.");
+            LoggerUtil.insert(users.getId(), "Mengupdate Data barang ID: " + kodeBrg);
             showPanel();
         } catch (SQLException ex) {
             Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, null, ex);
@@ -807,6 +813,8 @@ public class TabDataBarang extends javax.swing.JPanel {
 
     private void btnHapusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHapusMouseClicked
         if (selectedItem != null) {
+            String kodeBrg = selectedItem.getKode(); // ⬅️ AMAN dan AKURAT
+
             int confirm = JOptionPane.showConfirmDialog(this, "Yakin ingin menghapus barang ini?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 try {
@@ -822,6 +830,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                         selectedItem = null;
                         btnTambah.setEnabled(false);
                         btnHapus.setEnabled(false);
+                        LoggerUtil.insert(users.getId(), "Menghapus Data Barang Kode: " + kodeBrg); // ⬅️ log aman
                     } else {
                         notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING, "Gagal menghapus barang.");
                     }
