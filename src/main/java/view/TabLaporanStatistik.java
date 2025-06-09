@@ -835,7 +835,7 @@ private void loadData(String filterJenis) {
             .addGroup(panelViewLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelTable, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(panelTable, javax.swing.GroupLayout.PREFERRED_SIZE, 1152, Short.MAX_VALUE)
                     .addComponent(panelCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
         );
@@ -1546,23 +1546,17 @@ private void loadData(String filterJenis) {
     private component.ShadowPanel ShadowSearch1;
     private javax.swing.JComboBox<String> box_pilih;
     private javax.swing.JButton btnReset;
-    private component.Jbutton btn_Export;
     private component.Jbutton btn_Export1;
-    private javax.swing.JButton btn_before;
     private javax.swing.JButton btn_before1;
     private ripple.button.Button btn_detail_pemasukan;
-    private javax.swing.JButton btn_first;
     private javax.swing.JButton btn_first1;
     private ripple.button.Button btn_laporan_jual_sampah;
     private ripple.button.Button btn_laporan_transaksi;
-    private javax.swing.JButton btn_last;
     private javax.swing.JButton btn_last1;
-    private javax.swing.JButton btn_next;
     private javax.swing.JButton btn_next1;
     private component.Card cardPemasukan;
     private component.Card cardPengeluaran;
     private component.Card cardTransaksi;
-    private javax.swing.JComboBox<String> cbx_data;
     private javax.swing.JComboBox<String> cbx_data1;
     private datechooser.Main.DateBetween dateBetween1;
     private datechooser.Main.DateChooser dateChooser1;
@@ -1577,12 +1571,10 @@ private void loadData(String filterJenis) {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lb_halaman;
     private javax.swing.JLabel lb_halaman1;
     private javax.swing.JLabel lb_pemasukan;
     private javax.swing.JLabel lb_pengeluaran;
     private javax.swing.JLabel lb_total;
-    private component.ShadowPanel panelBawah;
     private component.ShadowPanel panelBawah1;
     private component.ShadowPanel panelCard;
     private component.ShadowPanel panelCurve;
