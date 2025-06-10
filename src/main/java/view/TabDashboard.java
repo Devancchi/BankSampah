@@ -32,7 +32,7 @@ public class TabDashboard extends javax.swing.JPanel {
 
     private final Connection conn;
     private int halamanSaatIni = 1;
-    private int dataPerHalaman = 2;
+    private int dataPerHalaman = 20;
     private int totalPages;
 
     public TabDashboard() {
@@ -327,7 +327,7 @@ public class TabDashboard extends javax.swing.JPanel {
 
         btn_beforeLog.setText("<");
 
-        cbx_dataLog.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2", "4", "6", "8" }));
+        cbx_dataLog.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "20", "40", "60", "80", "100" }));
 
         btn_nextLog.setText(">");
 
