@@ -31,7 +31,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         this.users = user;
         initComponents();
         /// load tabel utama ///
-        inisialisasiTabel();
+        loadtabelSampah();
         /// load combo box jenis sampah ///
         loadJenisSampah();
         /// load tabel ////
@@ -49,15 +49,15 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         panelMain.revalidate();
     }
 
-    private void inisialisasiTabel() {
+    private void loadtabelSampah() {
         // Mengatur model tabel
-        tblModel = new DefaultTableModel(new String[]{"ID Sampah", "Jenis Sampah", "Kategori Sampah", "Harga Setor/Kg", "Harga Jual/Kg", "Tanggal"}, 0);
+        tblModel = new DefaultTableModel(new String[]{"ID Sampah", "Jenis Sampah", "Kategori Sampah", "Harga Setor/Kg", "Harga Jual/Kg", "Tanggal", "Stok"}, 0);
         tblSampah.setModel(tblModel);
         tblSampah.getColumnModel().getColumn(0).setMinWidth(0);
         tblSampah.getColumnModel().getColumn(0).setMaxWidth(0);
         tblSampah.getColumnModel().getColumn(0).setWidth(0);
 
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT s.id_sampah, s.harga_setor, s.harga_jual, s.tanggal,  k.nama_kategori,  j.nama_jenis "
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT s.id_sampah, s.harga_setor, s.harga_jual, s.tanggal,  k.nama_kategori,  j.nama_jenis, s.stok_sampah "
                 + "FROM sampah s "
                 + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
                 + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
@@ -69,7 +69,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     rs.getString("nama_kategori"),
                     rs.getInt("harga_setor"),
                     rs.getInt("harga_jual"),
-                    rs.getDate("tanggal")
+                    rs.getDate("tanggal"),
+                    rs.getInt("stok_sampah")
                 };
                 tblModel.addRow(row);
             }
@@ -310,14 +311,14 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID Sampah", "Jenis Sampah", "Kategori Sampah", "Harga Setor/Kg", "Harga Jual/Kg", "Tanggal"
+                "ID Sampah", "Jenis Sampah", "Kategori Sampah", "Harga Setor/Kg", "Harga Jual/Kg", "Tanggal", "Stok"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -508,14 +509,13 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 .addGroup(panelTransaksiSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBatalProses, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnBatalProses, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelTransaksiSampahLayout.createSequentialGroup()
                         .addGap(119, 119, 119)
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panelTransaksiSampahLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btn_SampahKeluar, btn_SampahMasuk});
@@ -822,7 +822,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                             .addComponent(ShadowSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnKembaliR, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(269, Short.MAX_VALUE))
+                .addContainerGap(276, Short.MAX_VALUE))
         );
         shadowPanel1Layout.setVerticalGroup(
             shadowPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1125,7 +1125,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 .addGroup(panelJKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(shadowKategori, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(shadowJenis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(310, Short.MAX_VALUE))
+                .addContainerGap(304, Short.MAX_VALUE))
         );
         panelJKLayout.setVerticalGroup(
             panelJKLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1235,7 +1235,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 pstmtDeleteFromSampah.setString(1, idSampah);
                 pstmtDeleteFromSampah.executeUpdate();
 
-                inisialisasiTabel();
+                loadtabelSampah();
              ///////tambah
 
             } catch (SQLException e) {
