@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
 import chart.ModelPolarAreaChart;
-import chart.PolarAreaChart;
+import datechooser.Main.DateChooser;
 import notification.toast.Notifications;
 
 /**
@@ -32,18 +32,19 @@ public class TabDashboard extends javax.swing.JPanel {
 
     private final Connection conn;
     private int halamanSaatIni = 1;
-    private int dataPerHalaman = 15;
+    private int dataPerHalaman = 20;
     private int totalPages;
 
     public TabDashboard() {
-        conn = DBconnect.getConnection();
         initComponents();
-        loadDashboardData();
+        conn = DBconnect.getConnection();
         setTabelModel();
         loadLogData();
         paginationLog();
+        setupDateChooser();
         loadDataChartBarang();
         loadDataChartJenisSampah();
+        txt_date.setText("");
     }
 
     /**
@@ -55,6 +56,9 @@ public class TabDashboard extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        dateBetween1 = new datechooser.Main.DateBetween();
+        defaultDateChooserRender1 = new datechooser.render.DefaultDateChooserRender();
+        dateChooser1 = new datechooser.Main.DateChooser();
         panelCard = new component.ShadowPanel();
         CardTotalNasabah = new component.Card();
         panelGradient1 = new grafik.panel.PanelGradient();
@@ -72,8 +76,6 @@ public class TabDashboard extends javax.swing.JPanel {
         jLabel12 = new javax.swing.JLabel();
         lb_laba = new javax.swing.JLabel();
         panelTabel = new component.ShadowPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tbl_log = new component.Table();
         jLabel14 = new javax.swing.JLabel();
         ChartBarangTerjualVsBarangSisa = new chart.PolarAreaChart();
         ChartDistribusiSampah = new chart.PolarAreaChart();
@@ -85,6 +87,19 @@ public class TabDashboard extends javax.swing.JPanel {
         cbx_dataLog = new javax.swing.JComboBox<>();
         btn_nextLog = new javax.swing.JButton();
         btn_lastLog = new javax.swing.JButton();
+        ShadowSearch = new component.ShadowPanel();
+        txt_search = new swing.TextField();
+        box_pilih = new javax.swing.JComboBox<>();
+        ShadowSearch1 = new component.ShadowPanel();
+        txt_date = new javax.swing.JTextField();
+        pilihtanggal = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        btnReset = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbl_log = new component.Table();
+
+        dateChooser1.setDateSelectable(null);
+        dateChooser1.setDateSelectionMode(datechooser.Main.DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
 
         setBackground(new java.awt.Color(250, 250, 250));
         setPreferredSize(new java.awt.Dimension(1192, 944));
@@ -141,7 +156,9 @@ public class TabDashboard extends javax.swing.JPanel {
         );
         CardTotalNasabahLayout.setVerticalGroup(
             CardTotalNasabahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelGradient1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(CardTotalNasabahLayout.createSequentialGroup()
+                .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         CardTotalSampah.setFillColor(new java.awt.Color(31, 179, 148));
@@ -199,7 +216,9 @@ public class TabDashboard extends javax.swing.JPanel {
         );
         CardTotalSampahLayout.setVerticalGroup(
             CardTotalSampahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelGradient2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(CardTotalSampahLayout.createSequentialGroup()
+                .addComponent(panelGradient2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         CardSaldoTabungan.setFillColor(new java.awt.Color(31, 179, 148));
@@ -231,7 +250,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     .addGroup(panelGradient3Layout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addGap(18, 18, 18)
-                        .addComponent(lb_laba, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)))
+                        .addComponent(lb_laba, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelGradient3Layout.setVerticalGroup(
@@ -283,19 +302,6 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tbl_log.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
-            }
-        ));
-        jScrollPane1.setViewportView(tbl_log);
-
         jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel14.setText("Aktivitas terbaru");
         jLabel14.setPreferredSize(new java.awt.Dimension(145, 30));
@@ -318,20 +324,10 @@ public class TabDashboard extends javax.swing.JPanel {
         lb_halaman.setText("hal");
 
         btn_firstLog.setText("First Page");
-        btn_firstLog.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_firstLogActionPerformed(evt);
-            }
-        });
 
         btn_beforeLog.setText("<");
 
-        cbx_dataLog.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "15", "30", "45", "60" }));
-        cbx_dataLog.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbx_dataLogActionPerformed(evt);
-            }
-        });
+        cbx_dataLog.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "20", "40", "60", "80", "100" }));
 
         btn_nextLog.setText(">");
 
@@ -344,7 +340,7 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(panelBawahLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 159, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                 .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -377,36 +373,170 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
+        ShadowSearch.setBackground(new java.awt.Color(249, 251, 255));
+        ShadowSearch.setPreferredSize(new java.awt.Dimension(259, 43));
+
+        txt_search.setBorder(null);
+        txt_search.setForeground(new java.awt.Color(0, 0, 0));
+        txt_search.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txt_search.setHint("Cari Nama");
+        txt_search.setSelectionColor(new java.awt.Color(255, 255, 255));
+        txt_search.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_searchActionPerformed(evt);
+            }
+        });
+        txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_searchKeyTyped(evt);
+            }
+        });
+
+        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Jenis Aktivitas" }));
+        box_pilih.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                box_pilihActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout ShadowSearchLayout = new javax.swing.GroupLayout(ShadowSearch);
+        ShadowSearch.setLayout(ShadowSearchLayout);
+        ShadowSearchLayout.setHorizontalGroup(
+            ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearchLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(box_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        ShadowSearchLayout.setVerticalGroup(
+            ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearchLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(box_pilih)
+                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        ShadowSearch1.setBackground(new java.awt.Color(249, 251, 255));
+        ShadowSearch1.setPreferredSize(new java.awt.Dimension(259, 43));
+
+        txt_date.setBorder(null);
+        txt_date.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_dateActionPerformed(evt);
+            }
+        });
+        txt_date.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                txt_datePropertyChange(evt);
+            }
+        });
+        txt_date.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_dateKeyTyped(evt);
+            }
+        });
+
+        pilihtanggal.setText("...");
+        pilihtanggal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pilihtanggal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pilihtanggalActionPerformed(evt);
+            }
+        });
+        pilihtanggal.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                pilihtanggalPropertyChange(evt);
+            }
+        });
+
+        jLabel10.setBackground(new java.awt.Color(204, 204, 204));
+        jLabel10.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Calendar.png"))); // NOI18N
+
+        javax.swing.GroupLayout ShadowSearch1Layout = new javax.swing.GroupLayout(ShadowSearch1);
+        ShadowSearch1.setLayout(ShadowSearch1Layout);
+        ShadowSearch1Layout.setHorizontalGroup(
+            ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearch1Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pilihtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_date)
+                .addContainerGap())
+        );
+        ShadowSearch1Layout.setVerticalGroup(
+            ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearch1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                    .addComponent(pilihtanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txt_date))
+                .addContainerGap())
+        );
+
+        btnReset.setText("Reset");
+        btnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResetActionPerformed(evt);
+            }
+        });
+
+        tbl_log.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane2.setViewportView(tbl_log);
+
         javax.swing.GroupLayout panelTabelLayout = new javax.swing.GroupLayout(panelTabel);
         panelTabel.setLayout(panelTabelLayout);
         panelTabelLayout.setHorizontalGroup(
             panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTabelLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
                 .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelTabelLayout.createSequentialGroup()
-                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addComponent(jScrollPane2))
+                    .addComponent(panelBawah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelTabelLayout.createSequentialGroup()
-                        .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, 851, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
-                            .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnReset)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
+                    .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)))
         );
         panelTabelLayout.setVerticalGroup(
             panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelTabelLayout.createSequentialGroup()
-                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelTabelLayout.createSequentialGroup()
-                        .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTabelLayout.createSequentialGroup()
+                .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelTabelLayout.createSequentialGroup()
+                        .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelTabelLayout.createSequentialGroup()
+                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnReset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -517,13 +647,41 @@ public class TabDashboard extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btn_addActionPerformed
 
-    private void cbx_dataLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbx_dataLogActionPerformed
+    private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_searchActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_cbx_dataLogActionPerformed
+    }//GEN-LAST:event_txt_searchActionPerformed
 
-    private void btn_firstLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_firstLogActionPerformed
+    private void txt_searchKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyTyped
+        searchByKeywordAndDate();
+    }//GEN-LAST:event_txt_searchKeyTyped
+
+    private void box_pilihActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_box_pilihActionPerformed
+        searchByKeywordAndDate();
+    }//GEN-LAST:event_box_pilihActionPerformed
+
+    private void txt_dateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_dateActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btn_firstLogActionPerformed
+    }//GEN-LAST:event_txt_dateActionPerformed
+
+    private void txt_datePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txt_datePropertyChange
+        searchByKeywordAndDate();
+    }//GEN-LAST:event_txt_datePropertyChange
+
+    private void txt_dateKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_dateKeyTyped
+
+    }//GEN-LAST:event_txt_dateKeyTyped
+
+    private void pilihtanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pilihtanggalActionPerformed
+        dateChooser1.showPopup();
+    }//GEN-LAST:event_pilihtanggalActionPerformed
+
+    private void pilihtanggalPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_pilihtanggalPropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pilihtanggalPropertyChange
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        txt_date.setText("");
+    }//GEN-LAST:event_btnResetActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -532,12 +690,20 @@ public class TabDashboard extends javax.swing.JPanel {
     private component.Card CardTotalSampah;
     private chart.PolarAreaChart ChartBarangTerjualVsBarangSisa;
     private chart.PolarAreaChart ChartDistribusiSampah;
+    private component.ShadowPanel ShadowSearch;
+    private component.ShadowPanel ShadowSearch1;
+    private javax.swing.JComboBox<String> box_pilih;
+    private javax.swing.JButton btnReset;
     private component.Jbutton btn_add;
     private javax.swing.JButton btn_beforeLog;
     private javax.swing.JButton btn_firstLog;
     private javax.swing.JButton btn_lastLog;
     private javax.swing.JButton btn_nextLog;
     private javax.swing.JComboBox<String> cbx_dataLog;
+    private datechooser.Main.DateBetween dateBetween1;
+    private datechooser.Main.DateChooser dateChooser1;
+    private datechooser.render.DefaultDateChooserRender defaultDateChooserRender1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
@@ -545,7 +711,7 @@ public class TabDashboard extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lb_halaman;
     private javax.swing.JLabel lb_laba;
     private javax.swing.JLabel lb_totalNasabah;
@@ -556,9 +722,18 @@ public class TabDashboard extends javax.swing.JPanel {
     private grafik.panel.PanelGradient panelGradient2;
     private grafik.panel.PanelGradient panelGradient3;
     private component.ShadowPanel panelTabel;
+    private javax.swing.JButton pilihtanggal;
     private component.Table tbl_log;
+    private javax.swing.JTextField txt_date;
+    private swing.TextField txt_search;
     // End of variables declaration//GEN-END:variables
-            private void paginationLog() {
+
+    private void setupDateChooser() {
+        dateChooser1.setTextField(txt_date);
+        dateChooser1.setDateSelectionMode(DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
+    }
+
+    private void paginationLog() {
         btn_firstLog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -586,12 +761,10 @@ public class TabDashboard extends javax.swing.JPanel {
         btn_nextLog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 if (halamanSaatIni < totalPages) {
                     halamanSaatIni++;
                     loadLogData();
                 }
-
             }
         });
         btn_lastLog.addActionListener(new ActionListener() {
@@ -615,7 +788,7 @@ public class TabDashboard extends javax.swing.JPanel {
             }
 
         } catch (Exception e) {
-//            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(TabDashboard.class.getName()).log(Level.SEVERE, null, e);
         }
         return totalData;
     }
@@ -635,7 +808,9 @@ public class TabDashboard extends javax.swing.JPanel {
 
     private void getData(int startIndex, int entriesPage, DefaultTableModel model) {
         model.setRowCount(0);
-
+//        System.out.println("start index : "+startIndex);
+//        System.out.println("entries page : "+entriesPage);
+//        System.out.println("mode table : " +model);
         try {
             String sql = "SELECT log_aktivitas.id_log, login.nama_user, log_aktivitas.aktivitas, log_aktivitas.tanggal \n"
                     + "FROM log_aktivitas \n"
@@ -651,14 +826,14 @@ public class TabDashboard extends javax.swing.JPanel {
                     String admin = rs.getString("nama_user");
                     String aktivitas = rs.getString("aktivitas");
                     String tanggal = rs.getString("tanggal");
-
                     Object[] rowData = {idLog, admin, aktivitas, tanggal};
                     model.addRow(rowData);
-
                 }
+                System.out.println("Mengambil data dari index: " + startIndex + ", sebanyak: " + entriesPage);
+                System.out.println("Jumlah baris dalam model setelah load: " + model.getRowCount());
             }
         } catch (SQLException e) {
-//            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(TabDashboard.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -683,7 +858,7 @@ public class TabDashboard extends javax.swing.JPanel {
             }
 
             // Total Sampah
-            ResultSet rsSampah = stmt.executeQuery("SELECT SUM(berat_sampah) FROM setor_sampah");
+            ResultSet rsSampah = stmt.executeQuery("SELECT SUM(stok_sampah) FROM sampah");
             if (rsSampah.next()) {
                 double totalSampah = rsSampah.getDouble(1);
                 lb_totalSampah.setText(String.valueOf(totalSampah) + "KG");
@@ -874,6 +1049,122 @@ public class TabDashboard extends javax.swing.JPanel {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void searchByKeywordAndDate() {
+        String kataKunci = txt_search.getText().trim();
+        String tanggalRange = txt_date.getText().trim();
+        String filter = box_pilih.getSelectedItem().toString();
+
+        String tanggalMulai = "";
+        String tanggalAkhir = "";
+        boolean isRange = false;
+        boolean isSingleDate = false;
+
+        if (!tanggalRange.isEmpty()) {
+            if (tanggalRange.contains("dari")) {
+                String[] parts = tanggalRange.split("dari");
+                if (parts.length == 2) {
+                    tanggalMulai = parts[0].trim();
+                    tanggalAkhir = parts[1].trim();
+                    isRange = true;
+                }
+            } else {
+                tanggalMulai = tanggalRange;
+                isSingleDate = true;
+            }
+        }
+
+        DefaultTableModel model = (DefaultTableModel) tbl_log.getModel();
+        model.setRowCount(0);
+
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT log_aktivitas.id_log, login.nama_user, log_aktivitas.aktivitas, log_aktivitas.tanggal ")
+                    .append("FROM log_aktivitas ")
+                    .append("JOIN login ON log_aktivitas.id_user = login.id_user ");
+
+            boolean whereAdded = false;
+
+            if (!kataKunci.isEmpty()) {
+                switch (filter) {
+                    case "Default":
+                        sql.append("WHERE (login.nama_user LIKE ? OR log_aktivitas.aktivitas LIKE ?) ");
+                        whereAdded = true;
+                        break;
+                    case "Nama Admin":
+                        sql.append("WHERE (login.nama_user LIKE ?) ");
+                        whereAdded = true;
+                        break;
+                    case "Jenis Aktivitas":
+                        sql.append("WHERE (log_aktivitas.aktivitas LIKE ?) ");
+                        whereAdded = true;
+                        break;
+                }
+            }
+
+            if (isRange) {
+                sql.append(whereAdded ? "AND " : "WHERE ");
+                sql.append("log_aktivitas.tanggal BETWEEN ? AND ? ");
+            } else if (isSingleDate) {
+                sql.append(whereAdded ? "AND " : "WHERE ");
+                sql.append("log_aktivitas.tanggal = ? ");
+            }
+
+            sql.append("ORDER BY log_aktivitas.id_log DESC LIMIT ?,?");
+
+            try (PreparedStatement st = conn.prepareStatement(sql.toString())) {
+                int paramIndex = 1;
+
+                if (!kataKunci.isEmpty()) {
+                    String searchPattern = "%" + kataKunci + "%";
+                    switch (filter) {
+                        case "Default":
+                            st.setString(paramIndex++, searchPattern);
+                            st.setString(paramIndex++, searchPattern);
+                            break;
+                        default:
+                            st.setString(paramIndex++, searchPattern);
+                            break;
+                    }
+                }
+
+                if (isRange) {
+                    st.setString(paramIndex++, tanggalMulai);
+                    st.setString(paramIndex++, tanggalAkhir);
+                } else if (isSingleDate) {
+                    st.setString(paramIndex++, tanggalMulai);
+                }
+
+                // Add pagination parameters
+                int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
+                st.setInt(paramIndex++, startIndex);
+                st.setInt(paramIndex++, dataPerHalaman);
+
+                ResultSet rs = st.executeQuery();
+
+                while (rs.next()) {
+                    String idLog = rs.getString("id_log");
+                    String admin = rs.getString("nama_user");
+                    String aktivitas = rs.getString("aktivitas");
+                    String tanggal = rs.getString("tanggal");
+
+                    Object[] rowData = {idLog, admin, aktivitas, tanggal};
+                    model.addRow(rowData);
+                }
+            }
+
+            tbl_log.setModel(model);
+            tbl_log.clearSelection();
+
+            // Update pagination info
+            calculateTotalPage();
+            int totalData = getTotalData();
+            lb_halaman.setText(String.valueOf("Page " + halamanSaatIni + " Dari Total " + totalData + " Data"));
+
+        } catch (SQLException e) {
+            Logger.getLogger(TabDashboard.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 }

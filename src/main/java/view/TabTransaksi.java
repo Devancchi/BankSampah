@@ -86,7 +86,7 @@ public class TabTransaksi extends javax.swing.JPanel {
 
         public void cetakStruk(String kode, List<Object[]> pesanan, int tunai) {
             try {
-                String printerName = "POS-80"; // Ganti sesuai nama printer kamu
+                String printerName = "OK-58D"; // Ganti sesuai nama printer kamu
                 PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
                 PrintService printer = null;
 

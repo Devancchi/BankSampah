@@ -161,15 +161,23 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         panelTable = new component.ShadowPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tb_laporan = new component.Table();
-        btn_add = new component.Jbutton();
         panelGradient1 = new grafik.panel.PanelGradient();
-        jLabel2 = new javax.swing.JLabel();
         lbl_pengeluaran = new javax.swing.JLabel();
-        lbl_total_transaksi = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        panelBawah5 = new component.ShadowPanel();
+        lb_halaman5 = new javax.swing.JLabel();
+        btn_before5 = new javax.swing.JButton();
+        cbx_data5 = new javax.swing.JComboBox<>();
+        btn_next5 = new javax.swing.JButton();
+        btn_last5 = new javax.swing.JButton();
+        btn_first5 = new javax.swing.JButton();
+        btn_Export5 = new component.Jbutton();
+        panelGradient2 = new grafik.panel.PanelGradient();
         box_rentang_waktu = new javax.swing.JComboBox<>();
+        jLabel2 = new javax.swing.JLabel();
+        lbl_total_transaksi = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         dateChooser1.setDateChooserRender(defaultDateChooserRender1);
         dateChooser1.setDateSelectable(null);
@@ -234,7 +242,6 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         ShadowSearch1.setBackground(new java.awt.Color(249, 251, 255));
         ShadowSearch1.setPreferredSize(new java.awt.Dimension(259, 43));
 
-        txt_date.setText("");
         txt_date.setBorder(null);
         txt_date.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -351,91 +358,193 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(tb_laporan);
 
-        btn_add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
-        btn_add.setText("Export To Excel");
-        btn_add.setFillClick(new java.awt.Color(55, 130, 60));
-        btn_add.setFillOriginal(new java.awt.Color(76, 175, 80));
-        btn_add.setFillOver(new java.awt.Color(69, 160, 75));
-        btn_add.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_add.setRoundedCorner(40);
-        btn_add.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_addActionPerformed(evt);
-            }
-        });
-
         panelGradient1.setBackground(new java.awt.Color(0, 153, 153));
         panelGradient1.setColorGradient(new java.awt.Color(0, 204, 204));
-
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/total_item.png"))); // NOI18N
-        jLabel2.setText("jLabel2");
-        panelGradient1.add(jLabel2);
-        jLabel2.setBounds(20, 120, 60, 48);
 
         lbl_pengeluaran.setBackground(new java.awt.Color(255, 255, 255));
         lbl_pengeluaran.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         lbl_pengeluaran.setForeground(new java.awt.Color(255, 255, 255));
         lbl_pengeluaran.setText("0");
-        panelGradient1.add(lbl_pengeluaran);
-        lbl_pengeluaran.setBounds(30, 50, 240, 30);
-
-        lbl_total_transaksi.setBackground(new java.awt.Color(255, 255, 255));
-        lbl_total_transaksi.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        lbl_total_transaksi.setForeground(new java.awt.Color(255, 255, 255));
-        lbl_total_transaksi.setText("0");
-        panelGradient1.add(lbl_total_transaksi);
-        lbl_total_transaksi.setBounds(80, 140, 160, 20);
-
-        jLabel5.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel5.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("Rentan Periode");
-        panelGradient1.add(jLabel5);
-        jLabel5.setBounds(20, 190, 160, 20);
-
-        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel6.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("Total Transaksi");
-        panelGradient1.add(jLabel6);
-        jLabel6.setBounds(80, 120, 160, 20);
 
         jLabel9.setBackground(new java.awt.Color(255, 255, 255));
         jLabel9.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("Total Pengeluaran");
-        panelGradient1.add(jLabel9);
-        jLabel9.setBounds(30, 20, 160, 20);
+
+        javax.swing.GroupLayout panelGradient1Layout = new javax.swing.GroupLayout(panelGradient1);
+        panelGradient1.setLayout(panelGradient1Layout);
+        panelGradient1Layout.setHorizontalGroup(
+            panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelGradient1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelGradient1Layout.createSequentialGroup()
+                        .addComponent(lbl_pengeluaran, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
+        );
+        panelGradient1Layout.setVerticalGroup(
+            panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelGradient1Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(lbl_pengeluaran, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(282, Short.MAX_VALUE))
+        );
+
+        lb_halaman5.setText("hal");
+
+        btn_before5.setText("<");
+
+        cbx_data5.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "20", "40", "60", "80" }));
+
+        btn_next5.setText(">");
+        btn_next5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_next5ActionPerformed(evt);
+            }
+        });
+
+        btn_last5.setText("Last Page");
+        btn_last5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_last5ActionPerformed(evt);
+            }
+        });
+
+        btn_first5.setText("First Page");
+
+        btn_Export5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
+        btn_Export5.setText("Export To Excel");
+        btn_Export5.setFillClick(new java.awt.Color(55, 130, 60));
+        btn_Export5.setFillOriginal(new java.awt.Color(76, 175, 80));
+        btn_Export5.setFillOver(new java.awt.Color(69, 160, 75));
+        btn_Export5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_Export5.setRoundedCorner(40);
+        btn_Export5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_Export5ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelBawah5Layout = new javax.swing.GroupLayout(panelBawah5);
+        panelBawah5.setLayout(panelBawah5Layout);
+        panelBawah5Layout.setHorizontalGroup(
+            panelBawah5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBawah5Layout.createSequentialGroup()
+                .addComponent(btn_Export5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lb_halaman5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_first5, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_before5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbx_data5, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_next5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_last5, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        panelBawah5Layout.setVerticalGroup(
+            panelBawah5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBawah5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelBawah5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_Export5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb_halaman5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_first5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_before5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbx_data5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_next5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_last5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        panelGradient2.setBackground(new java.awt.Color(0, 153, 153));
+        panelGradient2.setColorGradient(new java.awt.Color(0, 204, 204));
 
         box_rentang_waktu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Laporan per 7 Hari Terakhir", "Laporan per 30 Hari Terakhir", "Laporan per 1 Tahun Terakhir" }));
-        panelGradient1.add(box_rentang_waktu);
-        box_rentang_waktu.setBounds(20, 220, 160, 22);
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/total_item.png"))); // NOI18N
+        jLabel2.setText("jLabel2");
+
+        lbl_total_transaksi.setBackground(new java.awt.Color(255, 255, 255));
+        lbl_total_transaksi.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        lbl_total_transaksi.setForeground(new java.awt.Color(255, 255, 255));
+        lbl_total_transaksi.setText("0");
+
+        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel6.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Total Transaksi");
+
+        jLabel5.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel5.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Rentan Periode");
+
+        javax.swing.GroupLayout panelGradient2Layout = new javax.swing.GroupLayout(panelGradient2);
+        panelGradient2.setLayout(panelGradient2Layout);
+        panelGradient2Layout.setHorizontalGroup(
+            panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelGradient2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelGradient2Layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(box_rentang_waktu, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(65, Short.MAX_VALUE))
+        );
+        panelGradient2Layout.setVerticalGroup(
+            panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelGradient2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addGroup(panelGradient2Layout.createSequentialGroup()
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(22, 22, 22)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(box_rentang_waktu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(246, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout panelTableLayout = new javax.swing.GroupLayout(panelTable);
         panelTable.setLayout(panelTableLayout);
         panelTableLayout.setHorizontalGroup(
             panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelTableLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTableLayout.createSequentialGroup()
                 .addGroup(panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelTableLayout.createSequentialGroup()
-                        .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(panelTableLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
+                    .addComponent(panelBawah5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(panelGradient2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelGradient1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelTableLayout.setVerticalGroup(
             panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTableLayout.createSequentialGroup()
+            .addGroup(panelTableLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelGradient1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 754, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1)
+                    .addGroup(panelTableLayout.createSequentialGroup()
+                        .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(panelGradient2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                .addComponent(panelBawah5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout panelViewLayout = new javax.swing.GroupLayout(panelView);
@@ -488,7 +597,18 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         dateChooser1.showPopup();
     }//GEN-LAST:event_pilihtanggalActionPerformed
 
-    private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        txt_date.setText("");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
+        panelMain.removeAll();
+        panelMain.add(new TabLaporanStatistik());
+        panelMain.repaint();
+        panelMain.revalidate();
+    }//GEN-LAST:event_btn_cancelActionPerformed
+
+    private void btn_Export5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_Export5ActionPerformed
         try {
             loadData("");
 
@@ -507,7 +627,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                 @Override
                 public boolean accept(File f) {
                     return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls")
-                            || f.getName().toLowerCase().endsWith(".xlsx");
+                    || f.getName().toLowerCase().endsWith(".xlsx");
                 }
 
                 @Override
@@ -529,10 +649,10 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                 // Check if file already exists
                 if (fileToSave.exists()) {
                     int confirm = JOptionPane.showConfirmDialog(
-                            this,
-                            "File sudah ada. Apakah Anda ingin menimpanya?",
-                            "Konfirmasi",
-                            JOptionPane.YES_NO_OPTION
+                        this,
+                        "File sudah ada. Apakah Anda ingin menimpanya?",
+                        "Konfirmasi",
+                        JOptionPane.YES_NO_OPTION
                     );
                     if (confirm != JOptionPane.YES_OPTION) {
                         return;
@@ -545,36 +665,33 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
 
                     // Show success message
                     JOptionPane.showMessageDialog(this,
-                            "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
-                            "Sukses",
-                            JOptionPane.INFORMATION_MESSAGE);
+                        "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
+                        "Sukses",
+                        JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this,
-                            "Gagal mengekspor file: " + e.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                        "Gagal mengekspor file: " + e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                    "Terjadi kesalahan: " + e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                "Terjadi kesalahan: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
-    }//GEN-LAST:event_btn_addActionPerformed
+    }//GEN-LAST:event_btn_Export5ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        txt_date.setText("");
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btn_last5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_last5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_last5ActionPerformed
 
-    private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
-        panelMain.removeAll();
-        panelMain.add(new TabLaporanStatistik());
-        panelMain.repaint();
-        panelMain.revalidate();
-    }//GEN-LAST:event_btn_cancelActionPerformed
+    private void btn_next5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_next5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_next5ActionPerformed
 
     private void searchByKeywordAndDate() {
         String kataKunci = txt_search.getText().trim();
@@ -943,8 +1060,31 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
     private component.ShadowPanel ShadowSearch1;
     private javax.swing.JComboBox<String> box_pilih;
     private javax.swing.JComboBox<String> box_rentang_waktu;
-    private component.Jbutton btn_add;
+    private component.Jbutton btn_Export2;
+    private component.Jbutton btn_Export3;
+    private component.Jbutton btn_Export4;
+    private component.Jbutton btn_Export5;
+    private javax.swing.JButton btn_before2;
+    private javax.swing.JButton btn_before3;
+    private javax.swing.JButton btn_before4;
+    private javax.swing.JButton btn_before5;
     private component.Jbutton btn_cancel;
+    private javax.swing.JButton btn_first2;
+    private javax.swing.JButton btn_first3;
+    private javax.swing.JButton btn_first4;
+    private javax.swing.JButton btn_first5;
+    private javax.swing.JButton btn_last2;
+    private javax.swing.JButton btn_last3;
+    private javax.swing.JButton btn_last4;
+    private javax.swing.JButton btn_last5;
+    private javax.swing.JButton btn_next2;
+    private javax.swing.JButton btn_next3;
+    private javax.swing.JButton btn_next4;
+    private javax.swing.JButton btn_next5;
+    private javax.swing.JComboBox<String> cbx_data2;
+    private javax.swing.JComboBox<String> cbx_data3;
+    private javax.swing.JComboBox<String> cbx_data4;
+    private javax.swing.JComboBox<String> cbx_data5;
     private datechooser.Main.DateBetween dateBetween1;
     private datechooser.Main.DateChooser dateChooser1;
     private datechooser.render.DefaultDateChooserRender defaultDateChooserRender1;
@@ -955,10 +1095,19 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lb_halaman2;
+    private javax.swing.JLabel lb_halaman3;
+    private javax.swing.JLabel lb_halaman4;
+    private javax.swing.JLabel lb_halaman5;
     private javax.swing.JLabel lbl_pengeluaran;
     private javax.swing.JLabel lbl_total_transaksi;
+    private component.ShadowPanel panelBawah2;
+    private component.ShadowPanel panelBawah3;
+    private component.ShadowPanel panelBawah4;
+    private component.ShadowPanel panelBawah5;
     private component.ShadowPanel panelFilter;
     private grafik.panel.PanelGradient panelGradient1;
+    private grafik.panel.PanelGradient panelGradient2;
     private javax.swing.JPanel panelMain;
     private component.ShadowPanel panelTable;
     private javax.swing.JPanel panelView;
