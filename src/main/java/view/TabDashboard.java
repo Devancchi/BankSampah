@@ -21,10 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
 import chart.ModelPolarAreaChart;
-import chart.PolarAreaChart;
 import datechooser.Main.DateChooser;
-import java.text.NumberFormat;
-import java.util.Locale;
 import notification.toast.Notifications;
 
 /**
@@ -35,17 +32,16 @@ public class TabDashboard extends javax.swing.JPanel {
 
     private final Connection conn;
     private int halamanSaatIni = 1;
-    private int dataPerHalaman = 15;
+    private int dataPerHalaman = 20;
     private int totalPages;
 
     public TabDashboard() {
-        conn = DBconnect.getConnection();
         initComponents();
-        setupDateChooser();
-        loadDashboardData();
+        conn = DBconnect.getConnection();
         setTabelModel();
         loadLogData();
         paginationLog();
+        setupDateChooser();
         loadDataChartBarang();
         loadDataChartJenisSampah();
         txt_date.setText("");
@@ -80,8 +76,6 @@ public class TabDashboard extends javax.swing.JPanel {
         jLabel12 = new javax.swing.JLabel();
         lb_laba = new javax.swing.JLabel();
         panelTabel = new component.ShadowPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tbl_log = new component.Table();
         jLabel14 = new javax.swing.JLabel();
         ChartBarangTerjualVsBarangSisa = new chart.PolarAreaChart();
         ChartDistribusiSampah = new chart.PolarAreaChart();
@@ -101,6 +95,8 @@ public class TabDashboard extends javax.swing.JPanel {
         pilihtanggal = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
         btnReset = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbl_log = new component.Table();
 
         dateChooser1.setDateSelectable(null);
         dateChooser1.setDateSelectionMode(datechooser.Main.DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
@@ -137,7 +133,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     .addGroup(panelGradient1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addGap(18, 18, 18)
-                        .addComponent(lb_totalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)))
+                        .addComponent(lb_totalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelGradient1Layout.setVerticalGroup(
@@ -194,7 +190,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     .addGroup(panelGradient2Layout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addGap(18, 18, 18)
-                        .addComponent(lb_totalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
+                        .addComponent(lb_totalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())))
         );
         panelGradient2Layout.setVerticalGroup(
@@ -254,7 +250,7 @@ public class TabDashboard extends javax.swing.JPanel {
                     .addGroup(panelGradient3Layout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addGap(18, 18, 18)
-                        .addComponent(lb_laba, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)))
+                        .addComponent(lb_laba, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelGradient3Layout.setVerticalGroup(
@@ -306,19 +302,6 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tbl_log.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
-            }
-        ));
-        jScrollPane1.setViewportView(tbl_log);
-
         jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel14.setText("Aktivitas terbaru");
         jLabel14.setPreferredSize(new java.awt.Dimension(145, 30));
@@ -341,20 +324,10 @@ public class TabDashboard extends javax.swing.JPanel {
         lb_halaman.setText("hal");
 
         btn_firstLog.setText("First Page");
-        btn_firstLog.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_firstLogActionPerformed(evt);
-            }
-        });
 
         btn_beforeLog.setText("<");
 
-        cbx_dataLog.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "15", "30", "45", "60" }));
-        cbx_dataLog.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbx_dataLogActionPerformed(evt);
-            }
-        });
+        cbx_dataLog.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "20", "40", "60", "80", "100" }));
 
         btn_nextLog.setText(">");
 
@@ -367,7 +340,7 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(panelBawahLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 172, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                 .addComponent(lb_halaman, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_firstLog, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -442,7 +415,7 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(ShadowSearchLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(box_pilih, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+                    .addComponent(box_pilih)
                     .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -502,7 +475,7 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(ShadowSearch1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
                     .addComponent(pilihtanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txt_date))
                 .addContainerGap())
@@ -515,44 +488,55 @@ public class TabDashboard extends javax.swing.JPanel {
             }
         });
 
+        tbl_log.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane2.setViewportView(tbl_log);
+
         javax.swing.GroupLayout panelTabelLayout = new javax.swing.GroupLayout(panelTabel);
         panelTabel.setLayout(panelTabelLayout);
         panelTabelLayout.setHorizontalGroup(
             panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelTabelLayout.createSequentialGroup()
-                .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(panelBawah, javax.swing.GroupLayout.DEFAULT_SIZE, 864, Short.MAX_VALUE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelTabelLayout.createSequentialGroup()
-                        .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelTabelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane2))
+                    .addComponent(panelBawah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelTabelLayout.createSequentialGroup()
+                        .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                        .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnReset))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addComponent(btnReset)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
-                    .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)))
+                    .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
+                    .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)))
         );
         panelTabelLayout.setVerticalGroup(
             panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelTabelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTabelLayout.createSequentialGroup()
                 .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(panelTabelLayout.createSequentialGroup()
-                        .addGap(44, 44, 44)
-                        .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
-                        .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelTabelLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelTabelLayout.createSequentialGroup()
+                        .addComponent(ChartBarangTerjualVsBarangSisa, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(ChartDistribusiSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelTabelLayout.createSequentialGroup()
                         .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(0, 0, 0)
                         .addGroup(panelTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
-                            .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                            .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnReset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 622, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane2)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBawah, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -663,14 +647,6 @@ public class TabDashboard extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btn_addActionPerformed
 
-    private void cbx_dataLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbx_dataLogActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbx_dataLogActionPerformed
-
-    private void btn_firstLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_firstLogActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_firstLogActionPerformed
-
     private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_searchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_searchActionPerformed
@@ -735,7 +711,7 @@ public class TabDashboard extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lb_halaman;
     private javax.swing.JLabel lb_laba;
     private javax.swing.JLabel lb_totalNasabah;
@@ -785,12 +761,10 @@ public class TabDashboard extends javax.swing.JPanel {
         btn_nextLog.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 if (halamanSaatIni < totalPages) {
                     halamanSaatIni++;
                     loadLogData();
                 }
-
             }
         });
         btn_lastLog.addActionListener(new ActionListener() {
@@ -814,7 +788,7 @@ public class TabDashboard extends javax.swing.JPanel {
             }
 
         } catch (Exception e) {
-//            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(TabDashboard.class.getName()).log(Level.SEVERE, null, e);
         }
         return totalData;
     }
@@ -834,7 +808,9 @@ public class TabDashboard extends javax.swing.JPanel {
 
     private void getData(int startIndex, int entriesPage, DefaultTableModel model) {
         model.setRowCount(0);
-
+//        System.out.println("start index : "+startIndex);
+//        System.out.println("entries page : "+entriesPage);
+//        System.out.println("mode table : " +model);
         try {
             String sql = "SELECT log_aktivitas.id_log, login.nama_user, log_aktivitas.aktivitas, log_aktivitas.tanggal \n"
                     + "FROM log_aktivitas \n"
@@ -850,14 +826,14 @@ public class TabDashboard extends javax.swing.JPanel {
                     String admin = rs.getString("nama_user");
                     String aktivitas = rs.getString("aktivitas");
                     String tanggal = rs.getString("tanggal");
-
                     Object[] rowData = {idLog, admin, aktivitas, tanggal};
                     model.addRow(rowData);
-
                 }
+                System.out.println("Mengambil data dari index: " + startIndex + ", sebanyak: " + entriesPage);
+                System.out.println("Jumlah baris dalam model setelah load: " + model.getRowCount());
             }
         } catch (SQLException e) {
-//            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(TabDashboard.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -1136,7 +1112,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 sql.append("log_aktivitas.tanggal = ? ");
             }
 
-            sql.append("ORDER BY log_aktivitas.id_log DESC");
+            sql.append("ORDER BY log_aktivitas.id_log DESC LIMIT ?,?");
 
             try (PreparedStatement st = conn.prepareStatement(sql.toString())) {
                 int paramIndex = 1;
@@ -1161,6 +1137,11 @@ public class TabDashboard extends javax.swing.JPanel {
                     st.setString(paramIndex++, tanggalMulai);
                 }
 
+                // Add pagination parameters
+                int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
+                st.setInt(paramIndex++, startIndex);
+                st.setInt(paramIndex++, dataPerHalaman);
+
                 ResultSet rs = st.executeQuery();
 
                 while (rs.next()) {
@@ -1176,6 +1157,11 @@ public class TabDashboard extends javax.swing.JPanel {
 
             tbl_log.setModel(model);
             tbl_log.clearSelection();
+
+            // Update pagination info
+            calculateTotalPage();
+            int totalData = getTotalData();
+            lb_halaman.setText(String.valueOf("Page " + halamanSaatIni + " Dari Total " + totalData + " Data"));
 
         } catch (SQLException e) {
             Logger.getLogger(TabDashboard.class.getName()).log(Level.SEVERE, null, e);
