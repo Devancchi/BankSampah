@@ -21,6 +21,7 @@ import java.awt.image.BufferedImage;
 import notification.toast.Notifications;
 import org.krysalis.barcode4j.impl.code128.Code128Bean;
 import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -33,6 +34,11 @@ public class TabDataBarang extends javax.swing.JPanel {
     private List<Item> itemPanels = new ArrayList<>();
     private ModelItem selectedItem = null;  // menyimpan item yang dipilih
     private final UserSession users;
+    
+    // Pagination variables
+    private int halamanSaatIni = 1;
+    private int dataPerHalaman = 2;
+    private int totalPages;
 
     public TabDataBarang(UserSession user) {
         this.users = user;
@@ -47,26 +53,88 @@ public class TabDataBarang extends javax.swing.JPanel {
         scrollBarang.setViewportView(panelBarang);
         scrollBarang.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        // Hapus isi panel sebelum load data
-        panelBarang.removeAll();
-        panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
-        ////////// get data barang  saat item di klik //////////
+        // Set initial data per page from combobox
+        dataPerHalaman = Integer.parseInt(cbx_data2.getSelectedItem().toString());
+        
+        // Initialize pagination
+        calculateTotalPage();
+        loadDataBarang();
+        
+        // Add pagination listeners
+        btn_first2.addActionListener(e -> {
+            halamanSaatIni = 1;
+            loadDataBarang();
+        });
+        
+        btn_before2.addActionListener(e -> {
+            if (halamanSaatIni > 1) {
+                halamanSaatIni--;
+                loadDataBarang();
+            }
+        });
+        
+        btn_next2.addActionListener(e -> {
+            if (halamanSaatIni < totalPages) {
+                halamanSaatIni++;
+                loadDataBarang();
+            }
+        });
+        
+        btn_last2.addActionListener(e -> {
+            halamanSaatIni = totalPages;
+            loadDataBarang();
+        });
+        
+        cbx_data2.addActionListener(e -> {
+            dataPerHalaman = Integer.parseInt(cbx_data2.getSelectedItem().toString());
+            halamanSaatIni = 1;
+            calculateTotalPage();
+            loadDataBarang();
+        });
+    }
+
+    private void calculateTotalPage() {
         try {
-            String sql = "SELECT * FROM data_barang";
+            String sql = "SELECT COUNT(*) as total FROM data_barang";
             PreparedStatement pst = conn.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                int totalData = rs.getInt("total");
+                totalPages = (int) Math.ceil((double) totalData / dataPerHalaman);
+            }
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadDataBarang() {
+        try {
+            panelBarang.removeAll();
+            panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
+
+            int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
+            
+            String sql = "SELECT * FROM data_barang LIMIT ? OFFSET ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setInt(1, dataPerHalaman);
+            pst.setInt(2, startIndex);
+            ResultSet rs = pst.executeQuery();
+
             while (rs.next()) {
-                int id = rs.getInt("id_barang"); // sesuaikan nama kolomnya
+                int id = rs.getInt("id_barang");
                 String nama = rs.getString("nama_barang");
                 String kode = rs.getString("kode_barang");
                 double harga = rs.getDouble("harga");
                 int stok = rs.getInt("stok");
-                byte[] gambarBytes = rs.getBytes("gambar"); // jika gambar disimpan sebagai BLOB
+                byte[] gambarBytes = rs.getBytes("gambar");
+
                 Icon icon = null;
                 if (gambarBytes != null) {
                     icon = new ImageIcon(gambarBytes);
                 }
-                // Di dalam method pembuatan item
+
                 ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
                 Item itemPanel = new Item();
                 itemPanel.setData(model);
@@ -76,31 +144,35 @@ public class TabDataBarang extends javax.swing.JPanel {
                         handleItemSelection(itemPanel, model);
                     }
                 });
-                itemPanels.add(itemPanel); // Simpan ke list
 
                 panelBarang.add(itemPanel);
             }
 
             rs.close();
             pst.close();
+
+            // Update page label
+            lb_halaman2.setText("Halaman " + halamanSaatIni + " dari " + totalPages);
+
+            panelBarang.revalidate();
+            panelBarang.repaint();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        panelBarang.revalidate();
-        panelBarang.repaint();
     }
 
-    ////////// mencari data barang //////////
     private void searchDataBarang(String keyword) {
         try {
             panelBarang.removeAll();
             panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
 
-            String sql = "SELECT * FROM data_barang WHERE nama_barang LIKE ? OR kode_barang LIKE ?";
+            String sql = "SELECT * FROM data_barang WHERE nama_barang LIKE ? OR kode_barang LIKE ? LIMIT ? OFFSET ?";
             PreparedStatement pst = conn.prepareStatement(sql);
             String likeKeyword = "%" + keyword + "%";
             pst.setString(1, likeKeyword);
             pst.setString(2, likeKeyword);
+            pst.setInt(3, dataPerHalaman);
+            pst.setInt(4, (halamanSaatIni - 1) * dataPerHalaman);
 
             ResultSet rs = pst.executeQuery();
 
@@ -132,6 +204,9 @@ public class TabDataBarang extends javax.swing.JPanel {
 
             rs.close();
             pst.close();
+
+            // Update page label
+            lb_halaman2.setText("Halaman " + halamanSaatIni + " dari " + totalPages);
 
             panelBarang.revalidate();
             panelBarang.repaint();
@@ -218,51 +293,6 @@ public class TabDataBarang extends javax.swing.JPanel {
         btnKembali.setVisible(false);
     }
 
-    private void loadDataBarang() {
-        try {
-            panelBarang.removeAll();
-            panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
-
-            String sql = "SELECT * FROM data_barang";
-            PreparedStatement pst = conn.prepareStatement(sql);
-            ResultSet rs = pst.executeQuery();
-
-            while (rs.next()) {
-                int id = rs.getInt("id_barang");
-                String nama = rs.getString("nama_barang");
-                String kode = rs.getString("kode_barang");
-                double harga = rs.getDouble("harga");
-                int stok = rs.getInt("stok");
-                byte[] gambarBytes = rs.getBytes("gambar");
-
-                Icon icon = null;
-                if (gambarBytes != null) {
-                    icon = new ImageIcon(gambarBytes);
-                }
-
-                ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
-                Item itemPanel = new Item();
-                itemPanel.setData(model);
-                itemPanel.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        handleItemSelection(itemPanel, model);
-                    }
-                });
-
-                panelBarang.add(itemPanel);
-            }
-
-            rs.close();
-            pst.close();
-
-            panelBarang.revalidate();
-            panelBarang.repaint();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void clearForm() {
         txt_gambar.setText("");
         txt_gambar.setText("");
@@ -307,6 +337,15 @@ public class TabDataBarang extends javax.swing.JPanel {
         scrollBarang = new javax.swing.JScrollPane();
         panelBarang = new javax.swing.JPanel();
         lb_dataNasabah = new javax.swing.JLabel();
+        panelBawah2 = new component.ShadowPanel();
+        lb_halaman2 = new javax.swing.JLabel();
+        btn_before2 = new javax.swing.JButton();
+        cbx_data2 = new javax.swing.JComboBox<>();
+        btn_next2 = new javax.swing.JButton();
+        btn_last2 = new javax.swing.JButton();
+        btn_first2 = new javax.swing.JButton();
+        btn_Export2 = new component.Jbutton();
+        btn_import2 = new component.Jbutton();
         shadowAction = new component.ShadowPanel();
         btnTambah = new component.Jbutton();
         btnHapus = new component.Jbutton();
@@ -345,6 +384,7 @@ public class TabDataBarang extends javax.swing.JPanel {
         scrollBarang.setMaximumSize(new java.awt.Dimension(300, 300));
 
         panelBarang.setBackground(new java.awt.Color(255, 255, 255));
+        panelBarang.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         panelBarang.setForeground(new java.awt.Color(255, 255, 255));
         panelBarang.setName(""); // NOI18N
         panelBarang.setPreferredSize(new java.awt.Dimension(300, 300));
@@ -353,11 +393,11 @@ public class TabDataBarang extends javax.swing.JPanel {
         panelBarang.setLayout(panelBarangLayout);
         panelBarangLayout.setHorizontalGroup(
             panelBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1146, Short.MAX_VALUE)
+            .addGap(0, 1148, Short.MAX_VALUE)
         );
         panelBarangLayout.setVerticalGroup(
             panelBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 735, Short.MAX_VALUE)
+            .addGap(0, 669, Short.MAX_VALUE)
         );
 
         scrollBarang.setViewportView(panelBarang);
@@ -365,24 +405,101 @@ public class TabDataBarang extends javax.swing.JPanel {
         lb_dataNasabah.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         lb_dataNasabah.setText("Data Barang");
 
+        lb_halaman2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lb_halaman2.setText("hal");
+
+        btn_before2.setText("<");
+
+        cbx_data2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2", "4", "6", "8", "10" }));
+
+        btn_next2.setText(">");
+
+        btn_last2.setText("Last Page");
+
+        btn_first2.setText("First Page");
+
+        btn_Export2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
+        btn_Export2.setText("Export To Excel");
+        btn_Export2.setFillClick(new java.awt.Color(55, 130, 60));
+        btn_Export2.setFillOriginal(new java.awt.Color(76, 175, 80));
+        btn_Export2.setFillOver(new java.awt.Color(69, 160, 75));
+        btn_Export2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_Export2.setRoundedCorner(40);
+        btn_Export2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_Export2ActionPerformed(evt);
+            }
+        });
+
+        btn_import2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_excel.png"))); // NOI18N
+        btn_import2.setText("Import To Excel");
+        btn_import2.setFillClick(new java.awt.Color(60, 130, 200));
+        btn_import2.setFillOriginal(new java.awt.Color(80, 150, 230));
+        btn_import2.setFillOver(new java.awt.Color(70, 140, 220));
+        btn_import2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_import2.setRoundedCorner(40);
+        btn_import2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_import2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelBawah2Layout = new javax.swing.GroupLayout(panelBawah2);
+        panelBawah2.setLayout(panelBawah2Layout);
+        panelBawah2Layout.setHorizontalGroup(
+            panelBawah2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBawah2Layout.createSequentialGroup()
+                .addComponent(btn_Export2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_import2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lb_halaman2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_first2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_before2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbx_data2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_next2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_last2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
+        );
+        panelBawah2Layout.setVerticalGroup(
+            panelBawah2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBawah2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelBawah2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_Export2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb_halaman2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_first2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_before2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbx_data2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_next2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_last2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_import2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout shadowBarangLayout = new javax.swing.GroupLayout(shadowBarang);
         shadowBarang.setLayout(shadowBarangLayout);
         shadowBarangLayout.setHorizontalGroup(
             shadowBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowBarangLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(scrollBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
             .addGroup(shadowBarangLayout.createSequentialGroup()
                 .addComponent(lb_dataNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(scrollBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panelBawah2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         shadowBarangLayout.setVerticalGroup(
             shadowBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shadowBarangLayout.createSequentialGroup()
                 .addComponent(lb_dataNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(scrollBarang, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
+                .addComponent(scrollBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 673, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelBawah2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -451,32 +568,32 @@ public class TabDataBarang extends javax.swing.JPanel {
         );
         shadowActionLayout.setVerticalGroup(
             shadowActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(shadowActionLayout.createSequentialGroup()
-                .addGap(32, 32, 32)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowActionLayout.createSequentialGroup()
+                .addGap(22, 22, 22)
                 .addGroup(shadowActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnKembali, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout panelViewLayout = new javax.swing.GroupLayout(panelView);
         panelView.setLayout(panelViewLayout);
         panelViewLayout.setHorizontalGroup(
             panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelViewLayout.createSequentialGroup()
+            .addGroup(panelViewLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(shadowAction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(shadowBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(shadowBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(shadowAction, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
         );
         panelViewLayout.setVerticalGroup(
             panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelViewLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(shadowAction, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(shadowAction, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20)
                 .addComponent(shadowBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(20, 20, 20))
@@ -852,6 +969,129 @@ public class TabDataBarang extends javax.swing.JPanel {
         searchDataBarang(txt_search.getText());
     }//GEN-LAST:event_txt_searchKeyTyped
 
+    private void btn_Export2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_Export2ActionPerformed
+//        try {
+//            // Siapkan model dan ambil data nasabah
+//            DefaultTableModel model = new DefaultTableModel(
+//                new String[]{"ID", "Nama", "Alamat", "Telepon", "Email", "Saldo"}, 0
+//            );
+//            getAllNasabahData(model); // Ambil data dari DB ke model
+//
+//            // Cek jika tidak ada data
+//            if (model.getRowCount() == 0) {
+//                JOptionPane.showMessageDialog(this, "Tidak ada data untuk diekspor!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+//                return;
+//            }
+//
+//            // Pilih lokasi penyimpanan file
+//            JFileChooser chooser = new JFileChooser();
+//            chooser.setDialogTitle("Simpan file Excel");
+//            chooser.setSelectedFile(new File("data_nasabah.xls")); // Nama default
+//
+//            chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+//                @Override
+//                public boolean accept(File f) {
+//                    return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
+//                }
+//
+//                @Override
+//                public String getDescription() {
+//                    return "Excel Files (*.xls, *.xlsx)";
+//                }
+//            });
+//
+//            int option = chooser.showSaveDialog(this);
+//            if (option == JFileChooser.APPROVE_OPTION) {
+//                File fileToSave = chooser.getSelectedFile();
+//
+//                // Tambahkan ekstensi jika tidak ada
+//                String fileName = fileToSave.getName().toLowerCase();
+//                if (!fileName.endsWith(".xls") && !fileName.endsWith(".xlsx")) {
+//                    fileToSave = new File(fileToSave.getAbsolutePath() + ".xls");
+//                }
+//
+//                // Konfirmasi jika file sudah ada
+//                if (fileToSave.exists()) {
+//                    int confirm = JOptionPane.showConfirmDialog(
+//                        this,
+//                        "File sudah ada. Apakah Anda ingin menimpanya?",
+//                        "Konfirmasi",
+//                        JOptionPane.YES_NO_OPTION
+//                    );
+//                    if (confirm != JOptionPane.YES_OPTION) {
+//                        return;
+//                    }
+//                }
+//
+//                // Ekspor data ke Excel
+//                try {
+//                    ExcelExporter.exportTableModelToExcel(model, fileToSave);
+//
+//                    JOptionPane.showMessageDialog(this,
+//                        "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
+//                        "Sukses",
+//                        JOptionPane.INFORMATION_MESSAGE);
+//                } catch (Exception e) {
+//                    JOptionPane.showMessageDialog(this,
+//                        "Gagal mengekspor file: " + e.getMessage(),
+//                        "Error",
+//                        JOptionPane.ERROR_MESSAGE);
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(this,
+//                "Terjadi kesalahan: " + e.getMessage(),
+//                "Error",
+//                JOptionPane.ERROR_MESSAGE);
+//            e.printStackTrace();
+//        }
+    }//GEN-LAST:event_btn_Export2ActionPerformed
+
+    private void btn_import2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_import2ActionPerformed
+//        try {
+//            // Pilih file Excel yang akan diimport
+//            JFileChooser chooser = new JFileChooser();
+//            chooser.setDialogTitle("Pilih file Excel");
+//            chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+//                @Override
+//                public boolean accept(File f) {
+//                    return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
+//                }
+//
+//                @Override
+//                public String getDescription() {
+//                    return "Excel Files (*.xls, *.xlsx)";
+//                }
+//            });
+//
+//            int option = chooser.showOpenDialog(this);
+//            if (option == JFileChooser.APPROVE_OPTION) {
+//                File selectedFile = chooser.getSelectedFile();
+//
+//                // Konfirmasi sebelum import
+//                int confirm = JOptionPane.showConfirmDialog(
+//                    this,
+//                    "Apakah Anda yakin ingin mengimport data dari file ini?\n" +
+//                    "Data yang sudah ada dengan ID yang sama akan diupdate.",
+//                    "Konfirmasi Import",
+//                    JOptionPane.YES_NO_OPTION
+//                );
+//
+//                if (confirm == JOptionPane.YES_OPTION) {
+//                    importExcelToDatabase(selectedFile);
+//                }
+//            }
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(this,
+//                "Terjadi kesalahan saat import: " + e.getMessage(),
+//                "Error",
+//                JOptionPane.ERROR_MESSAGE);
+//            e.printStackTrace();
+//        }
+    }//GEN-LAST:event_btn_import2ActionPerformed
+
     private void resetFormAndButtons() {
         btnTambah.setText("Tambah");
         btnTambah.setIcon(new ImageIcon("src\\main\\resources\\icon\\icon_tambah.png"));
@@ -872,8 +1112,15 @@ public class TabDataBarang extends javax.swing.JPanel {
     private component.Jbutton btnPilihGambar;
     private component.Jbutton btnTambah;
     private component.Jbutton btn_CancelAdd;
+    private component.Jbutton btn_Export2;
     private component.Jbutton btn_GenerateCode;
     private component.Jbutton btn_SaveAdd;
+    private javax.swing.JButton btn_before2;
+    private javax.swing.JButton btn_first2;
+    private component.Jbutton btn_import2;
+    private javax.swing.JButton btn_last2;
+    private javax.swing.JButton btn_next2;
+    private javax.swing.JComboBox<String> cbx_data2;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -881,8 +1128,10 @@ public class TabDataBarang extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel lb_dataNasabah;
+    private javax.swing.JLabel lb_halaman2;
     private javax.swing.JPanel panelAdd;
     private javax.swing.JPanel panelBarang;
+    private component.ShadowPanel panelBawah2;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
     private javax.swing.JScrollPane scrollBarang;
