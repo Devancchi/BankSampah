@@ -22,6 +22,10 @@ import notification.toast.Notifications;
 import org.krysalis.barcode4j.impl.code128.Code128Bean;
 import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 import javax.swing.table.DefaultTableModel;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import component.ExcelExporter;
 
 /**
  *
@@ -37,8 +41,9 @@ public class TabDataBarang extends javax.swing.JPanel {
     
     // Pagination variables
     private int halamanSaatIni = 1;
-    private int dataPerHalaman = 2;
+    private int dataPerHalaman = 20;
     private int totalPages;
+    private int totalData;
 
     public TabDataBarang(UserSession user) {
         this.users = user;
@@ -99,7 +104,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             PreparedStatement pst = conn.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
             if (rs.next()) {
-                int totalData = rs.getInt("total");
+                totalData = rs.getInt("total");
                 totalPages = (int) Math.ceil((double) totalData / dataPerHalaman);
             }
             rs.close();
@@ -152,7 +157,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             pst.close();
 
             // Update page label
-            lb_halaman2.setText("Halaman " + halamanSaatIni + " dari " + totalPages);
+            lb_halaman2.setText("Page " + halamanSaatIni + " dari total " + totalData + " data");
 
             panelBarang.revalidate();
             panelBarang.repaint();
@@ -163,12 +168,25 @@ public class TabDataBarang extends javax.swing.JPanel {
 
     private void searchDataBarang(String keyword) {
         try {
+            // Hitung total data hasil pencarian
+            String sqlCount = "SELECT COUNT(*) as total FROM data_barang WHERE nama_barang LIKE ? OR kode_barang LIKE ?";
+            PreparedStatement pstCount = conn.prepareStatement(sqlCount);
+            String likeKeyword = "%" + keyword + "%";
+            pstCount.setString(1, likeKeyword);
+            pstCount.setString(2, likeKeyword);
+            ResultSet rsCount = pstCount.executeQuery();
+            if (rsCount.next()) {
+                totalData = rsCount.getInt("total");
+                totalPages = (int) Math.ceil((double) totalData / dataPerHalaman);
+            }
+            rsCount.close();
+            pstCount.close();
+
             panelBarang.removeAll();
             panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
 
             String sql = "SELECT * FROM data_barang WHERE nama_barang LIKE ? OR kode_barang LIKE ? LIMIT ? OFFSET ?";
             PreparedStatement pst = conn.prepareStatement(sql);
-            String likeKeyword = "%" + keyword + "%";
             pst.setString(1, likeKeyword);
             pst.setString(2, likeKeyword);
             pst.setInt(3, dataPerHalaman);
@@ -206,7 +224,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             pst.close();
 
             // Update page label
-            lb_halaman2.setText("Halaman " + halamanSaatIni + " dari " + totalPages);
+            lb_halaman2.setText("Halaman " + halamanSaatIni + " dari total " + totalData + " data");
 
             panelBarang.revalidate();
             panelBarang.repaint();
@@ -319,9 +337,9 @@ public class TabDataBarang extends javax.swing.JPanel {
         selectedItem = model;
         btnTambah.setText("Ubah");
         btnTambah.setIcon(new ImageIcon("src\\main\\resources\\icon\\icon_edit.png"));
-        btnTambah.setFillClick(new Color(30, 100, 150));
-        btnTambah.setFillOriginal(new Color(41, 128, 185));
-        btnTambah.setFillOver(new Color(36, 116, 170));
+        btnTambah.setFillClick(new java.awt.Color(30, 100, 150));
+        btnTambah.setFillOriginal(new java.awt.Color(41, 128, 185));
+        btnTambah.setFillOver(new java.awt.Color(36, 116, 170));
         btnTambah.setEnabled(true);
         btnHapus.setVisible(true);
         btnKembali.setVisible(true);
@@ -410,7 +428,7 @@ public class TabDataBarang extends javax.swing.JPanel {
 
         btn_before2.setText("<");
 
-        cbx_data2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2", "4", "6", "8", "10" }));
+        cbx_data2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "20", "40", "60", "80", "100" }));
 
         btn_next2.setText(">");
 
@@ -970,139 +988,265 @@ public class TabDataBarang extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_searchKeyTyped
 
     private void btn_Export2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_Export2ActionPerformed
-//        try {
-//            // Siapkan model dan ambil data nasabah
-//            DefaultTableModel model = new DefaultTableModel(
-//                new String[]{"ID", "Nama", "Alamat", "Telepon", "Email", "Saldo"}, 0
-//            );
-//            getAllNasabahData(model); // Ambil data dari DB ke model
-//
-//            // Cek jika tidak ada data
-//            if (model.getRowCount() == 0) {
-//                JOptionPane.showMessageDialog(this, "Tidak ada data untuk diekspor!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-//                return;
-//            }
-//
-//            // Pilih lokasi penyimpanan file
-//            JFileChooser chooser = new JFileChooser();
-//            chooser.setDialogTitle("Simpan file Excel");
-//            chooser.setSelectedFile(new File("data_nasabah.xls")); // Nama default
-//
-//            chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-//                @Override
-//                public boolean accept(File f) {
-//                    return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
-//                }
-//
-//                @Override
-//                public String getDescription() {
-//                    return "Excel Files (*.xls, *.xlsx)";
-//                }
-//            });
-//
-//            int option = chooser.showSaveDialog(this);
-//            if (option == JFileChooser.APPROVE_OPTION) {
-//                File fileToSave = chooser.getSelectedFile();
-//
-//                // Tambahkan ekstensi jika tidak ada
-//                String fileName = fileToSave.getName().toLowerCase();
-//                if (!fileName.endsWith(".xls") && !fileName.endsWith(".xlsx")) {
-//                    fileToSave = new File(fileToSave.getAbsolutePath() + ".xls");
-//                }
-//
-//                // Konfirmasi jika file sudah ada
-//                if (fileToSave.exists()) {
-//                    int confirm = JOptionPane.showConfirmDialog(
-//                        this,
-//                        "File sudah ada. Apakah Anda ingin menimpanya?",
-//                        "Konfirmasi",
-//                        JOptionPane.YES_NO_OPTION
-//                    );
-//                    if (confirm != JOptionPane.YES_OPTION) {
-//                        return;
-//                    }
-//                }
-//
-//                // Ekspor data ke Excel
-//                try {
-//                    ExcelExporter.exportTableModelToExcel(model, fileToSave);
-//
-//                    JOptionPane.showMessageDialog(this,
-//                        "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
-//                        "Sukses",
-//                        JOptionPane.INFORMATION_MESSAGE);
-//                } catch (Exception e) {
-//                    JOptionPane.showMessageDialog(this,
-//                        "Gagal mengekspor file: " + e.getMessage(),
-//                        "Error",
-//                        JOptionPane.ERROR_MESSAGE);
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(this,
-//                "Terjadi kesalahan: " + e.getMessage(),
-//                "Error",
-//                JOptionPane.ERROR_MESSAGE);
-//            e.printStackTrace();
-//        }
+        try {
+            // Siapkan model dan ambil data barang
+            DefaultTableModel model = new DefaultTableModel(
+                new String[]{"ID", "Kode Barang", "Nama Barang", "Harga", "Stok"}, 0
+            );
+            getAllBarangData(model); // Ambil data dari DB ke model
+
+            // Cek jika tidak ada data
+            if (model.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "Tidak ada data untuk diekspor!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Pilih lokasi penyimpanan file
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogTitle("Simpan file Excel");
+            chooser.setSelectedFile(new File("data_barang.xls")); // Nama default
+
+            chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Excel Files (*.xls, *.xlsx)";
+                }
+            });
+
+            int option = chooser.showSaveDialog(this);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                File fileToSave = chooser.getSelectedFile();
+
+                // Tambahkan ekstensi jika tidak ada
+                String fileName = fileToSave.getName().toLowerCase();
+                if (!fileName.endsWith(".xls") && !fileName.endsWith(".xlsx")) {
+                    fileToSave = new File(fileToSave.getAbsolutePath() + ".xls");
+                }
+
+                // Konfirmasi jika file sudah ada
+                if (fileToSave.exists()) {
+                    int confirm = JOptionPane.showConfirmDialog(
+                        this,
+                        "File sudah ada. Apakah Anda ingin menimpanya?",
+                        "Konfirmasi",
+                        JOptionPane.YES_NO_OPTION
+                    );
+                    if (confirm != JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+
+                // Ekspor data ke Excel
+                try {
+                    ExcelExporter.exportTableModelToExcel(model, fileToSave);
+
+                    JOptionPane.showMessageDialog(this,
+                        "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
+                        "Sukses",
+                        JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this,
+                        "Gagal mengekspor file: " + e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                }
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Terjadi kesalahan: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_btn_Export2ActionPerformed
 
     private void btn_import2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_import2ActionPerformed
-//        try {
-//            // Pilih file Excel yang akan diimport
-//            JFileChooser chooser = new JFileChooser();
-//            chooser.setDialogTitle("Pilih file Excel");
-//            chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-//                @Override
-//                public boolean accept(File f) {
-//                    return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
-//                }
-//
-//                @Override
-//                public String getDescription() {
-//                    return "Excel Files (*.xls, *.xlsx)";
-//                }
-//            });
-//
-//            int option = chooser.showOpenDialog(this);
-//            if (option == JFileChooser.APPROVE_OPTION) {
-//                File selectedFile = chooser.getSelectedFile();
-//
-//                // Konfirmasi sebelum import
-//                int confirm = JOptionPane.showConfirmDialog(
-//                    this,
-//                    "Apakah Anda yakin ingin mengimport data dari file ini?\n" +
-//                    "Data yang sudah ada dengan ID yang sama akan diupdate.",
-//                    "Konfirmasi Import",
-//                    JOptionPane.YES_NO_OPTION
-//                );
-//
-//                if (confirm == JOptionPane.YES_OPTION) {
-//                    importExcelToDatabase(selectedFile);
-//                }
-//            }
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(this,
-//                "Terjadi kesalahan saat import: " + e.getMessage(),
-//                "Error",
-//                JOptionPane.ERROR_MESSAGE);
-//            e.printStackTrace();
-//        }
+        try {
+            // Pilih file Excel yang akan diimport
+            JFileChooser chooser = new JFileChooser();
+            chooser.setDialogTitle("Pilih file Excel");
+            chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    return f.isDirectory() || f.getName().toLowerCase().endsWith(".xls") || f.getName().toLowerCase().endsWith(".xlsx");
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Excel Files (*.xls, *.xlsx)";
+                }
+            });
+
+            int option = chooser.showOpenDialog(this);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = chooser.getSelectedFile();
+
+                // Konfirmasi sebelum import
+                int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Apakah Anda yakin ingin mengimport data dari file ini?\n" +
+                    "Data yang sudah ada dengan ID yang sama akan diupdate.",
+                    "Konfirmasi Import",
+                    JOptionPane.YES_NO_OPTION
+                );
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    importExcelToDatabase(selectedFile);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Terjadi kesalahan saat import: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_btn_import2ActionPerformed
 
-    private void resetFormAndButtons() {
-        btnTambah.setText("Tambah");
-        btnTambah.setIcon(new ImageIcon("src\\main\\resources\\icon\\icon_tambah.png"));
-        btnTambah.setFillClick(new Color(55, 130, 60));
-        btnTambah.setFillOriginal(new Color(76, 175, 80));
-        btnTambah.setFillOver(new Color(69, 160, 75));
-        btnTambah.setEnabled(false);
-        btnHapus.setVisible(false);
-        btnKembali.setVisible(false);
-        selectedItem = null;
-        clearForm();
+    private void getAllBarangData(DefaultTableModel model) {
+        try {
+            String sql = "SELECT * FROM data_barang";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("id_barang");
+                String kode = rs.getString("kode_barang");
+                String nama = rs.getString("nama_barang");
+                double harga = rs.getDouble("harga");
+                int stok = rs.getInt("stok");
+
+                model.addRow(new Object[]{
+                    id,
+                    kode,
+                    nama,
+                    harga,
+                    stok
+                });
+            }
+
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void importExcelToDatabase(File excelFile) {
+        try {
+            // Baca file Excel
+            Workbook workbook = WorkbookFactory.create(excelFile);
+            Sheet sheet = workbook.getSheetAt(0);
+
+            int insertCount = 0;
+            int skippedCount = 0;
+
+            // Mulai dari baris kedua (indeks 1) karena baris pertama adalah header
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+
+                String kodeBarang = getCellValueAsString(row.getCell(1)).trim();
+                String namaBarang = getCellValueAsString(row.getCell(2)).trim();
+                double harga = getCellValueAsDouble(row.getCell(3));
+                int stok = (int) getCellValueAsDouble(row.getCell(4));
+
+                // Lewati baris header yang ikut terbaca
+                if (kodeBarang.equalsIgnoreCase("Kode Barang") || namaBarang.equalsIgnoreCase("Nama Barang")) {
+                    continue;
+                }
+
+                // Validasi: Lewati jika kodeBarang atau namaBarang kosong
+                if (kodeBarang.isEmpty() || namaBarang.isEmpty()) {
+                    continue;
+                }
+
+                // Cek apakah data sudah ada
+                String checkSql = "SELECT id_barang FROM data_barang WHERE kode_barang = ?";
+                PreparedStatement checkPst = conn.prepareStatement(checkSql);
+                checkPst.setString(1, kodeBarang);
+                ResultSet rs = checkPst.executeQuery();
+
+                if (rs.next()) {
+                    // Data sudah ada, skip
+                    skippedCount++;
+                } else {
+                    // Insert data baru dengan gambar default
+                    String insertSql = "INSERT INTO data_barang (kode_barang, nama_barang, harga, stok, gambar) VALUES (?, ?, ?, ?, ?)";
+                    PreparedStatement insertPst = conn.prepareStatement(insertSql);
+                    insertPst.setString(1, kodeBarang);
+                    insertPst.setString(2, namaBarang);
+                    insertPst.setDouble(3, harga);
+                    insertPst.setInt(4, stok);
+                    insertPst.setBytes(5, null);
+                    insertPst.executeUpdate();
+                    insertPst.close();
+                    insertCount++;
+                }
+
+                rs.close();
+                checkPst.close();
+            }
+
+            workbook.close();
+
+            // Refresh tampilan
+            calculateTotalPage();
+            loadDataBarang();
+            
+            String message = String.format(
+                "Import selesai!\n" +
+                "Data baru: %d\n" +
+                "Data dilewati (sudah ada): %d",
+                insertCount, skippedCount
+            );
+            JOptionPane.showMessageDialog(this,
+                message,
+                "Hasil Import",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                "Gagal mengimport data: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private String getCellValueAsString(Cell cell) {
+        if (cell == null) return "";
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                return String.valueOf((int) cell.getNumericCellValue());
+            default:
+                return "";
+        }
+    }
+
+    private double getCellValueAsDouble(Cell cell) {
+        if (cell == null) return 0.0;
+        switch (cell.getCellType()) {
+            case NUMERIC:
+                return cell.getNumericCellValue();
+            case STRING:
+                try {
+                    return Double.parseDouble(cell.getStringCellValue());
+                } catch (NumberFormatException e) {
+                    return 0.0;
+                }
+            default:
+                return 0.0;
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
