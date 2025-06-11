@@ -75,7 +75,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="panelTable" pref="1152" max="32767" attributes="0"/>
+                          <Component id="panelTable" max="32767" attributes="0"/>
                           <Component id="panelCard" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
@@ -366,11 +366,11 @@
                                   <Component id="jLabel14" max="32767" attributes="0"/>
                               </Group>
                               <Component id="panelBawah1" alignment="0" max="32767" attributes="0"/>
-                              <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jScrollPane1" alignment="0" pref="652" max="32767" attributes="0"/>
                               <Group type="102" attributes="0">
-                                  <Component id="ShadowSearch" pref="275" max="32767" attributes="0"/>
+                                  <Component id="ShadowSearch" pref="273" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="ShadowSearch1" pref="275" max="32767" attributes="0"/>
+                                  <Component id="ShadowSearch1" pref="273" max="32767" attributes="0"/>
                                   <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                                   <Component id="btnReset" min="-2" pref="82" max="-2" attributes="0"/>
                               </Group>
@@ -397,7 +397,7 @@
                               <Component id="jScrollPane1" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="panelBawah1" min="-2" pref="50" max="-2" attributes="0"/>
+                          <Component id="panelBawah1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -414,7 +414,7 @@
                     <Component class="component.Table" name="tb_laporan">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="6" rowCount="0">
+                          <Table columnCount="6" rowCount="68">
                             <Column editable="true" title="No" type="java.lang.Object"/>
                             <Column editable="true" title="Nama Admin" type="java.lang.String"/>
                             <Column editable="true" title="Nama Nasabah" type="java.lang.String"/>
@@ -472,18 +472,6 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="btn_Export1" min="-2" pref="150" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="lb_halaman1" min="-2" pref="150" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_first1" min="-2" pref="90" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_before1" min="-2" pref="30" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="cbx_data1" min="-2" pref="80" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_next1" min="-2" pref="30" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_last1" min="-2" pref="90" max="-2" attributes="0"/>
-                              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -491,61 +479,13 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="btn_Export1" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="lb_halaman1" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="btn_first1" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="btn_before1" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="cbx_data1" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="btn_next1" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                                  <Component id="btn_last1" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="btn_Export1" min="-2" pref="38" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
                   </Layout>
                   <SubComponents>
-                    <Component class="javax.swing.JLabel" name="lb_halaman1">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="hal"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="btn_before1">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="&lt;"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JComboBox" name="cbx_data1">
-                      <Properties>
-                        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                          <StringArray count="4">
-                            <StringItem index="0" value="20"/>
-                            <StringItem index="1" value="40"/>
-                            <StringItem index="2" value="60"/>
-                            <StringItem index="3" value="80"/>
-                          </StringArray>
-                        </Property>
-                      </Properties>
-                      <AuxValues>
-                        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-                      </AuxValues>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="btn_next1">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="&gt;"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="btn_last1">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Last Page"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="btn_first1">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="First Page"/>
-                      </Properties>
-                    </Component>
                     <Component class="component.Jbutton" name="btn_Export1">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -742,13 +682,21 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="btn_laporan_jual_sampah" alignment="1" max="32767" attributes="0"/>
-                                  <Component id="btn_detail_pemasukan" alignment="1" pref="470" max="32767" attributes="0"/>
-                                  <Component id="btn_laporan_transaksi" alignment="1" max="32767" attributes="0"/>
-                                  <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="btn_laporan_jual_sampah" alignment="1" max="32767" attributes="0"/>
+                                          <Component id="btn_detail_pemasukan" alignment="1" pref="470" max="32767" attributes="0"/>
+                                          <Component id="btn_laporan_transaksi" alignment="1" max="32767" attributes="0"/>
+                                          <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="panelChart" max="32767" attributes="0"/>
+                                  </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -764,7 +712,8 @@
                               <Component id="btn_laporan_jual_sampah" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btn_detail_pemasukan" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="451" max="-2" attributes="0"/>
+                              <EmptySpace pref="13" max="32767" attributes="0"/>
+                              <Component id="panelChart" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -830,6 +779,53 @@
                         <Property name="text" type="java.lang.String" value="Halaman Laporan"/>
                       </Properties>
                     </Component>
+                    <Container class="component.Card" name="panelChart">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="cc" green="cc" red="cc" type="rgb"/>
+                        </Property>
+                        <Property name="fillColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                        </Property>
+                      </Properties>
+
+                      <Layout>
+                        <DimensionLayout dim="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="chart" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                        <DimensionLayout dim="1">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="chart" pref="432" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                      </Layout>
+                      <SubComponents>
+                        <Component class="grafik.main.CurveLineChart" name="chart">
+                          <Properties>
+                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                              <Color blue="0" green="0" red="0" type="rgb"/>
+                            </Property>
+                            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                              <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+                                <EmptyBorder bottom="10" left="10" right="10" top="10"/>
+                              </Border>
+                            </Property>
+                            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                              <Color blue="0" green="0" red="0" type="rgb"/>
+                            </Property>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
                   </SubComponents>
                 </Container>
                 <Component class="javax.swing.JLabel" name="jLabel14">
