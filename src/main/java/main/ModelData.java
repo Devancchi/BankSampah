@@ -1,4 +1,4 @@
-package grafik.main;
+package main;
 
 /**
  *
@@ -14,12 +14,12 @@ public class ModelData {
         this.month = month;
     }
 
-    public double getGrossProfit() {
-        return grossprofit;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setGrossProfit(double grossprofit) {
-        this.grossprofit = grossprofit;
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
     public double getCost() {
@@ -38,9 +38,9 @@ public class ModelData {
         this.profit = profit;
     }
 
-    public ModelData(String month, double grossprofit, double cost, double profit) {
+    public ModelData(String month, double amount, double cost, double profit) {
         this.month = month;
-        this.grossprofit = grossprofit;
+        this.amount = amount;
         this.cost = cost;
         this.profit = profit;
     }
@@ -49,7 +49,7 @@ public class ModelData {
     }
 
     private String month;
-    private double grossprofit;
+    private double amount;
     private double cost;
     private double profit;
 }
