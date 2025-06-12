@@ -127,6 +127,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             pst.setInt(2, startIndex);
             ResultSet rs = pst.executeQuery();
 
+            int itemCount = 0;
             while (rs.next()) {
                 int id = rs.getInt("id_barang");
                 String nama = rs.getString("nama_barang");
@@ -151,6 +152,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                 });
 
                 panelBarang.add(itemPanel);
+                itemCount++;
             }
 
             rs.close();
@@ -158,6 +160,13 @@ public class TabDataBarang extends javax.swing.JPanel {
 
             // Update page label
             lb_halaman2.setText("Page " + halamanSaatIni + " dari total " + totalData + " data");
+
+            // Atur layout sesuai jumlah item
+            if (itemCount < 5) {
+                panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
+            } else {
+                panelBarang.setLayout(new GridLayout(0, 5, 10, 19));
+            }
 
             panelBarang.revalidate();
             panelBarang.repaint();
@@ -194,6 +203,7 @@ public class TabDataBarang extends javax.swing.JPanel {
 
             ResultSet rs = pst.executeQuery();
 
+            int itemCount = 0;
             while (rs.next()) {
                 int id = rs.getInt("id_barang");
                 String nama = rs.getString("nama_barang");
@@ -218,6 +228,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                 });
 
                 panelBarang.add(itemPanel);
+                itemCount++;
             }
 
             rs.close();
@@ -225,6 +236,13 @@ public class TabDataBarang extends javax.swing.JPanel {
 
             // Update page label
             lb_halaman2.setText("Halaman " + halamanSaatIni + " dari total " + totalData + " data");
+
+            // Atur layout sesuai jumlah item
+            if (itemCount < 5) {
+                panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
+            } else {
+                panelBarang.setLayout(new GridLayout(0, 5, 10, 19));
+            }
 
             panelBarang.revalidate();
             panelBarang.repaint();
