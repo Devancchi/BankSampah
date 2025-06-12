@@ -24,7 +24,6 @@ public class DBconnect {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver"); // Load MySQL JDBC Driver
             connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("Koneksi Berhasil!");
             LoggerUtil.setConnection(connection);  // Set koneksi untuk LoggerUtil
         } catch (ClassNotFoundException e) {
             System.out.println("Driver tidak ditemukan: " + e.getMessage());
