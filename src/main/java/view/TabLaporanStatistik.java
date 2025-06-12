@@ -1,6 +1,7 @@
 package view;
 
 import component.ExcelExporter;
+import grafik.main.ModelChart;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.io.File;
@@ -8,22 +9,61 @@ import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.DBconnect;
-import main.ModelData;
 import notification.toast.Notifications;
+import main.ModelData;
 
 public class TabLaporanStatistik extends javax.swing.JPanel {
     private final Connection conn = DBconnect.getConnection();
 
-    public TabLaporanStatistik() {
+   public TabLaporanStatistik() {
         initComponents();
         loadDashboardData();
-        loadData("");
         txt_date.setText("");
+        
+        chart.setTitle("Chart Data");
+
+
+        chart.addLegend("Cost", Color.decode("#7b4397"), Color.decode("#dc2430"));
+        chart.addLegend("Gross Profit", Color.decode("#e65c00"), Color.decode("#F9D423"));
+        chart.addLegend("Profit", Color.decode("#00C853"), Color.decode("#2E7D32"));
+
+        setdata();
+        loadData("");
     }
+    
+    private void setdata() {
+    try {
+        List<ModelData>lists=new ArrayList<>();
+        DBconnect.getInstance().getConnection();
+        String sql = "SELECT Month, SUM(Cost) AS Cost, SUM(GrossProfit) AS GrossProfit, SUM(GrossProfit) - SUM(Cost) AS Profit FROM (SELECT DATE_FORMAT(t.tanggal, '%b %Y') AS Month, SUM(t.total_harga) AS GrossProfit, 0 AS Cost FROM laporan_pemasukan lpm JOIN transaksi t ON lpm.id_transaksi = t.id_transaksi GROUP BY DATE_FORMAT(t.tanggal, '%m%Y') UNION ALL SELECT DATE_FORMAT(js.tanggal, '%b %Y') AS Month, SUM(js.harga) GrossProfit, 0 AS Cost FROM laporan_pemasukan lpm JOIN jual_sampah js ON lpm.id_jual_sampah = js.id_jual_sampah GROUP BY DATE_FORMAT(js.tanggal, '%m%Y') UNION ALL SELECT DATE_FORMAT(lp.riwayat, '%b %Y') AS Month, 0 AS Amount, SUM(ss.harga) AS Cost FROM laporan_pengeluaran lp JOIN setor_sampah ss ON lp.id_setoran = ss.id_setoran GROUP BY DATE_FORMAT(lp.riwayat, '%m%Y')) AS data GROUP BY Month ORDER BY STR_TO_DATE(CONCAT('01 ', Month), '%d %b %Y') DESC LIMIT 12;";
+        PreparedStatement p = DBconnect.getInstance().getConnection().prepareStatement(sql);
+        ResultSet r = p.executeQuery();
+        while(r.next()){
+            String month=r.getString("Month");
+            double cost=r.getDouble("Cost");
+            double grossprofit=r.getDouble("GrossProfit");
+            double profit=r.getDouble("Profit");
+            lists.add(new ModelData(month, cost, grossprofit, profit));
+        }
+        p.close();
+        r.close();
+        
+        for (int i = lists.size() - 1; i >= 0; i--) {
+                ModelData d = lists.get(i);
+                chart.addData(new ModelChart(d.getMonth(), new double[]{d.getCost(), d.getGrossProfit(), d.getProfit()}));
+            }
+
+        chart.start();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
 private void loadData(String filterJenis) {
     DefaultTableModel model = new DefaultTableModel() {
@@ -33,7 +73,6 @@ private void loadData(String filterJenis) {
         }
     };
 
-    // Kolom tanpa ID
     model.setColumnIdentifiers(new String[]{
         "No", "Nama Admin", "Nama", "Nama Barang/Sampah", "Harga", "Jenis Transaksi", "Riwayat"
     });
@@ -91,6 +130,7 @@ private void loadData(String filterJenis) {
             JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah
             JOIN sampah sa ON s.id_sampah = sa.id_sampah
             JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
+            WHERE lpl.id_setoran IS NOT NULL
         ) AS combined
     """;
 
@@ -98,7 +138,13 @@ private void loadData(String filterJenis) {
         baseQuery += " WHERE jenis_transaksi = ? ";
     }
 
-    baseQuery += " ORDER BY riwayat DESC";
+    baseQuery += """
+         ORDER BY 
+             STR_TO_DATE(riwayat, '%Y-%m-%d') DESC,
+             STR_TO_DATE(riwayat, '%Y-%m-%d %H:%i:%s') DESC,
+             nama_admin ASC, 
+             nama_nasabah ASC
+         """;
 
     try (Connection conn = DBconnect.getConnection();
          PreparedStatement pst = conn.prepareStatement(baseQuery)) {
@@ -134,13 +180,14 @@ private void loadData(String filterJenis) {
         }
 
         tb_laporan.setModel(model);
+        System.out.println("Row count: " + model.getRowCount());
+        System.out.println("loadData dijalankan");
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(this, "Gagal memuat data laporan: " + e.getMessage());
     }
 }
-
-
+    
     private void loadDashboardData() {
         try {
             Connection conn = DBconnect.getConnection();
@@ -331,6 +378,8 @@ private void loadData(String filterJenis) {
         btn_laporan_transaksi = new ripple.button.Button();
         btn_laporan_jual_sampah = new ripple.button.Button();
         jLabel1 = new javax.swing.JLabel();
+        panelCurve1 = new component.ShadowPanel();
+        chart = new grafik.main.CurveLineChart();
         jLabel14 = new javax.swing.JLabel();
 
         dateChooser1.setDateChooserRender(defaultDateChooserRender1);
@@ -659,6 +708,7 @@ private void loadData(String filterJenis) {
         ShadowSearch1.setBackground(new java.awt.Color(249, 251, 255));
         ShadowSearch1.setPreferredSize(new java.awt.Dimension(259, 43));
 
+        txt_date.setText("");
         txt_date.setBorder(null);
         txt_date.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -755,6 +805,27 @@ private void loadData(String filterJenis) {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Halaman Laporan");
 
+        chart.setBackground(new java.awt.Color(0, 0, 0));
+        chart.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        chart.setForeground(new java.awt.Color(0, 0, 0));
+
+        javax.swing.GroupLayout panelCurve1Layout = new javax.swing.GroupLayout(panelCurve1);
+        panelCurve1.setLayout(panelCurve1Layout);
+        panelCurve1Layout.setHorizontalGroup(
+            panelCurve1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelCurve1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        panelCurve1Layout.setVerticalGroup(
+            panelCurve1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelCurve1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chart, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout panelCurveLayout = new javax.swing.GroupLayout(panelCurve);
         panelCurve.setLayout(panelCurveLayout);
         panelCurveLayout.setHorizontalGroup(
@@ -762,11 +833,17 @@ private void loadData(String filterJenis) {
             .addGroup(panelCurveLayout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addGroup(panelCurveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btn_laporan_jual_sampah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_detail_pemasukan, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
-                    .addComponent(btn_laporan_transaksi, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(panelCurveLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(panelCurve1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(panelCurveLayout.createSequentialGroup()
+                        .addGroup(panelCurveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btn_laporan_jual_sampah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btn_detail_pemasukan, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                            .addComponent(btn_laporan_transaksi, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         panelCurveLayout.setVerticalGroup(
             panelCurveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -778,7 +855,9 @@ private void loadData(String filterJenis) {
                 .addComponent(btn_laporan_jual_sampah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_detail_pemasukan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(451, 451, 451))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelCurve1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
@@ -816,7 +895,7 @@ private void loadData(String filterJenis) {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelCurve, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBawah1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -829,7 +908,7 @@ private void loadData(String filterJenis) {
             .addGroup(panelViewLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelTable, javax.swing.GroupLayout.PREFERRED_SIZE, 1152, Short.MAX_VALUE)
+                    .addComponent(panelTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panelCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
         );
@@ -1194,190 +1273,211 @@ private void loadData(String filterJenis) {
         }
     }//GEN-LAST:event_btn_Export1ActionPerformed
 
-    private void searchByKeywordAndDate() {
-        String kataKunci = txt_search.getText().trim();
-        String tanggalRange = txt_date.getText().trim();
-        String filter = box_pilih.getSelectedItem().toString();
+   private void searchByKeywordAndDate() {
+    String kataKunci = txt_search.getText().trim();
+    String tanggalRange = txt_date.getText().trim();
+    String filter = box_pilih.getSelectedItem().toString();
 
-        String tanggalMulai = "";
-        String tanggalAkhir = "";
-        boolean isRange = false;
-        boolean isSingleDate = false;
+    String tanggalMulai = "";
+    String tanggalAkhir = "";
+    boolean isRange = false;
+    boolean isSingleDate = false;
 
-        if (!tanggalRange.isEmpty()) {
-            if (tanggalRange.contains("dari")) {
-                String[] parts = tanggalRange.split("dari");
-                if (parts.length == 2) {
-                    tanggalMulai = parts[0].trim();
-                    tanggalAkhir = parts[1].trim();
-                    isRange = true;
-                }
-            } else {
-                tanggalMulai = tanggalRange;
-                isSingleDate = true;
+    if (!tanggalRange.isEmpty()) {
+        if (tanggalRange.contains("dari")) {
+            String[] parts = tanggalRange.split("dari");
+            if (parts.length == 2) {
+                tanggalMulai = parts[0].trim();
+                tanggalAkhir = parts[1].trim();
+                isRange = true;
             }
-        }
-
-        DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        model.setColumnIdentifiers(new Object[]{
-            "No", "Nama Admin", "Nama", "Nama Barang/Sampah", "Harga", "Jenis Transaksi", "Riwayat"
-        });
-
-        Connection conn = null;
-        PreparedStatement st = null;
-        ResultSet rs = null;
-
-        try {
-            conn = DBconnect.getConnection();
-
-            StringBuilder sql = new StringBuilder();
-            sql.append("SELECT nama_admin, nama_nasabah, nama_barang_sampah, jenis_transaksi, harga, riwayat FROM (")
-                    .append(" SELECT u.nama_user AS nama_admin, COALESCE(n.nama_nasabah, '-') AS nama_nasabah, db.nama_barang AS nama_barang_sampah, ")
-                    .append(" 'Pemasukan' AS jenis_transaksi, db.harga AS harga, lp.riwayat AS riwayat ")
-                    .append(" FROM laporan_pemasukan lp ")
-                    .append(" JOIN login u ON lp.id_user = u.id_user ")
-                    .append(" LEFT JOIN data_barang db ON lp.id_barang = db.id_barang ")
-                    .append(" LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah ")
-                    .append(" WHERE lp.id_barang IS NOT NULL ")
-                    .append(" UNION ALL ")
-                    .append(" SELECT u.nama_user AS nama_admin, '-' AS nama_nasabah, kate.nama_kategori AS nama_barang_sampah, ")
-                    .append(" 'Pemasukan' AS jenis_transaksi, js.harga AS harga, lp.riwayat AS riwayat ")
-                    .append(" FROM laporan_pemasukan lp ")
-                    .append(" JOIN login u ON lp.id_user = u.id_user ")
-                    .append(" LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah ")
-                    .append(" JOIN sampah sa ON js.id_sampah = sa.id_sampah ")
-                    .append(" JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori ")
-                    .append(" WHERE lp.id_jual_sampah IS NOT NULL ")
-                    .append(" UNION ALL ")
-                    .append(" SELECT u.nama_user AS nama_admin, n.nama_nasabah AS nama_nasabah, kate.nama_kategori AS nama_barang_sampah, ")
-                    .append(" 'Pengeluaran' AS jenis_transaksi, s.harga AS harga, lpl.riwayat AS riwayat ")
-                    .append(" FROM laporan_pengeluaran lpl ")
-                    .append(" JOIN login u ON lpl.id_user = u.id_user ")
-                    .append(" JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran ")
-                    .append(" JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah ")
-                    .append(" JOIN sampah sa ON s.id_sampah = sa.id_sampah ")
-                    .append(" JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori ")
-                    .append(") AS combined  ");
-
-            boolean whereAdded = false;
-
-            if (!kataKunci.isEmpty()) {
-                switch (filter) {
-                    case "Default":
-                        sql.append("WHERE (nama_admin LIKE ? OR nama_nasabah LIKE ? OR nama_barang_sampah LIKE ?) ");
-                        whereAdded = true;
-                        break;
-                    case "Nama Admin":
-                        sql.append("WHERE (nama_admin LIKE ?) ");
-                        whereAdded = true;
-                        break;
-                    case "Nama Nasabah":
-                        sql.append("WHERE (nama_nasabah LIKE ?) ");
-                        whereAdded = true;
-                        break;
-                    case "Nama Barang/Sampah":
-                        sql.append("WHERE (nama_barang_sampah LIKE ?) ");
-                        whereAdded = true;
-                        break;
-                }
-            }
-
-            if (isRange) {
-                sql.append(whereAdded ? "AND " : "WHERE ");
-                sql.append("riwayat BETWEEN ? AND ? ");
-            } else if (isSingleDate) {
-                sql.append(whereAdded ? "AND " : "WHERE ");
-                sql.append("riwayat = ? ");
-            }
-
-            sql.append("ORDER BY riwayat DESC");
-
-            st = conn.prepareStatement(sql.toString());
-            int paramIndex = 1;
-
-            if (!kataKunci.isEmpty()) {
-                String searchPattern = "%" + kataKunci + "%";
-                switch (filter) {
-                    case "Default":
-                        st.setString(paramIndex++, searchPattern);
-                        st.setString(paramIndex++, searchPattern);
-                        st.setString(paramIndex++, searchPattern);
-                        break;
-                    default:
-                        st.setString(paramIndex++, searchPattern);
-                        break;
-                }
-            }
-
-            if (isRange) {
-                st.setString(paramIndex++, tanggalMulai);
-                st.setString(paramIndex++, tanggalAkhir);
-            } else if (isSingleDate) {
-                st.setString(paramIndex++, tanggalMulai);
-            }
-
-            rs = st.executeQuery();
-            int no = 1;
-
-            while (rs.next()) {
-                String harga = rs.getString("harga");
-                if (harga != null && !harga.equals("-")) {
-                    try {
-                        double nominal = Double.parseDouble(harga);
-                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-                        harga = formatRupiah.format(nominal);
-                    } catch (NumberFormatException e) {
-                        // abaikan
-                    }
-                }
-
-                Object[] rowData = {
-                    no++,
-                    rs.getString("nama_admin"),
-                    rs.getString("nama_nasabah"),
-                    rs.getString("nama_barang_sampah"),
-                    harga,
-                    rs.getString("jenis_transaksi"),
-                    rs.getString("riwayat")
-                };
-                model.addRow(rowData);
-            }
-
-            tb_laporan.setModel(model);
-            tb_laporan.clearSelection();
-
-        } catch (SQLException e) {
-            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (st != null) {
-                    st.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        } else {
+            tanggalMulai = tanggalRange;
+            isSingleDate = true;
         }
     }
+
+    DefaultTableModel model = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+
+    model.setColumnIdentifiers(new Object[]{
+        "No", "Nama Admin", "Nama", "Nama Barang/Sampah", "Harga", "Jenis Transaksi", "Riwayat"
+    });
+
+    Connection conn = null;
+    PreparedStatement st = null;
+    ResultSet rs = null;
+
+    try {
+        conn = DBconnect.getConnection();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("""
+           SELECT
+                        nama_admin, 
+                        nama_nasabah, 
+                        nama_barang_sampah, 
+                        jenis_transaksi, 
+                        harga, 
+                        riwayat
+                    FROM (
+                        SELECT 
+                            u.nama_user AS nama_admin,
+                            COALESCE(n.nama_nasabah, '-') AS nama_nasabah,
+                            tr.nama_barang AS nama_barang_sampah,
+                            'Pemasukan' AS jenis_transaksi,
+                            tr.harga AS harga,
+                            lp.riwayat AS riwayat
+                        FROM laporan_pemasukan lp
+                        JOIN login u ON lp.id_user = u.id_user
+                        LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
+                        LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah
+                        WHERE lp.id_transaksi IS NOT NULL
+            
+                        UNION ALL
+            
+                        SELECT 
+                            u.nama_user AS nama_admin,
+                            '-' AS nama_nasabah,
+                            kate.nama_kategori AS nama_barang_sampah,
+                            'Pemasukan' AS jenis_transaksi,
+                            js.harga AS harga,
+                            lp.riwayat AS riwayat
+                        FROM laporan_pemasukan lp
+                        JOIN login u ON lp.id_user = u.id_user
+                        LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
+                        JOIN sampah sa ON js.id_sampah = sa.id_sampah
+                        JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
+                        WHERE lp.id_jual_sampah IS NOT NULL
+            
+                        UNION ALL
+            
+                        SELECT 
+                            u.nama_user AS nama_admin,
+                            n.nama_nasabah AS nama_nasabah,
+                            kate.nama_kategori AS nama_barang_sampah,
+                            'Pengeluaran' AS jenis_transaksi,
+                            s.harga AS harga,
+                            lpl.riwayat AS riwayat
+                        FROM laporan_pengeluaran lpl
+                        JOIN login u ON lpl.id_user = u.id_user
+                        JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran
+                        JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah
+                        JOIN sampah sa ON s.id_sampah = sa.id_sampah
+                        JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
+                        WHERE lpl.id_setoran IS NOT NULL
+                    ) AS combined
+        """);
+
+        boolean whereAdded = false;
+
+        if (!kataKunci.isEmpty()) {
+            switch (filter) {
+                case "Default":
+                    sql.append(" WHERE (nama_admin LIKE ? OR nama_nasabah LIKE ? OR nama_barang_sampah LIKE ?) ");
+                    whereAdded = true;
+                    break;
+                case "Nama Admin":
+                    sql.append(" WHERE nama_admin LIKE ? ");
+                    whereAdded = true;
+                    break;
+                case "Nama Nasabah":
+                    sql.append(" WHERE nama_nasabah LIKE ? ");
+                    whereAdded = true;
+                    break;
+                case "Nama Barang/Sampah":
+                    sql.append(" WHERE nama_barang_sampah LIKE ? ");
+                    whereAdded = true;
+                    break;
+            }
+        }
+
+        if (isRange) {
+            sql.append(whereAdded ? " AND " : " WHERE ");
+            sql.append("riwayat BETWEEN ? AND ? ");
+        } else if (isSingleDate) {
+            sql.append(whereAdded ? " AND " : " WHERE ");
+            sql.append("riwayat = ? ");
+        }
+
+        sql.append("""
+            ORDER BY 
+                STR_TO_DATE(riwayat, '%Y-%m-%d') DESC,
+                STR_TO_DATE(riwayat, '%Y-%m-%d %H:%i:%s') DESC,
+                nama_admin ASC,
+                nama_nasabah ASC
+        """);
+
+        st = conn.prepareStatement(sql.toString());
+
+        int paramIndex = 1;
+        if (!kataKunci.isEmpty()) {
+            String searchPattern = kataKunci + "%";
+            
+            switch (filter) {
+                case "Default":
+                    st.setString(paramIndex++, searchPattern);
+                    st.setString(paramIndex++, searchPattern);
+                    st.setString(paramIndex++, searchPattern);
+                    break;
+                default:
+                    st.setString(paramIndex++, searchPattern);
+                    break;
+            }
+        }
+
+        if (isRange) {
+            st.setString(paramIndex++, tanggalMulai);
+            st.setString(paramIndex++, tanggalAkhir);
+        } else if (isSingleDate) {
+            st.setString(paramIndex++, tanggalMulai);
+        }
+
+        rs = st.executeQuery();
+        int no = 1;
+        while (rs.next()) {
+            String harga = rs.getString("harga");
+            if (harga != null && !harga.equals("-")) {
+                try {
+                    double nominal = Double.parseDouble(harga);
+                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                    harga = formatRupiah.format(nominal);
+                } catch (NumberFormatException e) {
+                    // Abaikan jika gagal
+                }
+            }
+
+            Object[] rowData = {
+                no++,
+                rs.getString("nama_admin"),
+                rs.getString("nama_nasabah"),
+                rs.getString("nama_barang_sampah"),
+                harga,
+                rs.getString("jenis_transaksi"),
+                rs.getString("riwayat")
+            };
+            model.addRow(rowData);
+        }
+
+        tb_laporan.setModel(model);
+        tb_laporan.clearSelection();
+
+    } catch (SQLException e) {
+        Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (st != null) st.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
 
     private DefaultTableModel getFilteredTableModel() {
         String kataKunci = txt_search.getText().trim();
@@ -1416,33 +1516,62 @@ private void loadData(String filterJenis) {
 
         try (Connection conn = DBconnect.getConnection()) {
             StringBuilder sql = new StringBuilder();
-            sql.append("SELECT nama_admin, nama_nasabah, nama_barang_sampah, jenis_transaksi, harga, riwayat FROM (")
-                    .append(" SELECT u.nama_user AS nama_admin, COALESCE(n.nama_nasabah, '-') AS nama_nasabah, tr.nama_barang AS nama_barang_sampah, ")
-                    .append(" 'Pemasukan' AS jenis_transaksi, tr.harga AS harga, lp.riwayat AS riwayat")
-                    .append(" FROM laporan_pemasukan lp ")
-                    .append(" JOIN login u ON lp.id_user = u.id_user ")
-                    .append(" LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi ")
-                    .append(" LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah ")
-                    .append("  WHERE lp.id_transaksi IS NOT NULL ")
-                    .append("UNION ALL ")
-                    .append("SELECT u.nama_user AS nama_admin, '-' AS nama_nasabah, kate.nama_kategori AS nama_barang_sampah, ")
-                    .append("'Pemasukan' AS jenis_transaksi, js.harga AS harga, lp.riwayat AS riwayat ")
-                    .append("FROM laporan_pemasukan lp ")
-                    .append("JOIN login u ON lp.id_user = u.id_user ")
-                    .append("LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah ")
-                    .append("JOIN sampah sa ON js.id_sampah = sa.id_sampah ")
-                    .append("JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori ")
-                    .append("WHERE lp.id_jual_sampah IS NOT NULL ")
-                    .append("UNION ALL ")
-                    .append("SELECT u.nama_user AS nama_admin, n.nama_nasabah AS nama_nasabah, kate.nama_kategori AS nama_barang_sampah, ")
-                    .append("'Pengeluaran' AS jenis_transaksi, s.harga AS harga, lpl.riwayat AS riwayat ")
-                    .append("FROM laporan_pengeluaran lpl ")
-                    .append("JOIN login u ON lpl.id_user = u.id_user ")
-                    .append("JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran ")
-                    .append("JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah ")
-                    .append("JOIN sampah sa ON s.id_sampah = sa.id_sampah ")
-                    .append("JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori ")
-                    .append(") AS combined ");
+             sql.append("""
+           SELECT
+                        nama_admin, 
+                        nama_nasabah, 
+                        nama_barang_sampah, 
+                        jenis_transaksi, 
+                        harga, 
+                        riwayat
+                    FROM (
+                        SELECT 
+                            u.nama_user AS nama_admin,
+                            COALESCE(n.nama_nasabah, '-') AS nama_nasabah,
+                            tr.nama_barang AS nama_barang_sampah,
+                            'Pemasukan' AS jenis_transaksi,
+                            tr.harga AS harga,
+                            lp.riwayat AS riwayat
+                        FROM laporan_pemasukan lp
+                        JOIN login u ON lp.id_user = u.id_user
+                        LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
+                        LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah
+                        WHERE lp.id_transaksi IS NOT NULL
+            
+                        UNION ALL
+            
+                        SELECT 
+                            u.nama_user AS nama_admin,
+                            '-' AS nama_nasabah,
+                            kate.nama_kategori AS nama_barang_sampah,
+                            'Pemasukan' AS jenis_transaksi,
+                            js.harga AS harga,
+                            lp.riwayat AS riwayat
+                        FROM laporan_pemasukan lp
+                        JOIN login u ON lp.id_user = u.id_user
+                        LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
+                        JOIN sampah sa ON js.id_sampah = sa.id_sampah
+                        JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
+                        WHERE lp.id_jual_sampah IS NOT NULL
+            
+                        UNION ALL
+            
+                        SELECT 
+                            u.nama_user AS nama_admin,
+                            n.nama_nasabah AS nama_nasabah,
+                            kate.nama_kategori AS nama_barang_sampah,
+                            'Pengeluaran' AS jenis_transaksi,
+                            s.harga AS harga,
+                            lpl.riwayat AS riwayat
+                        FROM laporan_pengeluaran lpl
+                        JOIN login u ON lpl.id_user = u.id_user
+                        JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran
+                        JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah
+                        JOIN sampah sa ON s.id_sampah = sa.id_sampah
+                        JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
+                        WHERE lpl.id_setoran IS NOT NULL
+                    ) AS combined
+        """);
 
             boolean whereAdded = false;
 
@@ -1552,6 +1681,7 @@ private void loadData(String filterJenis) {
     private component.Card cardPengeluaran;
     private component.Card cardTransaksi;
     private javax.swing.JComboBox<String> cbx_data1;
+    private grafik.main.CurveLineChart chart;
     private datechooser.Main.DateBetween dateBetween1;
     private datechooser.Main.DateChooser dateChooser1;
     private datechooser.render.DefaultDateChooserRender defaultDateChooserRender1;
@@ -1572,6 +1702,7 @@ private void loadData(String filterJenis) {
     private component.ShadowPanel panelBawah1;
     private component.ShadowPanel panelCard;
     private component.ShadowPanel panelCurve;
+    private component.ShadowPanel panelCurve1;
     private javax.swing.JPanel panelMain;
     private component.ShadowPanel panelTable;
     private javax.swing.JPanel panelView;
