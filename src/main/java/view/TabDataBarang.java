@@ -41,7 +41,7 @@ public class TabDataBarang extends javax.swing.JPanel {
     
     // Pagination variables
     private int halamanSaatIni = 1;
-    private int dataPerHalaman = 20;
+    private int dataPerHalaman = 10;
     private int totalPages;
     private int totalData;
 
@@ -117,7 +117,7 @@ public class TabDataBarang extends javax.swing.JPanel {
     private void loadDataBarang() {
         try {
             panelBarang.removeAll();
-            panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
+            panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
 
             int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
             
@@ -183,7 +183,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             pstCount.close();
 
             panelBarang.removeAll();
-            panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
+            panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
 
             String sql = "SELECT * FROM data_barang WHERE nama_barang LIKE ? OR kode_barang LIKE ? LIMIT ? OFFSET ?";
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -402,7 +402,6 @@ public class TabDataBarang extends javax.swing.JPanel {
         scrollBarang.setMaximumSize(new java.awt.Dimension(300, 300));
 
         panelBarang.setBackground(new java.awt.Color(255, 255, 255));
-        panelBarang.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         panelBarang.setForeground(new java.awt.Color(255, 255, 255));
         panelBarang.setName(""); // NOI18N
         panelBarang.setPreferredSize(new java.awt.Dimension(300, 300));
@@ -411,11 +410,11 @@ public class TabDataBarang extends javax.swing.JPanel {
         panelBarang.setLayout(panelBarangLayout);
         panelBarangLayout.setHorizontalGroup(
             panelBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1148, Short.MAX_VALUE)
+            .addGap(0, 1152, Short.MAX_VALUE)
         );
         panelBarangLayout.setVerticalGroup(
             panelBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 669, Short.MAX_VALUE)
+            .addGap(0, 679, Short.MAX_VALUE)
         );
 
         scrollBarang.setViewportView(panelBarang);
@@ -428,7 +427,7 @@ public class TabDataBarang extends javax.swing.JPanel {
 
         btn_before2.setText("<");
 
-        cbx_data2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "20", "40", "60", "80", "100" }));
+        cbx_data2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "10", "20" }));
 
         btn_next2.setText(">");
 
@@ -470,7 +469,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                 .addComponent(btn_Export2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_import2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 296, Short.MAX_VALUE)
                 .addComponent(lb_halaman2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_first2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -497,25 +496,23 @@ public class TabDataBarang extends javax.swing.JPanel {
                     .addComponent(btn_next2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_last2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_import2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout shadowBarangLayout = new javax.swing.GroupLayout(shadowBarang);
         shadowBarang.setLayout(shadowBarangLayout);
         shadowBarangLayout.setHorizontalGroup(
             shadowBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(shadowBarangLayout.createSequentialGroup()
-                .addComponent(lb_dataNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
             .addComponent(scrollBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(panelBawah2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lb_dataNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         shadowBarangLayout.setVerticalGroup(
             shadowBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shadowBarangLayout.createSequentialGroup()
                 .addComponent(lb_dataNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(scrollBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 673, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollBarang, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBawah2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
