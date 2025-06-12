@@ -229,7 +229,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        txt_search.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txt_search.setPlaceholder("Cari Nasabah");
         txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
