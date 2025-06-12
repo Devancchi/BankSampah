@@ -91,9 +91,9 @@ public class TabDashboard extends javax.swing.JPanel {
         txt_search = new swing.TextField();
         box_pilih = new javax.swing.JComboBox<>();
         ShadowSearch1 = new component.ShadowPanel();
-        txt_date = new javax.swing.JTextField();
         pilihtanggal = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
+        txt_date = new swing.TextField();
         btnReset = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbl_log = new component.Table();
@@ -423,23 +423,6 @@ public class TabDashboard extends javax.swing.JPanel {
         ShadowSearch1.setBackground(new java.awt.Color(249, 251, 255));
         ShadowSearch1.setPreferredSize(new java.awt.Dimension(259, 43));
 
-        txt_date.setBorder(null);
-        txt_date.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_dateActionPerformed(evt);
-            }
-        });
-        txt_date.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                txt_datePropertyChange(evt);
-            }
-        });
-        txt_date.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txt_dateKeyTyped(evt);
-            }
-        });
-
         pilihtanggal.setText("...");
         pilihtanggal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         pilihtanggal.addActionListener(new java.awt.event.ActionListener() {
@@ -457,6 +440,27 @@ public class TabDashboard extends javax.swing.JPanel {
         jLabel10.setForeground(new java.awt.Color(204, 204, 204));
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Calendar.png"))); // NOI18N
 
+        txt_date.setBorder(null);
+        txt_date.setForeground(new java.awt.Color(0, 0, 0));
+        txt_date.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txt_date.setHint("Tanggal");
+        txt_date.setSelectionColor(new java.awt.Color(255, 255, 255));
+        txt_date.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_dateActionPerformed(evt);
+            }
+        });
+        txt_date.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                txt_datePropertyChange(evt);
+            }
+        });
+        txt_date.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_dateKeyTyped(evt);
+            }
+        });
+
         javax.swing.GroupLayout ShadowSearch1Layout = new javax.swing.GroupLayout(ShadowSearch1);
         ShadowSearch1.setLayout(ShadowSearch1Layout);
         ShadowSearch1Layout.setHorizontalGroup(
@@ -466,8 +470,8 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pilihtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_date)
+                .addGap(6, 6, 6)
+                .addComponent(txt_date, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         ShadowSearch1Layout.setVerticalGroup(
@@ -477,7 +481,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addGroup(ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
                     .addComponent(pilihtanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txt_date))
+                    .addComponent(txt_date, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -659,18 +663,6 @@ public class TabDashboard extends javax.swing.JPanel {
         searchByKeywordAndDate();
     }//GEN-LAST:event_box_pilihActionPerformed
 
-    private void txt_dateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_dateActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_dateActionPerformed
-
-    private void txt_datePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txt_datePropertyChange
-        searchByKeywordAndDate();
-    }//GEN-LAST:event_txt_datePropertyChange
-
-    private void txt_dateKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_dateKeyTyped
-
-    }//GEN-LAST:event_txt_dateKeyTyped
-
     private void pilihtanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pilihtanggalActionPerformed
         dateChooser1.showPopup();
     }//GEN-LAST:event_pilihtanggalActionPerformed
@@ -682,6 +674,18 @@ public class TabDashboard extends javax.swing.JPanel {
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         txt_date.setText("");
     }//GEN-LAST:event_btnResetActionPerformed
+
+    private void txt_dateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_dateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_dateActionPerformed
+
+    private void txt_dateKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_dateKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_dateKeyTyped
+
+    private void txt_datePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txt_datePropertyChange
+        searchByKeywordAndDate();        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_datePropertyChange
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -724,7 +728,7 @@ public class TabDashboard extends javax.swing.JPanel {
     private component.ShadowPanel panelTabel;
     private javax.swing.JButton pilihtanggal;
     private component.Table tbl_log;
-    private javax.swing.JTextField txt_date;
+    private swing.TextField txt_date;
     private swing.TextField txt_search;
     // End of variables declaration//GEN-END:variables
 
@@ -829,8 +833,6 @@ public class TabDashboard extends javax.swing.JPanel {
                     Object[] rowData = {idLog, admin, aktivitas, tanggal};
                     model.addRow(rowData);
                 }
-                System.out.println("Mengambil data dari index: " + startIndex + ", sebanyak: " + entriesPage);
-                System.out.println("Jumlah baris dalam model setelah load: " + model.getRowCount());
             }
         } catch (SQLException e) {
             Logger.getLogger(TabDashboard.class.getName()).log(Level.SEVERE, null, e);

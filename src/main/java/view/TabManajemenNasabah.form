@@ -308,7 +308,6 @@
               <SubComponents>
                 <Component class="component.PlaceholderTextField" name="txt_search">
                   <Properties>
-                    <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="placeholder" type="java.lang.String" value="Cari Nasabah"/>
                   </Properties>
                   <Events>
