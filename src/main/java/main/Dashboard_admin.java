@@ -92,7 +92,6 @@ public class Dashboard_admin extends javax.swing.JFrame {
         logout = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         pn_header = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
         lb_level = new javax.swing.JLabel();
         lb_user = new javax.swing.JLabel();
         panelSlide1 = new component.PanelSlide();
@@ -364,8 +363,6 @@ public class Dashboard_admin extends javax.swing.JFrame {
 
         pn_header.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/Profile.png"))); // NOI18N
-
         lb_level.setBackground(new java.awt.Color(0, 0, 0));
         lb_level.setForeground(new java.awt.Color(153, 153, 153));
         lb_level.setText("Admin");
@@ -399,15 +396,13 @@ public class Dashboard_admin extends javax.swing.JFrame {
                 .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(3, 3, 3)
                 .addComponent(panelSlide1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1916, Short.MAX_VALUE)
                 .addGroup(pn_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pn_headerLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lb_user))
                     .addComponent(lb_level))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5)
-                .addGap(11, 11, 11))
+                .addGap(74, 74, 74))
         );
         pn_headerLayout.setVerticalGroup(
             pn_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -416,14 +411,11 @@ public class Dashboard_admin extends javax.swing.JFrame {
                 .addGroup(pn_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelSlide1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(pn_headerLayout.createSequentialGroup()
-                        .addGroup(pn_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addGroup(pn_headerLayout.createSequentialGroup()
-                                .addGap(14, 14, 14)
-                                .addComponent(lb_user)
-                                .addGap(5, 5, 5)
-                                .addComponent(lb_level, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 15, Short.MAX_VALUE))
+                        .addGap(14, 14, 14)
+                        .addComponent(lb_user)
+                        .addGap(5, 5, 5)
+                        .addComponent(lb_level, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 21, Short.MAX_VALUE))
                     .addComponent(panelGradient1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1142,7 +1134,6 @@ public class Dashboard_admin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel lb_level;
     private javax.swing.JLabel lb_user;
     private javax.swing.JLabel logout;

@@ -145,7 +145,7 @@
                                   <Component id="jLabel16" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="lb_pengeluaran" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="186" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -161,7 +161,7 @@
                                       <Component id="lb_pengeluaran" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="36" max="32767" attributes="0"/>
+                              <EmptySpace pref="34" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -220,7 +220,7 @@
                                   <Component id="jLabel19" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="lb_total" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="179" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -299,7 +299,7 @@
                                   <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="lb_pemasukan" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="186" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -361,10 +361,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jLabel14" max="32767" attributes="0"/>
-                              </Group>
+                              <Component id="jLabel14" alignment="0" max="32767" attributes="0"/>
                               <Component id="panelBawah1" alignment="0" max="32767" attributes="0"/>
                               <Component id="jScrollPane1" alignment="0" pref="652" max="32767" attributes="0"/>
                               <Group type="102" attributes="0">
@@ -375,9 +372,9 @@
                                   <Component id="btnReset" min="-2" pref="82" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="panelCurve" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -394,7 +391,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="panelCurve" max="32767" attributes="0"/>
-                              <Component id="jScrollPane1" max="32767" attributes="0"/>
+                              <Component id="jScrollPane1" pref="620" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="panelBawah1" min="-2" max="-2" attributes="0"/>
@@ -539,8 +536,8 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="box_pilih" max="32767" attributes="0"/>
                                   <Component id="txt_search" max="32767" attributes="0"/>
+                                  <Component id="box_pilih" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -618,7 +615,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel8" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
-                                      <Component id="txt_date" min="-2" pref="32" max="-2" attributes="0"/>
+                                      <Component id="txt_date" min="-2" pref="31" max="-2" attributes="0"/>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
                                   <Component id="pilihtanggal" max="32767" attributes="0"/>
@@ -684,6 +681,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
+<<<<<<< HEAD
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
@@ -697,6 +695,12 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="panelChart" max="32767" attributes="0"/>
                                   </Group>
+=======
+                                  <Component id="btn_laporan_jual_sampah" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="btn_detail_pemasukan" alignment="1" pref="466" max="32767" attributes="0"/>
+                                  <Component id="btn_laporan_transaksi" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
+>>>>>>> origin/development
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -712,8 +716,12 @@
                               <Component id="btn_laporan_jual_sampah" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btn_detail_pemasukan" min="-2" max="-2" attributes="0"/>
+<<<<<<< HEAD
                               <EmptySpace pref="13" max="32767" attributes="0"/>
                               <Component id="panelChart" min="-2" max="-2" attributes="0"/>
+=======
+                              <EmptySpace max="32767" attributes="0"/>
+>>>>>>> origin/development
                           </Group>
                       </Group>
                     </DimensionLayout>

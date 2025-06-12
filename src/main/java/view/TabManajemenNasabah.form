@@ -51,7 +51,7 @@
                           <Component id="panelTabel" max="32767" attributes="0"/>
                           <Component id="panelAction" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -59,7 +59,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                      <Component id="panelAction" min="-2" pref="99" max="-2" attributes="0"/>
+                      <Component id="panelAction" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="panelTabel" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
@@ -138,8 +138,10 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="btn_Export" min="-2" pref="150" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btn_import" min="-2" pref="150" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="lb_halaman" min="-2" pref="150" max="-2" attributes="0"/>
+                              <Component id="lb_halaman" min="-2" pref="200" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btn_first" min="-2" pref="90" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -166,6 +168,7 @@
                                   <Component id="cbx_data" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                                   <Component id="btn_next" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                                   <Component id="btn_last" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
+                                  <Component id="btn_import" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="32767" attributes="0"/>
                           </Group>
@@ -175,6 +178,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JLabel" name="lb_halaman">
                       <Properties>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
                         <Property name="text" type="java.lang.String" value="hal"/>
                       </Properties>
                     </Component>
@@ -186,11 +190,12 @@
                     <Component class="javax.swing.JComboBox" name="cbx_data">
                       <Properties>
                         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                          <StringArray count="4">
+                          <StringArray count="5">
                             <StringItem index="0" value="20"/>
                             <StringItem index="1" value="40"/>
                             <StringItem index="2" value="60"/>
                             <StringItem index="3" value="80"/>
+                            <StringItem index="4" value="100"/>
                           </StringArray>
                         </Property>
                       </Properties>
@@ -237,6 +242,30 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_ExportActionPerformed"/>
                       </Events>
                     </Component>
+                    <Component class="component.Jbutton" name="btn_import">
+                      <Properties>
+                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/icon/icon_excel.png"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Import To Excel"/>
+                        <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="c8" green="82" red="3c" type="rgb"/>
+                        </Property>
+                        <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="e6" green="96" red="50" type="rgb"/>
+                        </Property>
+                        <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="dc" green="8c" red="46" type="rgb"/>
+                        </Property>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Segoe UI" size="12" style="1"/>
+                        </Property>
+                        <Property name="roundedCorner" type="int" value="40"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_importActionPerformed"/>
+                      </Events>
+                    </Component>
                   </SubComponents>
                 </Container>
               </SubComponents>
@@ -261,22 +290,17 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="btn_add" alignment="3" min="-2" pref="47" max="-2" attributes="0"/>
-                                      <Component id="btn_cancel" alignment="3" min="-2" pref="47" max="-2" attributes="0"/>
-                                      <Component id="btn_delete" alignment="3" min="-2" pref="47" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Group type="102" attributes="0">
-                                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
-                                  <Component id="txt_search" min="-2" pref="43" max="-2" attributes="0"/>
+                              <Component id="txt_search" alignment="0" min="-2" pref="47" max="-2" attributes="0"/>
+                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                  <Component id="btn_add" alignment="3" min="-2" pref="47" max="-2" attributes="0"/>
+                                  <Component id="btn_cancel" alignment="3" min="-2" pref="47" max="-2" attributes="0"/>
+                                  <Component id="btn_delete" alignment="3" min="-2" pref="47" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace min="25" pref="25" max="-2" attributes="0"/>
+                          <EmptySpace pref="30" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -284,6 +308,7 @@
               <SubComponents>
                 <Component class="component.PlaceholderTextField" name="txt_search">
                   <Properties>
+                    <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="placeholder" type="java.lang.String" value="Cari Nasabah"/>
                   </Properties>
                   <Events>
