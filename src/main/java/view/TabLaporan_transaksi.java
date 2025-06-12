@@ -57,7 +57,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
             JOIN login u ON lp.id_user = u.id_user
             LEFT JOIN data_barang db ON lp.id_barang = db.id_barang
             LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
-            WHERE lp.id_barang IS NOT NULL
+            WHERE lp.id_transaksi IS NOT NULL
         ) AS combined
         ORDER BY riwayat DESC
     """;
@@ -118,7 +118,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
             NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
             NumberFormat formatAngka = NumberFormat.getNumberInstance(new Locale("id", "ID"));
 
-            txt_total_harga.setText(formatRupiah.format(totalKeseluruhan));
+            lbl_total_harga.setText(formatRupiah.format(totalKeseluruhan));
             lbl_item_terjual.setText(formatAngka.format(totalItemTerjual) + " Item");
             lbl_total_transaksi.setText(formatAngka.format(totalTransaksi) + " Transaksi");
 
@@ -154,11 +154,9 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         lbl_total_transaksi = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        box_rentan_waktu = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        txt_total_harga = new javax.swing.JLabel();
+        lbl_total_harga = new javax.swing.JLabel();
         txt_total_harga1 = new javax.swing.JLabel();
         btn_add = new component.Jbutton();
 
@@ -364,19 +362,13 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
         jLabel10.setText("Total Transaksi");
 
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel13.setText("Rentan Periode");
-
-        box_rentan_waktu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Laporan per 7 Hari Terakhir", "Laporan per 30 Hari Terakhir", "Laporan per 1 Tahun Terakhir", " " }));
-
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/total_item.png"))); // NOI18N
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/total_transaksi.png"))); // NOI18N
 
-        txt_total_harga.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
-        txt_total_harga.setForeground(new java.awt.Color(255, 255, 255));
-        txt_total_harga.setText("Rp.12.00000");
+        lbl_total_harga.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        lbl_total_harga.setForeground(new java.awt.Color(255, 255, 255));
+        lbl_total_harga.setText("Rp.12.00000");
 
         txt_total_harga1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txt_total_harga1.setForeground(new java.awt.Color(255, 255, 255));
@@ -391,7 +383,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                     .addGroup(panelGradient2Layout.createSequentialGroup()
                         .addGap(30, 30, 30)
                         .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_total_harga)
+                            .addComponent(lbl_total_harga)
                             .addComponent(txt_total_harga1, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(panelGradient2Layout.createSequentialGroup()
                         .addGap(20, 20, 20)
@@ -406,13 +398,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                         .addGap(8, 8, 8)
                         .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(panelGradient2Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelGradient2Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(box_rentan_waktu, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelGradient2Layout.setVerticalGroup(
@@ -422,7 +408,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                 .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelGradient2Layout.createSequentialGroup()
                         .addGap(20, 20, 20)
-                        .addComponent(txt_total_harga))
+                        .addComponent(lbl_total_harga))
                     .addComponent(txt_total_harga1))
                 .addGap(22, 22, 22)
                 .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -438,10 +424,6 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                     .addGroup(panelGradient2Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(12, 12, 12)
-                .addComponent(jLabel13)
-                .addGap(5, 5, 5)
-                .addComponent(box_rentan_waktu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -624,240 +606,248 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         txt_date.setText("");
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void searchByKeywordAndDate() {
-        String kataKunci = txt_search.getText().trim();
-        String tanggalRange = txt_date.getText().trim();
-        String filter = box_pilih.getSelectedItem().toString();
-        String timeRange = box_rentan_waktu.getSelectedItem().toString(); // ComboBox baru untuk rentang waktu
+   // Method untuk mencari data berdasarkan keyword dan tanggal
+private void searchByKeywordAndDate() {
+    String kataKunci = txt_search.getText().trim();
+    String tanggalRange = txt_date.getText().trim();
+    String filter = box_pilih.getSelectedItem().toString();
 
-        String tanggalMulai = "";
-        String tanggalAkhir = "";
-        boolean isRange = false;
-        boolean isSingleDate = false;
-        boolean isTimeRangeFilter = false;
+    // Proses filter tanggal
+    String tanggalMulai = "";
+    String tanggalAkhir = "";
+    boolean isRange = false;
+    boolean isSingleDate = false;
 
-        // Handle rentang waktu dari ComboBox
-        if (!timeRange.equals("Semua")) {
-            Calendar cal = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            tanggalAkhir = sdf.format(cal.getTime()); // Hari ini
-
-            switch (timeRange) {
-                case "Laporan 7 Hari Terakhir":
-                    cal.add(Calendar.DAY_OF_MONTH, -7);
-                    tanggalMulai = sdf.format(cal.getTime());
-                    isTimeRangeFilter = true;
-                    break;
-                case "Laporan per 30 Hari Terakhir":
-                    cal.add(Calendar.DAY_OF_MONTH, -30);
-                    tanggalMulai = sdf.format(cal.getTime());
-                    isTimeRangeFilter = true;
-                    break;
-                case "Laporan per 1 Tahun Terakhir":
-                    cal.add(Calendar.YEAR, -1);
-                    tanggalMulai = sdf.format(cal.getTime());
-                    isTimeRangeFilter = true;
-                    break;
+    if (!tanggalRange.isEmpty()) {
+        if (tanggalRange.contains(" - ")) {
+            String[] parts = tanggalRange.split(" - ");
+            if (parts.length == 2) {
+                tanggalMulai = parts[0].trim();
+                tanggalAkhir = parts[1].trim();
+                isRange = true;
             }
-        } // Handle manual date input jika tidak menggunakan time range filter
-        else if (!tanggalRange.isEmpty()) {
-            if (tanggalRange.contains("dari")) {
-                String[] parts = tanggalRange.split("dari");
-                if (parts.length == 2) {
-                    tanggalMulai = parts[0].trim();
-                    tanggalAkhir = parts[1].trim();
-                    isRange = true;
-                }
-            } else {
-                tanggalMulai = tanggalRange;
-                isSingleDate = true;
+        } else if (tanggalRange.contains("dari")) {
+            String[] parts = tanggalRange.split("dari");
+            if (parts.length == 2) {
+                tanggalMulai = parts[0].trim();
+                tanggalAkhir = parts[1].trim();
+                isRange = true;
             }
-        }
-
-        DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        model.setColumnIdentifiers(new Object[]{
-            "No", "Nama Admin", "Nama Barang", "Kode Transaksi", "Quantity", "Total Harga", "Riwayat"
-        });
-
-        Connection conn = null;
-        PreparedStatement st = null;
-        ResultSet rs = null;
-
-        try {
-            conn = DBconnect.getConnection();
-
-            StringBuilder sql = new StringBuilder();
-            sql.append("""
-            SELECT nama_admin, nama_barang, kode_transaksi, quantity, total_harga, riwayat
-            FROM (
-               SELECT 
-                                        u.nama_user AS nama_admin,
-                                        tr.nama_barang AS nama_barang,
-                                        tr.kode_transaksi AS kode_transaksi,
-                                        tr.qty AS  quantity,                 
-                                        tr.total_harga AS total_harga,
-                                        tr.tanggal AS riwayat
-                                    FROM laporan_pemasukan lp
-                                    JOIN login u ON lp.id_user = u.id_user
-                                    LEFT JOIN data_barang db ON lp.id_barang = db.id_barang
-                                    LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
-                                    WHERE lp.id_barang IS NOT NULL
-            ) AS combined
-        """);
-
-            boolean whereAdded = false;
-
-            // Filter berdasarkan keyword
-            if (!kataKunci.isEmpty()) {
-                switch (filter) {
-                    case "Default":
-                        sql.append("WHERE (nama_admin LIKE ? OR nama_barang LIKE ?) ");
-                        whereAdded = true;
-                        break;
-                    case "Nama Admin":
-                        sql.append("WHERE nama_admin LIKE ? ");
-                        whereAdded = true;
-                        break;
-                    case "Nama Barang":
-                        sql.append("WHERE nama_barang LIKE ? ");
-                        whereAdded = true;
-                        break;
-                }
-            }
-
-            // Filter berdasarkan rentang waktu
-            if (isTimeRangeFilter || isRange) {
-                sql.append(whereAdded ? "AND " : "WHERE ");
-                sql.append("riwayat BETWEEN ? AND ? ");
-            } else if (isSingleDate) {
-                sql.append(whereAdded ? "AND " : "WHERE ");
-                sql.append("riwayat = ? ");
-            }
-
-            sql.append("ORDER BY riwayat DESC");
-
-            st = conn.prepareStatement(sql.toString());
-
-            int paramIndex = 1;
-
-            // Set parameter untuk keyword search
-            if (!kataKunci.isEmpty()) {
-                String searchPattern = "%" + kataKunci + "%";
-                switch (filter) {
-                    case "Default":
-                        st.setString(paramIndex++, searchPattern);
-                        st.setString(paramIndex++, searchPattern);
-                        break;
-                    default:
-                        st.setString(paramIndex++, searchPattern);
-                        break;
-                }
-            }
-
-            // Set parameter untuk date filter
-            if (isTimeRangeFilter || isRange) {
-                st.setString(paramIndex++, tanggalMulai);
-                st.setString(paramIndex++, tanggalAkhir);
-            } else if (isSingleDate) {
-                st.setString(paramIndex++, tanggalMulai);
-            }
-
-            rs = st.executeQuery();
-            int no = 1;
-            double totalKeseluruhan = 0.0;
-            int totalItemTerjual = 0;
-            int totalTransaksi = 0;
-
-            while (rs.next()) {
-                String harga = rs.getString("total_harga");
-                double hargaNominal = 0.0;
-
-                if (harga != null && !harga.equals("-")) {
-                    try {
-                        hargaNominal = Double.parseDouble(harga);
-                        totalKeseluruhan += hargaNominal;
-                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-                        harga = formatRupiah.format(hargaNominal);
-                    } catch (NumberFormatException e) {
-                        // biarkan original
-                    }
-                }
-
-                // Hitung total item terjual (quantity)
-                String quantityStr = rs.getString("quantity");
-                if (quantityStr != null && !quantityStr.equals("-")) {
-                    try {
-                        int quantity = Integer.parseInt(quantityStr);
-                        totalItemTerjual += quantity;
-                    } catch (NumberFormatException e) {
-                        // Jika parsing gagal, skip
-                    }
-                }
-
-                // Hitung total transaksi (jumlah baris data)
-                totalTransaksi++;
-
-                model.addRow(new Object[]{
-                    no++,
-                    rs.getString("nama_admin"),
-                    rs.getString("nama_barang"),
-                    rs.getString("kode_transaksi"),
-                    rs.getString("quantity"),
-                    harga,
-                    rs.getString("riwayat")
-                });
-            }
-
-            tb_laporan.setModel(model);
-            tb_laporan.clearSelection();
-
-            // Update JLabel dengan data yang sudah difilter
-            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-            NumberFormat formatAngka = NumberFormat.getNumberInstance(new Locale("id", "ID"));
-
-            txt_total_harga.setText(formatRupiah.format(totalKeseluruhan));
-            lbl_item_terjual.setText(formatAngka.format(totalItemTerjual) + " Item");
-            lbl_total_transaksi.setText(formatAngka.format(totalTransaksi) + " Transaksi");
-
-        } catch (SQLException e) {
-            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (st != null) {
-                    st.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        } else {
+            tanggalMulai = tanggalRange.trim();
+            isSingleDate = true;
         }
     }
+
+    DefaultTableModel model = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+
+    model.setColumnIdentifiers(new Object[]{
+        "No", "Nama Admin", "Nama Barang", "Kode Transaksi", "Quantity", "Total Harga", "Riwayat"
+    });
+
+    Connection conn = null;
+    PreparedStatement st = null;
+    ResultSet rs = null;
+
+    try {
+        conn = DBconnect.getConnection();
+
+        // Query untuk data yang difilter (untuk ditampilkan di tabel)
+        StringBuilder sql = new StringBuilder();
+        sql.append("""
+        SELECT nama_admin, nama_barang, kode_transaksi, quantity, total_harga, riwayat
+        FROM (
+           SELECT 
+                u.nama_user AS nama_admin,
+                tr.nama_barang AS nama_barang,
+                tr.kode_transaksi AS kode_transaksi,
+                tr.qty AS quantity,                 
+                tr.total_harga AS total_harga,
+                tr.tanggal AS riwayat
+            FROM laporan_pemasukan lp
+            JOIN login u ON lp.id_user = u.id_user
+            LEFT JOIN data_barang db ON lp.id_barang = db.id_barang
+            LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
+            WHERE lp.id_transaksi IS NOT NULL
+        ) AS combined
+        """);
+
+        boolean whereAdded = false;
+
+        // Filter berdasarkan keyword
+        if (!kataKunci.isEmpty()) {
+            switch (filter) {
+                case "Default":
+                    sql.append("WHERE (LOWER(nama_admin) LIKE LOWER(?) OR LOWER(nama_barang) LIKE LOWER(?) OR LOWER(kode_transaksi) LIKE LOWER(?)) ");
+                    whereAdded = true;
+                    break;
+                case "Nama Admin":
+                    sql.append("WHERE LOWER(nama_admin) LIKE LOWER(?) ");
+                    whereAdded = true;
+                    break;
+                case "Nama Barang":
+                    sql.append("WHERE LOWER(nama_barang) LIKE LOWER(?) ");
+                    whereAdded = true;
+                    break;
+                case "Kode Transaksi":
+                    sql.append("WHERE LOWER(kode_transaksi) LIKE LOWER(?) ");
+                    whereAdded = true;
+                    break;
+            }
+        }
+
+        // Filter berdasarkan tanggal
+        if (isRange) {
+            sql.append(whereAdded ? "AND " : "WHERE ");
+            sql.append("DATE(riwayat) BETWEEN ? AND ? ");
+        } else if (isSingleDate) {
+            sql.append(whereAdded ? "AND " : "WHERE ");
+            sql.append("DATE(riwayat) = ? ");
+        }
+
+        sql.append("ORDER BY riwayat DESC");
+
+        st = conn.prepareStatement(sql.toString());
+
+        int paramIndex = 1;
+
+        // Set parameter untuk keyword search
+        if (!kataKunci.isEmpty()) {
+            String searchPattern = "%" + kataKunci + "%";
+            switch (filter) {
+                case "Default":
+                    st.setString(paramIndex++, searchPattern);
+                    st.setString(paramIndex++, searchPattern);
+                    st.setString(paramIndex++, searchPattern);
+                    break;
+                default:
+                    st.setString(paramIndex++, searchPattern);
+                    break;
+            }
+        }
+
+        // Set parameter untuk date filter
+        if (isRange) {
+            st.setString(paramIndex++, tanggalMulai);
+            st.setString(paramIndex++, tanggalAkhir);
+        } else if (isSingleDate) {
+            st.setString(paramIndex++, tanggalMulai);
+        }
+
+        rs = st.executeQuery();
+        int no = 1;
+
+        while (rs.next()) {
+            String harga = rs.getString("total_harga");
+            double hargaNominal = 0.0;
+
+            if (harga != null && !harga.equals("-")) {
+                try {
+                    hargaNominal = Double.parseDouble(harga);
+                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                    harga = formatRupiah.format(hargaNominal);
+                } catch (NumberFormatException e) {
+                    // biarkan original
+                }
+            }
+
+            model.addRow(new Object[]{
+                no++,
+                rs.getString("nama_admin"),
+                rs.getString("nama_barang"),
+                rs.getString("kode_transaksi"),
+                rs.getString("quantity"),
+                harga,
+                rs.getString("riwayat")
+            });
+        }
+
+        tb_laporan.setModel(model);
+        tb_laporan.clearSelection();
+
+        // PENTING: Panggil method terpisah untuk menghitung total keseluruhan
+        // Method ini TIDAK menggunakan filter apapun
+        updateTotalLabels();
+
+    } catch (SQLException e) {
+        Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (st != null) st.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+// Method terpisah untuk menghitung dan menampilkan total keseluruhan
+// Method ini SELALU menghitung SEMUA data tanpa filter
+private void updateTotalLabels() {
+    Connection conn = null;
+    PreparedStatement st = null;
+    ResultSet rs = null;
+    
+    try {
+        conn = DBconnect.getConnection();
+        
+        // Query ini TIDAK menggunakan filter apapun - selalu menghitung SEMUA data
+        String sql = """
+            SELECT 
+                SUM(CASE WHEN tr.total_harga IS NOT NULL AND tr.total_harga != '-' 
+                    THEN CAST(tr.total_harga AS DECIMAL(15,2)) ELSE 0 END) AS total_harga_keseluruhan,
+                SUM(CASE WHEN tr.qty IS NOT NULL AND tr.qty != '-' 
+                    THEN CAST(tr.qty AS DECIMAL(10,0)) ELSE 0 END) AS total_item_terjual,
+                COUNT(*) AS total_transaksi
+            FROM laporan_pemasukan lp
+            JOIN login u ON lp.id_user = u.id_user
+            LEFT JOIN data_barang db ON lp.id_barang = db.id_barang
+            LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
+            WHERE lp.id_transaksi IS NOT NULL
+        """;
+        
+        st = conn.prepareStatement(sql);
+        rs = st.executeQuery();
+        
+        if (rs.next()) {
+            double totalHarga = rs.getDouble("total_harga_keseluruhan");
+            int totalItem = rs.getInt("total_item_terjual");
+            int totalTransaksi = rs.getInt("total_transaksi");
+            
+            // Format dan update JLabel dengan total keseluruhan
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+            NumberFormat formatAngka = NumberFormat.getNumberInstance(new Locale("id", "ID"));
+            
+            // Update JLabel dengan nilai SEMUA data (tidak terpengaruh filter)
+            lbl_total_harga.setText(formatRupiah.format(totalHarga));
+            lbl_item_terjual.setText(formatAngka.format(totalItem) + " Item");
+            lbl_total_transaksi.setText(formatAngka.format(totalTransaksi) + " Transaksi");
+        }
+        
+    } catch (SQLException e) {
+        Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (st != null) st.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.ShadowPanel ShadowSearch;
     private component.ShadowPanel ShadowSearch1;
     private javax.swing.JComboBox<String> box_pilih;
-    private javax.swing.JComboBox<String> box_rentan_waktu;
     private component.Jbutton btn_add;
     private component.Jbutton btn_cancel;
     private datechooser.Main.DateBetween dateBetween1;
@@ -865,13 +855,13 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
     private datechooser.render.DefaultDateChooserRender defaultDateChooserRender1;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbl_item_terjual;
+    private javax.swing.JLabel lbl_total_harga;
     private javax.swing.JLabel lbl_total_transaksi;
     private grafik.panel.PanelGradient panelGradient2;
     private javax.swing.JPanel panelMain;
@@ -882,7 +872,6 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
     private component.Table tb_laporan;
     private javax.swing.JTextField txt_date;
     private swing.TextField txt_search;
-    private javax.swing.JLabel txt_total_harga;
     private javax.swing.JLabel txt_total_harga1;
     // End of variables declaration//GEN-END:variables
 }
