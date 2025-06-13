@@ -65,7 +65,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
     }
 
     private void updatePaginationInfo() {
-        lb_halaman2.setText("Halaman " + halamanSaatIni + " dari " + totalPages + " (Total: " + totalData + " data)");
+        lb_halaman2.setText(String.valueOf("Page " + halamanSaatIni + " Dari Total " + totalData + " Data"));
     }
 
     private int getTotalData() {
@@ -626,6 +626,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                 .addContainerGap(255, Short.MAX_VALUE))
         );
 
+        lb_halaman2.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         lb_halaman2.setText("hal");
 
         btn_before2.setText("<");
@@ -657,10 +658,10 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
             panelBawah2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelBawah2Layout.createSequentialGroup()
                 .addComponent(btn_Export2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lb_halaman2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_first2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lb_halaman2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_first2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_before2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -668,7 +669,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_next2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_last2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_last2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
         panelBawah2Layout.setVerticalGroup(

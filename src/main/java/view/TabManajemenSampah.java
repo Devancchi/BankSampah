@@ -46,6 +46,28 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     public TabManajemenSampah(UserSession user) {
         this.users = user;
         initComponents();
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    txt_Kode.requestFocusInWindow();
+                    txt_Kode.requestFocus();
+                });
+            }
+        });
+        
+        // Add document listener to automatically trigger Enter key
+        txt_Kode.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                if (!txt_Kode.getText().isEmpty()) {
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        txt_KodeActionPerformed(new java.awt.event.ActionEvent(txt_Kode, java.awt.event.ActionEvent.ACTION_PERFORMED, ""));
+                    });
+                }
+            }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {}
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {}
+        });
+        
         // Inisialisasi pagination
         dataPerHalaman = Integer.parseInt(cbx_data2.getSelectedItem().toString());
         calculateTotalPageHarga();
@@ -85,6 +107,10 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         btnHapusHarga.setVisible(false);
         btnBatalHarga.setVisible(false);
         btnBatalProses.setVisible(false);
+    }
+
+    public component.PlaceholderTextField getTxt_Kode() {
+        return txt_Kode;
     }
 
     private void showPanel() {
@@ -419,7 +445,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             }
         });
 
-        lb_halaman2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lb_halaman2.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         lb_halaman2.setText("hal");
 
         btn_before2.setText("<");
@@ -466,10 +492,10 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 .addComponent(btn_Export2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_import2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lb_halaman2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_first2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lb_halaman2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_first2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_before2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -477,7 +503,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_next2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_last2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_last2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
         panelBawah2Layout.setVerticalGroup(
@@ -1940,6 +1966,12 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             btnBatalProses.setVisible(true);
         }
     }//GEN-LAST:event_txt_KodeKeyPressed
+
+    private void txt_KodeActionPerformed(java.awt.event.ActionEvent evt) {
+        // Trigger the same action as when Enter key is pressed
+        txt_KodeKeyPressed(new java.awt.event.KeyEvent(txt_Kode, java.awt.event.KeyEvent.KEY_PRESSED, 
+            System.currentTimeMillis(), 0, java.awt.event.KeyEvent.VK_ENTER, java.awt.event.KeyEvent.CHAR_UNDEFINED));
+    }
 
     public void importExcelSampahToDatabase(File excelFile) {
         try {

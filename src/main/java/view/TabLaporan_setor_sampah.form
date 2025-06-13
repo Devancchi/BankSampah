@@ -516,10 +516,10 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="btn_Export5" min="-2" pref="150" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="lb_halaman5" min="-2" pref="150" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_first5" min="-2" pref="90" max="-2" attributes="0"/>
+                              <Component id="lb_halaman5" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btn_first5" min="-2" pref="100" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btn_before5" min="-2" pref="30" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -527,7 +527,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btn_next5" min="-2" pref="30" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_last5" min="-2" pref="90" max="-2" attributes="0"/>
+                              <Component id="btn_last5" min="-2" pref="100" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -552,6 +552,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JLabel" name="lb_halaman5">
                       <Properties>
+                        <Property name="horizontalAlignment" type="int" value="11"/>
                         <Property name="text" type="java.lang.String" value="hal"/>
                       </Properties>
                     </Component>
