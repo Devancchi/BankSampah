@@ -1,7 +1,7 @@
 package loginregister;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import login_register.component.ButtonLink;
+import loginregister.component.ButtonLink;
 import net.miginfocom.swing.MigLayout;
 import raven.modal.ModalDialog;
 
