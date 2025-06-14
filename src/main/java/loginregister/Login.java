@@ -3,7 +3,7 @@ package loginregister;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import component.UserSession;
-import login_register.component.ButtonLink;
+import loginregister.component.ButtonLink;
 import net.miginfocom.swing.MigLayout;
 import raven.modal.ModalDialog;
 import java.security.MessageDigest;

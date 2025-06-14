@@ -1,4 +1,4 @@
-package login_register.component;
+package loginregister.component;
 
 import com.formdev.flatlaf.FlatClientProperties;
 
