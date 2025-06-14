@@ -45,7 +45,27 @@ public class TabTransaksi extends javax.swing.JPanel {
     public TabTransaksi(UserSession user) {
         this.users = user;
         initComponents();
-
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    scanbarang.requestFocusInWindow();
+                    scanbarang.requestFocus();
+                });
+            }
+        });
+        
+        // Add document listener to automatically trigger Enter key
+        scanbarang.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                if (!scanbarang.getText().isEmpty()) {
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        scanbarangActionPerformed(new java.awt.event.ActionEvent(scanbarang, java.awt.event.ActionEvent.ACTION_PERFORMED, ""));
+                    });
+                }
+            }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {}
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {}
+        });
     }
 
     private void showPanel() {
@@ -528,8 +548,8 @@ public class TabTransaksi extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(shadowTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(txttunai, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txttotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtkembalian, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txtkembalian, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txttotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnbayar, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -641,22 +661,24 @@ public class TabTransaksi extends javax.swing.JPanel {
     }//GEN-LAST:event_btntambahActionPerformed
 
     private void btnbatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbatalActionPerformed
-        btnbatal.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "Yakin membatalkan transaksi barang ini?",
-                    "Konfirmasi Batal",
-                    JOptionPane.YES_NO_OPTION
-            );
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Yakin membatalkan transaksi barang ini?",
+                "Konfirmasi Batal",
+                JOptionPane.YES_NO_OPTION
+        );
 
-            if (confirm == JOptionPane.YES_OPTION) {
-                bersihkanForm();
+        if (confirm == JOptionPane.YES_OPTION) {
+            int selectedRow = tabletransaksi.getSelectedRow();
+            if (selectedRow >= 0) {
                 DefaultTableModel model = (DefaultTableModel) tabletransaksi.getModel();
-                int a = tabletransaksi.getSelectedRow();
-                model.removeRow(a);
+                model.removeRow(selectedRow);
                 hitungTotal();
+            } else {
+                JOptionPane.showMessageDialog(this, "Pilih baris yang akan dibatalkan!");
             }
-        });
+            bersihkanForm();
+        }
     }//GEN-LAST:event_btnbatalActionPerformed
 
     private void btnbayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbayarActionPerformed
@@ -691,7 +713,7 @@ public class TabTransaksi extends javax.swing.JPanel {
                 "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", ""); PreparedStatement ps = conn.prepareStatement(
                         "INSERT INTO transaksi (id_user, id_nasabah, kode_transaksi, kode_barang, nama_barang, qty, harga, total_harga, bayar, kembalian, tanggal) "
                         + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"); PreparedStatement pstUpdate = conn.prepareStatement(
-                        "UPDATE data_barang SET stok = stok - ? WHERE kode_barang = ? AND stok >= ?")) {
+                        "UPDATE data_barang SET stok = stok - ? WHERE kode_barang = ? AND stok >=?")) {
 
             for (int i = 0; i < model.getRowCount(); i++) {
                 String kodeBarang = model.getValueAt(i, 0).toString();
@@ -786,6 +808,9 @@ public class TabTransaksi extends javax.swing.JPanel {
         prosesPembayaranNasabah(txtnasabah.getText());
     }//GEN-LAST:event_txtnasabahActionPerformed
 
+    public component.PlaceholderTextField getScanbarang() {
+        return scanbarang;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private component.Jbutton btnbatal;

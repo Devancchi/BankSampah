@@ -41,7 +41,7 @@ public class TabDataBarang extends javax.swing.JPanel {
     
     // Pagination variables
     private int halamanSaatIni = 1;
-    private int dataPerHalaman = 20;
+    private int dataPerHalaman = 10;
     private int totalPages;
     private int totalData;
 
@@ -117,7 +117,7 @@ public class TabDataBarang extends javax.swing.JPanel {
     private void loadDataBarang() {
         try {
             panelBarang.removeAll();
-            panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
+            panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
 
             int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
             
@@ -127,6 +127,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             pst.setInt(2, startIndex);
             ResultSet rs = pst.executeQuery();
 
+            int itemCount = 0;
             while (rs.next()) {
                 int id = rs.getInt("id_barang");
                 String nama = rs.getString("nama_barang");
@@ -151,6 +152,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                 });
 
                 panelBarang.add(itemPanel);
+                itemCount++;
             }
 
             rs.close();
@@ -158,6 +160,13 @@ public class TabDataBarang extends javax.swing.JPanel {
 
             // Update page label
             lb_halaman2.setText("Page " + halamanSaatIni + " dari total " + totalData + " data");
+
+            // Atur layout sesuai jumlah item
+            if (itemCount < 5) {
+                panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
+            } else {
+                panelBarang.setLayout(new GridLayout(0, 5, 10, 19));
+            }
 
             panelBarang.revalidate();
             panelBarang.repaint();
@@ -183,7 +192,7 @@ public class TabDataBarang extends javax.swing.JPanel {
             pstCount.close();
 
             panelBarang.removeAll();
-            panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
+            panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
 
             String sql = "SELECT * FROM data_barang WHERE nama_barang LIKE ? OR kode_barang LIKE ? LIMIT ? OFFSET ?";
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -194,6 +203,7 @@ public class TabDataBarang extends javax.swing.JPanel {
 
             ResultSet rs = pst.executeQuery();
 
+            int itemCount = 0;
             while (rs.next()) {
                 int id = rs.getInt("id_barang");
                 String nama = rs.getString("nama_barang");
@@ -218,6 +228,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                 });
 
                 panelBarang.add(itemPanel);
+                itemCount++;
             }
 
             rs.close();
@@ -225,6 +236,13 @@ public class TabDataBarang extends javax.swing.JPanel {
 
             // Update page label
             lb_halaman2.setText("Halaman " + halamanSaatIni + " dari total " + totalData + " data");
+
+            // Atur layout sesuai jumlah item
+            if (itemCount < 5) {
+                panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
+            } else {
+                panelBarang.setLayout(new GridLayout(0, 5, 10, 19));
+            }
 
             panelBarang.revalidate();
             panelBarang.repaint();
@@ -402,7 +420,6 @@ public class TabDataBarang extends javax.swing.JPanel {
         scrollBarang.setMaximumSize(new java.awt.Dimension(300, 300));
 
         panelBarang.setBackground(new java.awt.Color(255, 255, 255));
-        panelBarang.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         panelBarang.setForeground(new java.awt.Color(255, 255, 255));
         panelBarang.setName(""); // NOI18N
         panelBarang.setPreferredSize(new java.awt.Dimension(300, 300));
@@ -411,11 +428,11 @@ public class TabDataBarang extends javax.swing.JPanel {
         panelBarang.setLayout(panelBarangLayout);
         panelBarangLayout.setHorizontalGroup(
             panelBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1148, Short.MAX_VALUE)
+            .addGap(0, 1152, Short.MAX_VALUE)
         );
         panelBarangLayout.setVerticalGroup(
             panelBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 669, Short.MAX_VALUE)
+            .addGap(0, 679, Short.MAX_VALUE)
         );
 
         scrollBarang.setViewportView(panelBarang);
@@ -423,16 +440,19 @@ public class TabDataBarang extends javax.swing.JPanel {
         lb_dataNasabah.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         lb_dataNasabah.setText("Data Barang");
 
-        lb_halaman2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lb_halaman2.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         lb_halaman2.setText("hal");
 
         btn_before2.setText("<");
 
-        cbx_data2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "20", "40", "60", "80", "100" }));
+        cbx_data2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "10" }));
 
         btn_next2.setText(">");
 
         btn_last2.setText("Last Page");
+        btn_last2.setMaximumSize(new java.awt.Dimension(100, 23));
+        btn_last2.setName(""); // NOI18N
+        btn_last2.setPreferredSize(new java.awt.Dimension(100, 23));
 
         btn_first2.setText("First Page");
 
@@ -470,10 +490,10 @@ public class TabDataBarang extends javax.swing.JPanel {
                 .addComponent(btn_Export2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_import2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lb_halaman2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_first2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lb_halaman2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_first2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_before2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -481,7 +501,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_next2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_last2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_last2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
         panelBawah2Layout.setVerticalGroup(
@@ -497,25 +517,23 @@ public class TabDataBarang extends javax.swing.JPanel {
                     .addComponent(btn_next2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_last2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_import2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout shadowBarangLayout = new javax.swing.GroupLayout(shadowBarang);
         shadowBarang.setLayout(shadowBarangLayout);
         shadowBarangLayout.setHorizontalGroup(
             shadowBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(shadowBarangLayout.createSequentialGroup()
-                .addComponent(lb_dataNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
             .addComponent(scrollBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(panelBawah2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lb_dataNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         shadowBarangLayout.setVerticalGroup(
             shadowBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shadowBarangLayout.createSequentialGroup()
                 .addComponent(lb_dataNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(scrollBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 673, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollBarang, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBawah2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
