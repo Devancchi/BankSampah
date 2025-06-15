@@ -116,7 +116,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                     double totalPengeluaran = rsPengeluaran.getDouble("total_pengeluaran");
 
                     // Format ke rupiah
-                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                     String pengeluaranFormatted = formatRupiah.format(totalPengeluaran);
 
                     lbl_pengeluaran.setText(pengeluaranFormatted);
@@ -191,7 +191,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                     if (!harga.equals("-")) {
                         try {
                             double nominal = Double.parseDouble(harga);
-                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                             harga = formatRupiah.format(nominal);
                         } catch (NumberFormatException e) {
                             // Biarkan harga tetap apa adanya jika gagal format
@@ -477,8 +477,8 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                 .addGap(20, 20, 20)
                 .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10)
-                .addComponent(lbl_pengeluaran, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(282, Short.MAX_VALUE))
+                .addComponent(lbl_pengeluaran)
+                .addContainerGap(264, Short.MAX_VALUE))
         );
 
         lb_halaman5.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -947,7 +947,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                         if (harga != null && !harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
                                 // biarkan harga tetap
@@ -1071,7 +1071,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                 try (ResultSet rsPengeluaran = pstPengeluaran.executeQuery()) {
                     if (rsPengeluaran.next()) {
                         double totalPengeluaran = rsPengeluaran.getDouble("total_pengeluaran");
-                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                         String pengeluaranFormatted = formatRupiah.format(totalPengeluaran);
                         lbl_pengeluaran.setText(pengeluaranFormatted);
                     }

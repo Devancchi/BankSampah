@@ -2,7 +2,7 @@ package loginregister;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.Color;
-import login_register.component.ButtonLink;
+import loginregister.component.ButtonLink;
 import net.miginfocom.swing.MigLayout;
 import raven.modal.ModalDialog;
 import main.DBconnect;
