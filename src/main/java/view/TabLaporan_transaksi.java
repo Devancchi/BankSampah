@@ -77,15 +77,17 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
     try {
         String sql = """
             SELECT COUNT(*) as total FROM (
-                SELECT 
-                    u.nama_user AS nama_admin,
-                    tr.nama_barang AS nama_barang,
-                    tr.kode_transaksi AS kode_transaksi,
-                    tr.qty AS quantity,                
-                    tr.total_harga AS total_harga,
-                    tr.tanggal AS riwayat
-                FROM transaksi tr
-                INNER JOIN login u ON tr.id_user = u.id_user
+               SELECT 
+                                                                                                u.nama_user AS nama_admin,
+                                                                                                tr.nama_barang AS nama_barang,
+                                                                                                ns.nama_nasabah AS nama_nasabah,
+                                                                                                tr.kode_transaksi AS kode_transaksi,
+                                                                                                tr.qty AS quantity,                
+                                                                                                tr.total_harga AS total_harga,
+                                                                                                tr.tanggal AS riwayat
+                                                                                            FROM transaksi tr
+                                                                                            INNER JOIN login u ON tr.id_user = u.id_user
+                                                                                            INNER JOIN manajemen_nasabah ns ON tr.id_nasabah = ns.id_nasabah
             ) AS combine
         """;
 
@@ -112,29 +114,33 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         };
 
         model.setColumnIdentifiers(new String[]{
-           "No", "Nama Admin", "Nama Barang", "Kode Transaksi", "Quantity", "Total Harga", "Riwayat"
+           "No", "Nama Admin", "Nama Barang","Nama Nasabah", "Kode Transaksi", "Quantity", "Total Harga", "Riwayat"
         });
 
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("""
                  SELECT 
-                                                            nama_admin, 
-                                                            nama_barang,
-                                                            kode_transaksi,
-                                                            quantity,
-                                                            total_harga,
-                                                            riwayat
-                                                        FROM (
-                                                            SELECT 
-                                                                u.nama_user AS nama_admin,
-                                                                tr.nama_barang AS nama_barang,
-                                                                tr.kode_transaksi AS kode_transaksi,
-                                                                tr.qty AS quantity,                
-                                                                tr.total_harga AS total_harga,
-                                                                tr.tanggal AS riwayat
-                                                            FROM transaksi tr
-                                                            INNER JOIN login u ON tr.id_user = u.id_user
+                                                                            nama_admin, 
+                                                                            nama_barang,
+                                                                            nama_nasabah,
+                                                                            kode_transaksi,
+                                                                            quantity,
+                                                                            total_harga,
+                                                                            riwayat
+                                                                        FROM (
+                                                                            SELECT 
+                                                                                u.nama_user AS nama_admin,
+                                                                                tr.nama_barang AS nama_barang,
+                                                                                ns.nama_nasabah AS nama_nasabah,
+                                                                                tr.kode_transaksi AS kode_transaksi,
+                                                                                tr.qty AS quantity,                
+                                                                                tr.total_harga AS total_harga,
+                                                                                tr.tanggal AS riwayat
+                                                                            FROM transaksi tr
+                                                                            INNER JOIN login u ON tr.id_user = u.id_user
+                                                                            INNER JOIN manajemen_nasabah ns ON tr.id_nasabah = ns.id_nasabah
+                                                                            
             """);
 
             if (!filterJenis.isEmpty()) {
@@ -168,11 +174,12 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                         model.addRow(new Object[]{
                             no++,
                             rs.getString("nama_admin"),
-                            rs.getString("nama_barang"),
-                            rs.getString("kode_transaksi"),
-                            rs.getString("quantity"),
-                            harga,
-                            rs.getString("riwayat")
+                        rs.getString("nama_barang"),
+                         rs.getString("nama_nasabah"),
+                        rs.getString("kode_transaksi"),
+                        rs.getString("quantity"),
+                        harga,
+                        rs.getString("riwayat")
                         });
                     }
                 }
@@ -260,7 +267,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
             }
         });
 
-        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Barang" }));
+        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Barang", "Nama Nasabah" }));
         box_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 box_pilihActionPerformed(evt);
@@ -406,11 +413,11 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
 
             },
             new String [] {
-                "No", "Nama Admin", "Nama Barang", "Kode Transaksi", "Quantity", "Total Harga", "Riwayat"
+                "No", "Nama Admin", "Nama Barang", "Nama Nasabah", "Kode Transaksi", "Quantity", "Total Harga", "Riwayat"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -766,7 +773,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
     };
 
     model.setColumnIdentifiers(new String[]{
-        "No", "Nama Admin", "Nama Barang", "Kode Transaksi", "Quantity", "Total Harga", "Riwayat"
+        "No", "Nama Admin", "Nama Barang","Nama Nasabah", "Kode Transaksi", "Quantity", "Total Harga", "Riwayat"
     });
 
     try {
@@ -775,6 +782,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
             SELECT 
                 nama_admin, 
                 nama_barang,
+                nama_nasabah,
                 kode_transaksi,
                 quantity,
                 total_harga,
@@ -783,21 +791,24 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                 SELECT 
                     u.nama_user AS nama_admin,
                     tr.nama_barang AS nama_barang,
+                    ns.nama_nasabah AS nama_nasabah,
                     tr.kode_transaksi AS kode_transaksi,
                     tr.qty AS quantity,                
                     tr.total_harga AS total_harga,
                     tr.tanggal AS riwayat
                 FROM transaksi tr
                 INNER JOIN login u ON tr.id_user = u.id_user
+                INNER JOIN manajemen_nasabah ns ON tr.id_nasabah = ns.id_nasabah
                 WHERE 1=1
         """);
 
         // Filter berdasarkan kata kunci
         if (!kataKunci.isEmpty()) {
             switch (filter) {
-                case "Default" -> sql.append(" AND (u.nama_user LIKE ? OR tr.nama_barang LIKE ?) ");
+                case "Default" -> sql.append(" AND (u.nama_user LIKE ? OR tr.nama_barang LIKE ? OR ns.nama_nasabah LIKE ?) ");
                 case "Nama Admin" -> sql.append(" AND u.nama_user LIKE ? ");
                 case "Nama Barang" -> sql.append(" AND tr.nama_barang LIKE ? ");
+                case "Nama Nasabah" -> sql.append(" AND ns.nama_nasabah LIKE ? ");
             }
         }
 
@@ -855,6 +866,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                         no++,
                         rs.getString("nama_admin"),
                         rs.getString("nama_barang"),
+                         rs.getString("nama_nasabah"),
                         rs.getString("kode_transaksi"),
                         rs.getString("quantity"),
                         harga,
