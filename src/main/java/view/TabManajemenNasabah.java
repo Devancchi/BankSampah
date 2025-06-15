@@ -670,25 +670,25 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             int option = chooser.showOpenDialog(this);
             if (option == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = chooser.getSelectedFile();
-                
+
                 // Konfirmasi sebelum import
                 int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "Apakah Anda yakin ingin mengimport data dari file ini?\n" +
-                    "Data yang sudah ada dengan ID yang sama akan diupdate.",
-                    "Konfirmasi Import",
-                    JOptionPane.YES_NO_OPTION
+                        this,
+                        "Apakah Anda yakin ingin mengimport data dari file ini?\n"
+                        + "Data yang sudah ada dengan ID yang sama akan diupdate.",
+                        "Konfirmasi Import",
+                        JOptionPane.YES_NO_OPTION
                 );
-                
+
                 if (confirm == JOptionPane.YES_OPTION) {
                     importExcelToDatabase(selectedFile);
                 }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                "Terjadi kesalahan saat import: " + e.getMessage(),
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
+                    "Terjadi kesalahan saat import: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }//GEN-LAST:event_btn_importActionPerformed
@@ -846,7 +846,14 @@ private void paginationNasabah() {
                     BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     // Format saldo menjadi string dengan titik ribuan
-                    String saldoFormatted = "Rp " + formatRupiah.format(saldo);
+                    String saldoFormatted;
+                    if (saldo.stripTrailingZeros().scale() <= 0) {
+                        // Tanpa desimal
+                        saldoFormatted = "Rp " + NumberFormat.getIntegerInstance(new Locale("id", "ID")).format(saldo);
+                    } else {
+                        // Dengan desimal
+                        saldoFormatted = "Rp " + formatRupiah.format(saldo).replace(",00", "");
+                    }
 
                     Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, saldoFormatted};
                     model.addRow(rowData);
@@ -905,7 +912,14 @@ private void paginationNasabah() {
                     String email = rs.getString("email");
                     BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
-                    String saldoFormatted = "Rp " + formatRupiah.format(saldo);
+                    String saldoFormatted;
+                    if (saldo.stripTrailingZeros().scale() <= 0) {
+                        // Tanpa desimal
+                        saldoFormatted = "Rp " + NumberFormat.getIntegerInstance(new Locale("id", "ID")).format(saldo);
+                    } else {
+                        // Dengan desimal
+                        saldoFormatted = "Rp " + formatRupiah.format(saldo).replace(",00", "");
+                    }
 
                     Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, saldoFormatted};
                     model.addRow(rowData);
@@ -1117,7 +1131,9 @@ private String setIDAnggota() {
                 Row row = rowIterator.next();
                 try {
                     // Skip if row is empty
-                    if (row == null) continue;
+                    if (row == null) {
+                        continue;
+                    }
 
                     // Get cell values with null checks
                     Cell idCell = row.getCell(0);
@@ -1128,8 +1144,8 @@ private String setIDAnggota() {
                     Cell saldoCell = row.getCell(5);
 
                     // Skip if any required cell is null
-                    if (idCell == null || namaCell == null || alamatCell == null || 
-                        teleponCell == null || emailCell == null || saldoCell == null) {
+                    if (idCell == null || namaCell == null || alamatCell == null
+                            || teleponCell == null || emailCell == null || saldoCell == null) {
                         continue;
                     }
 
@@ -1178,24 +1194,24 @@ private String setIDAnggota() {
 
             // Show results
             String message = String.format(
-                "Import selesai!\n" +
-                "Data baru: %d\n" +
-                "Data dilewati (sudah ada): %d",
-                insertCount, skippedCount
+                    "Import selesai!\n"
+                    + "Data baru: %d\n"
+                    + "Data dilewati (sudah ada): %d",
+                    insertCount, skippedCount
             );
-            
+
             JOptionPane.showMessageDialog(this, message, "Hasil Import", JOptionPane.INFORMATION_MESSAGE);
-            
+
             // Refresh data
             loadData();
             LoggerUtil.insert(users.getId(), "Import data nasabah");
 
         } catch (IOException | SQLException | IllegalArgumentException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, 
-                "Gagal import data: " + e.getMessage(), 
-                "Error", 
-                JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Gagal import data: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 

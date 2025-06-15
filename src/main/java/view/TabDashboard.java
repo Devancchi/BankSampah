@@ -22,6 +22,7 @@ import javax.swing.table.DefaultTableModel;
 import main.DBconnect;
 import chart.ModelPolarAreaChart;
 import datechooser.Main.DateChooser;
+import java.text.DecimalFormat;
 import notification.toast.Notifications;
 
 /**
@@ -860,7 +861,9 @@ public class TabDashboard extends javax.swing.JPanel {
             ResultSet rsSampah = stmt.executeQuery("SELECT SUM(stok_sampah) FROM sampah");
             if (rsSampah.next()) {
                 double totalSampah = rsSampah.getDouble(1);
-                lb_totalSampah.setText(String.valueOf(totalSampah) + "KG");
+                DecimalFormat df = new DecimalFormat("#,##0.##");
+                lb_totalSampah.setText(df.format(totalSampah) + " KG");
+
             }
 
             // Total Pemasukan

@@ -1746,7 +1746,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     psUpdateSaldo.setString(2, kode);
                     psUpdateSaldo.executeUpdate();
 
-                    lblTotal.setText("Rp " + String.format("%,.2f", total));
+                    lblTotal.setText("Rp " + String.format("%,.0f", total));
 
                     String namaNasabah = "SELECT nama_nasabah FROM manajemen_nasabah WHERE id_nasabah = ?";
                     PreparedStatement psNasabah = conn.prepareStatement(namaNasabah);
@@ -1758,8 +1758,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     }
 
                     int result = JOptionPane.showConfirmDialog(null,
-                            "SETOR SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.2f", total)
-                            + "\nSaldo " + namaNasabahStr + " Bertambah Menjadi: Rp " + String.format("%,.2f", saldoBaru),
+                            "SETOR SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.0f", total)
+                            + "\nSaldo " + namaNasabahStr + " Bertambah Menjadi: Rp " + String.format("%,.0f", saldoBaru),
                             "Sukses",
                             JOptionPane.DEFAULT_OPTION);
 
@@ -1767,6 +1767,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                         lblTotal.setText("0");
                         clearForm();
                         loadJenisSampah();
+                        showPanel();
                     }
 
                 } else {
@@ -1798,12 +1799,13 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     insertPs.setInt(4, users.getId());
                     insertPs.executeUpdate();
 
-                    lblTotal.setText("Rp " + String.format("%,.2f", total));
-                    int result = JOptionPane.showConfirmDialog(null, "TRANSAKSI JUAL SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.2f", total), "Sukses", JOptionPane.DEFAULT_OPTION);
+                    lblTotal.setText("Rp " + String.format("%,.0f", total));
+                    int result = JOptionPane.showConfirmDialog(null, "TRANSAKSI JUAL SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.0f", total), "Sukses", JOptionPane.DEFAULT_OPTION);
                     if (result == JOptionPane.OK_OPTION) {
                         lblTotal.setText("0");
                         clearForm();
                         loadJenisSampah();
+                        showPanel();
                     }
 
                 } else {
