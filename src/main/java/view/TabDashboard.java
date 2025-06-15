@@ -42,6 +42,7 @@ public class TabDashboard extends javax.swing.JPanel {
         loadLogData();
         paginationLog();
         setupDateChooser();
+        loadDashboardData();
         loadDataChartBarang();
         loadDataChartJenisSampah();
         txt_date.setText("");
@@ -120,7 +121,6 @@ public class TabDashboard extends javax.swing.JPanel {
 
         lb_totalNasabah.setFont(new java.awt.Font("Arial Black", 1, 24)); // NOI18N
         lb_totalNasabah.setForeground(new java.awt.Color(255, 255, 255));
-        lb_totalNasabah.setText("14");
 
         javax.swing.GroupLayout panelGradient1Layout = new javax.swing.GroupLayout(panelGradient1);
         panelGradient1.setLayout(panelGradient1Layout);
@@ -175,7 +175,6 @@ public class TabDashboard extends javax.swing.JPanel {
 
         lb_totalSampah.setFont(new java.awt.Font("Arial Black", 1, 24)); // NOI18N
         lb_totalSampah.setForeground(new java.awt.Color(255, 255, 255));
-        lb_totalSampah.setText("1.000");
 
         javax.swing.GroupLayout panelGradient2Layout = new javax.swing.GroupLayout(panelGradient2);
         panelGradient2.setLayout(panelGradient2Layout);
@@ -235,7 +234,6 @@ public class TabDashboard extends javax.swing.JPanel {
 
         lb_laba.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lb_laba.setForeground(new java.awt.Color(255, 255, 255));
-        lb_laba.setText("Rp 1.000");
 
         javax.swing.GroupLayout panelGradient3Layout = new javax.swing.GroupLayout(panelGradient3);
         panelGradient3.setLayout(panelGradient3Layout);

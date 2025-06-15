@@ -835,7 +835,7 @@ private void paginationNasabah() {
                 ResultSet rs = st.executeQuery();
 
                 // Format angka sesuai locale Indonesia
-                NumberFormat formatRupiah = NumberFormat.getInstance(new Locale("id", "ID"));
+                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
 
                 while (rs.next()) {
                     String idNasabah = rs.getString("id_nasabah");
@@ -895,7 +895,7 @@ private void paginationNasabah() {
                 st.setString(3, "%" + kataKunci + "%");
                 st.setString(4, "%" + kataKunci + "%");
                 ResultSet rs = st.executeQuery();
-                NumberFormat formatRupiah = NumberFormat.getInstance(new Locale("id", "ID"));
+                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
 
                 while (rs.next()) {
                     String idNasabah = rs.getString("id_nasabah");

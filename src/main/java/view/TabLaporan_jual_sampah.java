@@ -115,7 +115,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                     double totalPendapatan = rsPendapatan.getDouble("total_pendapatan");
 
                     // Format ke rupiah
-                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                     String pendapatanFormatted = formatRupiah.format(totalPendapatan);
 
                     lbl_total_pendapatan.setText(pendapatanFormatted);
@@ -186,7 +186,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                     if (!harga.equals("-")) {
                         try {
                             double nominal = Double.parseDouble(harga);
-                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                             harga = formatRupiah.format(nominal);
                         } catch (NumberFormatException e) {
                             // Biarkan harga tetap apa adanya jika gagal format
@@ -297,7 +297,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                 try (ResultSet rsPendapatan = pstPendapatan.executeQuery()) {
                     if (rsPendapatan.next()) {
                         double totalPendapatan = rsPendapatan.getDouble("total_pendapatan");
-                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                         String pendapatanFormatted = formatRupiah.format(totalPendapatan);
                         lbl_total_pendapatan.setText(pendapatanFormatted);
                     }
@@ -982,7 +982,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                         if (harga != null && !harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
                                 // Biarkan harga tetap

@@ -165,7 +165,6 @@ public class ToastPanelUI extends BasicPanelUI implements StyleableUI, PropertyC
         }
     }
 
-
     private void installIconComponent(JComponent c) {
         iconComponent = clientProperty(c, TOAST_ICON, null, JComponent.class);
         if (iconComponent != null) {
@@ -173,7 +172,6 @@ public class ToastPanelUI extends BasicPanelUI implements StyleableUI, PropertyC
             c.add(iconComponent);
         }
     }
-
 
     private void uninstallIconComponent(JComponent c) {
         if (iconComponent != null) {
@@ -217,20 +215,21 @@ public class ToastPanelUI extends BasicPanelUI implements StyleableUI, PropertyC
         button.setFocusable(false);
         button.setName("Toast.closeButton");
         button.putClientProperty(BUTTON_TYPE, BUTTON_TYPE_TOOLBAR_BUTTON);
-        button.putClientProperty(STYLE, "" +
-                "arc:999;" +
-                "background:null;");
+        button.putClientProperty(STYLE, ""
+                + "arc:999;"
+                + "background:null;");
         button.setIcon(closeButtonIcon);
         button.addActionListener(e -> closeButtonClicked(c));
         return button;
     }
 
+    @SuppressWarnings("unchecked")
     protected void closeButtonClicked(JComponent c) {
         Object callback = c.getClientProperty(TOAST_CLOSE_CALLBACK);
         if (callback instanceof Runnable) {
             ((Runnable) callback).run();
-        } else if (callback instanceof Consumer) {
-            ((Consumer) callback).accept(c);
+        } else if (callback instanceof Consumer<?>) {
+            ((Consumer<JComponent>) callback).accept(c);
         }
     }
 
@@ -240,7 +239,6 @@ public class ToastPanelUI extends BasicPanelUI implements StyleableUI, PropertyC
         }
         c.setLayout(layout);
     }
-
 
     protected void installStyle(JPanel c) {
         try {
