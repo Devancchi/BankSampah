@@ -35,7 +35,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class TabTransaksi extends javax.swing.JPanel {
 
-    private static final NumberFormat Rp = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+    private static final NumberFormat Rp = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
     private int harga, total;
     private final UserSession users;
 
@@ -53,7 +53,7 @@ public class TabTransaksi extends javax.swing.JPanel {
                 });
             }
         });
-        
+
         // Add document listener to automatically trigger Enter key
         scanbarang.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
@@ -63,8 +63,12 @@ public class TabTransaksi extends javax.swing.JPanel {
                     });
                 }
             }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {}
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {}
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            }
         });
     }
 
@@ -222,7 +226,7 @@ public class TabTransaksi extends javax.swing.JPanel {
                 double jumlahBayar = total;
 
                 // Format total dan saldo dalam Rupiah
-                NumberFormat Rp = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                NumberFormat Rp = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                 String totalFormatted = Rp.format(jumlahBayar);
 
                 // Tampilkan dialog konfirmasi
