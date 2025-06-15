@@ -170,7 +170,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                         if (harga != null && !harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
                                 // biarkan harga tetap
@@ -880,7 +880,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                         if (harga != null && !harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
                                 // biarkan harga tetap
@@ -943,8 +943,8 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                 int totalTransaksi = rs.getInt("total_transaksi");
                 
                 // Format dan update JLabel dengan total keseluruhan
-                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-                NumberFormat formatAngka = NumberFormat.getNumberInstance(new Locale("id", "ID"));
+                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                NumberFormat formatAngka = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                 
                 // Update JLabel dengan nilai SEMUA data (tidak terpengaruh filter)
                 lbl_total_harga.setText(formatRupiah.format(totalHarga));
