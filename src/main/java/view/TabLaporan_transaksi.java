@@ -913,20 +913,19 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
             st = conn.prepareStatement(sql);
             rs = st.executeQuery();
             
-            if (rs.next()) {
-                double totalHarga = rs.getDouble("total_harga_keseluruhan");
-                int totalItem = rs.getInt("total_item_terjual");
-                int totalTransaksi = rs.getInt("total_transaksi");
-                
-                // Format dan update JLabel dengan total keseluruhan
-                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
-                NumberFormat formatAngka = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
-                
-                // Update JLabel dengan nilai SEMUA data (tidak terpengaruh filter)
-                lbl_total_harga.setText(formatRupiah.format(totalHarga));
-                lbl_item_terjual.setText(formatAngka.format(totalItem) + " Item");
-                lbl_total_transaksi.setText(formatAngka.format(totalTransaksi) + " Transaksi");
-            }
+           if (rs.next()) {
+            double totalHarga = rs.getDouble("total_harga_keseluruhan");
+            int totalItem = rs.getInt("total_item_terjual");
+            int totalTransaksi = rs.getInt("total_transaksi");
+
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+            NumberFormat formatAngka = NumberFormat.getNumberInstance(Locale.forLanguageTag("id-ID"));
+
+            lbl_total_harga.setText(formatRupiah.format(totalHarga));
+            lbl_item_terjual.setText(formatAngka.format(totalItem) + " Item");
+            lbl_total_transaksi.setText(formatAngka.format(totalTransaksi) + " Transaksi");
+        }
+
             
         } catch (SQLException e) {
             Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
