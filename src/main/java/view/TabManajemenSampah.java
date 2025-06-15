@@ -54,7 +54,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 });
             }
         });
-        
+
         // Add document listener to automatically trigger Enter key
         txt_Kode.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
@@ -64,10 +64,14 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     });
                 }
             }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {}
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {}
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            }
         });
-        
+
         // Inisialisasi pagination
         dataPerHalaman = Integer.parseInt(cbx_data2.getSelectedItem().toString());
         calculateTotalPageHarga();
@@ -1997,8 +2001,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
     private void txt_KodeActionPerformed(java.awt.event.ActionEvent evt) {
         // Trigger the same action as when Enter key is pressed
-        txt_KodeKeyPressed(new java.awt.event.KeyEvent(txt_Kode, java.awt.event.KeyEvent.KEY_PRESSED, 
-            System.currentTimeMillis(), 0, java.awt.event.KeyEvent.VK_ENTER, java.awt.event.KeyEvent.CHAR_UNDEFINED));
+        txt_KodeKeyPressed(new java.awt.event.KeyEvent(txt_Kode, java.awt.event.KeyEvent.KEY_PRESSED,
+                System.currentTimeMillis(), 0, java.awt.event.KeyEvent.VK_ENTER, java.awt.event.KeyEvent.CHAR_UNDEFINED));
     }
 
     public void importExcelSampahToDatabase(File excelFile) {
@@ -2238,7 +2242,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 ResultSet rs = st.executeQuery();
 
                 // Format angka sesuai locale Indonesia
-                NumberFormat formatRupiah = NumberFormat.getInstance(new Locale("id", "ID"));
+                NumberFormat formatRupiah = NumberFormat.getInstance(Locale.forLanguageTag("id-ID"));
 
                 while (rs.next()) {
                     String idNasabah = rs.getString("id_nasabah");
