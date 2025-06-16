@@ -269,10 +269,10 @@ public class TabTransaksi extends javax.swing.JPanel {
     return " ".repeat(Math.max(0, padding)) + teks;
 }
 
-
-
-
-    
+                // Format total dan saldo dalam Rupiah
+                NumberFormat Rp = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                String totalFormatted = Rp.format(jumlahBayar);
+   
 private void prosesPembayaranNasabah(String id_nasabah) {
     try {
         Connection conn = DriverManager.getConnection(
