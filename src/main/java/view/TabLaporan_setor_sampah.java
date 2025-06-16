@@ -116,7 +116,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                     double totalPengeluaran = rsPengeluaran.getDouble("total_pengeluaran");
 
                     // Format ke rupiah
-                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                     String pengeluaranFormatted = formatRupiah.format(totalPengeluaran);
 
                     lbl_pengeluaran.setText(pengeluaranFormatted);
@@ -191,7 +191,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                     if (!harga.equals("-")) {
                         try {
                             double nominal = Double.parseDouble(harga);
-                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                             harga = formatRupiah.format(nominal);
                         } catch (NumberFormatException e) {
                             // Biarkan harga tetap apa adanya jika gagal format
@@ -243,6 +243,9 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         panelGradient1 = new grafik.panel.PanelGradient();
         lbl_pengeluaran = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        lbl_total_transaksi = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
         panelBawah5 = new component.ShadowPanel();
         lb_halaman5 = new javax.swing.JLabel();
         btn_before5 = new javax.swing.JButton();
@@ -251,12 +254,6 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         btn_last5 = new javax.swing.JButton();
         btn_first5 = new javax.swing.JButton();
         btn_Export5 = new component.Jbutton();
-        panelGradient2 = new grafik.panel.PanelGradient();
-        box_rentang_waktu = new javax.swing.JComboBox<>();
-        jLabel2 = new javax.swing.JLabel();
-        lbl_total_transaksi = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
 
         dateChooser1.setDateChooserRender(defaultDateChooserRender1);
         dateChooser1.setDateSelectable(null);
@@ -459,6 +456,19 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("Total Pengeluaran");
 
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/total_item.png"))); // NOI18N
+        jLabel2.setText("jLabel2");
+
+        lbl_total_transaksi.setBackground(new java.awt.Color(255, 255, 255));
+        lbl_total_transaksi.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        lbl_total_transaksi.setForeground(new java.awt.Color(255, 255, 255));
+        lbl_total_transaksi.setText("0");
+
+        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel6.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Total Transaksi");
+
         javax.swing.GroupLayout panelGradient1Layout = new javax.swing.GroupLayout(panelGradient1);
         panelGradient1.setLayout(panelGradient1Layout);
         panelGradient1Layout.setHorizontalGroup(
@@ -466,19 +476,32 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
             .addGroup(panelGradient1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelGradient1Layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 65, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelGradient1Layout.createSequentialGroup()
                         .addComponent(lbl_pengeluaran, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addContainerGap())
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         panelGradient1Layout.setVerticalGroup(
             panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelGradient1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(lbl_pengeluaran, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(282, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_pengeluaran)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addGroup(panelGradient1Layout.createSequentialGroup()
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         lb_halaman5.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -551,62 +574,6 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelGradient2.setBackground(new java.awt.Color(0, 153, 153));
-        panelGradient2.setColorGradient(new java.awt.Color(0, 204, 204));
-
-        box_rentang_waktu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Semua", "Laporan per 7 Hari Terakhir", "Laporan per 30 Hari Terakhir", "Laporan per 1 Tahun Terakhir" }));
-
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/total_item.png"))); // NOI18N
-        jLabel2.setText("jLabel2");
-
-        lbl_total_transaksi.setBackground(new java.awt.Color(255, 255, 255));
-        lbl_total_transaksi.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        lbl_total_transaksi.setForeground(new java.awt.Color(255, 255, 255));
-        lbl_total_transaksi.setText("0");
-
-        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel6.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("Total Transaksi");
-
-        jLabel5.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel5.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("Rentan Periode");
-
-        javax.swing.GroupLayout panelGradient2Layout = new javax.swing.GroupLayout(panelGradient2);
-        panelGradient2.setLayout(panelGradient2Layout);
-        panelGradient2Layout.setHorizontalGroup(
-            panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelGradient2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelGradient2Layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(box_rentang_waktu, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(65, Short.MAX_VALUE))
-        );
-        panelGradient2Layout.setVerticalGroup(
-            panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelGradient2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addGroup(panelGradient2Layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(22, 22, 22)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(box_rentang_waktu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(246, Short.MAX_VALUE))
-        );
-
         javax.swing.GroupLayout panelTableLayout = new javax.swing.GroupLayout(panelTable);
         panelTable.setLayout(panelTableLayout);
         panelTableLayout.setHorizontalGroup(
@@ -616,9 +583,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
                     .addComponent(panelBawah5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(panelGradient2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelGradient1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         panelTableLayout.setVerticalGroup(
@@ -626,11 +591,10 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
             .addGroup(panelTableLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 742, Short.MAX_VALUE)
                     .addGroup(panelTableLayout.createSequentialGroup()
                         .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panelGradient2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelBawah5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -790,7 +754,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         String kataKunci = txt_search.getText().trim();
         String tanggalRange = txt_date.getText().trim();
         String filter = box_pilih.getSelectedItem().toString();
-        String rentangWaktu = box_rentang_waktu.getSelectedItem().toString();
+        
 
         String tanggalMulai = "";
         String tanggalAkhir = "";
@@ -798,30 +762,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         boolean isSingleDate = false;
         boolean isTimeRangeFilter = false;
 
-        // Cek rentang waktu dari combobox
-        if (!rentangWaktu.equals("Semua")) {
-            isTimeRangeFilter = true;
-            LocalDate today = LocalDate.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-            switch (rentangWaktu) {
-                case "Laporan 7 Hari Terakhir":
-                    tanggalMulai = today.minusDays(7).format(formatter);
-                    tanggalAkhir = today.format(formatter);
-                    isRange = true;
-                    break;
-                case "Laporan per 30 Hari Terakhir":
-                    tanggalMulai = today.minusDays(30).format(formatter);
-                    tanggalAkhir = today.format(formatter);
-                    isRange = true;
-                    break;
-                case "Laporan per 1 Tahun Terakhir":
-                    tanggalMulai = today.minusYears(1).format(formatter);
-                    tanggalAkhir = today.format(formatter);
-                    isRange = true;
-                    break;
-            }
-        } else if (!tanggalRange.isEmpty()) {
+           if (!tanggalRange.isEmpty()) {
             if (tanggalRange.contains("dari")) {
                 String[] parts = tanggalRange.split("dari");
                 if (parts.length == 2) {
@@ -947,7 +888,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                         if (harga != null && !harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
                                 // biarkan harga tetap
@@ -1071,7 +1012,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                 try (ResultSet rsPengeluaran = pstPengeluaran.executeQuery()) {
                     if (rsPengeluaran.next()) {
                         double totalPengeluaran = rsPengeluaran.getDouble("total_pengeluaran");
-                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                         String pengeluaranFormatted = formatRupiah.format(totalPengeluaran);
                         lbl_pengeluaran.setText(pengeluaranFormatted);
                     }
@@ -1125,7 +1066,6 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
     private component.ShadowPanel ShadowSearch;
     private component.ShadowPanel ShadowSearch1;
     private javax.swing.JComboBox<String> box_pilih;
-    private javax.swing.JComboBox<String> box_rentang_waktu;
     private component.Jbutton btn_Export5;
     private javax.swing.JButton btn_before5;
     private component.Jbutton btn_cancel;
@@ -1138,7 +1078,6 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
     private datechooser.render.DefaultDateChooserRender defaultDateChooserRender1;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1149,7 +1088,6 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
     private component.ShadowPanel panelBawah5;
     private component.ShadowPanel panelFilter;
     private grafik.panel.PanelGradient panelGradient1;
-    private grafik.panel.PanelGradient panelGradient2;
     private javax.swing.JPanel panelMain;
     private component.ShadowPanel panelTable;
     private javax.swing.JPanel panelView;
