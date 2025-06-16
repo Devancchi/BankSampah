@@ -74,39 +74,36 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
     }
 
     private int getTotalData() {
-        try {
-            String sql = """
-                SELECT COUNT(*) as total FROM (
-                    SELECT 
-                        u.nama_user AS nama_admin,
-                        n.nama_nasabah AS nama_nasabah,
-                        kate.nama_kategori AS nama_sampah,
-                        st.berat_sampah AS berat_sampah,                
-                        st.harga AS harga,
-                        st.tanggal AS riwayat,
-                        st.saldo_nasabah AS saldo_didapatkan
-                    FROM laporan_pengeluaran lpn
-                    INNER JOIN login u ON lpn.id_user = u.id_user
-                    INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                    INNER JOIN sampah s ON st.id_sampah = s.id_sampah
-                    INNER JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                    INNER JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
-                    WHERE lpn.id_setoran IS NOT NULL
-                ) AS combine
-            """;
+    try {
+        String sql = """
+            SELECT COUNT(*) as total FROM (
+               SELECT 
+                                                                                                u.nama_user AS nama_admin,
+                                                                                                tr.nama_barang AS nama_barang,
+                                                                                                ns.nama_nasabah AS nama_nasabah,
+                                                                                                tr.kode_transaksi AS kode_transaksi,
+                                                                                                tr.qty AS quantity,                
+                                                                                                tr.total_harga AS total_harga,
+                                                                                                tr.tanggal AS riwayat
+                                                                                            FROM transaksi tr
+                                                                                            INNER JOIN login u ON tr.id_user = u.id_user
+                                                                                            INNER JOIN manajemen_nasabah ns ON tr.id_nasabah = ns.id_nasabah
+            ) AS combine
+        """;
 
-            try (PreparedStatement st = conn.prepareStatement(sql);
-                 ResultSet rs = st.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("total");
-                }
+        try (PreparedStatement st = conn.prepareStatement(sql);
+             ResultSet rs = st.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
-        return 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
     }
+    return 0;
+}
+
 
     private void loadData(String filterJenis) {
         DefaultTableModel model = new DefaultTableModel() {
@@ -117,40 +114,37 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         };
 
         model.setColumnIdentifiers(new String[]{
-            "No", "Nama Admin", "Nama Nasabah", "Nama Sampah", "Berat Sampah", "Harga", "Saldo Didapatkan", "Riwayat"
+           "No", "Nama Admin", "Nama Barang","Nama Nasabah", "Kode Transaksi", "Quantity", "Total Harga", "Riwayat"
         });
 
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("""
-                SELECT 
-                    nama_admin, 
-                    nama_nasabah,
-                    nama_sampah,
-                    berat_sampah,
-                    harga,
-                    saldo_didapatkan,
-                    riwayat
-                FROM (
-                    SELECT 
-                        u.nama_user AS nama_admin,
-                        n.nama_nasabah AS nama_nasabah,
-                        kate.nama_kategori AS nama_sampah,
-                        st.berat_sampah AS berat_sampah,                
-                        st.harga AS harga,
-                        st.tanggal AS riwayat,
-                        st.saldo_nasabah AS saldo_didapatkan
-                    FROM laporan_pengeluaran lpn
-                    INNER JOIN login u ON lpn.id_user = u.id_user
-                    INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                    INNER JOIN sampah s ON st.id_sampah = s.id_sampah
-                    INNER JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                    INNER JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
-                    WHERE lpn.id_setoran IS NOT NULL
+                 SELECT 
+                                                                            nama_admin, 
+                                                                            nama_barang,
+                                                                            nama_nasabah,
+                                                                            kode_transaksi,
+                                                                            quantity,
+                                                                            total_harga,
+                                                                            riwayat
+                                                                        FROM (
+                                                                            SELECT 
+                                                                                u.nama_user AS nama_admin,
+                                                                                tr.nama_barang AS nama_barang,
+                                                                                ns.nama_nasabah AS nama_nasabah,
+                                                                                tr.kode_transaksi AS kode_transaksi,
+                                                                                tr.qty AS quantity,                
+                                                                                tr.total_harga AS total_harga,
+                                                                                tr.tanggal AS riwayat
+                                                                            FROM transaksi tr
+                                                                            INNER JOIN login u ON tr.id_user = u.id_user
+                                                                            INNER JOIN manajemen_nasabah ns ON tr.id_nasabah = ns.id_nasabah
+                                                                            
             """);
 
             if (!filterJenis.isEmpty()) {
-                sql.append(" AND kate.nama_kategori = ?");
+                sql.append(" AND tr.nama_barang = ?");
             }
 
             sql.append(") AS combine ORDER BY riwayat DESC LIMIT ? OFFSET ?");
@@ -166,11 +160,11 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                 try (ResultSet rs = st.executeQuery()) {
                     int no = (halamanSaatIni - 1) * dataPerHalaman + 1;
                     while (rs.next()) {
-                        String harga = rs.getString("harga");
+                        String harga = rs.getString("total_harga");
                         if (harga != null && !harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
                                 // biarkan harga tetap
@@ -180,12 +174,12 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                         model.addRow(new Object[]{
                             no++,
                             rs.getString("nama_admin"),
-                            rs.getString("nama_nasabah"),
-                            rs.getString("nama_sampah"),
-                            rs.getString("berat_sampah"),
-                            harga,
-                            rs.getString("saldo_didapatkan"),
-                            rs.getString("riwayat")
+                        rs.getString("nama_barang"),
+                         rs.getString("nama_nasabah"),
+                        rs.getString("kode_transaksi"),
+                        rs.getString("quantity"),
+                        harga,
+                        rs.getString("riwayat")
                         });
                     }
                 }
@@ -273,7 +267,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
             }
         });
 
-        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Barang" }));
+        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Barang", "Nama Nasabah" }));
         box_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 box_pilihActionPerformed(evt);
@@ -419,11 +413,11 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
 
             },
             new String [] {
-                "No", "Nama Admin", "Nama Barang", "Kode Transaksi", "Quantity", "Total Harga", "Riwayat"
+                "No", "Nama Admin", "Nama Barang", "Nama Nasabah", "Kode Transaksi", "Quantity", "Total Harga", "Riwayat"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -513,7 +507,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                     .addGroup(panelGradient2Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(508, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         lb_halaman2.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -596,13 +590,13 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(shadowTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(shadowTableLayout.createSequentialGroup()
-                        .addComponent(panelGradient2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(48, 48, 48))
+                        .addComponent(panelGradient2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(shadowTableLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 742, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panelBawah2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addComponent(panelBawah2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout panelViewLayout = new javax.swing.GroupLayout(panelView);
@@ -747,169 +741,151 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_dateKeyTyped
 
-    private void searchByKeywordAndDate() {
-        String kataKunci = txt_search.getText().trim();
-        String tanggalRange = txt_date.getText().trim();
-        String filter = box_pilih.getSelectedItem().toString();
+   private void searchByKeywordAndDate() {
+    String kataKunci = txt_search.getText().trim();
+    String tanggalRange = txt_date.getText().trim();
+    String filter = box_pilih.getSelectedItem().toString();
 
-        String tanggalMulai = "";
-        String tanggalAkhir = "";
-        boolean isRange = false;
-        boolean isSingleDate = false;
+    String tanggalMulai = "";
+    String tanggalAkhir = "";
+    boolean isRange = false;
+    boolean isSingleDate = false;
 
-        if (!tanggalRange.isEmpty()) {
-            if (tanggalRange.contains("dari")) {
-                String[] parts = tanggalRange.split("dari");
-                if (parts.length == 2) {
-                    tanggalMulai = parts[0].trim();
-                    tanggalAkhir = parts[1].trim();
-                    isRange = true;
-                }
-            } else {
-                tanggalMulai = tanggalRange;
-                isSingleDate = true;
+    if (!tanggalRange.isEmpty()) {
+        if (tanggalRange.contains("dari")) {
+            String[] parts = tanggalRange.split("dari");
+            if (parts.length == 2) {
+                tanggalMulai = parts[0].trim();
+                tanggalAkhir = parts[1].trim();
+                isRange = true;
             }
-        }
-
-        DefaultTableModel model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        model.setColumnIdentifiers(new String[]{
-            "No", "Nama Admin", "Nama Nasabah", "Nama Sampah", "Berat Sampah", "Harga", "Saldo Didapatkan", "Riwayat"
-        });
-
-        try {
-            StringBuilder sql = new StringBuilder();
-            sql.append("""
-                SELECT 
-                    nama_admin, 
-                    nama_nasabah,
-                    nama_sampah,
-                    berat_sampah,
-                    harga,
-                    saldo_didapatkan,
-                    riwayat
-                FROM (
-                    SELECT 
-                        u.nama_user AS nama_admin,
-                        n.nama_nasabah AS nama_nasabah,
-                        kate.nama_kategori AS nama_sampah,
-                        st.berat_sampah AS berat_sampah,                
-                        st.harga AS harga,
-                        st.tanggal AS riwayat,
-                        st.saldo_nasabah AS saldo_didapatkan
-                    FROM laporan_pengeluaran lpn
-                    INNER JOIN login u ON lpn.id_user = u.id_user
-                    INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                    INNER JOIN sampah s ON st.id_sampah = s.id_sampah
-                    INNER JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                    INNER JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
-                    WHERE lpn.id_setoran IS NOT NULL
-            """);
-
-            boolean whereAdded = false;
-
-            // Filter berdasarkan kata kunci
-            if (!kataKunci.isEmpty()) {
-                switch (filter) {
-                    case "Default":
-                        sql.append(" AND (nama_admin LIKE ? OR nama_nasabah LIKE ? OR nama_sampah LIKE ?) ");
-                        whereAdded = true;
-                        break;
-                    case "Nama Admin":
-                        sql.append(" AND nama_admin LIKE ? ");
-                        whereAdded = true;
-                        break;
-                    case "Nama Nasabah":
-                        sql.append(" AND nama_nasabah LIKE ? ");
-                        whereAdded = true;
-                        break;
-                    case "Nama Sampah":
-                        sql.append(" AND nama_sampah LIKE ? ");
-                        whereAdded = true;
-                        break;
-                }
-            }
-
-            // Filter berdasarkan tanggal
-            if (isRange) {
-                sql.append(" AND DATE(riwayat) BETWEEN ? AND ? ");
-            } else if (isSingleDate) {
-                sql.append(" AND DATE(riwayat) = ? ");
-            }
-
-            sql.append(") AS combine ORDER BY riwayat DESC LIMIT ? OFFSET ?");
-
-            try (PreparedStatement st = conn.prepareStatement(sql.toString())) {
-                int paramIndex = 1;
-
-                // Set parameter untuk kata kunci
-                if (!kataKunci.isEmpty()) {
-                    String searchPattern = "%" + kataKunci + "%";
-                    switch (filter) {
-                        case "Default":
-                            st.setString(paramIndex++, searchPattern);
-                            st.setString(paramIndex++, searchPattern);
-                            st.setString(paramIndex++, searchPattern);
-                            break;
-                        default:
-                            st.setString(paramIndex++, searchPattern);
-                            break;
-                    }
-                }
-
-                // Set parameter untuk tanggal
-                if (isRange) {
-                    st.setString(paramIndex++, tanggalMulai);
-                    st.setString(paramIndex++, tanggalAkhir);
-                } else if (isSingleDate) {
-                    st.setString(paramIndex++, tanggalMulai);
-                }
-
-                st.setInt(paramIndex++, dataPerHalaman);
-                st.setInt(paramIndex, (halamanSaatIni - 1) * dataPerHalaman);
-
-                try (ResultSet rs = st.executeQuery()) {
-                    int no = (halamanSaatIni - 1) * dataPerHalaman + 1;
-                    while (rs.next()) {
-                        String harga = rs.getString("harga");
-                        if (harga != null && !harga.equals("-")) {
-                            try {
-                                double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-                                harga = formatRupiah.format(nominal);
-                            } catch (NumberFormatException e) {
-                                // biarkan harga tetap
-                            }
-                        }
-
-                        model.addRow(new Object[]{
-                            no++,
-                            rs.getString("nama_admin"),
-                            rs.getString("nama_nasabah"),
-                            rs.getString("nama_sampah"),
-                            rs.getString("berat_sampah"),
-                            harga,
-                            rs.getString("saldo_didapatkan"),
-                            rs.getString("riwayat")
-                        });
-                    }
-                }
-            }
-
-            tb_laporan.setModel(model);
-            calculateTotalPage();
-            updateTotalLabels();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        } else {
+            tanggalMulai = tanggalRange;
+            isSingleDate = true;
         }
     }
+
+    DefaultTableModel model = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+
+    model.setColumnIdentifiers(new String[]{
+        "No", "Nama Admin", "Nama Barang","Nama Nasabah", "Kode Transaksi", "Quantity", "Total Harga", "Riwayat"
+    });
+
+    try {
+        StringBuilder sql = new StringBuilder();
+        sql.append("""
+            SELECT 
+                nama_admin, 
+                nama_barang,
+                nama_nasabah,
+                kode_transaksi,
+                quantity,
+                total_harga,
+                riwayat
+            FROM (
+                SELECT 
+                    u.nama_user AS nama_admin,
+                    tr.nama_barang AS nama_barang,
+                    ns.nama_nasabah AS nama_nasabah,
+                    tr.kode_transaksi AS kode_transaksi,
+                    tr.qty AS quantity,                
+                    tr.total_harga AS total_harga,
+                    tr.tanggal AS riwayat
+                FROM transaksi tr
+                INNER JOIN login u ON tr.id_user = u.id_user
+                INNER JOIN manajemen_nasabah ns ON tr.id_nasabah = ns.id_nasabah
+                WHERE 1=1
+        """);
+
+        // Filter berdasarkan kata kunci
+        if (!kataKunci.isEmpty()) {
+            switch (filter) {
+                case "Default" -> sql.append(" AND (u.nama_user LIKE ? OR tr.nama_barang LIKE ? OR ns.nama_nasabah LIKE ?) ");
+                case "Nama Admin" -> sql.append(" AND u.nama_user LIKE ? ");
+                case "Nama Barang" -> sql.append(" AND tr.nama_barang LIKE ? ");
+                case "Nama Nasabah" -> sql.append(" AND ns.nama_nasabah LIKE ? ");
+            }
+        }
+
+        // Filter berdasarkan tanggal
+        if (isRange) {
+            sql.append(" AND DATE(tr.tanggal) BETWEEN ? AND ? ");
+        } else if (isSingleDate) {
+            sql.append(" AND DATE(tr.tanggal) = ? ");
+        }
+
+        sql.append(") AS combine ORDER BY riwayat DESC LIMIT ? OFFSET ?");
+
+        try (PreparedStatement st = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+
+            // Set parameter kata kunci
+            if (!kataKunci.isEmpty()) {
+                String searchPattern = "%" + kataKunci + "%";
+                switch (filter) {
+                    case "Default" -> {
+                        st.setString(paramIndex++, searchPattern);
+                        st.setString(paramIndex++, searchPattern);
+                    }
+                    default -> st.setString(paramIndex++, searchPattern);
+                }
+            }
+
+            // Set parameter tanggal
+            if (isRange) {
+                st.setString(paramIndex++, tanggalMulai);
+                st.setString(paramIndex++, tanggalAkhir);
+            } else if (isSingleDate) {
+                st.setString(paramIndex++, tanggalMulai);
+            }
+
+            // Set limit dan offset
+            st.setInt(paramIndex++, dataPerHalaman);
+            st.setInt(paramIndex, (halamanSaatIni - 1) * dataPerHalaman);
+
+            try (ResultSet rs = st.executeQuery()) {
+                int no = (halamanSaatIni - 1) * dataPerHalaman + 1;
+                while (rs.next()) {
+                    String harga = rs.getString("total_harga");
+                    if (harga != null && !harga.equals("-")) {
+                        try {
+                            double nominal = Double.parseDouble(harga);
+                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                            harga = formatRupiah.format(nominal);
+                        } catch (NumberFormatException e) {
+                            // harga tetap
+                        }
+                    }
+
+                    model.addRow(new Object[]{
+                        no++,
+                        rs.getString("nama_admin"),
+                        rs.getString("nama_barang"),
+                         rs.getString("nama_nasabah"),
+                        rs.getString("kode_transaksi"),
+                        rs.getString("quantity"),
+                        harga,
+                        rs.getString("riwayat")
+                    });
+                }
+            }
+        }
+
+        tb_laporan.setModel(model);
+        calculateTotalPage();
+        updateTotalLabels();
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    }
+}
+
 
     private void updateTotalLabels() {
         Connection conn = null;
@@ -937,20 +913,19 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
             st = conn.prepareStatement(sql);
             rs = st.executeQuery();
             
-            if (rs.next()) {
-                double totalHarga = rs.getDouble("total_harga_keseluruhan");
-                int totalItem = rs.getInt("total_item_terjual");
-                int totalTransaksi = rs.getInt("total_transaksi");
-                
-                // Format dan update JLabel dengan total keseluruhan
-                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
-                NumberFormat formatAngka = NumberFormat.getNumberInstance(new Locale("id", "ID"));
-                
-                // Update JLabel dengan nilai SEMUA data (tidak terpengaruh filter)
-                lbl_total_harga.setText(formatRupiah.format(totalHarga));
-                lbl_item_terjual.setText(formatAngka.format(totalItem) + " Item");
-                lbl_total_transaksi.setText(formatAngka.format(totalTransaksi) + " Transaksi");
-            }
+           if (rs.next()) {
+            double totalHarga = rs.getDouble("total_harga_keseluruhan");
+            int totalItem = rs.getInt("total_item_terjual");
+            int totalTransaksi = rs.getInt("total_transaksi");
+
+            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+            NumberFormat formatAngka = NumberFormat.getNumberInstance(Locale.forLanguageTag("id-ID"));
+
+            lbl_total_harga.setText(formatRupiah.format(totalHarga));
+            lbl_item_terjual.setText(formatAngka.format(totalItem) + " Item");
+            lbl_total_transaksi.setText(formatAngka.format(totalTransaksi) + " Transaksi");
+        }
+
             
         } catch (SQLException e) {
             Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);

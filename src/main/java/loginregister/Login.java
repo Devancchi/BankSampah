@@ -3,7 +3,7 @@ package loginregister;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import component.UserSession;
-import login_register.component.ButtonLink;
+import loginregister.component.ButtonLink;
 import net.miginfocom.swing.MigLayout;
 import raven.modal.ModalDialog;
 import java.security.MessageDigest;
@@ -153,7 +153,8 @@ public class Login extends JPanel {
                     notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Username atau password salah.");
                 }
             } catch (Exception ex) {
-                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan koneksi: " + ex.getMessage());
+                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan koneksi:" + ex.getMessage());
+                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan koneksi: Akses ke Database");
                 ex.printStackTrace();
             }
         });

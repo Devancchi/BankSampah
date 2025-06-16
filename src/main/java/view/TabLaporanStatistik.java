@@ -171,7 +171,7 @@ private void loadData(String filterJenis) {
                 if (!harga.equals("-")) {
                     try {
                         double nominal = Double.parseDouble(harga);
-                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                         harga = formatRupiah.format(nominal);
                     } catch (NumberFormatException e) {
                         // Biarkan harga tetap apa adanya jika gagal format
@@ -1298,7 +1298,7 @@ private void loadData(String filterJenis) {
                 if (harga != null && !harga.equals("-")) {
                     try {
                         double nominal = Double.parseDouble(harga);
-                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                         harga = formatRupiah.format(nominal);
                     } catch (NumberFormatException e) {
                         // Biarkan tetap
@@ -1557,7 +1557,7 @@ private void loadData(String filterJenis) {
                         if (!harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
                                 // Biarkan harga tetap apa adanya jika gagal format
@@ -1747,7 +1747,7 @@ private void loadData(String filterJenis) {
                     if (harga != null && !harga.equals("-")) {
                         try {
                             double nominal = Double.parseDouble(harga);
-                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                             harga = formatRupiah.format(nominal);
                         } catch (NumberFormatException e) {
                             // abaikan
