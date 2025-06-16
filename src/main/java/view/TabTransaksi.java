@@ -110,7 +110,7 @@ public class TabTransaksi extends javax.swing.JPanel {
 
         public void cetakStruk(String kode, List<Object[]> pesanan, int tunai) {
             try {
-                String printerName = "OK-58D"; // Ganti sesuai nama printer kamu
+                String printerName = "POS-80"; // Ganti sesuai nama printer kamu
                 PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
                 PrintService printer = null;
 
@@ -206,46 +206,120 @@ public class TabTransaksi extends javax.swing.JPanel {
             return String.format("%,d", angka).replace(",", ".");
         }
     }
+    
+    public void cetakStrukTarikTunai(String kode, String nama, double jumlahTarik, double saldoBaru) {
+    try {
+        String printerName = "POS-80"; // Ganti sesuai nama printer thermal kamu
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        PrintService printer = null;
 
-    private void prosesPembayaranNasabah(String id_nasabah) {
-        try {
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
+        for (PrintService ps : services) {
+            if (ps.getName().equalsIgnoreCase(printerName)) {
+                printer = ps;
+                break;
+            }
+        }
 
-            String sql = "SELECT * FROM manajemen_nasabah WHERE id_nasabah = ?";
-            PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setString(1, id_nasabah);
-            ResultSet rs = pst.executeQuery();
+        if (printer == null) {
+            System.out.println("Printer tidak ditemukan.");
+            return;
+        }
 
-            if (rs.next()) {
-                String nama = rs.getString("nama_nasabah");
-                double saldo = rs.getDouble("saldo_total");
+        NumberFormat rupiah = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        StringBuilder sb = new StringBuilder();
 
-                // Hitung total transaksi
-                hitungTotal(); // pastikan method ini menghitung dan menyet nilai ke variabel `total`
-                double jumlahBayar = total;
+        sb.append(center("Bank Sampah Sahabat Ibu")).append("\n");
+        sb.append(center("Jl. Perumahan Taman Gading")).append("\n");
+        sb.append(center("Tumpengsari, Kaliwates, Jember")).append("\n");
+        sb.append(center("Telp: 082141055879")).append("\n");
+        sb.append(center("STRUK TARIK TUNAI")).append("\n");
+        sb.append("--------------------------------\n");
+
+        String tgl = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
+        sb.append("Tanggal     : ").append(tgl).append("\n");
+        sb.append("Kode Trans  : ").append(kode).append("\n");
+        sb.append("Nama        : ").append(potong(nama, 20)).append("\n");
+        sb.append("Tarik Tunai : ").append(rupiah.format(jumlahTarik)).append("\n");
+        sb.append("Sisa Saldo  : ").append(rupiah.format(saldoBaru)).append("\n");
+
+        sb.append("--------------------------------\n");
+        sb.append(center("Terima Kasih")).append("\n");
+        sb.append(center("Telah Menabung & Peduli Lingkungan")).append("\n\n");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.write(sb.toString().getBytes("UTF-8"));
+
+        // Tambahan baris kosong & potong kertas
+        out.write(new byte[]{0x0A, 0x0A}); // Baris kosong
+        out.write(new byte[]{0x1D, 0x56, 0x00}); // Perintah cut kertas (ESC/POS)
+
+        DocPrintJob job = printer.createPrintJob();
+        Doc doc = new SimpleDoc(out.toByteArray(), DocFlavor.BYTE_ARRAY.AUTOSENSE, null);
+        job.print(doc, null);
+
+        System.out.println("Struk tarik tunai dicetak.");
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+    private String center(String teks) {
+    int width = 32; // Untuk printer 58mm (ganti 48 untuk printer 80mm)
+    teks = teks.trim();
+    int padding = (width - teks.length()) / 2;
+    return " ".repeat(Math.max(0, padding)) + teks;
+}
 
                 // Format total dan saldo dalam Rupiah
                 NumberFormat Rp = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                 String totalFormatted = Rp.format(jumlahBayar);
+   
+private void prosesPembayaranNasabah(String id_nasabah) {
+    try {
+        Connection conn = DriverManager.getConnection(
+        "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
 
-                // Tampilkan dialog konfirmasi
+        String sql = "SELECT * FROM manajemen_nasabah WHERE id_nasabah = ?";
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, id_nasabah);
+        ResultSet rs = pst.executeQuery();
+
+        if (rs.next()) {
+            String nama = rs.getString("nama_nasabah");
+            double saldo = rs.getDouble("saldo_total");
+
+            hitungTotal(); // asumsi ini set nilai ke 'total'
+            double jumlahBayar = total;
+
+            NumberFormat Rp = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+            String totalFormatted = Rp.format(jumlahBayar);
+
+            String[] pilihan = {"Pembayaran", "Tarik Tunai", "Batal"};
+            int pilihanUser = JOptionPane.showOptionDialog(this,
+                "Nama: " + nama +
+                        "\nSaldo saat ini: " + Rp.format(saldo) +
+                        "\n\nPilih jenis transaksi:",
+                "Pilih Transaksi",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                pilihan,
+                pilihan[0]);
+
+            if (pilihanUser == 0) { // PEMBAYARAN
                 int konfirmasi = JOptionPane.showConfirmDialog(this,
-                        "Nama: " + nama
-                        + "\nSaldo saat ini: " + Rp.format(saldo)
-                        + "\nTotal transaksi: " + totalFormatted
-                        + "\n\nLanjutkan pembayaran?",
+                        "Nama: " + nama +
+                        "\nSaldo saat ini: " + Rp.format(saldo) +
+                        "\nTotal transaksi: " + totalFormatted +
+                        "\n\nLanjutkan pembayaran?",
                         "Konfirmasi Pembayaran",
                         JOptionPane.YES_NO_OPTION);
 
                 if (konfirmasi == JOptionPane.YES_OPTION) {
                     if (jumlahBayar > saldo) {
-                        JOptionPane.showMessageDialog(this,
-                                "Saldo tidak mencukupi!", "Gagal", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Saldo tidak mencukupi!", "Gagal", JOptionPane.WARNING_MESSAGE);
                     } else {
                         double saldoBaru = saldo - jumlahBayar;
 
-                        // Update saldo di database
                         String updateSql = "UPDATE manajemen_nasabah SET saldo_total = ? WHERE id_nasabah = ?";
                         PreparedStatement updatePst = conn.prepareStatement(updateSql);
                         updatePst.setDouble(1, saldoBaru);
@@ -253,25 +327,82 @@ public class TabTransaksi extends javax.swing.JPanel {
                         updatePst.executeUpdate();
                         updatePst.close();
 
-                        // Set jumlah bayar ke txttunai
                         txttunai.setText(String.valueOf((int) jumlahBayar));
 
-                        JOptionPane.showMessageDialog(this,
-                                "Pembayaran berhasil!\nSisa Saldo: " + Rp.format(saldoBaru));
+                        JOptionPane.showMessageDialog(this, "Pembayaran berhasil!\nSisa Saldo: " + Rp.format(saldoBaru));
                     }
                 }
 
+
+                    } else if (pilihanUser == 1) { // TARIK TUNAI
+                        String input = JOptionPane.showInputDialog(this, 
+                                "Saldo saat ini: " + Rp.format(saldo) +
+                                "\nMasukkan jumlah tarik tunai (Rp):", 
+                                "Input Jumlah", 
+                                JOptionPane.PLAIN_MESSAGE);
+                
+                if (input != null && !input.trim().isEmpty()) {
+                    try {
+                        double jumlahTarik = Double.parseDouble(input);
+                        
+                        if (jumlahTarik <= 0) {
+                            JOptionPane.showMessageDialog(this, "Jumlah tidak valid.");
+                            return;
+                        }
+
+                        if (jumlahTarik > saldo) {
+                            JOptionPane.showMessageDialog(this, "Saldo tidak mencukupi!", "Gagal", JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+
+                        int konfirmasi = JOptionPane.showConfirmDialog(this,
+                                "Nama: " + nama +
+                                "\nSaldo saat ini: " + Rp.format(saldo) +
+                                "\nJumlah yang akan ditarik: " + Rp.format(jumlahTarik) +
+                                "\n\nLanjutkan tarik tunai?",
+                                "Konfirmasi Tarik Tunai",
+                                JOptionPane.YES_NO_OPTION);
+
+                        if (konfirmasi == JOptionPane.YES_OPTION) {
+                            double saldoBaru = saldo - jumlahTarik;
+
+                            String updateSql = "UPDATE manajemen_nasabah SET saldo_total = ? WHERE id_nasabah = ?";
+                            PreparedStatement updatePst = conn.prepareStatement(updateSql);
+                            updatePst.setDouble(1, saldoBaru);
+                            updatePst.setString(2, id_nasabah);
+                            updatePst.executeUpdate();
+                            updatePst.close();
+
+                            // Set ke txttunai
+                            txttunai.setText(String.valueOf((int) jumlahTarik));
+
+                            String kodeTransaksi = "TRX" + System.currentTimeMillis(); // contoh kode unik
+                            cetakStrukTarikTunai(kodeTransaksi, nama, jumlahTarik, saldoBaru);
+
+
+                            JOptionPane.showMessageDialog(this,
+                                    "Tarik tunai berhasil!\nSisa Saldo: " + Rp.format(saldoBaru));
+                        }
+
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(this, "Input tidak valid. Harap masukkan angka.");
+                    }
+                }
             } else {
-                JOptionPane.showMessageDialog(this, "Nasabah tidak ditemukan.");
+                JOptionPane.showMessageDialog(this, "Transaksi dibatalkan.");
             }
 
-            rs.close();
-            pst.close();
-            conn.close();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage());
+        } else {
+            JOptionPane.showMessageDialog(this, "Nasabah tidak ditemukan.");
         }
+
+        rs.close();
+        pst.close();
+        conn.close();
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage());
     }
+}
 
     private void tambahKeTabel(String kode, String nama, int hargaSatuan, int qty) {
         DefaultTableModel model = (DefaultTableModel) tabletransaksi.getModel();
