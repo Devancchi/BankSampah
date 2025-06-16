@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import main.DBconnect;
 import notification.toast.Notifications;
 import main.ModelData;
+import java.text.DecimalFormat;
 
 public class TabLaporanStatistik extends javax.swing.JPanel {
     private final Connection conn = DBconnect.getConnection();
@@ -172,6 +173,8 @@ private void loadData(String filterJenis) {
                     try {
                         double nominal = Double.parseDouble(harga);
                         NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                        formatRupiah.setMaximumFractionDigits(0);
+                        formatRupiah.setMinimumFractionDigits(0);
                         harga = formatRupiah.format(nominal);
                     } catch (NumberFormatException e) {
                         // Biarkan harga tetap apa adanya jika gagal format
@@ -311,10 +314,8 @@ private void loadData(String filterJenis) {
             ResultSet rspemasukan = stmt.executeQuery("SELECT COALESCE(SUM(tr.total_harga), 0) + COALESCE(SUM(sp.harga), 0) FROM laporan_pemasukan lp LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi LEFT JOIN jual_sampah sp ON lp.id_jual_sampah = sp.id_jual_sampah ORDER BY riwayat DESC;");
             if (rspemasukan.next()) {
                 totalpemasukan = rspemasukan.getDouble(1);
-                String formatted = String.format("Rp %,.2f", totalpemasukan)
-                        .replace(',', 'X') // sementara ubah koma jadi X
-                        .replace('.', ',') // titik jadi koma
-                        .replace('X', '.');  // X (yang tadi koma) jadi titik
+                DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
+                String formatted = formatRupiah.format(totalpemasukan);
                 lb_pemasukan.setText(formatted);
             }
 
@@ -323,19 +324,15 @@ private void loadData(String filterJenis) {
             ResultSet rspengeluaran = stmt.executeQuery("SELECT SUM(harga) FROM setor_sampah ORDER BY tanggal DESC");
             if (rspengeluaran.next()) {
                 totalpengeluaran = rspengeluaran.getDouble(1);
-                String formatted = String.format("Rp %,.2f", totalpengeluaran)
-                        .replace(',', 'X')
-                        .replace('.', ',')
-                        .replace('X', '.');
+                DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
+                String formatted = formatRupiah.format(totalpengeluaran);
                 lb_pengeluaran.setText(formatted);
             }
 
             // Hitung total akhir (pemasukan - pengeluaran)
             double totalakhir = totalpemasukan - totalpengeluaran;
-            String formattedTotal = String.format("Rp %,.2f", totalakhir)
-                    .replace(',', 'X')
-                    .replace('.', ',')
-                    .replace('X', '.');
+            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
+            String formattedTotal = formatRupiah.format(totalakhir);
             lb_total.setText(formattedTotal);
 
             conn.close();
@@ -1298,7 +1295,7 @@ private void loadData(String filterJenis) {
                 if (harga != null && !harga.equals("-")) {
                     try {
                         double nominal = Double.parseDouble(harga);
-                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                        DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                         harga = formatRupiah.format(nominal);
                     } catch (NumberFormatException e) {
                         // Biarkan tetap
@@ -1557,7 +1554,7 @@ private void loadData(String filterJenis) {
                         if (!harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                                DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
                                 // Biarkan harga tetap apa adanya jika gagal format
@@ -1747,7 +1744,7 @@ private void loadData(String filterJenis) {
                     if (harga != null && !harga.equals("-")) {
                         try {
                             double nominal = Double.parseDouble(harga);
-                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                             harga = formatRupiah.format(nominal);
                         } catch (NumberFormatException e) {
                             // abaikan

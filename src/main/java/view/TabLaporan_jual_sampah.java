@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import main.DBconnect;
 import notification.toast.Notifications;
+import java.text.DecimalFormat;
 
 public class TabLaporan_jual_sampah extends javax.swing.JPanel {
     private final Connection conn = DBconnect.getConnection();
@@ -115,7 +116,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                     double totalPendapatan = rsPendapatan.getDouble("total_pendapatan");
 
                     // Format ke rupiah
-                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                    DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                     String pendapatanFormatted = formatRupiah.format(totalPendapatan);
 
                     lbl_total_pendapatan.setText(pendapatanFormatted);
@@ -186,7 +187,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                     if (!harga.equals("-")) {
                         try {
                             double nominal = Double.parseDouble(harga);
-                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                             harga = formatRupiah.format(nominal);
                         } catch (NumberFormatException e) {
                             // Biarkan harga tetap apa adanya jika gagal format
@@ -297,7 +298,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                 try (ResultSet rsPendapatan = pstPendapatan.executeQuery()) {
                     if (rsPendapatan.next()) {
                         double totalPendapatan = rsPendapatan.getDouble("total_pendapatan");
-                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                        DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                         String pendapatanFormatted = formatRupiah.format(totalPendapatan);
                         lbl_total_pendapatan.setText(pendapatanFormatted);
                     }
@@ -989,7 +990,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                         if (harga != null && !harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                                DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
                                 // Biarkan harga tetap

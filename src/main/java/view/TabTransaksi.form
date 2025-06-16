@@ -256,16 +256,19 @@
                 </Component>
                 <Component class="component.PlaceholderTextField" name="txtbarang">
                   <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="placeholder" type="java.lang.String" value="Nama barang"/>
                   </Properties>
                 </Component>
                 <Component class="component.PlaceholderTextField" name="txtharga">
                   <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="placeholder" type="java.lang.String" value="Harga"/>
                   </Properties>
                 </Component>
                 <Component class="component.PlaceholderTextField" name="txtstok">
                   <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="placeholder" type="java.lang.String" value="Stok"/>
                   </Properties>
                 </Component>

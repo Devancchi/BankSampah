@@ -23,6 +23,8 @@ import main.DBconnect;
 import chart.ModelPolarAreaChart;
 import datechooser.Main.DateChooser;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import notification.toast.Notifications;
 
 /**
@@ -862,8 +864,8 @@ public class TabDashboard extends javax.swing.JPanel {
             if (rsSampah.next()) {
                 double totalSampah = rsSampah.getDouble(1);
                 DecimalFormat df = new DecimalFormat("#,##0.##");
+                df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
                 lb_totalSampah.setText(df.format(totalSampah) + " KG");
-
             }
 
             // Total Pemasukan

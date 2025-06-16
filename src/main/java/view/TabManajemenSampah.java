@@ -167,7 +167,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     rs.getInt("harga_setor"),
                     rs.getInt("harga_jual"),
                     rs.getDate("tanggal"),
-                    rs.getInt("stok_sampah")
+                    String.format("%.2f", rs.getDouble("stok_sampah")).replace(",", ".")
                 };
                 tblModel.addRow(row);
             }
@@ -2442,7 +2442,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     rs.getInt("harga_setor"),
                     rs.getInt("harga_jual"),
                     rs.getDate("tanggal"),
-                    rs.getInt("stok_sampah")
+                    String.format("%.2f", rs.getDouble("stok_sampah")).replace(",", ".")
                 };
                 model.addRow(row);
             }
@@ -2495,7 +2495,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     rs.getInt("harga_setor"),
                     rs.getInt("harga_jual"),
                     rs.getDate("tanggal"),
-                    rs.getInt("stok_sampah")
+                    String.format("%.2f", rs.getDouble("stok_sampah")).replace(",", ".")
                 };
                 model.addRow(row);
             }
