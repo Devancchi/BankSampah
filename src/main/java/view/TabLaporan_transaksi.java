@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.DBconnect;
 import notification.toast.Notifications;
+import java.text.DecimalFormat;
 
 public class TabLaporan_transaksi extends javax.swing.JPanel {
 
@@ -164,7 +165,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                         if (harga != null && !harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                                DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
                                 // biarkan harga tetap
@@ -855,7 +856,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                     if (harga != null && !harga.equals("-")) {
                         try {
                             double nominal = Double.parseDouble(harga);
-                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                             harga = formatRupiah.format(nominal);
                         } catch (NumberFormatException e) {
                             // harga tetap
@@ -918,12 +919,11 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
             int totalItem = rs.getInt("total_item_terjual");
             int totalTransaksi = rs.getInt("total_transaksi");
 
-            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
-            NumberFormat formatAngka = NumberFormat.getNumberInstance(Locale.forLanguageTag("id-ID"));
-
-            lbl_total_harga.setText(formatRupiah.format(totalHarga));
-            lbl_item_terjual.setText(formatAngka.format(totalItem) + " Item");
-            lbl_total_transaksi.setText(formatAngka.format(totalTransaksi) + " Transaksi");
+            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
+            String totalHargaFormatted = formatRupiah.format(totalHarga);
+            lbl_total_harga.setText(totalHargaFormatted);
+            lbl_item_terjual.setText(totalItem + " Item");
+            lbl_total_transaksi.setText(totalTransaksi + " Transaksi");
         }
 
             

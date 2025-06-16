@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import component.ExcelExporter;
+import java.text.DecimalFormat;
 
 /**
  *
@@ -316,7 +317,7 @@ public class TabDataBarang extends javax.swing.JPanel {
     private void setPanelEditFormData(ModelItem item) {
         txt_kode.setText(item.getKode());    // Contoh, asumsi txt_kode1 di panelEdit
         txt_nama.setText(item.getNama());
-        txt_harga.setText(String.valueOf(item.getHarga()));
+        txt_harga.setText(String.valueOf((int)item.getHarga()));
         txt_stok.setText(String.valueOf(item.getStok()));
     }
 

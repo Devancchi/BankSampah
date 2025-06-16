@@ -36,6 +36,10 @@ import javax.swing.table.DefaultTableModel;
 public class TabTransaksi extends javax.swing.JPanel {
 
     private static final NumberFormat Rp = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+    static {
+        Rp.setMaximumFractionDigits(0);
+        Rp.setMinimumFractionDigits(0);
+    }
     private int harga, total;
     private final UserSession users;
 
@@ -226,7 +230,6 @@ public class TabTransaksi extends javax.swing.JPanel {
                 double jumlahBayar = total;
 
                 // Format total dan saldo dalam Rupiah
-                NumberFormat Rp = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                 String totalFormatted = Rp.format(jumlahBayar);
 
                 // Tampilkan dialog konfirmasi
@@ -410,10 +413,13 @@ public class TabTransaksi extends javax.swing.JPanel {
             }
         });
 
+        txtbarang.setEditable(false);
         txtbarang.setPlaceholder("Nama barang");
 
+        txtharga.setEditable(false);
         txtharga.setPlaceholder("Harga");
 
+        txtstok.setEditable(false);
         txtstok.setPlaceholder("Stok");
 
         txtqty.setPlaceholder("Jumlah");
