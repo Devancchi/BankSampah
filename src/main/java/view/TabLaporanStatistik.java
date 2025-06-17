@@ -726,7 +726,6 @@ private void loadData(String filterJenis) {
         btn_Export1.setFillClick(new java.awt.Color(55, 130, 60));
         btn_Export1.setFillOriginal(new java.awt.Color(76, 175, 80));
         btn_Export1.setFillOver(new java.awt.Color(69, 160, 75));
-        btn_Export1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btn_Export1.setRoundedCorner(40);
         btn_Export1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
