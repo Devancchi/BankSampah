@@ -74,7 +74,7 @@ public class Item extends javax.swing.JPanel {
         lbItemName.setText(data.getNama());
         lbKode.setText(data.getKode());
         lbStok.setText(String.valueOf(data.getStok()));
-        DecimalFormat df = new DecimalFormat("Rp #,##0.00");
+        DecimalFormat df = new DecimalFormat("'Rp '###,###");
         lbPrice.setText(df.format(data.getHarga()));
     }
 

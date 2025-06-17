@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import main.DBconnect;
 import notification.toast.Notifications;
+import java.text.DecimalFormat;
 
 public class TabLaporan_jual_sampah extends javax.swing.JPanel {
     private final Connection conn = DBconnect.getConnection();
@@ -115,7 +116,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                     double totalPendapatan = rsPendapatan.getDouble("total_pendapatan");
 
                     // Format ke rupiah
-                    NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                    DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                     String pendapatanFormatted = formatRupiah.format(totalPendapatan);
 
                     lbl_total_pendapatan.setText(pendapatanFormatted);
@@ -186,7 +187,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                     if (!harga.equals("-")) {
                         try {
                             double nominal = Double.parseDouble(harga);
-                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                             harga = formatRupiah.format(nominal);
                         } catch (NumberFormatException e) {
                             // Biarkan harga tetap apa adanya jika gagal format
@@ -297,7 +298,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                 try (ResultSet rsPendapatan = pstPendapatan.executeQuery()) {
                     if (rsPendapatan.next()) {
                         double totalPendapatan = rsPendapatan.getDouble("total_pendapatan");
-                        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                        DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                         String pendapatanFormatted = formatRupiah.format(totalPendapatan);
                         lbl_total_pendapatan.setText(pendapatanFormatted);
                     }
@@ -573,22 +574,22 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
         panelGradient1.setBackground(new java.awt.Color(0, 153, 153));
         panelGradient1.setColorGradient(new java.awt.Color(0, 204, 204));
 
-        jLabel5.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLabel5.setFont(jLabel5.getFont().deriveFont(jLabel5.getFont().getStyle() | java.awt.Font.BOLD, jLabel5.getFont().getSize()+6));
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("Total Pendapatan Jual Sampah");
+        jLabel5.setText("Total Penjualan Sampah");
         jLabel5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        lbl_total_pendapatan.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbl_total_pendapatan.setFont(lbl_total_pendapatan.getFont().deriveFont(lbl_total_pendapatan.getFont().getStyle() | java.awt.Font.BOLD, lbl_total_pendapatan.getFont().getSize()+24));
         lbl_total_pendapatan.setForeground(new java.awt.Color(255, 255, 255));
         lbl_total_pendapatan.setText("0");
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/total_transaksi.png"))); // NOI18N
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel7.setFont(jLabel7.getFont().deriveFont(jLabel7.getFont().getStyle() | java.awt.Font.BOLD));
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Total Transaksi");
 
-        lbl_transaksi.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbl_transaksi.setFont(lbl_transaksi.getFont().deriveFont(lbl_transaksi.getFont().getStyle() | java.awt.Font.BOLD, lbl_transaksi.getFont().getSize()+12));
         lbl_transaksi.setForeground(new java.awt.Color(255, 255, 255));
         lbl_transaksi.setText("0");
 
@@ -597,38 +598,33 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
         panelGradient1Layout.setHorizontalGroup(
             panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelGradient1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(20, 20, 20)
                 .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbl_total_pendapatan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelGradient1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbl_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(panelGradient1Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
-                            .addComponent(lbl_total_pendapatan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
+                            .addComponent(lbl_transaksi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE))
+                .addGap(20, 20, 20))
         );
         panelGradient1Layout.setVerticalGroup(
             panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelGradient1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel5)
+                .addGap(20, 20, 20)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbl_total_pendapatan)
-                .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(lbl_total_pendapatan, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(115, 115, 115)
+                .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(panelGradient1Layout.createSequentialGroup()
-                        .addGap(9, 9, 9)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelGradient1Layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbl_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(23, Short.MAX_VALUE))
+                        .addComponent(lbl_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(20, 20, 20))
         );
 
         lb_halaman2.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -649,7 +645,6 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
         btn_Export2.setFillClick(new java.awt.Color(55, 130, 60));
         btn_Export2.setFillOriginal(new java.awt.Color(76, 175, 80));
         btn_Export2.setFillOver(new java.awt.Color(69, 160, 75));
-        btn_Export2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btn_Export2.setRoundedCorner(40);
         btn_Export2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -698,7 +693,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
             shadowTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shadowTableLayout.createSequentialGroup()
                 .addGroup(shadowTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 848, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 845, Short.MAX_VALUE)
                     .addComponent(panelBawah2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -709,7 +704,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
             .addGroup(shadowTableLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(shadowTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 753, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 741, Short.MAX_VALUE)
                     .addGroup(shadowTableLayout.createSequentialGroup()
                         .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -989,7 +984,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                         if (harga != null && !harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                                DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
                                 // Biarkan harga tetap

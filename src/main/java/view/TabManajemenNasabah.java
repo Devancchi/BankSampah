@@ -151,7 +151,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_Export.setFillClick(new java.awt.Color(55, 130, 60));
         btn_Export.setFillOriginal(new java.awt.Color(76, 175, 80));
         btn_Export.setFillOver(new java.awt.Color(69, 160, 75));
-        btn_Export.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btn_Export.setRoundedCorner(40);
         btn_Export.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -164,7 +163,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_import.setFillClick(new java.awt.Color(60, 130, 200));
         btn_import.setFillOriginal(new java.awt.Color(80, 150, 230));
         btn_import.setFillOver(new java.awt.Color(70, 140, 220));
-        btn_import.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btn_import.setRoundedCorner(40);
         btn_import.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -281,15 +279,15 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         panelAction.setLayout(panelActionLayout);
         panelActionLayout.setHorizontalGroup(
             panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelActionLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelActionLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 940, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 164, Short.MAX_VALUE)
+                .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         panelActionLayout.setVerticalGroup(
@@ -328,22 +326,22 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         panelMain.add(panelView, "card2");
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        jLabel6.setFont(jLabel6.getFont().deriveFont(jLabel6.getFont().getStyle() | java.awt.Font.BOLD, jLabel6.getFont().getSize()+10));
         jLabel6.setText("Data Nasabah");
 
-        jLabel11.setFont(new java.awt.Font("Mongolian Baiti", 1, 21)); // NOI18N
+        jLabel11.setFont(jLabel11.getFont().deriveFont(jLabel11.getFont().getStyle() & ~java.awt.Font.BOLD, jLabel11.getFont().getSize()+9));
         jLabel11.setText("ID");
 
-        jLabel12.setFont(new java.awt.Font("Mongolian Baiti", 1, 22)); // NOI18N
+        jLabel12.setFont(jLabel12.getFont().deriveFont(jLabel12.getFont().getStyle() & ~java.awt.Font.BOLD, jLabel12.getFont().getSize()+9));
         jLabel12.setText("Nama");
 
-        jLabel7.setFont(new java.awt.Font("Mongolian Baiti", 1, 21)); // NOI18N
+        jLabel7.setFont(jLabel7.getFont().deriveFont(jLabel7.getFont().getStyle() & ~java.awt.Font.BOLD, jLabel7.getFont().getSize()+9));
         jLabel7.setText("Email");
 
-        jLabel8.setFont(new java.awt.Font("Mongolian Baiti", 1, 21)); // NOI18N
+        jLabel8.setFont(jLabel8.getFont().deriveFont(jLabel8.getFont().getStyle() & ~java.awt.Font.BOLD, jLabel8.getFont().getSize()+9));
         jLabel8.setText("Telepon");
 
-        jLabel13.setFont(new java.awt.Font("Mongolian Baiti", 1, 22)); // NOI18N
+        jLabel13.setFont(jLabel13.getFont().deriveFont(jLabel13.getFont().getStyle() & ~java.awt.Font.BOLD, jLabel13.getFont().getSize()+9));
         jLabel13.setText("Alamat");
 
         btn_save.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_simpan.png"))); // NOI18N
@@ -351,7 +349,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_save.setFillClick(new java.awt.Color(30, 100, 150));
         btn_save.setFillOriginal(new java.awt.Color(41, 128, 185));
         btn_save.setFillOver(new java.awt.Color(36, 116, 170));
-        btn_save.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btn_save.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_saveActionPerformed(evt);
@@ -363,7 +360,6 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_back.setFillClick(new java.awt.Color(200, 125, 0));
         btn_back.setFillOriginal(new java.awt.Color(243, 156, 18));
         btn_back.setFillOver(new java.awt.Color(230, 145, 10));
-        btn_back.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btn_back.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_backActionPerformed(evt);
@@ -387,36 +383,36 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             .addGroup(panelFormLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel13)
-                    .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(panelFormLayout.createSequentialGroup()
-                            .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel12)
-                                .addComponent(jLabel11))
-                            .addGap(1072, 1072, 1072))
-                        .addComponent(txt_nama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txt_email, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txt_telepon, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txt_alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, 1128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
-            .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(panelFormLayout.createSequentialGroup()
-                    .addGap(970, 970, 970)
-                    .addComponent(btn_save, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(btn_back, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(49, Short.MAX_VALUE)))
+                    .addComponent(txt_alamat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelFormLayout.createSequentialGroup()
+                        .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel13))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(txt_nama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txt_id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txt_telepon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txt_email, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelFormLayout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 839, Short.MAX_VALUE)
+                        .addComponent(btn_save, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_back, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         panelFormLayout.setVerticalGroup(
             panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFormLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16)
+                .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_back, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_save, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(12, 12, 12)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -436,14 +432,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txt_email, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(478, Short.MAX_VALUE))
-            .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(panelFormLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(btn_save, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btn_back, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addContainerGap(855, Short.MAX_VALUE)))
+                .addContainerGap(232, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout panelAddLayout = new javax.swing.GroupLayout(panelAdd);
@@ -670,25 +659,25 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             int option = chooser.showOpenDialog(this);
             if (option == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = chooser.getSelectedFile();
-                
+
                 // Konfirmasi sebelum import
                 int confirm = JOptionPane.showConfirmDialog(
-                    this,
-                    "Apakah Anda yakin ingin mengimport data dari file ini?\n" +
-                    "Data yang sudah ada dengan ID yang sama akan diupdate.",
-                    "Konfirmasi Import",
-                    JOptionPane.YES_NO_OPTION
+                        this,
+                        "Apakah Anda yakin ingin mengimport data dari file ini?\n"
+                        + "Data yang sudah ada dengan ID yang sama akan diupdate.",
+                        "Konfirmasi Import",
+                        JOptionPane.YES_NO_OPTION
                 );
-                
+
                 if (confirm == JOptionPane.YES_OPTION) {
                     importExcelToDatabase(selectedFile);
                 }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                "Terjadi kesalahan saat import: " + e.getMessage(),
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
+                    "Terjadi kesalahan saat import: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }//GEN-LAST:event_btn_importActionPerformed
@@ -846,7 +835,14 @@ private void paginationNasabah() {
                     BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     // Format saldo menjadi string dengan titik ribuan
-                    String saldoFormatted = "Rp " + formatRupiah.format(saldo);
+                    String saldoFormatted;
+                    if (saldo.stripTrailingZeros().scale() <= 0) {
+                        // Tanpa desimal
+                        saldoFormatted = "Rp " + NumberFormat.getIntegerInstance(new Locale("id", "ID")).format(saldo);
+                    } else {
+                        // Dengan desimal
+                        saldoFormatted = "Rp " + formatRupiah.format(saldo).replace(",00", "");
+                    }
 
                     Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, saldoFormatted};
                     model.addRow(rowData);
@@ -905,7 +901,14 @@ private void paginationNasabah() {
                     String email = rs.getString("email");
                     BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
-                    String saldoFormatted = "Rp " + formatRupiah.format(saldo);
+                    String saldoFormatted;
+                    if (saldo.stripTrailingZeros().scale() <= 0) {
+                        // Tanpa desimal
+                        saldoFormatted = "Rp " + NumberFormat.getIntegerInstance(new Locale("id", "ID")).format(saldo);
+                    } else {
+                        // Dengan desimal
+                        saldoFormatted = "Rp " + formatRupiah.format(saldo).replace(",00", "");
+                    }
 
                     Object[] rowData = {idNasabah, namaNasabah, alamat, telepon, email, saldoFormatted};
                     model.addRow(rowData);
@@ -1117,7 +1120,9 @@ private String setIDAnggota() {
                 Row row = rowIterator.next();
                 try {
                     // Skip if row is empty
-                    if (row == null) continue;
+                    if (row == null) {
+                        continue;
+                    }
 
                     // Get cell values with null checks
                     Cell idCell = row.getCell(0);
@@ -1128,8 +1133,8 @@ private String setIDAnggota() {
                     Cell saldoCell = row.getCell(5);
 
                     // Skip if any required cell is null
-                    if (idCell == null || namaCell == null || alamatCell == null || 
-                        teleponCell == null || emailCell == null || saldoCell == null) {
+                    if (idCell == null || namaCell == null || alamatCell == null
+                            || teleponCell == null || emailCell == null || saldoCell == null) {
                         continue;
                     }
 
@@ -1178,24 +1183,24 @@ private String setIDAnggota() {
 
             // Show results
             String message = String.format(
-                "Import selesai!\n" +
-                "Data baru: %d\n" +
-                "Data dilewati (sudah ada): %d",
-                insertCount, skippedCount
+                    "Import selesai!\n"
+                    + "Data baru: %d\n"
+                    + "Data dilewati (sudah ada): %d",
+                    insertCount, skippedCount
             );
-            
+
             JOptionPane.showMessageDialog(this, message, "Hasil Import", JOptionPane.INFORMATION_MESSAGE);
-            
+
             // Refresh data
             loadData();
             LoggerUtil.insert(users.getId(), "Import data nasabah");
 
         } catch (IOException | SQLException | IllegalArgumentException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, 
-                "Gagal import data: " + e.getMessage(), 
-                "Error", 
-                JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Gagal import data: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
