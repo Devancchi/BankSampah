@@ -260,9 +260,6 @@
                         <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="4b" green="a0" red="45" type="rgb"/>
                         </Property>
-                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Segoe UI" size="12" style="1"/>
-                        </Property>
                         <Property name="roundedCorner" type="int" value="40"/>
                       </Properties>
                       <Events>
@@ -283,9 +280,6 @@
                         </Property>
                         <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="dc" green="8c" red="46" type="rgb"/>
-                        </Property>
-                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                          <Font name="Segoe UI" size="12" style="1"/>
                         </Property>
                         <Property name="roundedCorner" type="int" value="40"/>
                       </Properties>

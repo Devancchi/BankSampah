@@ -521,7 +521,6 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="btn_add" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                                   <Component id="btn_firstLog" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                                   <Component id="btn_beforeLog" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                                   <Component id="cbx_dataLog" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
@@ -531,7 +530,10 @@
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="lb_halaman" min="-2" pref="39" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="lb_halaman" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
+                                  <Component id="btn_add" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -554,9 +556,6 @@
                 </Property>
                 <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="4b" green="a0" red="45" type="rgb"/>
-                </Property>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="12" style="1"/>
                 </Property>
                 <Property name="roundedCorner" type="int" value="40"/>
               </Properties>
