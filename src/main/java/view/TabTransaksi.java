@@ -8,6 +8,7 @@ import component.Jbutton;
 import component.Table;
 import component.UserSession;
 import java.awt.Color;
+import component.LoggerUtil;
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -28,6 +29,7 @@ import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import notification.toast.Notifications;
 
 /**
  *
@@ -346,11 +348,13 @@ public class TabTransaksi extends javax.swing.JPanel {
                             updatePst.setDouble(1, saldoBaru);
                             updatePst.setString(2, id_nasabah);
                             updatePst.executeUpdate();
-                            updatePst.close();
+                            updatePst.close();                            txttunai.setText(String.valueOf((int) jumlahBayar));
 
-                            txttunai.setText(String.valueOf((int) jumlahBayar));
-
+                            // Log transaction
+                            LoggerUtil.insert(users.getId(), "Melakukan pembayaran dengan saldo nasabah: " + nama + " (ID: " + id_nasabah + ") sejumlah " + totalFormatted);
+                            
                             JOptionPane.showMessageDialog(this, "Pembayaran berhasil!\nSisa Saldo: " + Rp.format(saldoBaru));
+                            Notifications.getInstance().show(Notifications.Type.SUCCESS, "Pembayaran dengan saldo berhasil");
                         }
                     }
 
@@ -397,10 +401,12 @@ public class TabTransaksi extends javax.swing.JPanel {
                                 txttunai.setText(String.valueOf((int) jumlahTarik));
 
                                 String kodeTransaksi = "TRX" + System.currentTimeMillis(); // contoh kode unik
-                                cetakStrukTarikTunai(kodeTransaksi, nama, jumlahTarik, saldoBaru);
-
+                                cetakStrukTarikTunai(kodeTransaksi, nama, jumlahTarik, saldoBaru);                                // Log tarik tunai
+                                LoggerUtil.insert(users.getId(), "Melakukan tarik tunai nasabah: " + nama + " (ID: " + id_nasabah + ") sejumlah " + Rp.format(jumlahTarik));
+                                
                                 JOptionPane.showMessageDialog(this,
                                         "Tarik tunai berhasil!\nSisa Saldo: " + Rp.format(saldoBaru));
+                                Notifications.getInstance().show(Notifications.Type.SUCCESS, "Tarik tunai berhasil");
                             }
 
                         } catch (NumberFormatException ex) {
@@ -794,11 +800,15 @@ public class TabTransaksi extends javax.swing.JPanel {
                     found = true;
                     break;
                 }
-            }
-
-            if (!found) {
+            }            if (!found) {
                 int totalHarga = qty * hargaParsed;
                 model.addRow(new Object[]{kode, nama, qty, hargaParsed, totalHarga, idNasabah});
+                
+                // Log adding new item to cart
+                LoggerUtil.insert(users.getId(), "Menambahkan barang ke keranjang: " + nama + " (Kode: " + kode + "), Qty: " + qty);
+            } else {
+                // Log updating item in cart
+                LoggerUtil.insert(users.getId(), "Memperbarui qty barang di keranjang: " + nama + " (Kode: " + kode + ")");
             }
 
             hitungTotal();
@@ -817,13 +827,21 @@ public class TabTransaksi extends javax.swing.JPanel {
                 JOptionPane.YES_NO_OPTION
         );
 
-        if (confirm == JOptionPane.YES_OPTION) {
-            int selectedRow = tabletransaksi.getSelectedRow();
+        if (confirm == JOptionPane.YES_OPTION) {            int selectedRow = tabletransaksi.getSelectedRow();
             if (selectedRow >= 0) {
                 DefaultTableModel model = (DefaultTableModel) tabletransaksi.getModel();
+                // Get info about the item before removing
+                String kode = model.getValueAt(selectedRow, 0).toString();
+                String nama = model.getValueAt(selectedRow, 1).toString();
+                int qty = Integer.parseInt(model.getValueAt(selectedRow, 2).toString());
+                
                 model.removeRow(selectedRow);
                 hitungTotal();
                 btnbatal.setVisible(false); // Hide button after deletion
+                
+                // Log removing item from cart
+                LoggerUtil.insert(users.getId(), "Menghapus barang dari keranjang: " + nama + " (Kode: " + kode + "), Qty: " + qty);
+                Notifications.getInstance().show(Notifications.Type.INFO, "Barang dihapus dari keranjang");
             } else {
                 JOptionPane.showMessageDialog(this, "Pilih baris yang akan dibatalkan!");
             }
@@ -898,10 +916,11 @@ public class TabTransaksi extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(this, "Stok tidak cukup untuk " + namaBarang);
                     return;
                 }
-            }
+            }            ps.executeBatch();
 
-            ps.executeBatch();
-
+            // Log the transaction
+            LoggerUtil.insert(users.getId(), "Melakukan transaksi penjualan dengan kode: " + kodeTransaksi + " untuk nasabah: " + idNasabah);
+            
             // Cetak struk
             Print printer = new Print();
             printer.cetakStruk(kodeTransaksi, pesanan, tunai);
@@ -912,6 +931,7 @@ public class TabTransaksi extends javax.swing.JPanel {
             bersihkanForm2();
 
             JOptionPane.showMessageDialog(this, "Transaksi berhasil dan struk dicetak.");
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, "Transaksi berhasil disimpan");
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal menyimpan transaksi: " + e.getMessage());
@@ -941,8 +961,13 @@ public class TabTransaksi extends javax.swing.JPanel {
                 txtharga.setText(String.valueOf(rs.getInt("harga")));
                 txtstok.setText(String.valueOf(rs.getInt("stok")));
                 txtqty.setText("1");
-            } else {
+            }            else {
                 JOptionPane.showMessageDialog(this, "Barang tidak ditemukan.");
+            }
+
+            // Log scan barcode activity
+            if (rs.previous() && rs.next()) { // Move back and forth to reset cursor
+                LoggerUtil.insert(users.getId(), "Memindai barcode barang: " + rs.getString("nama_barang") + " (Kode: " + kode + ")");
             }
 
             rs.close();
