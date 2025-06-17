@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import component.ExcelExporter;
+import java.text.DecimalFormat;
 
 /**
  *
@@ -316,7 +317,7 @@ public class TabDataBarang extends javax.swing.JPanel {
     private void setPanelEditFormData(ModelItem item) {
         txt_kode.setText(item.getKode());    // Contoh, asumsi txt_kode1 di panelEdit
         txt_nama.setText(item.getNama());
-        txt_harga.setText(String.valueOf(item.getHarga()));
+        txt_harga.setText(String.valueOf((int)item.getHarga()));
         txt_stok.setText(String.valueOf(item.getStok()));
     }
 
@@ -461,7 +462,6 @@ public class TabDataBarang extends javax.swing.JPanel {
         btn_Export2.setFillClick(new java.awt.Color(55, 130, 60));
         btn_Export2.setFillOriginal(new java.awt.Color(76, 175, 80));
         btn_Export2.setFillOver(new java.awt.Color(69, 160, 75));
-        btn_Export2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btn_Export2.setRoundedCorner(40);
         btn_Export2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -474,7 +474,6 @@ public class TabDataBarang extends javax.swing.JPanel {
         btn_import2.setFillClick(new java.awt.Color(60, 130, 200));
         btn_import2.setFillOriginal(new java.awt.Color(80, 150, 230));
         btn_import2.setFillOver(new java.awt.Color(70, 140, 220));
-        btn_import2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btn_import2.setRoundedCorner(40);
         btn_import2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
