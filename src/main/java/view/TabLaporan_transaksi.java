@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.DBconnect;
 import notification.toast.Notifications;
+import java.text.DecimalFormat;
 
 public class TabLaporan_transaksi extends javax.swing.JPanel {
 
@@ -164,7 +165,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                         if (harga != null && !harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
-                                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                                DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
                                 // biarkan harga tetap
@@ -429,19 +430,19 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         panelGradient2.setBackground(new java.awt.Color(0, 204, 204));
         panelGradient2.setColorGradient(new java.awt.Color(0, 153, 153));
 
-        lbl_item_terjual.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        lbl_item_terjual.setFont(lbl_item_terjual.getFont().deriveFont(lbl_item_terjual.getFont().getStyle() | java.awt.Font.BOLD, lbl_item_terjual.getFont().getSize()+6));
         lbl_item_terjual.setForeground(new java.awt.Color(255, 255, 255));
         lbl_item_terjual.setText("12.000000");
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel5.setFont(jLabel5.getFont().deriveFont(jLabel5.getFont().getStyle() | java.awt.Font.BOLD, jLabel5.getFont().getSize()+6));
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Total Item Terjual");
 
-        lbl_total_transaksi.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        lbl_total_transaksi.setFont(lbl_total_transaksi.getFont().deriveFont(lbl_total_transaksi.getFont().getStyle() | java.awt.Font.BOLD, lbl_total_transaksi.getFont().getSize()+6));
         lbl_total_transaksi.setForeground(new java.awt.Color(255, 255, 255));
         lbl_total_transaksi.setText("12.000000");
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel10.setFont(jLabel10.getFont().deriveFont(jLabel10.getFont().getStyle() | java.awt.Font.BOLD, jLabel10.getFont().getSize()+6));
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
         jLabel10.setText("Total Transaksi");
 
@@ -449,11 +450,11 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/total_transaksi.png"))); // NOI18N
 
-        lbl_total_harga.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        lbl_total_harga.setFont(lbl_total_harga.getFont().deriveFont(lbl_total_harga.getFont().getStyle() | java.awt.Font.BOLD, lbl_total_harga.getFont().getSize()+24));
         lbl_total_harga.setForeground(new java.awt.Color(255, 255, 255));
         lbl_total_harga.setText("Rp.12.00000");
 
-        txt_total_harga1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        txt_total_harga1.setFont(txt_total_harga1.getFont().deriveFont(txt_total_harga1.getFont().getStyle() | java.awt.Font.BOLD, txt_total_harga1.getFont().getSize()+6));
         txt_total_harga1.setForeground(new java.awt.Color(255, 255, 255));
         txt_total_harga1.setText("Total Pendapatan Transaksi");
 
@@ -462,52 +463,46 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         panelGradient2Layout.setHorizontalGroup(
             panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelGradient2Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
                 .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txt_total_harga1, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
+                    .addComponent(lbl_total_harga, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelGradient2Layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbl_total_harga)
-                            .addComponent(txt_total_harga1, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(panelGradient2Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
                         .addComponent(jLabel4)
                         .addGap(8, 8, 8)
                         .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbl_item_terjual, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lbl_item_terjual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(panelGradient2Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
                         .addComponent(jLabel6)
                         .addGap(8, 8, 8)
                         .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(20, 20, 20))
         );
         panelGradient2Layout.setVerticalGroup(
             panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelGradient2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelGradient2Layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(lbl_total_harga))
-                    .addComponent(txt_total_harga1))
-                .addGap(22, 22, 22)
-                .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_total_harga1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_total_harga, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(46, 46, 46)
+                .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(panelGradient2Layout.createSequentialGroup()
                         .addComponent(jLabel5)
-                        .addGap(4, 4, 4)
-                        .addComponent(lbl_item_terjual, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(28, 28, 28)
-                .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel10)
+                        .addGap(0, 0, 0)
+                        .addComponent(lbl_item_terjual, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(panelGradient2Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(lbl_total_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(26, Short.MAX_VALUE))
+                        .addComponent(jLabel10)
+                        .addGap(0, 0, 0)
+                        .addComponent(lbl_total_transaksi))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20))
         );
 
         lb_halaman2.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -528,7 +523,6 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         btn_Export2.setFillClick(new java.awt.Color(55, 130, 60));
         btn_Export2.setFillOriginal(new java.awt.Color(76, 175, 80));
         btn_Export2.setFillOver(new java.awt.Color(69, 160, 75));
-        btn_Export2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btn_Export2.setRoundedCorner(40);
         btn_Export2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -578,10 +572,10 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
             .addGroup(shadowTableLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(shadowTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 845, Short.MAX_VALUE)
                     .addComponent(panelBawah2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelGradient2, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(panelGradient2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         shadowTableLayout.setVerticalGroup(
@@ -855,7 +849,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
                     if (harga != null && !harga.equals("-")) {
                         try {
                             double nominal = Double.parseDouble(harga);
-                            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                             harga = formatRupiah.format(nominal);
                         } catch (NumberFormatException e) {
                             // harga tetap
@@ -918,12 +912,11 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
             int totalItem = rs.getInt("total_item_terjual");
             int totalTransaksi = rs.getInt("total_transaksi");
 
-            NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
-            NumberFormat formatAngka = NumberFormat.getNumberInstance(Locale.forLanguageTag("id-ID"));
-
-            lbl_total_harga.setText(formatRupiah.format(totalHarga));
-            lbl_item_terjual.setText(formatAngka.format(totalItem) + " Item");
-            lbl_total_transaksi.setText(formatAngka.format(totalTransaksi) + " Transaksi");
+            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
+            String totalHargaFormatted = formatRupiah.format(totalHarga);
+            lbl_total_harga.setText(totalHargaFormatted);
+            lbl_item_terjual.setText(totalItem + " Item");
+            lbl_total_transaksi.setText(totalTransaksi + " Transaksi");
         }
 
             
