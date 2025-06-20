@@ -29,29 +29,112 @@ import component.ExcelExporter;
 import java.text.DecimalFormat;
 
 /**
- *
+ * TabDataBarang Class
+ * 
+ * This class manages the Product/Item data management tab in the Bank Sampah
+ * application.
+ * It provides functionality for displaying, adding, editing, and deleting
+ * items,
+ * as well as searching, pagination, and barcode generation.
+ * 
+ * Features:
+ * - Grid display of products with images
+ * - Add/Edit/Delete product functionality
+ * - Search by name or product code
+ * - Pagination controls
+ * - Barcode generation for products
+ * - Import/Export to Excel
+ * 
  * @author devan
  */
 public class TabDataBarang extends javax.swing.JPanel {
 
+    /** Database connection instance */
     private final Connection conn = DBconnect.getConnection();
+
+    /** Currently selected image file for product */
     private File selectedImageFile;
+
+    /** List of item panels currently displayed in the UI */
     private List<Item> itemPanels = new ArrayList<>();
-    private ModelItem selectedItem = null; // menyimpan item yang dipilih
+
+    /** Currently selected item model */
+    private ModelItem selectedItem = null;
+
+    /** Current user session information */
     private final UserSession users;
 
-    // Pagination variables
+    // ==========================================================================
+    // PAGINATION VARIABLES
+    // ==========================================================================
+
+    /** Current page number */
     private int halamanSaatIni = 1;
+
+    /** Number of items per page */
     private int dataPerHalaman = 10;
+
+    /** Total number of pages */
     private int totalPages;
+
+    /** Total number of data records */
     private int totalData;
 
+    /**
+     * Constructor for TabDataBarang
+     * 
+     * @param user Current user session information
+     */
     public TabDataBarang(UserSession user) {
         this.users = user;
         initComponents();
         initializePanel();
+
+        // Add validation to prevent negative values in price field
+        txt_harga.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent evt) {
+                char c = evt.getKeyChar();
+                // Only allow digits, backspace and delete
+                if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
+                    evt.consume();
+                }
+                // Prevent leading zeros
+                if (c == '0' && txt_harga.getText().isEmpty()) {
+                    // Allow single '0'
+                } else if (txt_harga.getText().equals("0") && Character.isDigit(c)) {
+                    evt.consume();
+                }
+            }
+        });
+
+        // Add validation to prevent negative values in stock field
+        txt_stok.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent evt) {
+                char c = evt.getKeyChar();
+                // Only allow digits, backspace and delete
+                if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
+                    evt.consume();
+                }
+                // Prevent leading zeros
+                if (c == '0' && txt_stok.getText().isEmpty()) {
+                    // Allow single '0'
+                } else if (txt_stok.getText().equals("0") && Character.isDigit(c)) {
+                    evt.consume();
+                }
+            }
+        });
     }
 
+    // ==========================================================================
+    // INITIALIZATION METHODS
+    // ==========================================================================
+
+    /**
+     * Initialize panel configuration and event handlers
+     * Sets up UI components, pagination, and event listeners
+     */
     private void initializePanel() {
         btnKembali.setVisible(false);
         btnHapus.setVisible(false);
@@ -99,6 +182,15 @@ public class TabDataBarang extends javax.swing.JPanel {
         });
     }
 
+    // ==========================================================================
+    // PAGINATION AND DATA LOADING METHODS
+    // ==========================================================================
+
+    /**
+     * Calculates the total number of pages based on total records and items per
+     * page
+     * Updates totalData and totalPages variables
+     */
     private void calculateTotalPage() {
         try {
             String sql = "SELECT COUNT(*) as total FROM data_barang";
@@ -111,10 +203,14 @@ public class TabDataBarang extends javax.swing.JPanel {
             rs.close();
             pst.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, "Error calculating pagination", e);
         }
     }
 
+    /**
+     * Loads product data for the current page
+     * Populates the panel with product items and sets up their display
+     */
     private void loadDataBarang() {
         try {
             panelBarang.removeAll();
@@ -181,6 +277,12 @@ public class TabDataBarang extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Searches for products by keyword (name or code)
+     * Updates the UI with filtered results
+     * 
+     * @param keyword The search term to filter products
+     */
     private void searchDataBarang(String keyword) {
         try {
             // Hitung total data hasil pencarian
@@ -262,7 +364,16 @@ public class TabDataBarang extends javax.swing.JPanel {
         }
     }
 
-    ////////// generate random number untuk barcode //////////
+    // ==========================================================================
+    // BARCODE GENERATION METHODS
+    // ==========================================================================
+
+    /**
+     * Generates a random 12-digit number string for barcode
+     * First digit is 1-9 to ensure 12 significant digits
+     * 
+     * @return Random 12-digit numeric string
+     */
     public String getRandomNumberString() {
         Random rnd = new Random();
         StringBuilder sb = new StringBuilder();
@@ -276,7 +387,12 @@ public class TabDataBarang extends javax.swing.JPanel {
         return sb.toString(); // Total 12 digit
     }
 
-    ////////// generate barcode //////////
+    /**
+     * Generates a barcode image for the product
+     * Creates a PNG image file with the product code
+     * 
+     * @param kode The product code to generate barcode for
+     */
     public void generate(String kode) {
         String namaBarang = txt_nama.getText().trim();
         try {
@@ -327,13 +443,26 @@ public class TabDataBarang extends javax.swing.JPanel {
         }
     }
 
+    // ==========================================================================
+    // UI MANAGEMENT METHODS
+    // ==========================================================================
+
+    /**
+     * Sets the edit form data with the values from the selected item
+     * 
+     * @param item The item model to populate the form with
+     */
     private void setPanelEditFormData(ModelItem item) {
-        txt_kode.setText(item.getKode()); // Contoh, asumsi txt_kode1 di panelEdit
+        txt_kode.setText(item.getKode());
         txt_nama.setText(item.getNama());
         txt_harga.setText(String.valueOf((int) item.getHarga()));
         txt_stok.setText(String.valueOf(item.getStok()));
     }
 
+    /**
+     * Resets the main panel view
+     * Refreshes the panel and resets UI state
+     */
     private void showPanel() {
         panelMain.removeAll();
         panelMain.add(new TabDataBarang(users));
@@ -343,18 +472,28 @@ public class TabDataBarang extends javax.swing.JPanel {
         btnKembali.setVisible(false);
     }
 
+    /**
+     * Clears all form fields
+     * Resets text fields to empty values
+     */
     private void clearForm() {
         txt_gambar.setText("");
-        txt_gambar.setText("");
-        txt_harga.setText("");
         txt_harga.setText("");
         txt_kode.setText("");
         txt_nama.setText("");
-        txt_nama.setText("");
         txt_stok.setText("");
-        txt_stok.setText("");
+
+        // Reset selected image
+        selectedImageFile = null;
     }
 
+    /**
+     * Handles item selection in the grid
+     * Updates UI state to show selected item is active
+     * 
+     * @param itemPanel The panel component that was selected
+     * @param model     The data model of the selected item
+     */
     private void handleItemSelection(Item itemPanel, ModelItem model) {
         // Reset all items first
         for (Item panel : itemPanels) {
@@ -888,6 +1027,14 @@ public class TabDataBarang extends javax.swing.JPanel {
         }
     }// GEN-LAST:event_btn_SaveAddActionPerformed
 
+    // ==========================================================================
+    // DATA MANAGEMENT METHODS
+    // ==========================================================================
+
+    /**
+     * Inserts new product data into the database
+     * Validates input and handles file upload for product image
+     */
     private void insertData() {
         String kodeBrg = txt_kode.getText();
         String namaBrg = txt_nama.getText();
@@ -928,6 +1075,10 @@ public class TabDataBarang extends javax.swing.JPanel {
         }
     }
 
+    /**
+     * Updates existing product data in the database
+     * Validates input and handles file upload for product image
+     */
     private void updateData() {
         try {
             int id = selectedItem.getId();

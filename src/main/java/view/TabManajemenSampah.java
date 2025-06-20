@@ -58,19 +58,31 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
         // Add document listener to automatically trigger Enter key
         txt_Kode.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                if (!txt_Kode.getText().isEmpty()) {
-                    javax.swing.SwingUtilities.invokeLater(() -> {
+            private javax.swing.Timer timer;
+
+            {
+                // Create a timer with 500ms delay that will process the input
+                timer = new javax.swing.Timer(500, evt -> {
+                    if (!txt_Kode.getText().isEmpty()) {
+                        // Only process when input is complete (after delay)
                         txt_KodeActionPerformed(new java.awt.event.ActionEvent(txt_Kode,
                                 java.awt.event.ActionEvent.ACTION_PERFORMED, ""));
-                    });
-                }
+                    }
+                });
+                timer.setRepeats(false); // Only fire once
+            }
+
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                // Reset and restart the timer
+                timer.restart();
             }
 
             public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                timer.restart();
             }
 
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                timer.restart();
             }
         });
 
@@ -685,6 +697,27 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         txt_Nama.setPlaceholder("Nama");
 
         txt_Berat.setPlaceholder("Berat sampah");
+        txt_Berat.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                // Prevent negative sign
+                if (evt.getKeyChar() == '-') {
+                    evt.consume();
+                }
+
+                // Only allow digits, decimal point, and control keys
+                if (!Character.isDigit(evt.getKeyChar())
+                        && evt.getKeyChar() != '.'
+                        && evt.getKeyChar() != KeyEvent.VK_BACK_SPACE
+                        && evt.getKeyChar() != KeyEvent.VK_DELETE) {
+                    evt.consume();
+                }
+
+                // Prevent multiple decimal points
+                if (evt.getKeyChar() == '.' && txt_Berat.getText().contains(".")) {
+                    evt.consume();
+                }
+            }
+        });
 
         lblTotal.setFont(new java.awt.Font("NSimSun", 1, 48)); // NOI18N
         lblTotal.setText("0");
@@ -1862,9 +1895,29 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             String kode = txt_Kode.getText(); // id_nasabah
             String namaJenis = cbxJenis_pnView.getSelectedItem().toString();
             String namaKategori = cbxKategori_pnView.getSelectedItem().toString();
-            String strBerat = txt_Berat.getText();
+            String strBerat = txt_Berat.getText().trim();
 
-            double berat = Double.parseDouble(strBerat);
+            // Validate input - check if empty
+            if (strBerat.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Berat sampah tidak boleh kosong!", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            double berat;
+            try {
+                berat = Double.parseDouble(strBerat);
+                // Validate that the value is positive
+                if (berat <= 0) {
+                    JOptionPane.showMessageDialog(this, "Berat sampah harus lebih dari 0!", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Format berat sampah tidak valid!", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             // Ambil ID Kategori
             String idKategori = "";
@@ -2199,9 +2252,12 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
     private void txt_KodeKeyPressed(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txt_KodeKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            String kode = txt_Kode.getText();
-            cariNamaNasabah(kode);
-            btnBatalProses.setVisible(true);
+            String kode = txt_Kode.getText().trim();
+            // Some RFID scanners may add special characters, clean the input if needed
+            if (kode.length() >= 3) {
+                cariNamaNasabah(kode);
+                btnBatalProses.setVisible(true);
+            }
         }
     }// GEN-LAST:event_txt_KodeKeyPressed
 
