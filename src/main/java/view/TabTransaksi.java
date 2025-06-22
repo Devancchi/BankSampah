@@ -76,7 +76,9 @@ public class TabTransaksi extends javax.swing.JPanel {
                     evt.consume();
                 }
             }
-        }); // Add validation to prevent negative values in tunai field
+        });
+
+        // Add validation to prevent negative values in tunai field
         txttunai.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 char c = evt.getKeyChar();
@@ -90,6 +92,11 @@ public class TabTransaksi extends javax.swing.JPanel {
                 } else if (txttunai.getText().equals("0") && Character.isDigit(c)) {
                     evt.consume();
                 }
+            }
+
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                // Calculate change amount whenever tunai value changes
+                hitungKembalian();
             }
         });
 
@@ -126,6 +133,21 @@ public class TabTransaksi extends javax.swing.JPanel {
             }
 
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            }
+        });
+
+        // Add document listener to automatically calculate kembalian
+        txttunai.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                hitungKembalian();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                hitungKembalian();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                hitungKembalian();
             }
         });
     }
@@ -427,14 +449,22 @@ public class TabTransaksi extends javax.swing.JPanel {
                                     JOptionPane.YES_NO_OPTION);
 
                             if (konfirmasi == JOptionPane.YES_OPTION) {
-                                double saldoBaru = saldo - jumlahTarik;
-
-                                String updateSql = "UPDATE manajemen_nasabah SET saldo_total = ? WHERE id_nasabah = ?";
+                                double saldoBaru = saldo - jumlahTarik; // Update the saldo and total_penarikan in
+                                                                        // manajemen_nasabah
+                                String updateSql = "UPDATE manajemen_nasabah SET saldo_total = ?, total_penarikan = total_penarikan + ? WHERE id_nasabah = ?";
                                 PreparedStatement updatePst = conn.prepareStatement(updateSql);
                                 updatePst.setDouble(1, saldoBaru);
-                                updatePst.setString(2, id_nasabah);
+                                updatePst.setDouble(2, jumlahTarik);
+                                updatePst.setString(3, id_nasabah);
                                 updatePst.executeUpdate();
-                                updatePst.close();
+                                updatePst.close(); // Insert record into penarikan_saldo table
+                                String insertSql = "INSERT INTO penarikan_saldo (id_nasabah, id_user, jumlah_penarikan, tanggal_penarikan) VALUES (?, ?, ?, NOW())";
+                                PreparedStatement insertPst = conn.prepareStatement(insertSql);
+                                insertPst.setString(1, id_nasabah);
+                                insertPst.setInt(2, users.getId());
+                                insertPst.setDouble(3, jumlahTarik);
+                                insertPst.executeUpdate();
+                                insertPst.close();
 
                                 String kodeTransaksi = "TRX" + System.currentTimeMillis(); // contoh kode unik
                                 cetakStrukTarikTunai(kodeTransaksi, nama, jumlahTarik, saldoBaru); // Log tarik tunai
@@ -498,15 +528,24 @@ public class TabTransaksi extends javax.swing.JPanel {
         }
 
         txttotal.setText(Rp.format(total));
+
+        // Also update kembalian when total changes
+        if (!txttunai.getText().isEmpty()) {
+            hitungKembalian();
+        }
     }
 
     private void hitungKembalian() {
         try {
-            int tunai = txttunai.getText().isEmpty() ? 0 : Integer.parseInt(txttunai.getText());
+            // Clean the input text (remove non-digits)
+            String cleanInput = txttunai.getText().replaceAll("[^\\d]", "");
+            int tunai = cleanInput.isEmpty() ? 0 : Integer.parseInt(cleanInput);
             int kembali = tunai - total;
-            txtkembalian.setText(kembali >= 0 ? String.valueOf(kembali) : "0");
+
+            // Format the display value
+            txtkembalian.setText(kembali >= 0 ? Rp.format(kembali) : Rp.format(0));
         } catch (NumberFormatException e) {
-            txtkembalian.setText("0");
+            txtkembalian.setText(Rp.format(0));
         }
     }
 
@@ -516,6 +555,7 @@ public class TabTransaksi extends javax.swing.JPanel {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -738,10 +778,12 @@ public class TabTransaksi extends javax.swing.JPanel {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel4.setText("Kembalian   :");
 
+        txttotal.setEditable(false);
         txttotal.setPlaceholder("Total harga");
 
         txttunai.setPlaceholder("Tunai");
 
+        txtkembalian.setEditable(false);
         txtkembalian.setPlaceholder("Kembalian");
 
         javax.swing.GroupLayout shadowTabelLayout = new javax.swing.GroupLayout(shadowTabel);

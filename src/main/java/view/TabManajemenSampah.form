@@ -1325,11 +1325,13 @@
                               </Group>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jScrollPane3" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane3" pref="1146" max="32767" attributes="0"/>
                                       <Group type="102" attributes="0">
                                           <Component id="btnTambahJenis" min="-2" pref="80" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="btnHapusJenis" min="-2" pref="80" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="btn_cancelJenis" min="-2" pref="80" max="-2" attributes="0"/>
                                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                       </Group>
                                       <Component id="txt_Jenis" alignment="0" max="32767" attributes="0"/>
@@ -1355,9 +1357,12 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="txt_Jenis" min="-2" pref="30" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="btnTambahJenis" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
-                              <Component id="btnHapusJenis" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="btnTambahJenis" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                                  <Component id="btnHapusJenis" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="btn_cancelJenis" alignment="1" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -1429,13 +1434,13 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="Tambah"/>
                     <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="0" green="99" red="0" type="rgb"/>
+                      <Color blue="3c" green="82" red="37" type="rgb"/>
                     </Property>
                     <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="0" green="cc" red="0" type="rgb"/>
+                      <Color blue="50" green="af" red="4c" type="rgb"/>
                     </Property>
                     <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="33" green="ff" red="33" type="rgb"/>
+                      <Color blue="4b" green="a0" red="45" type="rgb"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -1449,13 +1454,13 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="Hapus"/>
                     <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="0" green="0" red="99" type="rgb"/>
+                      <Color blue="14" green="1e" red="be" type="rgb"/>
                     </Property>
                     <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="0" green="0" red="ff" type="rgb"/>
+                      <Color blue="3c" green="4c" red="e7" type="rgb"/>
                     </Property>
                     <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="33" green="33" red="ff" type="rgb"/>
+                      <Color blue="28" green="32" red="d2" type="rgb"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -1490,6 +1495,29 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnKembaliJKActionPerformed"/>
                   </Events>
                 </Component>
+                <Component class="component.Jbutton" name="btn_cancelJenis">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/icon/icon_batal.png"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Batal"/>
+                    <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="0" green="7d" red="c8" type="rgb"/>
+                    </Property>
+                    <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="12" green="9c" red="f3" type="rgb"/>
+                    </Property>
+                    <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="a" green="91" red="e6" type="rgb"/>
+                    </Property>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Segoe UI" size="12" style="1"/>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_cancelJenisActionPerformed"/>
+                  </Events>
+                </Component>
               </SubComponents>
             </Container>
             <Container class="component.ShadowPanel" name="shadowKategori">
@@ -1508,7 +1536,9 @@
                                   <Component id="btnTambahKategori" min="-2" pref="80" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="btnHapusKategori" min="-2" pref="80" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="974" max="32767" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="btn_cancelJenisKategori" min="-2" pref="80" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
                               <Component id="jLabel26" alignment="0" max="32767" attributes="0"/>
                               <Component id="jLabel27" alignment="0" max="32767" attributes="0"/>
@@ -1533,9 +1563,12 @@
                           <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                           <Component id="txt_Kategori" min="-2" pref="30" max="-2" attributes="0"/>
                           <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="btnTambahKategori" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
-                              <Component id="btnHapusKategori" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="btnTambahKategori" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                                  <Component id="btnHapusKategori" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="btn_cancelJenisKategori" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -1589,13 +1622,13 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="Tambah"/>
                     <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="0" green="99" red="0" type="rgb"/>
+                      <Color blue="3c" green="82" red="37" type="rgb"/>
                     </Property>
                     <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="0" green="cc" red="0" type="rgb"/>
+                      <Color blue="50" green="af" red="4c" type="rgb"/>
                     </Property>
                     <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="33" green="ff" red="33" type="rgb"/>
+                      <Color blue="4b" green="a0" red="45" type="rgb"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -1612,10 +1645,10 @@
                       <Color blue="0" green="0" red="99" type="rgb"/>
                     </Property>
                     <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="0" green="0" red="ff" type="rgb"/>
+                      <Color blue="3c" green="4c" red="e7" type="rgb"/>
                     </Property>
                     <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="33" green="33" red="ff" type="rgb"/>
+                      <Color blue="28" green="32" red="d2" type="rgb"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -1677,6 +1710,29 @@
                     </Property>
                     <Property name="text" type="java.lang.String" value="Kelola Kategori Sampah"/>
                   </Properties>
+                </Component>
+                <Component class="component.Jbutton" name="btn_cancelJenisKategori">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/icon/icon_batal.png"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Batal"/>
+                    <Property name="fillClick" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="0" green="7d" red="c8" type="rgb"/>
+                    </Property>
+                    <Property name="fillOriginal" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="12" green="9c" red="f3" type="rgb"/>
+                    </Property>
+                    <Property name="fillOver" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="a" green="91" red="e6" type="rgb"/>
+                    </Property>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Segoe UI" size="12" style="1"/>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_cancelJenisKategoriActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

@@ -449,6 +449,7 @@
                 </Component>
                 <Component class="component.PlaceholderTextField" name="txttotal">
                   <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="placeholder" type="java.lang.String" value="Total harga"/>
                   </Properties>
                 </Component>
@@ -459,6 +460,7 @@
                 </Component>
                 <Component class="component.PlaceholderTextField" name="txtkembalian">
                   <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="placeholder" type="java.lang.String" value="Kembalian"/>
                   </Properties>
                 </Component>

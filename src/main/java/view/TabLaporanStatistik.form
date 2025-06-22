@@ -745,21 +745,14 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
+                              <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="btn_laporan_jual_sampah" alignment="1" max="32767" attributes="0"/>
-                                          <Component id="btn_detail_pemasukan" alignment="1" pref="466" max="32767" attributes="0"/>
-                                          <Component id="btn_laporan_transaksi" alignment="1" max="32767" attributes="0"/>
-                                          <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="btn_detail_pemasukan1" alignment="1" pref="466" max="32767" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <Group type="102" attributes="0">
-                                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                                      <Component id="panelCurve1" max="32767" attributes="0"/>
-                                  </Group>
+                                  <Component id="btn_laporan_jual_sampah" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="btn_detail_pemasukan" alignment="1" pref="466" max="32767" attributes="0"/>
+                                  <Component id="btn_laporan_transaksi" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="btn_laporan_saldo" alignment="1" pref="466" max="32767" attributes="0"/>
+                                  <Component id="panelCurve1" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -776,7 +769,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btn_detail_pemasukan" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btn_detail_pemasukan1" min="-2" max="-2" attributes="0"/>
+                              <Component id="btn_laporan_saldo" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="panelCurve1" max="32767" attributes="0"/>
                           </Group>
@@ -880,7 +873,7 @@
                         </Component>
                       </SubComponents>
                     </Container>
-                    <Component class="ripple.button.Button" name="btn_detail_pemasukan1">
+                    <Component class="ripple.button.Button" name="btn_laporan_saldo">
                       <Properties>
                         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="cc" green="cc" red="0" type="rgb"/>
@@ -894,7 +887,7 @@
                         </Property>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_detail_pemasukan1ActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_laporan_saldoActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>

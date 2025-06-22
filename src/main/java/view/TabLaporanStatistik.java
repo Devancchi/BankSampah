@@ -490,7 +490,7 @@ private void loadData(String filterJenis) {
         jLabel1 = new javax.swing.JLabel();
         panelCurve1 = new component.ShadowPanel();
         chart = new grafik.main.CurveLineChart();
-        btn_detail_pemasukan1 = new ripple.button.Button();
+        btn_laporan_saldo = new ripple.button.Button();
         jLabel14 = new javax.swing.JLabel();
 
         dateChooser1.setDateChooserRender(defaultDateChooserRender1);
@@ -935,13 +935,13 @@ private void loadData(String filterJenis) {
                 .addGap(0, 0, 0))
         );
 
-        btn_detail_pemasukan1.setBackground(new java.awt.Color(0, 204, 204));
-        btn_detail_pemasukan1.setForeground(new java.awt.Color(255, 255, 255));
-        btn_detail_pemasukan1.setText("Laporan Tarik Saldo");
-        btn_detail_pemasukan1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btn_detail_pemasukan1.addActionListener(new java.awt.event.ActionListener() {
+        btn_laporan_saldo.setBackground(new java.awt.Color(0, 204, 204));
+        btn_laporan_saldo.setForeground(new java.awt.Color(255, 255, 255));
+        btn_laporan_saldo.setText("Laporan Tarik Saldo");
+        btn_laporan_saldo.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_laporan_saldo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_detail_pemasukan1ActionPerformed(evt);
+                btn_laporan_saldoActionPerformed(evt);
             }
         });
 
@@ -950,18 +950,14 @@ private void loadData(String filterJenis) {
         panelCurveLayout.setHorizontalGroup(
             panelCurveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelCurveLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
                 .addGroup(panelCurveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelCurveLayout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addGroup(panelCurveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_laporan_jual_sampah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btn_detail_pemasukan, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
-                            .addComponent(btn_laporan_transaksi, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btn_detail_pemasukan1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)))
-                    .addGroup(panelCurveLayout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(panelCurve1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(btn_laporan_jual_sampah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_detail_pemasukan, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                    .addComponent(btn_laporan_transaksi, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_laporan_saldo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                    .addComponent(panelCurve1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelCurveLayout.setVerticalGroup(
@@ -975,7 +971,7 @@ private void loadData(String filterJenis) {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_detail_pemasukan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_detail_pemasukan1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_laporan_saldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panelCurve1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1394,9 +1390,14 @@ private void loadData(String filterJenis) {
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_dateKeyTyped
 
-    private void btn_detail_pemasukan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_detail_pemasukan1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_detail_pemasukan1ActionPerformed
+    private void btn_laporan_saldoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_laporan_saldoActionPerformed
+        panelMain.setOpaque(false);
+        panelMain.removeAll();
+        panelMain.add(new TabLaporan_tarik_saldo());
+        panelMain.repaint();
+        panelMain.revalidate();
+        notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Saldo");
+    }//GEN-LAST:event_btn_laporan_saldoActionPerformed
 
    private void searchByKeywordAndDate() {
         String kataKunci = txt_search.getText().trim();
@@ -1860,9 +1861,9 @@ private void loadData(String filterJenis) {
     private component.Jbutton btn_Export1;
     private javax.swing.JButton btn_before1;
     private ripple.button.Button btn_detail_pemasukan;
-    private ripple.button.Button btn_detail_pemasukan1;
     private javax.swing.JButton btn_first1;
     private ripple.button.Button btn_laporan_jual_sampah;
+    private ripple.button.Button btn_laporan_saldo;
     private ripple.button.Button btn_laporan_transaksi;
     private javax.swing.JButton btn_last1;
     private javax.swing.JButton btn_next1;
