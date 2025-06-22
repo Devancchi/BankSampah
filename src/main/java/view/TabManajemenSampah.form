@@ -1562,13 +1562,18 @@
                           <Component id="jLabel26" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                           <Component id="txt_Kategori" min="-2" pref="30" max="-2" attributes="0"/>
-                          <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="btnTambahKategori" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
-                                  <Component id="btnHapusKategori" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="btnTambahKategori" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                                      <Component id="btnHapusKategori" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <Component id="btn_cancelJenisKategori" max="32767" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="btn_cancelJenisKategori" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -1730,9 +1735,6 @@
                       <Font name="Segoe UI" size="12" style="1"/>
                     </Property>
                   </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_cancelJenisKategoriActionPerformed"/>
-                  </Events>
                 </Component>
               </SubComponents>
             </Container>
