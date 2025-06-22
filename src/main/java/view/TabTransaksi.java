@@ -8,6 +8,7 @@ import component.Jbutton;
 import component.Table;
 import component.UserSession;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import component.LoggerUtil;
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
@@ -60,6 +61,43 @@ public class TabTransaksi extends javax.swing.JPanel {
                     scanbarang.requestFocus();
                 });
             }
+        }); // Add validation to prevent negative values in quantity field
+        txtqty.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                char c = evt.getKeyChar();
+                // Only allow digits, backspace and delete
+                if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
+                    evt.consume();
+                }
+                // Prevent leading zero when entering a second digit
+                if (c == '0' && txtqty.getText().isEmpty()) {
+                    // Allow single '0'
+                } else if (txtqty.getText().equals("0") && Character.isDigit(c)) {
+                    evt.consume();
+                }
+            }
+        });
+
+        // Add validation to prevent negative values in tunai field
+        txttunai.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                char c = evt.getKeyChar();
+                // Only allow digits, backspace and delete
+                if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
+                    evt.consume();
+                }
+                // Prevent leading zeros
+                if (c == '0' && txttunai.getText().isEmpty()) {
+                    // Allow single '0'
+                } else if (txttunai.getText().equals("0") && Character.isDigit(c)) {
+                    evt.consume();
+                }
+            }
+
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                // Calculate change amount whenever tunai value changes
+                hitungKembalian();
+            }
         });
 
         // Add mouse listener to tabletransaksi
@@ -85,7 +123,8 @@ public class TabTransaksi extends javax.swing.JPanel {
             public void insertUpdate(javax.swing.event.DocumentEvent e) {
                 if (!scanbarang.getText().isEmpty()) {
                     javax.swing.SwingUtilities.invokeLater(() -> {
-                        scanbarangActionPerformed(new java.awt.event.ActionEvent(scanbarang, java.awt.event.ActionEvent.ACTION_PERFORMED, ""));
+                        scanbarangActionPerformed(new java.awt.event.ActionEvent(scanbarang,
+                                java.awt.event.ActionEvent.ACTION_PERFORMED, ""));
                     });
                 }
             }
@@ -94,6 +133,21 @@ public class TabTransaksi extends javax.swing.JPanel {
             }
 
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            }
+        });
+
+        // Add document listener to automatically calculate kembalian
+        txttunai.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                hitungKembalian();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                hitungKembalian();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                hitungKembalian();
             }
         });
     }
@@ -129,7 +183,8 @@ public class TabTransaksi extends javax.swing.JPanel {
     }
 
     private void cetakStruk(String kodeNota, Table tabletransaksi) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from
+                                                                       // nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     public class Print {
@@ -196,15 +251,15 @@ public class TabTransaksi extends javax.swing.JPanel {
                 out.write(sb.toString().getBytes("UTF-8"));
 
                 // Barcode (opsional)
-                out.write(new byte[]{0x1D, 0x48, 0x02}); // Tampilkan kode
-                out.write(new byte[]{0x1D, 0x77, 0x02}); // Lebar
-                out.write(new byte[]{0x1D, 0x68, 0x40}); // Tinggi
-                out.write(new byte[]{0x1D, 0x6B, 0x49}); // Code 128
+                out.write(new byte[] { 0x1D, 0x48, 0x02 }); // Tampilkan kode
+                out.write(new byte[] { 0x1D, 0x77, 0x02 }); // Lebar
+                out.write(new byte[] { 0x1D, 0x68, 0x40 }); // Tinggi
+                out.write(new byte[] { 0x1D, 0x6B, 0x49 }); // Code 128
                 out.write((byte) kode.length());
                 out.write(kode.getBytes("UTF-8"));
 
-                out.write(new byte[]{0x0A, 0x0A});
-                out.write(new byte[]{0x1D, 0x56, 0x00}); // Cut
+                out.write(new byte[] { 0x0A, 0x0A });
+                out.write(new byte[] { 0x1D, 0x56, 0x00 }); // Cut
 
                 DocPrintJob job = printer.createPrintJob();
                 Doc doc = new SimpleDoc(out.toByteArray(), DocFlavor.BYTE_ARRAY.AUTOSENSE, null);
@@ -276,8 +331,8 @@ public class TabTransaksi extends javax.swing.JPanel {
             out.write(sb.toString().getBytes("UTF-8"));
 
             // Tambahan baris kosong & potong kertas
-            out.write(new byte[]{0x0A, 0x0A}); // Baris kosong
-            out.write(new byte[]{0x1D, 0x56, 0x00}); // Perintah cut kertas (ESC/POS)
+            out.write(new byte[] { 0x0A, 0x0A }); // Baris kosong
+            out.write(new byte[] { 0x1D, 0x56, 0x00 }); // Perintah cut kertas (ESC/POS)
 
             DocPrintJob job = printer.createPrintJob();
             Doc doc = new SimpleDoc(out.toByteArray(), DocFlavor.BYTE_ARRAY.AUTOSENSE, null);
@@ -316,11 +371,11 @@ public class TabTransaksi extends javax.swing.JPanel {
                 NumberFormat Rp = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                 String totalFormatted = Rp.format(jumlahBayar);
 
-                String[] pilihan = {"Pembayaran", "Tarik Tunai", "Batal"};
+                String[] pilihan = { "Pembayaran", "Tarik Tunai", "Batal" };
                 int pilihanUser = JOptionPane.showOptionDialog(this,
                         "Nama: " + nama
-                        + "\nSaldo saat ini: " + Rp.format(saldo)
-                        + "\n\nPilih jenis transaksi:",
+                                + "\nSaldo saat ini: " + Rp.format(saldo)
+                                + "\n\nPilih jenis transaksi:",
                         "Pilih Transaksi",
                         JOptionPane.DEFAULT_OPTION,
                         JOptionPane.QUESTION_MESSAGE,
@@ -331,15 +386,16 @@ public class TabTransaksi extends javax.swing.JPanel {
                 if (pilihanUser == 0) { // PEMBAYARAN
                     int konfirmasi = JOptionPane.showConfirmDialog(this,
                             "Nama: " + nama
-                            + "\nSaldo saat ini: " + Rp.format(saldo)
-                            + "\nTotal transaksi: " + totalFormatted
-                            + "\n\nLanjutkan pembayaran?",
+                                    + "\nSaldo saat ini: " + Rp.format(saldo)
+                                    + "\nTotal transaksi: " + totalFormatted
+                                    + "\n\nLanjutkan pembayaran?",
                             "Konfirmasi Pembayaran",
                             JOptionPane.YES_NO_OPTION);
 
                     if (konfirmasi == JOptionPane.YES_OPTION) {
                         if (jumlahBayar > saldo) {
-                            JOptionPane.showMessageDialog(this, "Saldo tidak mencukupi!", "Gagal", JOptionPane.WARNING_MESSAGE);
+                            JOptionPane.showMessageDialog(this, "Saldo tidak mencukupi!", "Gagal",
+                                    JOptionPane.WARNING_MESSAGE);
                         } else {
                             double saldoBaru = saldo - jumlahBayar;
 
@@ -348,20 +404,24 @@ public class TabTransaksi extends javax.swing.JPanel {
                             updatePst.setDouble(1, saldoBaru);
                             updatePst.setString(2, id_nasabah);
                             updatePst.executeUpdate();
-                            updatePst.close();                            txttunai.setText(String.valueOf((int) jumlahBayar));
+                            updatePst.close();
+                            txttunai.setText(String.valueOf((int) jumlahBayar));
 
                             // Log transaction
-                            LoggerUtil.insert(users.getId(), "Melakukan pembayaran dengan saldo nasabah: " + nama + " (ID: " + id_nasabah + ") sejumlah " + totalFormatted);
-                            
-                            JOptionPane.showMessageDialog(this, "Pembayaran berhasil!\nSisa Saldo: " + Rp.format(saldoBaru));
-                            Notifications.getInstance().show(Notifications.Type.SUCCESS, "Pembayaran dengan saldo berhasil");
+                            LoggerUtil.insert(users.getId(), "Melakukan pembayaran dengan saldo nasabah: " + nama
+                                    + " (ID: " + id_nasabah + ") sejumlah " + totalFormatted);
+
+                            JOptionPane.showMessageDialog(this,
+                                    "Pembayaran berhasil!\nSisa Saldo: " + Rp.format(saldoBaru));
+                            Notifications.getInstance().show(Notifications.Type.SUCCESS,
+                                    "Pembayaran dengan saldo berhasil");
                         }
                     }
 
                 } else if (pilihanUser == 1) { // TARIK TUNAI
                     String input = JOptionPane.showInputDialog(this,
                             "Saldo saat ini: " + Rp.format(saldo)
-                            + "\nMasukkan jumlah tarik tunai (Rp):",
+                                    + "\nMasukkan jumlah tarik tunai (Rp):",
                             "Input Jumlah",
                             JOptionPane.PLAIN_MESSAGE);
 
@@ -375,35 +435,42 @@ public class TabTransaksi extends javax.swing.JPanel {
                             }
 
                             if (jumlahTarik > saldo) {
-                                JOptionPane.showMessageDialog(this, "Saldo tidak mencukupi!", "Gagal", JOptionPane.WARNING_MESSAGE);
+                                JOptionPane.showMessageDialog(this, "Saldo tidak mencukupi!", "Gagal",
+                                        JOptionPane.WARNING_MESSAGE);
                                 return;
                             }
 
                             int konfirmasi = JOptionPane.showConfirmDialog(this,
                                     "Nama: " + nama
-                                    + "\nSaldo saat ini: " + Rp.format(saldo)
-                                    + "\nJumlah yang akan ditarik: " + Rp.format(jumlahTarik)
-                                    + "\n\nLanjutkan tarik tunai?",
+                                            + "\nSaldo saat ini: " + Rp.format(saldo)
+                                            + "\nJumlah yang akan ditarik: " + Rp.format(jumlahTarik)
+                                            + "\n\nLanjutkan tarik tunai?",
                                     "Konfirmasi Tarik Tunai",
                                     JOptionPane.YES_NO_OPTION);
 
                             if (konfirmasi == JOptionPane.YES_OPTION) {
-                                double saldoBaru = saldo - jumlahTarik;
-
-                                String updateSql = "UPDATE manajemen_nasabah SET saldo_total = ? WHERE id_nasabah = ?";
+                                double saldoBaru = saldo - jumlahTarik; // Update the saldo and total_penarikan in
+                                                                        // manajemen_nasabah
+                                String updateSql = "UPDATE manajemen_nasabah SET saldo_total = ?, total_penarikan = total_penarikan + ? WHERE id_nasabah = ?";
                                 PreparedStatement updatePst = conn.prepareStatement(updateSql);
                                 updatePst.setDouble(1, saldoBaru);
-                                updatePst.setString(2, id_nasabah);
+                                updatePst.setDouble(2, jumlahTarik);
+                                updatePst.setString(3, id_nasabah);
                                 updatePst.executeUpdate();
-                                updatePst.close();
-
-                                // Set ke txttunai
-                                txttunai.setText(String.valueOf((int) jumlahTarik));
+                                updatePst.close(); // Insert record into penarikan_saldo table
+                                String insertSql = "INSERT INTO penarikan_saldo (id_nasabah, id_user, jumlah_penarikan, tanggal_penarikan) VALUES (?, ?, ?, NOW())";
+                                PreparedStatement insertPst = conn.prepareStatement(insertSql);
+                                insertPst.setString(1, id_nasabah);
+                                insertPst.setInt(2, users.getId());
+                                insertPst.setDouble(3, jumlahTarik);
+                                insertPst.executeUpdate();
+                                insertPst.close();
 
                                 String kodeTransaksi = "TRX" + System.currentTimeMillis(); // contoh kode unik
-                                cetakStrukTarikTunai(kodeTransaksi, nama, jumlahTarik, saldoBaru);                                // Log tarik tunai
-                                LoggerUtil.insert(users.getId(), "Melakukan tarik tunai nasabah: " + nama + " (ID: " + id_nasabah + ") sejumlah " + Rp.format(jumlahTarik));
-                                
+                                cetakStrukTarikTunai(kodeTransaksi, nama, jumlahTarik, saldoBaru); // Log tarik tunai
+                                LoggerUtil.insert(users.getId(), "Melakukan tarik tunai nasabah: " + nama + " (ID: "
+                                        + id_nasabah + ") sejumlah " + Rp.format(jumlahTarik));
+
                                 JOptionPane.showMessageDialog(this,
                                         "Tarik tunai berhasil!\nSisa Saldo: " + Rp.format(saldoBaru));
                                 Notifications.getInstance().show(Notifications.Type.SUCCESS, "Tarik tunai berhasil");
@@ -447,7 +514,7 @@ public class TabTransaksi extends javax.swing.JPanel {
 
         if (!ditemukan) {
             int totalHarga = qty * hargaSatuan;
-            model.addRow(new Object[]{kode, nama, qty, hargaSatuan, totalHarga});
+            model.addRow(new Object[] { kode, nama, qty, hargaSatuan, totalHarga });
         }
 
         hitungTotal();
@@ -461,15 +528,24 @@ public class TabTransaksi extends javax.swing.JPanel {
         }
 
         txttotal.setText(Rp.format(total));
+
+        // Also update kembalian when total changes
+        if (!txttunai.getText().isEmpty()) {
+            hitungKembalian();
+        }
     }
 
     private void hitungKembalian() {
         try {
-            int tunai = txttunai.getText().isEmpty() ? 0 : Integer.parseInt(txttunai.getText());
+            // Clean the input text (remove non-digits)
+            String cleanInput = txttunai.getText().replaceAll("[^\\d]", "");
+            int tunai = cleanInput.isEmpty() ? 0 : Integer.parseInt(cleanInput);
             int kembali = tunai - total;
-            txtkembalian.setText(kembali >= 0 ? String.valueOf(kembali) : "0");
+
+            // Format the display value
+            txtkembalian.setText(kembali >= 0 ? Rp.format(kembali) : Rp.format(0));
         } catch (NumberFormatException e) {
-            txtkembalian.setText("0");
+            txtkembalian.setText(Rp.format(0));
         }
     }
 
@@ -479,7 +555,9 @@ public class TabTransaksi extends javax.swing.JPanel {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panelMain = new javax.swing.JPanel();
@@ -590,63 +668,84 @@ public class TabTransaksi extends javax.swing.JPanel {
         javax.swing.GroupLayout shadowDataBarangLayout = new javax.swing.GroupLayout(shadowDataBarang);
         shadowDataBarang.setLayout(shadowDataBarangLayout);
         shadowDataBarangLayout.setHorizontalGroup(
-            shadowDataBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(shadowDataBarangLayout.createSequentialGroup()
-                .addGroup(shadowDataBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 108, Short.MAX_VALUE))
-            .addGroup(shadowDataBarangLayout.createSequentialGroup()
-                .addGroup(shadowDataBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(shadowDataBarangLayout.createSequentialGroup()
-                        .addComponent(btnbatal, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(btntambah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(txtstok, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtqty, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtnasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(scanbarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtbarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtharga, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+                shadowDataBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(shadowDataBarangLayout.createSequentialGroup()
+                                .addGroup(shadowDataBarangLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel8)
+                                        .addComponent(jLabel9)
+                                        .addComponent(jLabel6)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 142,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 241,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 108, Short.MAX_VALUE))
+                        .addGroup(shadowDataBarangLayout.createSequentialGroup()
+                                .addGroup(shadowDataBarangLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(shadowDataBarangLayout.createSequentialGroup()
+                                                .addComponent(btnbatal, javax.swing.GroupLayout.PREFERRED_SIZE, 146,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(0, 0, 0)
+                                                .addComponent(btntambah, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(txtstok, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txtqty, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txtnasabah, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(scanbarang, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txtbarang, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txtharga, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap()));
         shadowDataBarangLayout.setVerticalGroup(
-            shadowDataBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowDataBarangLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(jLabel2)
-                .addGap(13, 13, 13)
-                .addComponent(scanbarang, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtbarang, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel6)
-                .addGap(13, 13, 13)
-                .addComponent(txtharga, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel9)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtstok, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
-                .addComponent(jLabel8)
-                .addGap(7, 7, 7)
-                .addComponent(txtqty, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(shadowDataBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btntambah, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnbatal, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtnasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                shadowDataBarangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                shadowDataBarangLayout.createSequentialGroup()
+                                        .addGap(0, 0, 0)
+                                        .addComponent(jLabel2)
+                                        .addGap(13, 13, 13)
+                                        .addComponent(scanbarang, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel7)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtbarang, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel6)
+                                        .addGap(13, 13, 13)
+                                        .addComponent(txtharga, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel9)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtstok, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(7, 7, 7)
+                                        .addComponent(jLabel8)
+                                        .addGap(7, 7, 7)
+                                        .addComponent(txtqty, javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(shadowDataBarangLayout
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(btntambah, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(btnbatal, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel10)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtnasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 135,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         btnbayar.setForeground(new java.awt.Color(0, 0, 0));
         btnbayar.setText("Bayar");
@@ -662,13 +761,12 @@ public class TabTransaksi extends javax.swing.JPanel {
         });
 
         tabletransaksi.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][] {
 
-            },
-            new String [] {
-                "Kode Barang", "Nama Barang", "Qty", "Harga", "Total Harga", "Nasabah"
-            }
-        ));
+                },
+                new String[] {
+                        "Kode Barang", "Nama Barang", "Qty", "Harga", "Total Harga", "Nasabah"
+                }));
         jScrollPane2.setViewportView(tabletransaksi);
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -680,84 +778,109 @@ public class TabTransaksi extends javax.swing.JPanel {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel4.setText("Kembalian   :");
 
+        txttotal.setEditable(false);
         txttotal.setPlaceholder("Total harga");
 
         txttunai.setPlaceholder("Tunai");
 
+        txtkembalian.setEditable(false);
         txtkembalian.setPlaceholder("Kembalian");
 
         javax.swing.GroupLayout shadowTabelLayout = new javax.swing.GroupLayout(shadowTabel);
         shadowTabel.setLayout(shadowTabelLayout);
         shadowTabelLayout.setHorizontalGroup(
-            shadowTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowTabelLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
-                .addGap(6, 6, 6))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowTabelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(shadowTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(shadowTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txttunai, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtkembalian, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txttotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnbayar, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
+                shadowTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowTabelLayout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 785, Short.MAX_VALUE)
+                                .addGap(6, 6, 6))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowTabelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(shadowTabelLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE, 108,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel4))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(shadowTabelLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(txttunai, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txtkembalian, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txttotal, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnbayar, javax.swing.GroupLayout.PREFERRED_SIZE, 153,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap()));
         shadowTabelLayout.setVerticalGroup(
-            shadowTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowTabelLayout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 751, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(shadowTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(shadowTabelLayout.createSequentialGroup()
-                        .addGroup(shadowTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txttotal, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(shadowTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txttunai, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(shadowTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtkembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(btnbayar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+                shadowTabelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, shadowTabelLayout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 751, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(shadowTabelLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(shadowTabelLayout.createSequentialGroup()
+                                                .addGroup(shadowTabelLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(txttotal, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(shadowTabelLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(txttunai, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(18, 18, 18)
+                                                .addGroup(shadowTabelLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(txtkembalian,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 36,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(btnbayar, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap()));
 
         javax.swing.GroupLayout panelViewLayout = new javax.swing.GroupLayout(panelView);
         panelView.setLayout(panelViewLayout);
         panelViewLayout.setHorizontalGroup(
-            panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelViewLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(shadowDataBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(shadowTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(20, 20, 20))
-        );
+                panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelViewLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(shadowDataBarang, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(shadowTabel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(20, 20, 20)));
         panelViewLayout.setVerticalGroup(
-            panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelViewLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(shadowTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(shadowDataBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(20, 20, 20))
-        );
+                panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelViewLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addGroup(
+                                        panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addComponent(shadowTabel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(shadowDataBarang, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(20, 20, 20)));
 
         panelMain.add(panelView, "card2");
 
         add(panelMain, "card2");
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btntambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btntambahActionPerformed
+    private void btntambahActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btntambahActionPerformed
         // TODO add your handling code here:
         String kode = scanbarang.getText().trim();
         String nama = txtbarang.getText().trim();
@@ -800,15 +923,18 @@ public class TabTransaksi extends javax.swing.JPanel {
                     found = true;
                     break;
                 }
-            }            if (!found) {
+            }
+            if (!found) {
                 int totalHarga = qty * hargaParsed;
-                model.addRow(new Object[]{kode, nama, qty, hargaParsed, totalHarga, idNasabah});
-                
+                model.addRow(new Object[] { kode, nama, qty, hargaParsed, totalHarga, idNasabah });
+
                 // Log adding new item to cart
-                LoggerUtil.insert(users.getId(), "Menambahkan barang ke keranjang: " + nama + " (Kode: " + kode + "), Qty: " + qty);
+                LoggerUtil.insert(users.getId(),
+                        "Menambahkan barang ke keranjang: " + nama + " (Kode: " + kode + "), Qty: " + qty);
             } else {
                 // Log updating item in cart
-                LoggerUtil.insert(users.getId(), "Memperbarui qty barang di keranjang: " + nama + " (Kode: " + kode + ")");
+                LoggerUtil.insert(users.getId(),
+                        "Memperbarui qty barang di keranjang: " + nama + " (Kode: " + kode + ")");
             }
 
             hitungTotal();
@@ -817,39 +943,40 @@ public class TabTransaksi extends javax.swing.JPanel {
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Input harus berupa angka valid!");
         }
-    }//GEN-LAST:event_btntambahActionPerformed
+    }// GEN-LAST:event_btntambahActionPerformed
 
-    private void btnbatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbatalActionPerformed
+    private void btnbatalActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnbatalActionPerformed
         int confirm = JOptionPane.showConfirmDialog(
                 this,
                 "Yakin membatalkan transaksi barang ini?",
                 "Konfirmasi Batal",
-                JOptionPane.YES_NO_OPTION
-        );
+                JOptionPane.YES_NO_OPTION);
 
-        if (confirm == JOptionPane.YES_OPTION) {            int selectedRow = tabletransaksi.getSelectedRow();
+        if (confirm == JOptionPane.YES_OPTION) {
+            int selectedRow = tabletransaksi.getSelectedRow();
             if (selectedRow >= 0) {
                 DefaultTableModel model = (DefaultTableModel) tabletransaksi.getModel();
                 // Get info about the item before removing
                 String kode = model.getValueAt(selectedRow, 0).toString();
                 String nama = model.getValueAt(selectedRow, 1).toString();
                 int qty = Integer.parseInt(model.getValueAt(selectedRow, 2).toString());
-                
+
                 model.removeRow(selectedRow);
                 hitungTotal();
                 btnbatal.setVisible(false); // Hide button after deletion
-                
+
                 // Log removing item from cart
-                LoggerUtil.insert(users.getId(), "Menghapus barang dari keranjang: " + nama + " (Kode: " + kode + "), Qty: " + qty);
+                LoggerUtil.insert(users.getId(),
+                        "Menghapus barang dari keranjang: " + nama + " (Kode: " + kode + "), Qty: " + qty);
                 Notifications.getInstance().show(Notifications.Type.INFO, "Barang dihapus dari keranjang");
             } else {
                 JOptionPane.showMessageDialog(this, "Pilih baris yang akan dibatalkan!");
             }
             bersihkanForm();
         }
-    }//GEN-LAST:event_btnbatalActionPerformed
+    }// GEN-LAST:event_btnbatalActionPerformed
 
-    private void btnbayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbayarActionPerformed
+    private void btnbayarActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnbayarActionPerformed
 
         DefaultTableModel model = (DefaultTableModel) tabletransaksi.getModel();
 
@@ -878,9 +1005,11 @@ public class TabTransaksi extends javax.swing.JPanel {
         List<Object[]> pesanan = new ArrayList<>();
 
         try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", ""); PreparedStatement ps = conn.prepareStatement(
+                "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
+                PreparedStatement ps = conn.prepareStatement(
                         "INSERT INTO transaksi (id_user, id_nasabah, kode_transaksi, kode_barang, nama_barang, qty, harga, total_harga, bayar, kembalian, tanggal) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())"); PreparedStatement pstUpdate = conn.prepareStatement(
+                                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                PreparedStatement pstUpdate = conn.prepareStatement(
                         "UPDATE data_barang SET stok = stok - ? WHERE kode_barang = ? AND stok >=?")) {
 
             for (int i = 0; i < model.getRowCount(); i++) {
@@ -891,20 +1020,20 @@ public class TabTransaksi extends javax.swing.JPanel {
                 int totalHarga = (int) model.getValueAt(i, 4);
 
                 // Simpan transaksi
-                ps.setInt(1, users.getId());           // id_user
-                ps.setString(2, idNasabah);            // id_nasabah
-                ps.setString(3, kodeTransaksi);        // kode_transaksi
-                ps.setString(4, kodeBarang);           // kode_barang
-                ps.setString(5, namaBarang);           // nama_barang
-                ps.setInt(6, qty);                     // qty
-                ps.setInt(7, harga);                   // harga
-                ps.setInt(8, totalHarga);              // total_harga
-                ps.setInt(9, tunai);                   // bayar
-                ps.setInt(10, kembali);                // kembalian
+                ps.setInt(1, users.getId()); // id_user
+                ps.setString(2, idNasabah); // id_nasabah
+                ps.setString(3, kodeTransaksi); // kode_transaksi
+                ps.setString(4, kodeBarang); // kode_barang
+                ps.setString(5, namaBarang); // nama_barang
+                ps.setInt(6, qty); // qty
+                ps.setInt(7, harga); // harga
+                ps.setInt(8, totalHarga); // total_harga
+                ps.setInt(9, tunai); // bayar
+                ps.setInt(10, kembali); // kembalian
                 ps.addBatch();
 
                 // Simpan data untuk cetak
-                pesanan.add(new Object[]{namaBarang, qty, harga});
+                pesanan.add(new Object[] { namaBarang, qty, harga });
 
                 // Update stok
                 pstUpdate.setInt(1, qty);
@@ -916,11 +1045,13 @@ public class TabTransaksi extends javax.swing.JPanel {
                     JOptionPane.showMessageDialog(this, "Stok tidak cukup untuk " + namaBarang);
                     return;
                 }
-            }            ps.executeBatch();
+            }
+            ps.executeBatch();
 
             // Log the transaction
-            LoggerUtil.insert(users.getId(), "Melakukan transaksi penjualan dengan kode: " + kodeTransaksi + " untuk nasabah: " + idNasabah);
-            
+            LoggerUtil.insert(users.getId(),
+                    "Melakukan transaksi penjualan dengan kode: " + kodeTransaksi + " untuk nasabah: " + idNasabah);
+
             // Cetak struk
             Print printer = new Print();
             printer.cetakStruk(kodeTransaksi, pesanan, tunai);
@@ -937,9 +1068,9 @@ public class TabTransaksi extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Gagal menyimpan transaksi: " + e.getMessage());
             e.printStackTrace();
         }
-    }//GEN-LAST:event_btnbayarActionPerformed
+    }// GEN-LAST:event_btnbayarActionPerformed
 
-    private void scanbarangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanbarangActionPerformed
+    private void scanbarangActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_scanbarangActionPerformed
         String SUrl, SUser, SPass;
         String kode = scanbarang.getText();
         SUrl = "jdbc:MySQL://localhost:3306/bank_sampah_sahabat_ibu";
@@ -961,13 +1092,14 @@ public class TabTransaksi extends javax.swing.JPanel {
                 txtharga.setText(String.valueOf(rs.getInt("harga")));
                 txtstok.setText(String.valueOf(rs.getInt("stok")));
                 txtqty.setText("1");
-            }            else {
+            } else {
                 JOptionPane.showMessageDialog(this, "Barang tidak ditemukan.");
             }
 
             // Log scan barcode activity
             if (rs.previous() && rs.next()) { // Move back and forth to reset cursor
-                LoggerUtil.insert(users.getId(), "Memindai barcode barang: " + rs.getString("nama_barang") + " (Kode: " + kode + ")");
+                LoggerUtil.insert(users.getId(),
+                        "Memindai barcode barang: " + rs.getString("nama_barang") + " (Kode: " + kode + ")");
             }
 
             rs.close();
@@ -977,11 +1109,11 @@ public class TabTransaksi extends javax.swing.JPanel {
         } catch (Exception e) {
             System.out.println("Error! " + e.getMessage());
         }
-    }//GEN-LAST:event_scanbarangActionPerformed
+    }// GEN-LAST:event_scanbarangActionPerformed
 
-    private void txtnasabahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtnasabahActionPerformed
+    private void txtnasabahActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txtnasabahActionPerformed
         prosesPembayaranNasabah(txtnasabah.getText());
-    }//GEN-LAST:event_txtnasabahActionPerformed
+    }// GEN-LAST:event_txtnasabahActionPerformed
 
     public component.PlaceholderTextField getScanbarang() {
         return scanbarang;
