@@ -12,6 +12,8 @@ import java.util.Locale;
 import main.DBconnect;
 import notification.toast.Notifications;
 import java.text.DecimalFormat;
+import java.awt.Color;
+import java.awt.Cursor;
 
 public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     private final Connection conn = DBconnect.getConnection();
@@ -19,6 +21,13 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     private int dataPerHalaman = 20;
     private int totalPages;
     private int totalData;
+
+    // Variable to store current filter type - "Pemasukan", "Pengeluaran", or "" for
+    // all
+    private String currentFilterType = "";
+
+    // Variable for filtering based on combobox selection
+    private String filterJenis = null;
 
     public TabLaporan_tarik_saldo() {
         initComponents();
@@ -103,19 +112,31 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     }
 
     private void updateLabels() {
-        try (Connection conn = DBconnect.getConnection()) { // Query untuk total saldo masuk (sum harga dari setor
-                                                            // sampah)
+        try (Connection conn = DBconnect.getConnection()) {
             String querySaldoMasuk = "SELECT SUM(harga) as total_saldo_masuk FROM setor_sampah WHERE harga != '-'";
-
-            // Query untuk total saldo keluar (sum jumlah_penarikan dari penarikan_saldo)
             String querySaldoKeluar = "SELECT SUM(jumlah_penarikan) as total_saldo_keluar FROM penarikan_saldo";
+            String queryTotalTransaksi;
 
-            // Query untuk total transaksi (count dari keduanya)
-            String queryTotalTransaksi = """
-                    SELECT
-                        (SELECT COUNT(*) FROM setor_sampah) +
-                        (SELECT COUNT(*) FROM penarikan_saldo) as total_transaksi
-                    """;
+            // Modify total transaksi query based on filter
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM setor_sampah";
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM penarikan_saldo";
+                } else {
+                    queryTotalTransaksi = """
+                            SELECT
+                                (SELECT COUNT(*) FROM setor_sampah) +
+                                (SELECT COUNT(*) FROM penarikan_saldo) as total_transaksi
+                            """;
+                }
+            } else {
+                queryTotalTransaksi = """
+                        SELECT
+                            (SELECT COUNT(*) FROM setor_sampah) +
+                            (SELECT COUNT(*) FROM penarikan_saldo) as total_transaksi
+                        """;
+            }
 
             // Mengambil total saldo masuk
             double totalSaldoMasuk = 0;
@@ -140,12 +161,37 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
             String saldoMasukFormatted = formatRupiah.format(totalSaldoMasuk);
             String saldoKeluarFormatted = formatRupiah.format(totalSaldoKeluar);
 
-            // Menampilkan total saldo (saldo masuk - saldo keluar)
-            double netSaldo = totalSaldoMasuk - totalSaldoKeluar;
+            // Calculate the saldo based on filter
+            double netSaldo;
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    netSaldo = totalSaldoMasuk;
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    netSaldo = totalSaldoKeluar;
+                } else {
+                    netSaldo = totalSaldoMasuk - totalSaldoKeluar;
+                }
+            } else {
+                netSaldo = totalSaldoMasuk - totalSaldoKeluar;
+            }
+
             String netSaldoFormatted = formatRupiah.format(netSaldo);
 
             // Update label dengan total saldo
             lbl_saldoNasabah.setText(netSaldoFormatted);
+
+            // Update label judul saldo sesuai filter
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    LabelTotalSaldo.setText("Total Saldo Masuk");
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    LabelTotalSaldo.setText("Total Saldo Keluar");
+                } else {
+                    LabelTotalSaldo.setText("Total Saldo Nasabah");
+                }
+            } else {
+                LabelTotalSaldo.setText("Total Saldo Nasabah");
+            }
 
             // Mengambil total transaksi
             try (PreparedStatement pst = conn.prepareStatement(queryTotalTransaksi);
@@ -165,7 +211,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         }
     }
 
-    private void loadData(String filterJenis) {
+    private void loadData(String searchKeyword) {
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -219,11 +265,28 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                         INNER JOIN login l ON ps.id_user = l.id_user
                         INNER JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
                     ) AS combined_data
-                """;
+                """; // Add filter conditions if necessary
+        boolean whereAdded = false;
 
-        // Add filter conditions if necessary
-        if (filterJenis != null && !filterJenis.isEmpty()) {
-            baseQuery += " WHERE nasabah_name LIKE ? OR admin_name LIKE ? OR transaction_type LIKE ?";
+        // First apply filter based on the combobox selection (Saldo Masuk/Keluar)
+        if (filterJenis != null) {
+            if (filterJenis.equals("Pemasukan")) {
+                baseQuery += " WHERE transaction_type = 'Setor Sampah'";
+                whereAdded = true;
+            } else if (filterJenis.equals("Pengeluaran")) {
+                baseQuery += " WHERE transaction_type = 'Tarik Tunai'";
+                whereAdded = true;
+            }
+        }
+
+        // Then apply additional search keyword if provided
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            if (whereAdded) {
+                baseQuery += " AND (nasabah_name LIKE ? OR admin_name LIKE ? OR transaction_type LIKE ?)";
+            } else {
+                baseQuery += " WHERE (nasabah_name LIKE ? OR admin_name LIKE ? OR transaction_type LIKE ?)";
+                whereAdded = true;
+            }
         }
 
         baseQuery += " ORDER BY transaction_date DESC LIMIT ? OFFSET ?";
@@ -231,8 +294,9 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         try (PreparedStatement pst = conn.prepareStatement(baseQuery)) {
             int paramIndex = 1;
 
-            if (filterJenis != null && !filterJenis.isEmpty()) {
-                String searchPattern = "%" + filterJenis + "%";
+            // Add search parameters if we have a search keyword
+            if (searchKeyword != null && !searchKeyword.isEmpty()) {
+                String searchPattern = "%" + searchKeyword + "%";
                 pst.setString(paramIndex++, searchPattern);
                 pst.setString(paramIndex++, searchPattern);
                 pst.setString(paramIndex++, searchPattern);
@@ -283,7 +347,16 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         dateChooser1 = new datechooser.Main.DateChooser();
@@ -301,6 +374,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         txt_date = new swing.TextField();
         jButton1 = new javax.swing.JButton();
         btn_cancel = new component.Jbutton();
+        box_FilterMK = new javax.swing.JComboBox<>();
         panelTable = new component.ShadowPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tb_laporan = new component.Table();
@@ -351,8 +425,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
             }
         });
 
-        box_pilih.setModel(
-                new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Sampah" }));
+        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Nasabah", "Nama Sampah" }));
         box_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 box_pilihActionPerformed(evt);
@@ -362,36 +435,29 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         javax.swing.GroupLayout ShadowSearchLayout = new javax.swing.GroupLayout(ShadowSearch);
         ShadowSearch.setLayout(ShadowSearchLayout);
         ShadowSearchLayout.setHorizontalGroup(
-                ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(ShadowSearchLayout.createSequentialGroup()
-                                .addGap(0, 0, 0)
-                                .addComponent(box_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, 81,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 307,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap()));
+            ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearchLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(box_pilih, 0, 81, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
         ShadowSearchLayout.setVerticalGroup(
-                ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(ShadowSearchLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(ShadowSearchLayout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(box_pilih)
-                                        .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap()));
+            ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearchLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(box_pilih)
+                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
 
         ShadowSearch1.setBackground(new java.awt.Color(249, 251, 255));
         ShadowSearch1.setPreferredSize(new java.awt.Dimension(259, 43));
 
         pilihtanggal.setText("...");
         pilihtanggal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        pilihtanggal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pilihtanggalActionPerformed(evt);
-            }
-        });
 
         jLabel8.setBackground(new java.awt.Color(204, 204, 204));
         jLabel8.setForeground(new java.awt.Color(204, 204, 204));
@@ -421,34 +487,28 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         javax.swing.GroupLayout ShadowSearch1Layout = new javax.swing.GroupLayout(ShadowSearch1);
         ShadowSearch1.setLayout(ShadowSearch1Layout);
         ShadowSearch1Layout.setHorizontalGroup(
-                ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(ShadowSearch1Layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(jLabel8)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(pilihtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 50,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_date, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
-                                .addContainerGap()));
+            ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearch1Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pilihtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_date, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
+                .addContainerGap())
+        );
         ShadowSearch1Layout.setVerticalGroup(
-                ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(ShadowSearch1Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(ShadowSearch1Layout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(txt_date, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
-                                                ShadowSearch1Layout.createSequentialGroup()
-                                                        .addGap(0, 0, Short.MAX_VALUE)
-                                                        .addComponent(pilihtanggal,
-                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 32,
-                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap()));
+            ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ShadowSearch1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txt_date, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ShadowSearch1Layout.createSequentialGroup()
+                        .addGap(0, 1, Short.MAX_VALUE)
+                        .addComponent(pilihtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
 
         jButton1.setText("Reset");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -469,60 +529,61 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
             }
         });
 
+        box_FilterMK.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Saldo Masuk", "Saldo Keluar" }));
+        box_FilterMK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                box_FilterMKActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelFilterLayout = new javax.swing.GroupLayout(panelFilter);
         panelFilter.setLayout(panelFilterLayout);
         panelFilterLayout.setHorizontalGroup(
-                panelFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panelFilterLayout.createSequentialGroup()
-                                .addGap(0, 0, 0)
-                                .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 400,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ShadowSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, 400,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134,
-                                        Short.MAX_VALUE)
-                                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap()));
+            panelFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelFilterLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(ShadowSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ShadowSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(box_FilterMK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
         panelFilterLayout.setVerticalGroup(
-                panelFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panelFilterLayout.createSequentialGroup()
-                                .addGap(14, 14, 14)
-                                .addGroup(panelFilterLayout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(panelFilterLayout
-                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 44,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 45,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(panelFilterLayout
-                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 44,
-                                                        Short.MAX_VALUE)
-                                                .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 44,
-                                                        Short.MAX_VALUE)))
-                                .addGap(15, 15, 15)));
+            panelFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelFilterLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(panelFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(ShadowSearch1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                        .addComponent(ShadowSearch, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                        .addGroup(panelFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(box_FilterMK)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(15, 15, 15))
+        );
+
+        panelFilterLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {box_FilterMK, jButton1});
 
         tb_laporan.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][] {
+            new Object [][] {
 
-                },
-                new String[] {
-                        "No", "Nama Admin", "Nama Nasabah", "Jenis Transaksi", "Deskripsi", "Saldo Masuk",
-                        "Saldo Keluar", "Tanggal"
-                }) {
-            Class[] types = new Class[] {
-                    java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class,
-                    java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            },
+            new String [] {
+                "No", "Nama Admin", "Nama Nasabah", "Jenis Transaksi", "Deskripsi", "Saldo Masuk", "Saldo Keluar", "Tanggal"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
-                return types[columnIndex];
+                return types [columnIndex];
             }
         });
         jScrollPane1.setViewportView(tb_laporan);
@@ -532,14 +593,12 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         panelGradient1.setPreferredSize(new java.awt.Dimension(295, 295));
 
         lbl_saldoNasabah.setBackground(new java.awt.Color(255, 255, 255));
-        lbl_saldoNasabah.setFont(lbl_saldoNasabah.getFont().deriveFont(
-                lbl_saldoNasabah.getFont().getStyle() | java.awt.Font.BOLD, lbl_saldoNasabah.getFont().getSize() + 24));
+        lbl_saldoNasabah.setFont(lbl_saldoNasabah.getFont().deriveFont(lbl_saldoNasabah.getFont().getStyle() | java.awt.Font.BOLD, lbl_saldoNasabah.getFont().getSize()+24));
         lbl_saldoNasabah.setForeground(new java.awt.Color(255, 255, 255));
         lbl_saldoNasabah.setText("0");
 
         LabelTotalSaldo.setBackground(new java.awt.Color(255, 255, 255));
-        LabelTotalSaldo.setFont(LabelTotalSaldo.getFont().deriveFont(
-                LabelTotalSaldo.getFont().getStyle() | java.awt.Font.BOLD, LabelTotalSaldo.getFont().getSize() + 6));
+        LabelTotalSaldo.setFont(LabelTotalSaldo.getFont().deriveFont(LabelTotalSaldo.getFont().getStyle() | java.awt.Font.BOLD, LabelTotalSaldo.getFont().getSize()+6));
         LabelTotalSaldo.setForeground(new java.awt.Color(255, 255, 255));
         LabelTotalSaldo.setText("Total Saldo Nasabah");
 
@@ -548,66 +607,47 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         jLabel2.setPreferredSize(new java.awt.Dimension(52, 47));
 
         lbl_jumlahPenarikan.setBackground(new java.awt.Color(255, 255, 255));
-        lbl_jumlahPenarikan.setFont(
-                lbl_jumlahPenarikan.getFont().deriveFont(lbl_jumlahPenarikan.getFont().getStyle() | java.awt.Font.BOLD,
-                        lbl_jumlahPenarikan.getFont().getSize() + 12));
+        lbl_jumlahPenarikan.setFont(lbl_jumlahPenarikan.getFont().deriveFont(lbl_jumlahPenarikan.getFont().getStyle() | java.awt.Font.BOLD, lbl_jumlahPenarikan.getFont().getSize()+12));
         lbl_jumlahPenarikan.setForeground(new java.awt.Color(255, 255, 255));
         lbl_jumlahPenarikan.setText("0");
 
         lbl_totalJumlahPenarikan.setBackground(new java.awt.Color(255, 255, 255));
-        lbl_totalJumlahPenarikan.setFont(lbl_totalJumlahPenarikan.getFont()
-                .deriveFont(lbl_totalJumlahPenarikan.getFont().getStyle() | java.awt.Font.BOLD));
+        lbl_totalJumlahPenarikan.setFont(lbl_totalJumlahPenarikan.getFont().deriveFont(lbl_totalJumlahPenarikan.getFont().getStyle() | java.awt.Font.BOLD));
         lbl_totalJumlahPenarikan.setForeground(new java.awt.Color(255, 255, 255));
         lbl_totalJumlahPenarikan.setText("Total Transaksi");
 
         javax.swing.GroupLayout panelGradient1Layout = new javax.swing.GroupLayout(panelGradient1);
         panelGradient1.setLayout(panelGradient1Layout);
         panelGradient1Layout.setHorizontalGroup(
-                panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panelGradient1Layout.createSequentialGroup()
-                                .addGap(20, 20, 20)
-                                .addGroup(panelGradient1Layout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(panelGradient1Layout.createSequentialGroup()
-                                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 60,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGroup(panelGradient1Layout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(lbl_totalJumlahPenarikan,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(lbl_jumlahPenarikan,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                        .addComponent(lbl_saldoNasabah, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(LabelTotalSaldo, javax.swing.GroupLayout.DEFAULT_SIZE, 255,
-                                                Short.MAX_VALUE))
-                                .addGap(20, 20, 20)));
+            panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelGradient1Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelGradient1Layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbl_totalJumlahPenarikan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lbl_jumlahPenarikan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(lbl_saldoNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(LabelTotalSaldo, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE))
+                .addGap(20, 20, 20))
+        );
         panelGradient1Layout.setVerticalGroup(
-                panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panelGradient1Layout.createSequentialGroup()
-                                .addGap(20, 20, 20)
-                                .addComponent(LabelTotalSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 25,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbl_saldoNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 53,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(120, 120, 120)
-                                .addGroup(panelGradient1Layout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(panelGradient1Layout.createSequentialGroup()
-                                                .addComponent(lbl_totalJumlahPenarikan,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 20,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(lbl_jumlahPenarikan,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 25,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(20, 20, 20)));
+            panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelGradient1Layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(LabelTotalSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_saldoNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(120, 120, 120)
+                .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelGradient1Layout.createSequentialGroup()
+                        .addComponent(lbl_totalJumlahPenarikan, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbl_jumlahPenarikan, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20))
+        );
 
         lb_halaman5.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         lb_halaman5.setText("hal");
@@ -647,110 +687,104 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         javax.swing.GroupLayout panelBawah5Layout = new javax.swing.GroupLayout(panelBawah5);
         panelBawah5.setLayout(panelBawah5Layout);
         panelBawah5Layout.setHorizontalGroup(
-                panelBawah5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panelBawah5Layout.createSequentialGroup()
-                                .addComponent(btn_Export5, javax.swing.GroupLayout.PREFERRED_SIZE, 150,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lb_halaman5, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_first5, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_before5, javax.swing.GroupLayout.PREFERRED_SIZE, 30,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cbx_data5, javax.swing.GroupLayout.PREFERRED_SIZE, 80,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_next5, javax.swing.GroupLayout.PREFERRED_SIZE, 30,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btn_last5, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)));
+            panelBawah5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBawah5Layout.createSequentialGroup()
+                .addComponent(btn_Export5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lb_halaman5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_first5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_before5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cbx_data5, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_next5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_last5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
         panelBawah5Layout.setVerticalGroup(
-                panelBawah5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panelBawah5Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(panelBawah5Layout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(btn_Export5, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(lb_halaman5, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btn_first5, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btn_before5, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(cbx_data5, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btn_next5, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(btn_last5, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+            panelBawah5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBawah5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelBawah5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_Export5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb_halaman5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_first5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_before5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbx_data5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_next5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_last5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout panelTableLayout = new javax.swing.GroupLayout(panelTable);
         panelTable.setLayout(panelTableLayout);
         panelTableLayout.setHorizontalGroup(
-                panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTableLayout.createSequentialGroup()
-                                .addGroup(
-                                        panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 845,
-                                                        Short.MAX_VALUE)
-                                                .addComponent(panelBawah5, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap()));
+            panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTableLayout.createSequentialGroup()
+                .addGroup(panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 845, Short.MAX_VALUE)
+                    .addComponent(panelBawah5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
         panelTableLayout.setVerticalGroup(
-                panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panelTableLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(panelTableLayout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 742,
-                                                Short.MAX_VALUE)
-                                        .addGroup(panelTableLayout.createSequentialGroup()
-                                                .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(0, 0, Short.MAX_VALUE)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(panelBawah5, javax.swing.GroupLayout.PREFERRED_SIZE, 50,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap()));
+            panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelTableLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 742, Short.MAX_VALUE)
+                    .addGroup(panelTableLayout.createSequentialGroup()
+                        .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panelBawah5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout panelViewLayout = new javax.swing.GroupLayout(panelView);
         panelView.setLayout(panelViewLayout);
         panelViewLayout.setHorizontalGroup(
-                panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panelViewLayout.createSequentialGroup()
-                                .addGap(20, 20, 20)
-                                .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(panelFilter, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(panelTable, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(20, 20, 20)));
+            panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelViewLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelFilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(20, 20, 20))
+        );
         panelViewLayout.setVerticalGroup(
-                panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panelViewLayout.createSequentialGroup()
-                                .addGap(20, 20, 20)
-                                .addComponent(panelFilter, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(20, 20, 20)
-                                .addComponent(panelTable, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(20, 20, 20)));
+            panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelViewLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(panelFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(panelTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(20, 20, 20))
+        );
 
         panelMain.add(panelView, "card2");
 
         add(panelMain, "card2");
     }// </editor-fold>//GEN-END:initComponents
+
+    private void box_FilterMKActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_box_FilterMKActionPerformed
+        // Handle filter selection for Saldo Masuk and Saldo Keluar
+        String selectedFilter = box_FilterMK.getSelectedItem().toString();
+        if (selectedFilter.equals("Saldo Masuk")) {
+            filterJenis = "Pemasukan";
+        } else if (selectedFilter.equals("Saldo Keluar")) {
+            filterJenis = "Pengeluaran";
+        } else {
+            filterJenis = null; // Reset filter to show all data
+        }
+        // Apply the filter and refresh the table
+        searchByKeywordAndDate();
+        // Update labels to reflect the current filter
+        updateLabels();
+    }// GEN-LAST:event_box_FilterMKActionPerformed
 
     private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txt_searchActionPerformed
         // TODO add your handling code here:
@@ -762,14 +796,11 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
 
     private void box_pilihActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_box_pilihActionPerformed
         searchByKeywordAndDate();
-    }// GEN-LAST:event_box_pilihActionPerformed
-
-    private void pilihtanggalActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_pilihtanggalActionPerformed
-        dateChooser1.showPopup();
-    }// GEN-LAST:event_pilihtanggalActionPerformed
+    }// GEN-LAST:event_box_pilihActionPerformed // Date chooser popup is now handled
+     // directly in the action listener
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
-        txt_date.setText("");
+        resetFilter();
     }// GEN-LAST:event_jButton1ActionPerformed
 
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_cancelActionPerformed
@@ -880,12 +911,10 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         String kataKunci = txt_search.getText().trim();
         String tanggalRange = txt_date.getText().trim();
         String filter = box_pilih.getSelectedItem().toString();
-
         String tanggalMulai = "";
         String tanggalAkhir = "";
         boolean isRange = false;
         boolean isSingleDate = false;
-        boolean isTimeRangeFilter = false;
 
         if (!tanggalRange.isEmpty()) {
             if (tanggalRange.contains("dari")) {
@@ -958,33 +987,66 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                     ) AS combined_data
                     """);
 
-            boolean whereAdded = false; // Filter berdasarkan kata kunci
+            boolean whereAdded = false;
+
+            // First apply filter based on the combobox selection (Saldo Masuk/Keluar)
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    sql.append(" WHERE transaction_type = 'Setor Sampah'");
+                    whereAdded = true;
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    sql.append(" WHERE transaction_type = 'Tarik Tunai'");
+                    whereAdded = true;
+                }
+            }
+
+            // Filter berdasarkan kata kunci
             if (!kataKunci.isEmpty()) {
                 switch (filter) {
                     case "Default":
-                        sql.append(" WHERE (admin_name LIKE ? OR nasabah_name LIKE ? OR transaction_type LIKE ?) ");
-                        whereAdded = true;
+                        if (whereAdded) {
+                            sql.append(" AND (admin_name LIKE ? OR nasabah_name LIKE ? OR transaction_type LIKE ?)");
+                        } else {
+                            sql.append(" WHERE (admin_name LIKE ? OR nasabah_name LIKE ? OR transaction_type LIKE ?)");
+                            whereAdded = true;
+                        }
                         break;
                     case "Nama Admin":
-                        sql.append(" WHERE admin_name LIKE ? ");
-                        whereAdded = true;
+                        if (whereAdded) {
+                            sql.append(" AND admin_name LIKE ?");
+                        } else {
+                            sql.append(" WHERE admin_name LIKE ?");
+                            whereAdded = true;
+                        }
                         break;
                     case "Nama Nasabah":
-                        sql.append(" WHERE nasabah_name LIKE ? ");
-                        whereAdded = true;
+                        if (whereAdded) {
+                            sql.append(" AND nasabah_name LIKE ?");
+                        } else {
+                            sql.append(" WHERE nasabah_name LIKE ?");
+                            whereAdded = true;
+                        }
                         break;
                     case "Jenis Transaksi":
-                        sql.append(" WHERE transaction_type LIKE ? ");
-                        whereAdded = true;
+                        if (whereAdded) {
+                            sql.append(" AND transaction_type LIKE ?");
+                        } else {
+                            sql.append(" WHERE transaction_type LIKE ?");
+                            whereAdded = true;
+                        }
                         break;
                 }
-            } // Filter berdasarkan tanggal
+            }
+
+            // Filter berdasarkan tanggal
             if (isRange) {
-                sql.append(whereAdded ? "AND " : "WHERE ");
+                sql.append(whereAdded ? " AND " : " WHERE ");
                 sql.append("DATE(transaction_date) BETWEEN ? AND ? ");
+                whereAdded = true;
             } else if (isSingleDate) {
-                sql.append(whereAdded ? "AND " : "WHERE ");
+                sql.append(whereAdded ? " AND " : " WHERE ");
                 sql.append("DATE(transaction_date) = ? ");
+                whereAdded = true;
             }
 
             sql.append(" ORDER BY transaction_date DESC LIMIT ? OFFSET ?");
@@ -1017,6 +1079,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
 
                 st.setInt(paramIndex++, dataPerHalaman);
                 st.setInt(paramIndex, (halamanSaatIni - 1) * dataPerHalaman);
+
                 try (ResultSet rs = st.executeQuery()) {
                     int no = (halamanSaatIni - 1) * dataPerHalaman + 1;
                     while (rs.next()) {
@@ -1037,16 +1100,16 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                                 rs.getString("transaction_date")
                         });
                     }
+
+                    tb_laporan.setModel(model);
+                    calculateTotalPage();
+                    updateLabels();
+                    updateLabelsWithFilter(kataKunci, filter, tanggalMulai, tanggalAkhir, isRange, isSingleDate);
                 }
             }
-
-            tb_laporan.setModel(model);
-            calculateTotalPage();
-            updateLabelsWithFilter(kataKunci, filter, tanggalMulai, tanggalAkhir, isRange, isSingleDate);
-
         } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal memuat data laporan: " + e.getMessage());
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
     } // Method tambahan untuk update labels berdasarkan filter yang diterapkan
 
@@ -1332,12 +1395,25 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
             lbl_jumlahPenarikan.setText("0 Transaksi");
         }
     } // This method has been removed since we're now using the penarikan_saldo table
-      // which is already created in the database
+      // which is already created in the database // Method to reset the filter type
+      // and reload all data
+
+    private void resetFilter() {
+        currentFilterType = "";
+        filterJenis = null;
+        txt_search.setText("");
+        txt_date.setText("");
+        box_pilih.setSelectedIndex(0);
+        box_FilterMK.setSelectedIndex(0); // Reset filter dropdown to "Default"
+        loadData("");
+        updateLabels(); // Update labels to reflect the reset filter
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel LabelTotalSaldo;
     private component.ShadowPanel ShadowSearch;
     private component.ShadowPanel ShadowSearch1;
+    private javax.swing.JComboBox<String> box_FilterMK;
     private javax.swing.JComboBox<String> box_pilih;
     private component.Jbutton btn_Export5;
     private javax.swing.JButton btn_before5;
