@@ -889,15 +889,9 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                     String email = rs.getString("email");
                     BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
-                    // Format saldo menjadi string dengan titik ribuan
-                    String saldoFormatted;
-                    if (saldo.stripTrailingZeros().scale() <= 0) {
-                        // Tanpa desimal
-                        saldoFormatted = "Rp " + NumberFormat.getIntegerInstance(new Locale("id", "ID")).format(saldo);
-                    } else {
-                        // Dengan desimal
-                        saldoFormatted = "Rp " + formatRupiah.format(saldo).replace(",00", "");
-                    }
+                    // Format saldo menjadi string dengan format "Rp 100.000" (tanpa desimal)
+                    String saldoFormatted = "Rp "
+                            + NumberFormat.getIntegerInstance(Locale.forLanguageTag("id-ID")).format(saldo);
 
                     Object[] rowData = { idNasabah, namaNasabah, alamat, telepon, email, saldoFormatted };
                     model.addRow(rowData);
@@ -1108,7 +1102,11 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                     String email = rs.getString("email");
                     BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
-                    Object[] rowData = { id, nama, alamat, telepon, email, saldo };
+                    // Format saldo menjadi string dengan format "Rp 100.000" (tanpa desimal)
+                    String saldoFormatted = "Rp "
+                            + NumberFormat.getIntegerInstance(Locale.forLanguageTag("id-ID")).format(saldo);
+
+                    Object[] rowData = { id, nama, alamat, telepon, email, saldoFormatted };
                     model.addRow(rowData);
                 }
             }

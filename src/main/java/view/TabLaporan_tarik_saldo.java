@@ -87,7 +87,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                                 st.tanggal
                             FROM laporan_pengeluaran lpn
                             INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                            INNER JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
+                            LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
                             WHERE lpn.id_setoran IS NOT NULL
 
                             UNION ALL
@@ -96,7 +96,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                             SELECT
                                 ps.tanggal_penarikan
                             FROM penarikan_saldo ps
-                            INNER JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                            LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
                         ) AS combined_data
                     """;
             try (PreparedStatement ps = conn.prepareStatement(query);
@@ -112,19 +112,31 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     }
 
     private void updateLabels() {
-        try (Connection conn = DBconnect.getConnection()) { // Query untuk total saldo masuk (sum harga dari setor
-                                                            // sampah)
+        try (Connection conn = DBconnect.getConnection()) {
             String querySaldoMasuk = "SELECT SUM(harga) as total_saldo_masuk FROM setor_sampah WHERE harga != '-'";
-
-            // Query untuk total saldo keluar (sum jumlah_penarikan dari penarikan_saldo)
             String querySaldoKeluar = "SELECT SUM(jumlah_penarikan) as total_saldo_keluar FROM penarikan_saldo";
+            String queryTotalTransaksi;
 
-            // Query untuk total transaksi (count dari keduanya)
-            String queryTotalTransaksi = """
-                    SELECT
-                        (SELECT COUNT(*) FROM setor_sampah) +
-                        (SELECT COUNT(*) FROM penarikan_saldo) as total_transaksi
-                    """;
+            // Modify total transaksi query based on filter
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM setor_sampah";
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM penarikan_saldo";
+                } else {
+                    queryTotalTransaksi = """
+                            SELECT
+                                (SELECT COUNT(*) FROM setor_sampah) +
+                                (SELECT COUNT(*) FROM penarikan_saldo) as total_transaksi
+                            """;
+                }
+            } else {
+                queryTotalTransaksi = """
+                        SELECT
+                            (SELECT COUNT(*) FROM setor_sampah) +
+                            (SELECT COUNT(*) FROM penarikan_saldo) as total_transaksi
+                        """;
+            }
 
             // Mengambil total saldo masuk
             double totalSaldoMasuk = 0;
@@ -136,6 +148,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
             }
 
             // Mengambil total saldo keluar
+
             double totalSaldoKeluar = 0;
             try (PreparedStatement pst = conn.prepareStatement(querySaldoKeluar);
                     ResultSet rs = pst.executeQuery()) {
@@ -149,12 +162,37 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
             String saldoMasukFormatted = formatRupiah.format(totalSaldoMasuk);
             String saldoKeluarFormatted = formatRupiah.format(totalSaldoKeluar);
 
-            // Menampilkan total saldo (saldo masuk - saldo keluar)
-            double netSaldo = totalSaldoMasuk - totalSaldoKeluar;
+            // Calculate the saldo based on filter
+            double netSaldo;
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    netSaldo = totalSaldoMasuk;
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    netSaldo = totalSaldoKeluar;
+                } else {
+                    netSaldo = totalSaldoMasuk - totalSaldoKeluar;
+                }
+            } else {
+                netSaldo = totalSaldoMasuk - totalSaldoKeluar;
+            }
+
             String netSaldoFormatted = formatRupiah.format(netSaldo);
 
             // Update label dengan total saldo
             lbl_saldoNasabah.setText(netSaldoFormatted);
+
+            // Update label judul saldo sesuai filter
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    LabelTotalSaldo.setText("Total Saldo Masuk");
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    LabelTotalSaldo.setText("Total Saldo Keluar");
+                } else {
+                    LabelTotalSaldo.setText("Total Saldo Nasabah");
+                }
+            } else {
+                LabelTotalSaldo.setText("Total Saldo Nasabah");
+            }
 
             // Mengambil total transaksi
             try (PreparedStatement pst = conn.prepareStatement(queryTotalTransaksi);
@@ -198,35 +236,35 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                     FROM (
                         -- Setor sampah entries (Saldo Masuk)
                         SELECT
-                            u.nama_user AS admin_name,
-                            n.nama_nasabah AS nasabah_name,
+                            COALESCE(u.nama_user, '[user dihapus]') AS admin_name,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
                             'Setor Sampah' AS transaction_type,
                             CONCAT(kate.nama_kategori, ' (', st.berat_sampah, ' kg)') AS description,
                             st.harga AS saldo_masuk,
                             0 AS saldo_keluar,
                             st.tanggal AS transaction_date
                         FROM laporan_pengeluaran lpn
-                        INNER JOIN login u ON lpn.id_user = u.id_user
+                        LEFT JOIN login u ON lpn.id_user = u.id_user
                         INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
                         INNER JOIN sampah s ON st.id_sampah = s.id_sampah
                         INNER JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                        INNER JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
+                        LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
                         WHERE lpn.id_setoran IS NOT NULL
 
                         UNION ALL
 
                         -- Penarikan saldo entries (Saldo Keluar)
                         SELECT
-                            l.nama_user AS admin_name,
-                            n.nama_nasabah AS nasabah_name,
+                            COALESCE(l.nama_user, '[user dihapus]') AS admin_name,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
                             'Tarik Tunai' AS transaction_type,
                             'Penarikan Saldo' AS description,
                             0 AS saldo_masuk,
                             ps.jumlah_penarikan AS saldo_keluar,
                             ps.tanggal_penarikan AS transaction_date
                         FROM penarikan_saldo ps
-                        INNER JOIN login l ON ps.id_user = l.id_user
-                        INNER JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                        LEFT JOIN login l ON ps.id_user = l.id_user
+                        LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
                     ) AS combined_data
                 """; // Add filter conditions if necessary
         boolean whereAdded = false;
@@ -791,25 +829,22 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         panelMain.add(panelView, "card2");
 
         add(panelMain, "card2");
-    }// </editor-fold>//GEN-END:initComponents private void
-     // box_FilterMKActionPerformed(java.awt.event.ActionEvent evt) {//
-     // GEN-FIRST:event_box_FilterMKActionPerformed
-     // Handle filter selection for Saldo Masuk and Saldo Keluar
+    }// </editor-fold>//GEN-END:initComponents
 
-    String selectedFilter = box_FilterMK.getSelectedItem().toString();if(selectedFilter.equals("Saldo Masuk"))
-    {
-        filterJenis = "Pemasukan";
-    }else if(selectedFilter.equals("Saldo Keluar"))
-    {
-        filterJenis = "Pengeluaran";
-    }else
-    {
-        filterJenis = null; // Reset filter to show all data
-    }
-
-    // Apply the filter and refresh the table
-    searchByKeywordAndDate();
-
+    private void box_FilterMKActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_box_FilterMKActionPerformed
+        // Handle filter selection for Saldo Masuk and Saldo Keluar
+        String selectedFilter = box_FilterMK.getSelectedItem().toString();
+        if (selectedFilter.equals("Saldo Masuk")) {
+            filterJenis = "Pemasukan";
+        } else if (selectedFilter.equals("Saldo Keluar")) {
+            filterJenis = "Pengeluaran";
+        } else {
+            filterJenis = null; // Reset filter to show all data
+        }
+        // Apply the filter and refresh the table
+        searchByKeywordAndDate();
+        // Update labels to reflect the current filter
+        updateLabels();
     }// GEN-LAST:event_box_FilterMKActionPerformed
 
     private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txt_searchActionPerformed
@@ -1421,14 +1456,18 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
             lbl_jumlahPenarikan.setText("0 Transaksi");
         }
     } // This method has been removed since we're now using the penarikan_saldo table
-      // which is already created in the database
+      // which is already created in the database // Method to reset the filter type
+      // and reload all data
 
-    // Method to reset the filter type and reload all data
     private void resetFilter() {
         currentFilterType = "";
-        loadData("");
+        filterJenis = null;
         txt_search.setText("");
         txt_date.setText("");
+        box_pilih.setSelectedIndex(0);
+        box_FilterMK.setSelectedIndex(0); // Reset filter dropdown to "Default"
+        loadData("");
+        updateLabels(); // Update labels to reflect the reset filter
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
