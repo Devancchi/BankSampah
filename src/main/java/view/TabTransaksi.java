@@ -8,6 +8,8 @@ import component.Jbutton;
 import component.Table;
 import component.UserSession;
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import component.LoggerUtil;
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -28,6 +30,7 @@ import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import notification.toast.Notifications;
 
 /**
  *
@@ -57,6 +60,43 @@ public class TabTransaksi extends javax.swing.JPanel {
                     scanbarang.requestFocusInWindow();
                     scanbarang.requestFocus();
                 });
+            }
+        }); // Add validation to prevent negative values in quantity field
+        txtqty.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                char c = evt.getKeyChar();
+                // Only allow digits, backspace and delete
+                if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
+                    evt.consume();
+                }
+                // Prevent leading zero when entering a second digit
+                if (c == '0' && txtqty.getText().isEmpty()) {
+                    // Allow single '0'
+                } else if (txtqty.getText().equals("0") && Character.isDigit(c)) {
+                    evt.consume();
+                }
+            }
+        });
+
+        // Add validation to prevent negative values in tunai field
+        txttunai.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                char c = evt.getKeyChar();
+                // Only allow digits, backspace and delete
+                if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
+                    evt.consume();
+                }
+                // Prevent leading zeros
+                if (c == '0' && txttunai.getText().isEmpty()) {
+                    // Allow single '0'
+                } else if (txttunai.getText().equals("0") && Character.isDigit(c)) {
+                    evt.consume();
+                }
+            }
+
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                // Calculate change amount whenever tunai value changes
+                hitungKembalian();
             }
         });
 
@@ -93,6 +133,21 @@ public class TabTransaksi extends javax.swing.JPanel {
             }
 
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            }
+        });
+
+        // Add document listener to automatically calculate kembalian
+        txttunai.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                hitungKembalian();
+            }
+
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                hitungKembalian();
+            }
+
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                hitungKembalian();
             }
         });
     }
@@ -350,11 +405,16 @@ public class TabTransaksi extends javax.swing.JPanel {
                             updatePst.setString(2, id_nasabah);
                             updatePst.executeUpdate();
                             updatePst.close();
-
                             txttunai.setText(String.valueOf((int) jumlahBayar));
+
+                            // Log transaction
+                            LoggerUtil.insert(users.getId(), "Melakukan pembayaran dengan saldo nasabah: " + nama
+                                    + " (ID: " + id_nasabah + ") sejumlah " + totalFormatted);
 
                             JOptionPane.showMessageDialog(this,
                                     "Pembayaran berhasil!\nSisa Saldo: " + Rp.format(saldoBaru));
+                            Notifications.getInstance().show(Notifications.Type.SUCCESS,
+                                    "Pembayaran dengan saldo berhasil");
                         }
                     }
 
@@ -387,25 +447,30 @@ public class TabTransaksi extends javax.swing.JPanel {
                                             + "\n\nLanjutkan tarik tunai?",
                                     "Konfirmasi Tarik Tunai",
                                     JOptionPane.YES_NO_OPTION);
-
                             if (konfirmasi == JOptionPane.YES_OPTION) {
-                                double saldoBaru = saldo - jumlahTarik;
-
+                                double saldoBaru = saldo - jumlahTarik; // Update the saldo in manajemen_nasabah
                                 String updateSql = "UPDATE manajemen_nasabah SET saldo_total = ? WHERE id_nasabah = ?";
                                 PreparedStatement updatePst = conn.prepareStatement(updateSql);
                                 updatePst.setDouble(1, saldoBaru);
                                 updatePst.setString(2, id_nasabah);
                                 updatePst.executeUpdate();
-                                updatePst.close();
-
-                                // Set ke txttunai
-                                txttunai.setText(String.valueOf((int) jumlahTarik));
+                                updatePst.close(); // Insert record into penarikan_saldo table
+                                String insertSql = "INSERT INTO penarikan_saldo (id_nasabah, id_user, jumlah_penarikan, tanggal_penarikan) VALUES (?, ?, ?, NOW())";
+                                PreparedStatement insertPst = conn.prepareStatement(insertSql);
+                                insertPst.setString(1, id_nasabah);
+                                insertPst.setInt(2, users.getId());
+                                insertPst.setDouble(3, jumlahTarik);
+                                insertPst.executeUpdate();
+                                insertPst.close();
 
                                 String kodeTransaksi = "TRX" + System.currentTimeMillis(); // contoh kode unik
-                                cetakStrukTarikTunai(kodeTransaksi, nama, jumlahTarik, saldoBaru);
+                                cetakStrukTarikTunai(kodeTransaksi, nama, jumlahTarik, saldoBaru); // Log tarik tunai
+                                LoggerUtil.insert(users.getId(), "Melakukan tarik tunai nasabah: " + nama + " (ID: "
+                                        + id_nasabah + ") sejumlah " + Rp.format(jumlahTarik));
 
                                 JOptionPane.showMessageDialog(this,
                                         "Tarik tunai berhasil!\nSisa Saldo: " + Rp.format(saldoBaru));
+                                Notifications.getInstance().show(Notifications.Type.SUCCESS, "Tarik tunai berhasil");
                             }
 
                         } catch (NumberFormatException ex) {
@@ -460,15 +525,24 @@ public class TabTransaksi extends javax.swing.JPanel {
         }
 
         txttotal.setText(Rp.format(total));
+
+        // Also update kembalian when total changes
+        if (!txttunai.getText().isEmpty()) {
+            hitungKembalian();
+        }
     }
 
     private void hitungKembalian() {
         try {
-            int tunai = txttunai.getText().isEmpty() ? 0 : Integer.parseInt(txttunai.getText());
+            // Clean the input text (remove non-digits)
+            String cleanInput = txttunai.getText().replaceAll("[^\\d]", "");
+            int tunai = cleanInput.isEmpty() ? 0 : Integer.parseInt(cleanInput);
             int kembali = tunai - total;
-            txtkembalian.setText(kembali >= 0 ? String.valueOf(kembali) : "0");
+
+            // Format the display value
+            txtkembalian.setText(kembali >= 0 ? Rp.format(kembali) : Rp.format(0));
         } catch (NumberFormatException e) {
-            txtkembalian.setText("0");
+            txtkembalian.setText(Rp.format(0));
         }
     }
 
@@ -478,6 +552,7 @@ public class TabTransaksi extends javax.swing.JPanel {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -700,10 +775,12 @@ public class TabTransaksi extends javax.swing.JPanel {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel4.setText("Kembalian   :");
 
+        txttotal.setEditable(false);
         txttotal.setPlaceholder("Total harga");
 
         txttunai.setPlaceholder("Tunai");
 
+        txtkembalian.setEditable(false);
         txtkembalian.setPlaceholder("Kembalian");
 
         javax.swing.GroupLayout shadowTabelLayout = new javax.swing.GroupLayout(shadowTabel);
@@ -844,10 +921,17 @@ public class TabTransaksi extends javax.swing.JPanel {
                     break;
                 }
             }
-
             if (!found) {
                 int totalHarga = qty * hargaParsed;
                 model.addRow(new Object[] { kode, nama, qty, hargaParsed, totalHarga, idNasabah });
+
+                // Log adding new item to cart
+                LoggerUtil.insert(users.getId(),
+                        "Menambahkan barang ke keranjang: " + nama + " (Kode: " + kode + "), Qty: " + qty);
+            } else {
+                // Log updating item in cart
+                LoggerUtil.insert(users.getId(),
+                        "Memperbarui qty barang di keranjang: " + nama + " (Kode: " + kode + ")");
             }
 
             hitungTotal();
@@ -869,9 +953,19 @@ public class TabTransaksi extends javax.swing.JPanel {
             int selectedRow = tabletransaksi.getSelectedRow();
             if (selectedRow >= 0) {
                 DefaultTableModel model = (DefaultTableModel) tabletransaksi.getModel();
+                // Get info about the item before removing
+                String kode = model.getValueAt(selectedRow, 0).toString();
+                String nama = model.getValueAt(selectedRow, 1).toString();
+                int qty = Integer.parseInt(model.getValueAt(selectedRow, 2).toString());
+
                 model.removeRow(selectedRow);
                 hitungTotal();
                 btnbatal.setVisible(false); // Hide button after deletion
+
+                // Log removing item from cart
+                LoggerUtil.insert(users.getId(),
+                        "Menghapus barang dari keranjang: " + nama + " (Kode: " + kode + "), Qty: " + qty);
+                Notifications.getInstance().show(Notifications.Type.INFO, "Barang dihapus dari keranjang");
             } else {
                 JOptionPane.showMessageDialog(this, "Pilih baris yang akan dibatalkan!");
             }
@@ -949,8 +1043,11 @@ public class TabTransaksi extends javax.swing.JPanel {
                     return;
                 }
             }
-
             ps.executeBatch();
+
+            // Log the transaction
+            LoggerUtil.insert(users.getId(),
+                    "Melakukan transaksi penjualan dengan kode: " + kodeTransaksi + " untuk nasabah: " + idNasabah);
 
             // Cetak struk
             Print printer = new Print();
@@ -962,6 +1059,7 @@ public class TabTransaksi extends javax.swing.JPanel {
             bersihkanForm2();
 
             JOptionPane.showMessageDialog(this, "Transaksi berhasil dan struk dicetak.");
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, "Transaksi berhasil disimpan");
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal menyimpan transaksi: " + e.getMessage());
@@ -993,6 +1091,12 @@ public class TabTransaksi extends javax.swing.JPanel {
                 txtqty.setText("1");
             } else {
                 JOptionPane.showMessageDialog(this, "Barang tidak ditemukan.");
+            }
+
+            // Log scan barcode activity
+            if (rs.previous() && rs.next()) { // Move back and forth to reset cursor
+                LoggerUtil.insert(users.getId(),
+                        "Memindai barcode barang: " + rs.getString("nama_barang") + " (Kode: " + kode + ")");
             }
 
             rs.close();
