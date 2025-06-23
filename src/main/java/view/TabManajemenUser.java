@@ -586,7 +586,7 @@ public class TabManajemenUser extends javax.swing.JPanel {
         txt_email.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-                    txt_password.requestFocus();
+                    txt_telepon.requestFocus();
                 }
             }
         });
@@ -623,14 +623,30 @@ public class TabManajemenUser extends javax.swing.JPanel {
     }// GEN-LAST:event_btn_cancelActionPerformed
 
     private void tbl_dataMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_tbl_dataMouseClicked
-        if (btn_add.getText().equals("Tambah")) {
-            btn_add.setText("Ubah");
-            btn_add.setIcon(new ImageIcon("src\\main\\resources\\icon\\icon_edit.png"));
-            btn_add.setFillClick(new Color(30, 100, 150));
-            btn_add.setFillOriginal(new Color(41, 128, 185));
-            btn_add.setFillOver(new Color(36, 116, 170));
-            btn_delete.setVisible(true);
-            btn_cancel.setVisible(true);
+        int selectedRow = tbl_data.getSelectedRow();
+        if (selectedRow >= 0) {
+            // Check if the selected user is marked as deleted
+            String idUser = tbl_data.getValueAt(selectedRow, 0).toString();
+            if ("[user dihapus]".equals(idUser)) {
+                // Disable edit and delete buttons for deleted users
+                btn_delete.setVisible(false);
+                btn_cancel.setVisible(false);
+                JOptionPane.showMessageDialog(this,
+                        "User ini sudah dihapus dan tidak dapat diedit atau dihapus!",
+                        "Info", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            // Regular non-deleted user
+            if (btn_add.getText().equals("Tambah")) {
+                btn_add.setText("Ubah");
+                btn_add.setIcon(new ImageIcon("src\\main\\resources\\icon\\icon_edit.png"));
+                btn_add.setFillClick(new Color(30, 100, 150));
+                btn_add.setFillOriginal(new Color(41, 128, 185));
+                btn_add.setFillOver(new Color(36, 116, 170));
+                btn_delete.setVisible(true);
+                btn_cancel.setVisible(true);
+            }
         }
     }// GEN-LAST:event_tbl_dataMouseClicked
 
@@ -884,6 +900,7 @@ public class TabManajemenUser extends javax.swing.JPanel {
     private int getTotalData() {
         int totalData = 0;
         try {
+            // Count all records including those with null IDs
             String sql = "SELECT COUNT(*) AS total FROM login";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 ResultSet rs = st.executeQuery();
@@ -901,6 +918,7 @@ public class TabManajemenUser extends javax.swing.JPanel {
     private void getData(int startIndex, int entriesPage, DefaultTableModel model) {
         model.setRowCount(0);
         try {
+            // Show all records including those with null IDs
             String sql = "SELECT * FROM login ORDER BY id_user DESC LIMIT ?,?";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setInt(1, startIndex);
@@ -913,6 +931,10 @@ public class TabManajemenUser extends javax.swing.JPanel {
                     String email = rs.getString("email");
                     String level = rs.getString("level");
 
+                    // Display all records, showing "[user dihapus]" for null IDs
+                    if (idUser == null) {
+                        idUser = "[user dihapus]";
+                    }
                     Object[] rowData = { idUser, namaUser, email, level };
                     model.addRow(rowData);
                 }
@@ -940,7 +962,21 @@ public class TabManajemenUser extends javax.swing.JPanel {
         int row = tbl_data.getSelectedRow();
 
         txt_id.setEnabled(false);
-        txt_id.setText(tbl_data.getValueAt(row, 0).toString());
+        String idUser = tbl_data.getValueAt(row, 0).toString();
+
+        // Check if this is a deleted user
+        if ("[user dihapus]".equals(idUser)) {
+            JOptionPane.showMessageDialog(this, "Data user ini sudah dihapus dan tidak dapat diedit!",
+                    "Peringatan", JOptionPane.WARNING_MESSAGE);
+            // Return to view panel
+            panelMain.removeAll();
+            panelMain.add(panelView);
+            panelMain.repaint();
+            panelMain.revalidate();
+            return;
+        }
+
+        txt_id.setText(idUser);
         txt_nama.setText(tbl_data.getValueAt(row, 1).toString());
         txt_email.setText(tbl_data.getValueAt(row, 2).toString());
         cmb_level.setSelectedItem(tbl_data.getValueAt(row, 3).toString());
@@ -952,6 +988,7 @@ public class TabManajemenUser extends javax.swing.JPanel {
         model.setRowCount(0);
 
         try {
+            // Search all records including those with null IDs
             String sql = "SELECT * FROM login WHERE id_user LIKE ? OR nama_user LIKE ? OR email LIKE ?";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setString(1, "%" + kataKunci + "%");
@@ -965,6 +1002,10 @@ public class TabManajemenUser extends javax.swing.JPanel {
                     String email = rs.getString("email");
                     String level = rs.getString("level");
 
+                    // Display all records, showing "[user dihapus]" for null IDs
+                    if (idUser == null) {
+                        idUser = "[user dihapus]";
+                    }
                     Object[] rowData = { idUser, namaUser, email, level };
                     model.addRow(rowData);
                 }
@@ -997,8 +1038,9 @@ public class TabManajemenUser extends javax.swing.JPanel {
         String level = cmb_level.getSelectedItem().toString();
 
         // Validasi input
-        if (idUser.isEmpty() || namaUser.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!", "validasi", JOptionPane.ERROR_MESSAGE);
+        if (idUser == null || idUser.trim().isEmpty() || namaUser.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Semua kolom harus diisi dan ID User tidak boleh kosong!",
+                    "Validasi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -1049,8 +1091,9 @@ public class TabManajemenUser extends javax.swing.JPanel {
         String password = txt_password.getText();
         String level = cmb_level.getSelectedItem().toString();
 
-        if (idUser.isEmpty() || namaUser.isEmpty() || email.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "ID, Nama, dan Email harus diisi!", "validasi",
+        if (idUser == null || idUser.trim().isEmpty() || namaUser.isEmpty() || email.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "ID harus valid dan tidak kosong! Nama dan Email juga harus diisi!",
+                    "validasi",
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -1109,6 +1152,13 @@ public class TabManajemenUser extends javax.swing.JPanel {
         String id = tbl_data.getValueAt(selectedRow, 0).toString();
         String namaUser = tbl_data.getValueAt(selectedRow, 1).toString();
 
+        // Prevent deleting records with null or empty IDs or marked as deleted
+        if (id == null || id.trim().isEmpty() || id.equals("[user dihapus]")) {
+            JOptionPane.showMessageDialog(this, "Tidak dapat menghapus user yang sudah dihapus!",
+                    "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         // Prevent deleting yourself
         if (id.equals(users.getId())) {
             JOptionPane.showMessageDialog(this, "Anda tidak dapat menghapus akun Anda sendiri!",
@@ -1165,6 +1215,7 @@ public class TabManajemenUser extends javax.swing.JPanel {
         model.setRowCount(0);
 
         try {
+            // Include all records including those with null IDs
             String sql = "SELECT * FROM login ORDER BY id_user DESC";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 ResultSet rs = st.executeQuery();
@@ -1175,6 +1226,12 @@ public class TabManajemenUser extends javax.swing.JPanel {
                     String email = rs.getString("email");
                     String level = rs.getString("level");
 
+                    // Display all records, showing "[user dihapus]" for null IDs
+                    if (id == null) {
+                        id = "[user dihapus]";
+                    }
+
+                    // Include all records in the export
                     Object[] rowData = { id, nama, email, level };
                     model.addRow(rowData);
                 }
@@ -1192,7 +1249,8 @@ public class TabManajemenUser extends javax.swing.JPanel {
         String nextId = "1"; // Default if no users exist
 
         try {
-            String sql = "SELECT MAX(CAST(id_user AS SIGNED)) FROM login";
+            // Modified SQL to exclude null IDs and handle potential non-numeric values
+            String sql = "SELECT MAX(CAST(NULLIF(id_user, '') AS SIGNED)) FROM login WHERE id_user IS NOT NULL AND id_user REGEXP '^[0-9]+$'";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 ResultSet rs = st.executeQuery();
 
@@ -1202,6 +1260,8 @@ public class TabManajemenUser extends javax.swing.JPanel {
                         nextId = String.valueOf(maxId + 1);
                     } catch (NumberFormatException e) {
                         // If current IDs are not numeric, start with 1
+                        Logger.getLogger(TabManajemenUser.class.getName()).log(Level.WARNING,
+                                "Non-numeric ID found in database, starting with ID=1", e);
                     }
                 }
             }
@@ -1408,15 +1468,13 @@ public class TabManajemenUser extends javax.swing.JPanel {
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(cmb_level, 0, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 Short.MAX_VALUE)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addGroup(layout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jLabel12)
-                                                        .addComponent(jLabel11)
-                                                        .addComponent(jLabel7)
-                                                        .addComponent(lblPassword)
-                                                        .addComponent(lblLevel))
-                                                .addGap(0, 0, Short.MAX_VALUE))
+                                        .addGroup(layout
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addComponent(jLabel12)
+                                                .addComponent(jLabel11)
+                                                .addComponent(jLabel7)
+                                                .addComponent(lblPassword)
+                                                .addComponent(lblLevel))
                                         .addComponent(txt_nama, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(txt_id, javax.swing.GroupLayout.DEFAULT_SIZE,
@@ -1514,4 +1572,5 @@ public class TabManajemenUser extends javax.swing.JPanel {
         }
         return count;
     }
+
 }

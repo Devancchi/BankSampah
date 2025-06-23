@@ -72,23 +72,23 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
     private int getTotalData() {
         try {
             String query = """
-                SELECT COUNT(*) as total FROM (
-                    SELECT 
-                        u.nama_user AS nama_admin,
-                        kate.nama_kategori AS nama_sampah,
-                        js.berat_sampah AS berat_sampah,                
-                        js.harga AS harga,
-                        js.tanggal AS riwayat
-                    FROM laporan_pemasukan lp
-                    JOIN login u ON lp.id_user = u.id_user
-                    JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
-                    JOIN sampah s ON js.id_sampah = s.id_sampah
-                    JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                    WHERE lp.id_jual_sampah IS NOT NULL
-                ) AS combined
-            """;
+                        SELECT COUNT(*) as total FROM (
+                            SELECT
+                                COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
+                                kate.nama_kategori AS nama_sampah,
+                                js.berat_sampah AS berat_sampah,
+                                js.harga AS harga,
+                                js.tanggal AS riwayat
+                            FROM laporan_pemasukan lp
+                            LEFT JOIN login u ON lp.id_user = u.id_user
+                            JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
+                            JOIN sampah s ON js.id_sampah = s.id_sampah
+                            JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
+                            WHERE lp.id_jual_sampah IS NOT NULL
+                        ) AS combined
+                    """;
             try (PreparedStatement ps = conn.prepareStatement(query);
-                 ResultSet rs = ps.executeQuery()) {
+                    ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("total");
                 }
@@ -110,7 +110,8 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
             String queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM jual_sampah";
 
             // Mengambil total pendapatan
-            try (PreparedStatement pstPendapatan = conn.prepareStatement(queryPendapatan); ResultSet rsPendapatan = pstPendapatan.executeQuery()) {
+            try (PreparedStatement pstPendapatan = conn.prepareStatement(queryPendapatan);
+                    ResultSet rsPendapatan = pstPendapatan.executeQuery()) {
 
                 if (rsPendapatan.next()) {
                     double totalPendapatan = rsPendapatan.getDouble("total_pendapatan");
@@ -124,7 +125,8 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
             }
 
             // Mengambil total transaksi
-            try (PreparedStatement pstTotalTransaksi = conn.prepareStatement(queryTotalTransaksi); ResultSet rsTotalTransaksi = pstTotalTransaksi.executeQuery()) {
+            try (PreparedStatement pstTotalTransaksi = conn.prepareStatement(queryTotalTransaksi);
+                    ResultSet rsTotalTransaksi = pstTotalTransaksi.executeQuery()) {
 
                 if (rsTotalTransaksi.next()) {
                     int totalTransaksi = rsTotalTransaksi.getInt("total_transaksi");
@@ -140,7 +142,8 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
         }
     }
 
-// Method loadData yang sudah dimodifikasi untuk memanggil updatePemasukanLabels()
+    // Method loadData yang sudah dimodifikasi untuk memanggil
+    // updatePemasukanLabels()
     private void loadData(String filterJenis) {
         DefaultTableModel model = new DefaultTableModel() {
             @Override
@@ -148,32 +151,32 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                 return false;
             }
         };
-        model.setColumnIdentifiers(new String[]{
-            "No", "Nama Admin", "Nama Sampah", "Berat Sampah", "Harga", "Riwayat"
+        model.setColumnIdentifiers(new String[] {
+                "No", "Nama Admin", "Nama Sampah", "Berat Sampah", "Harga", "Riwayat"
         });
 
         String baseQuery = """
-            SELECT 
-                nama_admin, 
-                nama_sampah, 
-                berat_sampah,
-                harga, 
-                riwayat
-            FROM (
-                SELECT 
-                    u.nama_user AS nama_admin,
-                    kate.nama_kategori AS nama_sampah,
-                    js.berat_sampah AS berat_sampah,                
-                    js.harga AS harga,
-                    js.tanggal AS riwayat
-                FROM laporan_pemasukan lp
-                JOIN login u ON lp.id_user = u.id_user
-                JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
-                JOIN sampah s ON js.id_sampah = s.id_sampah
-                JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                WHERE lp.id_jual_sampah IS NOT NULL
-            ) AS combined
-        """;
+                    SELECT
+                        nama_admin,
+                        nama_sampah,
+                        berat_sampah,
+                        harga,
+                        riwayat
+                    FROM (
+                        SELECT
+                            COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
+                            kate.nama_kategori AS nama_sampah,
+                            js.berat_sampah AS berat_sampah,
+                            js.harga AS harga,
+                            js.tanggal AS riwayat
+                        FROM laporan_pemasukan lp
+                        LEFT JOIN login u ON lp.id_user = u.id_user
+                        JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
+                        JOIN sampah s ON js.id_sampah = s.id_sampah
+                        JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
+                        WHERE lp.id_jual_sampah IS NOT NULL
+                    ) AS combined
+                """;
         baseQuery += " ORDER BY riwayat DESC LIMIT ? OFFSET ?";
 
         try (PreparedStatement pst = conn.prepareStatement(baseQuery)) {
@@ -193,13 +196,13 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                             // Biarkan harga tetap apa adanya jika gagal format
                         }
                     }
-                    model.addRow(new Object[]{
-                        no++,
-                        rs.getString("nama_admin"),
-                        rs.getString("nama_sampah"),
-                        rs.getString("berat_sampah"),
-                        harga,
-                        rs.getString("riwayat")
+                    model.addRow(new Object[] {
+                            no++,
+                            rs.getString("nama_admin"),
+                            rs.getString("nama_sampah"),
+                            rs.getString("berat_sampah"),
+                            harga,
+                            rs.getString("riwayat")
                     });
                 }
             }
@@ -212,27 +215,29 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
         }
     }
 
-// Method tambahan untuk update labels berdasarkan filter (jika diperlukan untuk search function)
-    private void updatePemasukanLabelsWithFilter(String kataKunci, String filter, String tanggalMulai, String tanggalAkhir, boolean isRange, boolean isSingleDate) {
+    // Method tambahan untuk update labels berdasarkan filter (jika diperlukan untuk
+    // search function)
+    private void updatePemasukanLabelsWithFilter(String kataKunci, String filter, String tanggalMulai,
+            String tanggalAkhir, boolean isRange, boolean isSingleDate) {
         try (Connection conn = DBconnect.getConnection()) {
 
             // Base query untuk mengambil data yang sudah difilter dari jual_sampah
             StringBuilder baseQuery = new StringBuilder();
             baseQuery.append("""
-            SELECT harga FROM (
-                SELECT 
-                    u.nama_user AS nama_admin,
-                    kate.nama_kategori AS nama_sampah,
-                    js.harga AS harga,
-                    js.tanggal AS riwayat
-                FROM laporan_pemasukan lp
-                JOIN login u ON lp.id_user = u.id_user
-                JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
-                JOIN sampah s ON js.id_sampah = s.id_sampah
-                JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                WHERE lp.id_jual_sampah IS NOT NULL
-            ) AS combined
-        """);
+                        SELECT harga FROM (
+                            SELECT
+                                COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
+                                kate.nama_kategori AS nama_sampah,
+                                js.harga AS harga,
+                                js.tanggal AS riwayat
+                            FROM laporan_pemasukan lp
+                            LEFT JOIN login u ON lp.id_user = u.id_user
+                            JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
+                            JOIN sampah s ON js.id_sampah = s.id_sampah
+                            JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
+                            WHERE lp.id_jual_sampah IS NOT NULL
+                        ) AS combined
+                    """);
 
             boolean whereAdded = false;
 
@@ -264,10 +269,12 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
             }
 
             // Query untuk total pendapatan
-            String queryPendapatan = "SELECT SUM(CASE WHEN harga != '-' THEN CAST(harga AS DECIMAL(10,2)) ELSE 0 END) as total_pendapatan FROM (" + baseQuery.toString() + ") AS filtered_data";
+            String queryPendapatan = "SELECT SUM(CASE WHEN harga != '-' THEN CAST(harga AS DECIMAL(10,2)) ELSE 0 END) as total_pendapatan FROM ("
+                    + baseQuery.toString() + ") AS filtered_data";
 
             // Query untuk total transaksi
-            String queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM (" + baseQuery.toString() + ") AS filtered_data";
+            String queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM (" + baseQuery.toString()
+                    + ") AS filtered_data";
 
             // Mengambil total pendapatan
             try (PreparedStatement pstPendapatan = conn.prepareStatement(queryPendapatan)) {
@@ -294,7 +301,6 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                 } else if (isSingleDate) {
                     pstPendapatan.setString(paramIndex++, tanggalMulai);
                 }
-
                 try (ResultSet rsPendapatan = pstPendapatan.executeQuery()) {
                     if (rsPendapatan.next()) {
                         double totalPendapatan = rsPendapatan.getDouble("total_pendapatan");
@@ -347,6 +353,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
     }
 
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -702,13 +709,14 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
         shadowTableLayout.setVerticalGroup(
             shadowTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shadowTableLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(shadowTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 741, Short.MAX_VALUE)
                     .addGroup(shadowTableLayout.createSequentialGroup()
                         .addComponent(panelGradient1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 458, Short.MAX_VALUE))
+                    .addGroup(shadowTableLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 741, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addComponent(panelBawah2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -739,41 +747,42 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
         add(panelMain, "card2");
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
         txt_date.setText("");
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }// GEN-LAST:event_jButton1ActionPerformed
 
-    private void pilihtanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pilihtanggalActionPerformed
+    private void pilihtanggalActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_pilihtanggalActionPerformed
         dateChooser1.showPopup();
-    }//GEN-LAST:event_pilihtanggalActionPerformed
+    }// GEN-LAST:event_pilihtanggalActionPerformed
 
-    private void box_pilihActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_box_pilihActionPerformed
+    private void box_pilihActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_box_pilihActionPerformed
         searchByKeywordAndDate();
-    }//GEN-LAST:event_box_pilihActionPerformed
+    }// GEN-LAST:event_box_pilihActionPerformed
 
-    private void txt_searchKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_searchKeyTyped
+    private void txt_searchKeyTyped(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txt_searchKeyTyped
         searchByKeywordAndDate();
-    }//GEN-LAST:event_txt_searchKeyTyped
+    }// GEN-LAST:event_txt_searchKeyTyped
 
-    private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_searchActionPerformed
+    private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txt_searchActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txt_searchActionPerformed
+    }// GEN-LAST:event_txt_searchActionPerformed
 
-    private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
+    private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_cancelActionPerformed
         panelMain.removeAll();
         panelMain.add(new TabLaporanStatistik());
         panelMain.repaint();
         panelMain.revalidate();
-    }//GEN-LAST:event_btn_cancelActionPerformed
+    }// GEN-LAST:event_btn_cancelActionPerformed
 
-    private void btn_Export2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_Export2ActionPerformed
+    private void btn_Export2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_Export2ActionPerformed
         try {
             loadData("");
 
             DefaultTableModel model = (DefaultTableModel) tb_laporan.getModel();
 
             if (model.getRowCount() == 0) {
-                JOptionPane.showMessageDialog(this, "Tidak ada data untuk diekspor!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Tidak ada data untuk diekspor!", "Peringatan",
+                        JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -810,8 +819,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                             this,
                             "File sudah ada. Apakah Anda ingin menimpanya?",
                             "Konfirmasi",
-                            JOptionPane.YES_NO_OPTION
-                    );
+                            JOptionPane.YES_NO_OPTION);
                     if (confirm != JOptionPane.YES_OPTION) {
                         return;
                     }
@@ -841,25 +849,25 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                     JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
-    }//GEN-LAST:event_btn_Export2ActionPerformed
+    }// GEN-LAST:event_btn_Export2ActionPerformed
 
-    private void txt_dateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_dateActionPerformed
+    private void txt_dateActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txt_dateActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txt_dateActionPerformed
+    }// GEN-LAST:event_txt_dateActionPerformed
 
-    private void txt_datePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txt_datePropertyChange
-        searchByKeywordAndDate();        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_datePropertyChange
+    private void txt_datePropertyChange(java.beans.PropertyChangeEvent evt) {// GEN-FIRST:event_txt_datePropertyChange
+        searchByKeywordAndDate(); // TODO add your handling code here:
+    }// GEN-LAST:event_txt_datePropertyChange
 
-    private void txt_dateKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_dateKeyTyped
+    private void txt_dateKeyTyped(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txt_dateKeyTyped
         // TODO add your handling code here:
-    }//GEN-LAST:event_txt_dateKeyTyped
+    }// GEN-LAST:event_txt_dateKeyTyped
 
-   private void searchByKeywordAndDate() {
+    private void searchByKeywordAndDate() {
         String kataKunci = txt_search.getText().trim();
         String tanggalRange = txt_date.getText().trim();
         String filter = box_pilih.getSelectedItem().toString();
-        
+
         String tanggalMulai = "";
         String tanggalAkhir = "";
         boolean isRange = false;
@@ -887,34 +895,34 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
             }
         };
 
-        model.setColumnIdentifiers(new String[]{
-            "No", "Nama Admin", "Nama Sampah", "Berat Sampah", "Harga", "Riwayat"
+        model.setColumnIdentifiers(new String[] {
+                "No", "Nama Admin", "Nama Sampah", "Berat Sampah", "Harga", "Riwayat"
         });
 
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("""
-                SELECT 
-                    nama_admin, 
-                    nama_sampah, 
-                    berat_sampah,
-                    harga, 
-                    riwayat
-                FROM (
-                    SELECT 
-                        u.nama_user AS nama_admin,
-                        kate.nama_kategori AS nama_sampah,
-                        js.berat_sampah AS berat_sampah,                
-                        js.harga AS harga,
-                        js.tanggal AS riwayat
-                    FROM laporan_pemasukan lp
-                    JOIN login u ON lp.id_user = u.id_user
-                    JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
-                    JOIN sampah s ON js.id_sampah = s.id_sampah
-                    JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                    WHERE lp.id_jual_sampah IS NOT NULL
-                ) AS combined
-            """);
+                        SELECT
+                            nama_admin,
+                            nama_sampah,
+                            berat_sampah,
+                            harga,
+                            riwayat
+                        FROM (
+                            SELECT
+                                COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
+                                kate.nama_kategori AS nama_sampah,
+                                js.berat_sampah AS berat_sampah,
+                                js.harga AS harga,
+                                js.tanggal AS riwayat
+                            FROM laporan_pemasukan lp
+                            LEFT JOIN login u ON lp.id_user = u.id_user
+                            JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
+                            JOIN sampah s ON js.id_sampah = s.id_sampah
+                            JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
+                            WHERE lp.id_jual_sampah IS NOT NULL
+                        ) AS combined
+                    """);
 
             boolean whereAdded = false;
 
@@ -974,42 +982,43 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                     st.setString(paramIndex++, tanggalMulai);
                 }
 
+                // Set parameter paginasi
                 st.setInt(paramIndex++, dataPerHalaman);
                 st.setInt(paramIndex, (halamanSaatIni - 1) * dataPerHalaman);
 
                 try (ResultSet rs = st.executeQuery()) {
-                    int no = (halamanSaatIni - 1) * dataPerHalaman + 1;
+                    int no = 1;
+
                     while (rs.next()) {
                         String harga = rs.getString("harga");
-                        if (harga != null && !harga.equals("-")) {
+                        if (!harga.equals("-")) {
                             try {
                                 double nominal = Double.parseDouble(harga);
                                 DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
                                 harga = formatRupiah.format(nominal);
                             } catch (NumberFormatException e) {
-                                // Biarkan harga tetap
+                                // biarkan harga tetap apa adanya
                             }
                         }
 
-                        model.addRow(new Object[]{
-                            no++,
-                            rs.getString("nama_admin"),
-                            rs.getString("nama_sampah"),
-                            rs.getString("berat_sampah"),
-                            harga,
-                            rs.getString("riwayat")
+                        model.addRow(new Object[] {
+                                no++,
+                                rs.getString("nama_admin"),
+                                rs.getString("nama_sampah"),
+                                rs.getString("berat_sampah"),
+                                harga,
+                                rs.getString("riwayat")
                         });
                     }
                 }
             }
 
             tb_laporan.setModel(model);
-            calculateTotalPage();
             updatePemasukanLabelsWithFilter(kataKunci, filter, tanggalMulai, tanggalAkhir, isRange, isSingleDate);
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Gagal memuat data laporan: " + e.getMessage());
         }
     }
 

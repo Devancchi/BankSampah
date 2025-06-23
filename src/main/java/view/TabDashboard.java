@@ -1034,9 +1034,9 @@ public class TabDashboard extends javax.swing.JPanel {
                 // System.out.println("entries page : "+entriesPage);
                 // System.out.println("mode table : " +model);
                 try {
-                        String sql = "SELECT log_aktivitas.id_log, login.nama_user, log_aktivitas.aktivitas, log_aktivitas.tanggal \n"
+                        String sql = "SELECT log_aktivitas.id_log, COALESCE(login.nama_user, '[user dihapus]') AS nama_user, log_aktivitas.aktivitas, log_aktivitas.tanggal \n"
                                         + "FROM log_aktivitas \n"
-                                        + "JOIN login ON log_aktivitas.id_user = login.id_user \n"
+                                        + "LEFT JOIN login ON log_aktivitas.id_user = login.id_user \n"
                                         + "ORDER BY log_aktivitas.id_log DESC LIMIT ?,?";
                         try (PreparedStatement st = conn.prepareStatement(sql)) {
                                 st.setInt(1, startIndex);
@@ -1155,9 +1155,9 @@ public class TabDashboard extends javax.swing.JPanel {
                 model.setRowCount(0);
 
                 try {
-                        String sql = "SELECT log_aktivitas.id_log, login.nama_user, log_aktivitas.aktivitas, log_aktivitas.tanggal \n"
+                        String sql = "SELECT log_aktivitas.id_log, COALESCE(login.nama_user, '[user dihapus]') AS nama_user, log_aktivitas.aktivitas, log_aktivitas.tanggal \n"
                                         + "FROM log_aktivitas \n"
-                                        + "JOIN login ON log_aktivitas.id_user = login.id_user \n"
+                                        + "LEFT JOIN login ON log_aktivitas.id_user = login.id_user \n"
                                         + "ORDER BY log_aktivitas.id_log DESC";
                         try (PreparedStatement st = conn.prepareStatement(sql)) {
                                 ResultSet rs = st.executeQuery();
@@ -1302,9 +1302,9 @@ public class TabDashboard extends javax.swing.JPanel {
 
                 try {
                         StringBuilder sql = new StringBuilder();
-                        sql.append("SELECT log_aktivitas.id_log, login.nama_user, log_aktivitas.aktivitas, log_aktivitas.tanggal ")
+                        sql.append("SELECT log_aktivitas.id_log, COALESCE(login.nama_user, '[user dihapus]') AS nama_user, log_aktivitas.aktivitas, log_aktivitas.tanggal ")
                                         .append("FROM log_aktivitas ")
-                                        .append("JOIN login ON log_aktivitas.id_user = login.id_user ");
+                                        .append("LEFT JOIN login ON log_aktivitas.id_user = login.id_user ");
 
                         boolean whereAdded = false;
 

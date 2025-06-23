@@ -87,7 +87,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                                 st.tanggal
                             FROM laporan_pengeluaran lpn
                             INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                            INNER JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
+                            LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
                             WHERE lpn.id_setoran IS NOT NULL
 
                             UNION ALL
@@ -96,7 +96,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                             SELECT
                                 ps.tanggal_penarikan
                             FROM penarikan_saldo ps
-                            INNER JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                            LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
                         ) AS combined_data
                     """;
             try (PreparedStatement ps = conn.prepareStatement(query);
@@ -113,16 +113,37 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
 
     private void updateLabels() {
         try (Connection conn = DBconnect.getConnection()) {
-            String querySaldoMasuk = "SELECT SUM(harga) as total_saldo_masuk FROM setor_sampah WHERE harga != '-'";
-            String querySaldoKeluar = "SELECT SUM(jumlah_penarikan) as total_saldo_keluar FROM penarikan_saldo";
+            String querySaldoMasuk = """
+                        SELECT SUM(st.harga) as total_saldo_masuk
+                        FROM setor_sampah st
+                        WHERE st.harga != '-'
+                    """;
+
+            String querySaldoKeluar = """
+                        SELECT SUM(ps.jumlah_penarikan) as total_saldo_keluar
+                        FROM penarikan_saldo ps
+                    """;
+
             String queryTotalTransaksi;
 
             // Modify total transaksi query based on filter
             if (filterJenis != null) {
                 if (filterJenis.equals("Pemasukan")) {
-                    queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM setor_sampah";
+                    queryTotalTransaksi = """
+                                SELECT COUNT(*) as total_transaksi
+                                FROM laporan_pengeluaran lpn
+                                LEFT JOIN login u ON lpn.id_user = u.id_user
+                                INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
+                                LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
+                                WHERE lpn.id_setoran IS NOT NULL
+                            """;
                 } else if (filterJenis.equals("Pengeluaran")) {
-                    queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM penarikan_saldo";
+                    queryTotalTransaksi = """
+                                SELECT COUNT(*) as total_transaksi
+                                FROM penarikan_saldo ps
+                                LEFT JOIN login l ON ps.id_user = l.id_user
+                                LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                            """;
                 } else {
                     queryTotalTransaksi = """
                             SELECT
@@ -235,35 +256,35 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                     FROM (
                         -- Setor sampah entries (Saldo Masuk)
                         SELECT
-                            u.nama_user AS admin_name,
-                            n.nama_nasabah AS nasabah_name,
+                            COALESCE(u.nama_user, '[user dihapus]') AS admin_name,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
                             'Setor Sampah' AS transaction_type,
                             CONCAT(kate.nama_kategori, ' (', st.berat_sampah, ' kg)') AS description,
                             st.harga AS saldo_masuk,
                             0 AS saldo_keluar,
                             st.tanggal AS transaction_date
                         FROM laporan_pengeluaran lpn
-                        INNER JOIN login u ON lpn.id_user = u.id_user
+                        LEFT JOIN login u ON lpn.id_user = u.id_user
                         INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
                         INNER JOIN sampah s ON st.id_sampah = s.id_sampah
                         INNER JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                        INNER JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
+                        LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
                         WHERE lpn.id_setoran IS NOT NULL
 
                         UNION ALL
 
                         -- Penarikan saldo entries (Saldo Keluar)
                         SELECT
-                            l.nama_user AS admin_name,
-                            n.nama_nasabah AS nasabah_name,
+                            COALESCE(l.nama_user, '[user dihapus]') AS admin_name,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
                             'Tarik Tunai' AS transaction_type,
                             'Penarikan Saldo' AS description,
                             0 AS saldo_masuk,
                             ps.jumlah_penarikan AS saldo_keluar,
                             ps.tanggal_penarikan AS transaction_date
                         FROM penarikan_saldo ps
-                        INNER JOIN login l ON ps.id_user = l.id_user
-                        INNER JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                        LEFT JOIN login l ON ps.id_user = l.id_user
+                        LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
                     ) AS combined_data
                 """; // Add filter conditions if necessary
         boolean whereAdded = false;
@@ -345,9 +366,6 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated
-    // <editor-fold defaultstate="collapsed" desc="Generated
-    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
@@ -510,7 +528,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
                                                 ShadowSearch1Layout.createSequentialGroup()
-                                                        .addGap(0, 1, Short.MAX_VALUE)
+                                                        .addGap(0, 0, Short.MAX_VALUE)
                                                         .addComponent(pilihtanggal,
                                                                 javax.swing.GroupLayout.PREFERRED_SIZE, 32,
                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -560,11 +578,11 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(box_FilterMK, javax.swing.GroupLayout.PREFERRED_SIZE,
                                         javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
                                         javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap()));
@@ -574,23 +592,20 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                                 .addGap(14, 14, 14)
                                 .addGroup(panelFilterLayout
                                         .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 45,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(panelFilterLayout
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 44,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 45,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(panelFilterLayout
                                                 .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                                 .addComponent(ShadowSearch1, javax.swing.GroupLayout.Alignment.LEADING,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
                                                 .addComponent(ShadowSearch, javax.swing.GroupLayout.Alignment.LEADING,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
-                                                .addGroup(panelFilterLayout
-                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(box_FilterMK)
-                                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                                44, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+                                                .addComponent(box_FilterMK)))
                                 .addGap(15, 15, 15)));
-
-        panelFilterLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
-                new java.awt.Component[] { box_FilterMK, jButton1 });
 
         tb_laporan.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][] {
@@ -1021,35 +1036,35 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                     FROM (
                         -- Setor sampah entries (Saldo Masuk)
                         SELECT
-                            u.nama_user AS admin_name,
-                            n.nama_nasabah AS nasabah_name,
+                            COALESCE(u.nama_user, '[user dihapus]') AS admin_name,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
                             'Setor Sampah' AS transaction_type,
                             CONCAT(kate.nama_kategori, ' (', st.berat_sampah, ' kg)') AS description,
                             st.harga AS saldo_masuk,
                             0 AS saldo_keluar,
                             st.tanggal AS transaction_date
                         FROM laporan_pengeluaran lpn
-                        INNER JOIN login u ON lpn.id_user = u.id_user
+                        LEFT JOIN login u ON lpn.id_user = u.id_user
                         INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
                         INNER JOIN sampah s ON st.id_sampah = s.id_sampah
                         INNER JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                        INNER JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
+                        LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
                         WHERE lpn.id_setoran IS NOT NULL
 
                         UNION ALL
 
                         -- Penarikan saldo entries (Saldo Keluar)
                         SELECT
-                            l.nama_user AS admin_name,
-                            n.nama_nasabah AS nasabah_name,
+                            COALESCE(l.nama_user, '[user dihapus]') AS admin_name,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
                             'Tarik Tunai' AS transaction_type,
                             'Penarikan Saldo' AS description,
                             0 AS saldo_masuk,
                             ps.jumlah_penarikan AS saldo_keluar,
                             ps.tanggal_penarikan AS transaction_date
                         FROM penarikan_saldo ps
-                        INNER JOIN login l ON ps.id_user = l.id_user
-                        INNER JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                        LEFT JOIN login l ON ps.id_user = l.id_user
+                        LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
                     ) AS combined_data
                     """);
 
