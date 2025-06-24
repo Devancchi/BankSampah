@@ -9,12 +9,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.sql.*;
-import java.sql.SQLException;
+
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.logging.*;
 import main.DBconnect;
 import java.awt.image.BufferedImage;
@@ -118,6 +117,8 @@ public class TabDataBarang extends javax.swing.JPanel {
     private void loadDataBarang() {
         try {
             panelBarang.removeAll();
+
+            // Always use GridLayout regardless of item count
             panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
 
             int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
@@ -145,6 +146,12 @@ public class TabDataBarang extends javax.swing.JPanel {
                 ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
                 Item itemPanel = new Item();
                 itemPanel.setData(model);
+
+                // Set fixed size for each card
+                itemPanel.setPreferredSize(new java.awt.Dimension(200, 300));
+                itemPanel.setMinimumSize(new java.awt.Dimension(200, 300));
+                itemPanel.setMaximumSize(new java.awt.Dimension(200, 300));
+
                 itemPanel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -156,18 +163,26 @@ public class TabDataBarang extends javax.swing.JPanel {
                 itemCount++;
             }
 
+            // Always add empty panels to fill at least one row
+            // This forces the grid layout to maintain proper structure
+            int emptyPanelsNeeded = 5 - (itemCount % 5);
+            if (emptyPanelsNeeded < 5) {
+                for (int i = 0; i < emptyPanelsNeeded; i++) {
+                    JPanel emptyPanel = new JPanel();
+                    emptyPanel.setOpaque(false);
+                    // Set consistent size for empty panels too
+                    emptyPanel.setPreferredSize(new java.awt.Dimension(200, 300));
+                    emptyPanel.setMinimumSize(new java.awt.Dimension(200, 300));
+                    emptyPanel.setMaximumSize(new java.awt.Dimension(200, 300));
+                    panelBarang.add(emptyPanel);
+                }
+            }
+
             rs.close();
             pst.close();
 
             // Update page label
             lb_halaman2.setText("Page " + halamanSaatIni + " dari total " + totalData + " data");
-
-            // Atur layout sesuai jumlah item
-            if (itemCount < 5) {
-                panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
-            } else {
-                panelBarang.setLayout(new GridLayout(0, 5, 10, 19));
-            }
 
             panelBarang.revalidate();
             panelBarang.repaint();
@@ -237,15 +252,18 @@ public class TabDataBarang extends javax.swing.JPanel {
                 itemCount++;
             }
 
-            // Add empty panels to fill the grid if fewer than 5 items
-            if (itemCount > 0 && itemCount < 5) {
-                int emptyPanelsNeeded = 5 - (itemCount % 5);
-                if (emptyPanelsNeeded < 5) {
-                    for (int i = 0; i < emptyPanelsNeeded; i++) {
-                        JPanel emptyPanel = new JPanel();
-                        emptyPanel.setOpaque(false);
-                        panelBarang.add(emptyPanel);
-                    }
+            // In searchDataBarang method - modify the empty panels section
+            // Always add empty panels to fill at least one row
+            int emptyPanelsNeeded = 5 - (itemCount % 5);
+            if (emptyPanelsNeeded < 5) {
+                for (int i = 0; i < emptyPanelsNeeded; i++) {
+                    JPanel emptyPanel = new JPanel();
+                    emptyPanel.setOpaque(false);
+                    // Set consistent size for empty panels too
+                    emptyPanel.setPreferredSize(new java.awt.Dimension(200, 300));
+                    emptyPanel.setMinimumSize(new java.awt.Dimension(200, 300));
+                    emptyPanel.setMaximumSize(new java.awt.Dimension(200, 300));
+                    panelBarang.add(emptyPanel);
                 }
             }
 

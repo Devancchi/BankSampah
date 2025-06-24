@@ -39,7 +39,9 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
 
         setdata();
         setupPagination();
-        loadData("");
+
+        // Initially load all transactions without filtering
+        loadData(""); // KEEP THIS - it loads the correct table model initially
     }
 
     private void setdata() {
@@ -59,15 +61,39 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
             p.close();
             r.close();
 
-            for (int i = lists.size() - 1; i >= 0; i--) {
-                ModelData d = lists.get(i);
-                chart.addData(
-                        new ModelChart(d.getMonth(), new double[] { d.getCost(), d.getGrossProfit(), d.getProfit() }));
-            }
+            // Fix: Check if we have enough data points to render the chart
+            if (lists.size() >= 4) {
+                // We have enough data points, proceed normally
+                for (int i = lists.size() - 1; i >= 0; i--) {
+                    ModelData d = lists.get(i);
+                    chart.addData(new ModelChart(d.getMonth(),
+                            new double[] { d.getCost(), d.getGrossProfit(), d.getProfit() }));
+                }
+                chart.start();
+            } else if (lists.size() > 0) {
+                // We have some data but not enough for spline rendering
+                // Add dummy data points to make at least 4 points
+                for (int i = lists.size() - 1; i >= 0; i--) {
+                    ModelData d = lists.get(i);
+                    chart.addData(new ModelChart(d.getMonth(),
+                            new double[] { d.getCost(), d.getGrossProfit(), d.getProfit() }));
+                }
 
-            chart.start();
+                // Add extra dummy data points with zero values
+                for (int i = 0; i < (4 - lists.size()); i++) {
+                    chart.addData(new ModelChart("Dummy " + i, new double[] { 0, 0, 0 }));
+                }
+                chart.start();
+            } else {
+                // No data at all - add 4 dummy points
+                for (int i = 0; i < 4; i++) {
+                    chart.addData(new ModelChart("No Data " + i, new double[] { 0, 0, 0 }));
+                }
+                chart.start();
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error loading chart data: " + e.getMessage());
         }
     }
 
@@ -188,7 +214,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                 int no = startIndex + 1;
                 while (rs.next()) {
                     String nominal = rs.getString("nominal");
-                    if (!nominal.equals("-")) {
+                    if (nominal != null && !nominal.equals("-")) {
                         try {
                             double amount = Double.parseDouble(nominal);
                             NumberFormat formatRupiah = NumberFormat
@@ -216,12 +242,11 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
 
             tb_laporan.setModel(model);
             updatePaginationInfo();
-
-            // Update calculateTotalPage() to count all transactions
             calculateTotalPage();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data laporan: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -1120,6 +1145,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
 
     private void cardPemasukanMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_cardPemasukanMouseClicked
         loadData("Pemasukan");
+        Notifications.getInstance().show(Notifications.Type.INFO, "Menampilkan transaksi pemasukan");
     }// GEN-LAST:event_cardPemasukanMouseClicked
 
     private void cardPemasukanMouseEntered(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_cardPemasukanMouseEntered
@@ -1146,6 +1172,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
 
     private void cardPengeluaranMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_cardPengeluaranMouseClicked
         loadData("Pengeluaran");
+        Notifications.getInstance().show(Notifications.Type.INFO, "Menampilkan transaksi pengeluaran");
     }// GEN-LAST:event_cardPengeluaranMouseClicked
 
     private void cardPengeluaranMouseEntered(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_cardPengeluaranMouseEntered
@@ -1171,7 +1198,17 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
     }// GEN-LAST:event_cardPengeluaranMouseReleased
 
     private void cardTransaksiMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_cardTransaksiMouseClicked
+        // Reset any filters that might be applied
+        txt_search.setText("");
+        txt_date.setText("");
+        box_pilih.setSelectedItem("Default");
+        halamanSaatIni = 1;
+
+        // Load data with empty filter to show all transactions
         loadData("");
+
+        // Provide user feedback
+        Notifications.getInstance().show(Notifications.Type.INFO, "Menampilkan semua transaksi");
     }// GEN-LAST:event_cardTransaksiMouseClicked
 
     private void cardTransaksiMouseEntered(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_cardTransaksiMouseEntered
@@ -1505,75 +1542,100 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
             }
         };
 
-        model.setColumnIdentifiers(new Object[] {
-                "No", "Nama Admin", "Nama", "Nama Barang/Sampah", "Harga", "Jenis Transaksi", "Riwayat"
+        // Use the SAME column structure as in loadData() method
+        model.setColumnIdentifiers(new String[] {
+                "No", "Nama Admin", "Nama Nasabah", "Transaksi", "Detail", "Nominal", "Status", "Waktu"
         });
 
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("""
+                    SELECT
+                        nama_admin,
+                        nama_nasabah,
+                        jenis_transaksi,
+                        detail,
+                        nominal,
+                        status,
+                        waktu_transaksi
+                    FROM (
+                        -- Transaksi penjualan barang (Pemasukan)
                         SELECT
-                            nama_admin,
-                            nama_nasabah,
-                            nama_barang_sampah,
-                            jenis_transaksi,
-                            harga,
-                            riwayat
-                        FROM (
-                            SELECT
-                                COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                                COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
-                                tr.nama_barang AS nama_barang_sampah,
-                                'Pemasukan' AS jenis_transaksi,
-                                tr.harga AS harga,
-                                lp.riwayat AS riwayat
-                            FROM laporan_pemasukan lp
-                            LEFT JOIN login u ON lp.id_user = u.id_user
-                            LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
-                            LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah
-                            WHERE lp.id_transaksi IS NOT NULL
+                            COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
+                            'Penjualan Barang' AS jenis_transaksi,
+                            tr.nama_barang AS detail,
+                            tr.total_harga AS nominal,
+                            'Pemasukan' AS status,
+                            tr.tanggal AS waktu_transaksi
+                        FROM laporan_pemasukan lp
+                        LEFT JOIN login u ON lp.id_user = u.id_user
+                        LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
+                        LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah
+                        WHERE lp.id_transaksi IS NOT NULL
 
-                            UNION ALL
+                        UNION ALL
 
-                            SELECT
-                                COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                                '-' AS nama_nasabah,
-                                kate.nama_kategori AS nama_barang_sampah,
-                                'Pemasukan' AS jenis_transaksi,
-                                js.harga AS harga,
-                                lp.riwayat AS riwayat
-                            FROM laporan_pemasukan lp
-                            LEFT JOIN login u ON lp.id_user = u.id_user
-                            LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
-                            JOIN sampah sa ON js.id_sampah = sa.id_sampah
-                            JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
-                            WHERE lp.id_jual_sampah IS NOT NULL
+                        -- Penjualan sampah (Pemasukan)
+                        SELECT
+                            COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
+                            '-' AS nama_nasabah,
+                            'Penjualan Sampah' AS jenis_transaksi,
+                            kate.nama_kategori AS detail,
+                            js.harga AS nominal,
+                            'Pemasukan' AS status,
+                            js.tanggal AS waktu_transaksi
+                        FROM laporan_pemasukan lp
+                        LEFT JOIN login u ON lp.id_user = u.id_user
+                        LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
+                        JOIN sampah sa ON js.id_sampah = sa.id_sampah
+                        JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
+                        WHERE lp.id_jual_sampah IS NOT NULL
 
-                            UNION ALL
+                        UNION ALL
 
-                            SELECT
-                                COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                                COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
-                                kate.nama_kategori AS nama_barang_sampah,
-                                'Pengeluaran' AS jenis_transaksi,
-                                s.harga AS harga,
-                                lpl.riwayat AS riwayat
-                            FROM laporan_pengeluaran lpl
-                            LEFT JOIN login u ON lpl.id_user = u.id_user
-                            JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran
-                            LEFT JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah
-                            JOIN sampah sa ON s.id_sampah = sa.id_sampah
-                            JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
-                            WHERE lpl.id_setoran IS NOT NULL
-                        ) AS combined
+                        -- Setoran sampah (Pengeluaran)
+                        SELECT
+                            COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
+                            'Setoran Sampah' AS jenis_transaksi,
+                            kate.nama_kategori AS detail,
+                            s.harga AS nominal,
+                            'Pengeluaran' AS status,
+                            s.tanggal AS waktu_transaksi
+                        FROM laporan_pengeluaran lpl
+                        LEFT JOIN login u ON lpl.id_user = u.id_user
+                        JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran
+                        LEFT JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah
+                        JOIN sampah sa ON s.id_sampah = sa.id_sampah
+                        JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
+                        WHERE lpl.id_setoran IS NOT NULL
+
+                        UNION ALL
+
+                        -- Penarikan saldo (Pengeluaran dari perspektif bank)
+                        SELECT
+                            COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
+                            'Penarikan Saldo' AS jenis_transaksi,
+                            'Tarik Tunai' AS detail,
+                            ps.jumlah_penarikan AS nominal,
+                            'Pengeluaran' AS status,
+                            ps.tanggal_penarikan AS waktu_transaksi
+                        FROM penarikan_saldo ps
+                        LEFT JOIN login u ON ps.id_user = u.id_user
+                        LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                    ) AS combined_data
                     """);
 
             boolean whereAdded = false;
 
+            // Filter berdasarkan kata kunci
+
             if (!kataKunci.isEmpty()) {
                 switch (filter) {
                     case "Default":
-                        sql.append(" WHERE (nama_admin LIKE ? OR nama_nasabah LIKE ? OR nama_barang_sampah LIKE ?) ");
+                        sql.append(" WHERE (nama_admin LIKE ? OR nama_nasabah LIKE ? OR detail LIKE ?) ");
                         whereAdded = true;
                         break;
                     case "Nama Admin":
@@ -1585,33 +1647,30 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                         whereAdded = true;
                         break;
                     case "Nama Barang/Sampah":
-                        sql.append(" WHERE nama_barang_sampah LIKE ? ");
+                        sql.append(" WHERE detail LIKE ? ");
                         whereAdded = true;
                         break;
                 }
             }
 
+            // Filter berdasarkan tanggal
             if (isRange) {
                 sql.append(whereAdded ? " AND " : " WHERE ");
-                sql.append("riwayat BETWEEN ? AND ? ");
+                sql.append("DATE(waktu_transaksi) BETWEEN STR_TO_DATE(?, '%d-%m-%Y') AND STR_TO_DATE(?, '%d-%m-%Y') ");
+                whereAdded = true;
             } else if (isSingleDate) {
                 sql.append(whereAdded ? " AND " : " WHERE ");
-                sql.append("riwayat = ? ");
+                sql.append("DATE(waktu_transaksi) = STR_TO_DATE(?, '%d-%m-%Y') ");
+                whereAdded = true;
             }
 
-            sql.append("""
-                        ORDER BY
-                            STR_TO_DATE(riwayat, '%Y-%m-%d') DESC,
-                            STR_TO_DATE(riwayat, '%Y-%m-%d %H:%i:%s') DESC,
-                            nama_admin ASC,
-                            nama_nasabah ASC
-                        LIMIT ?, ?
-                    """);
+            sql.append(" ORDER BY waktu_transaksi DESC LIMIT ? OFFSET ?");
 
             try (Connection conn = DBconnect.getConnection();
                     PreparedStatement st = conn.prepareStatement(sql.toString())) {
                 int paramIndex = 1;
 
+                // Set parameter untuk kata kunci
                 if (!kataKunci.isEmpty()) {
                     String searchPattern = "%" + kataKunci + "%";
                     switch (filter) {
@@ -1626,6 +1685,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                     }
                 }
 
+                // Set parameter untuk tanggal
                 if (isRange) {
                     st.setString(paramIndex++, tanggalMulai);
                     st.setString(paramIndex++, tanggalAkhir);
@@ -1635,20 +1695,23 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
 
                 // Add pagination parameters
                 int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
-                st.setInt(paramIndex++, startIndex);
                 st.setInt(paramIndex++, dataPerHalaman);
+                st.setInt(paramIndex, startIndex);
 
                 try (ResultSet rs = st.executeQuery()) {
-                    int no = 1;
+                    int no = startIndex + 1;
                     while (rs.next()) {
-                        String harga = rs.getString("harga");
-                        if (!harga.equals("-")) {
+                        String nominal = rs.getString("nominal");
+                        if (!nominal.equals("-")) {
                             try {
-                                double nominal = Double.parseDouble(harga);
-                                DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
-                                harga = formatRupiah.format(nominal);
+                                double amount = Double.parseDouble(nominal);
+                                NumberFormat formatRupiah = NumberFormat
+                                        .getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                                formatRupiah.setMaximumFractionDigits(0);
+                                formatRupiah.setMinimumFractionDigits(0);
+                                nominal = formatRupiah.format(amount);
                             } catch (NumberFormatException e) {
-                                // Biarkan harga tetap apa adanya jika gagal format
+                                // Keep original value if formatting fails
                             }
                         }
 
@@ -1656,25 +1719,21 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                                 no++,
                                 rs.getString("nama_admin"),
                                 rs.getString("nama_nasabah"),
-                                rs.getString("nama_barang_sampah"),
-                                harga,
                                 rs.getString("jenis_transaksi"),
-                                rs.getString("riwayat")
+                                rs.getString("detail"),
+                                nominal,
+                                rs.getString("status"),
+                                rs.getString("waktu_transaksi")
                         });
                     }
                 }
+                tb_laporan.setModel(model);
+                calculateTotalPage();
+                updatePaginationInfo();
             }
-
-            tb_laporan.setModel(model);
-            tb_laporan.clearSelection();
-
-            // Update pagination info
-            calculateTotalPage();
-            int totalData = getTotalData();
-            lb_halaman1.setText(String.valueOf("Page " + halamanSaatIni + " Dari Total " + totalData + " Data"));
-
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data laporan: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -1709,8 +1768,9 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
             }
         };
 
-        model.setColumnIdentifiers(new Object[] {
-                "No", "Nama Admin", "Nama", "Nama Barang/Sampah", "Harga", "Jenis Transaksi", "Riwayat"
+        // Use the SAME column structure as in loadData() method
+        model.setColumnIdentifiers(new String[] {
+                "No", "Nama Admin", "Nama Nasabah", "Transaksi", "Detail", "Nominal", "Status", "Waktu"
         });
 
         try (Connection conn = DBconnect.getConnection()) {
