@@ -79,79 +79,97 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
             }
         };
 
+        // Update columns for unified transaction view
         model.setColumnIdentifiers(new String[] {
-                "No", "Nama Admin", "Nama", "Nama Barang/Sampah", "Harga", "Jenis Transaksi", "Riwayat"
+                "No", "Nama Admin", "Nama Nasabah", "Transaksi", "Detail", "Nominal", "Status", "Waktu"
         });
 
         String baseQuery = """
+                SELECT
+                    nama_admin,
+                    nama_nasabah,
+                    jenis_transaksi,
+                    detail,
+                    nominal,
+                    status,
+                    waktu_transaksi
+                FROM (
+                    -- Transaksi penjualan barang (Pemasukan)
                     SELECT
-                        nama_admin,
-                        nama_nasabah,
-                        nama_barang_sampah,
-                        jenis_transaksi,
-                        harga,
-                        riwayat
-                    FROM (
-                        SELECT
-                            COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
-                            tr.nama_barang AS nama_barang_sampah,
-                            'Pemasukan' AS jenis_transaksi,
-                            tr.harga AS harga,
-                            lp.riwayat AS riwayat
-                        FROM laporan_pemasukan lp
-                        LEFT JOIN login u ON lp.id_user = u.id_user
-                        LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
-                        LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah
-                        WHERE lp.id_transaksi IS NOT NULL
+                        COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
+                        COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
+                        'Penjualan Barang' AS jenis_transaksi,
+                        tr.nama_barang AS detail,
+                        tr.total_harga AS nominal,
+                        'Pemasukan' AS status,
+                        tr.tanggal AS waktu_transaksi
+                    FROM laporan_pemasukan lp
+                    LEFT JOIN login u ON lp.id_user = u.id_user
+                    LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
+                    LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah
+                    WHERE lp.id_transaksi IS NOT NULL
 
-                        UNION ALL
+                    UNION ALL
 
-                        SELECT
-                            COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                            '-' AS nama_nasabah,
-                            kate.nama_kategori AS nama_barang_sampah,
-                            'Pemasukan' AS jenis_transaksi,
-                            js.harga AS harga,
-                            lp.riwayat AS riwayat
-                        FROM laporan_pemasukan lp
-                        LEFT JOIN login u ON lp.id_user = u.id_user
-                        LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
-                        JOIN sampah sa ON js.id_sampah = sa.id_sampah
-                        JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
-                        WHERE lp.id_jual_sampah IS NOT NULL
+                    -- Penjualan sampah (Pemasukan)
+                    SELECT
+                        COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
+                        '-' AS nama_nasabah,
+                        'Penjualan Sampah' AS jenis_transaksi,
+                        kate.nama_kategori AS detail,
+                        js.harga AS nominal,
+                        'Pemasukan' AS status,
+                        js.tanggal AS waktu_transaksi
+                    FROM laporan_pemasukan lp
+                    LEFT JOIN login u ON lp.id_user = u.id_user
+                    LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
+                    JOIN sampah sa ON js.id_sampah = sa.id_sampah
+                    JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
+                    WHERE lp.id_jual_sampah IS NOT NULL
 
-                        UNION ALL
+                    UNION ALL
 
-                        SELECT
-                            COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
-                            kate.nama_kategori AS nama_barang_sampah,
-                            'Pengeluaran' AS jenis_transaksi,
-                            s.harga AS harga,
-                            lpl.riwayat AS riwayat
-                        FROM laporan_pengeluaran lpl
-                        LEFT JOIN login u ON lpl.id_user = u.id_user
-                        JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran
-                        LEFT JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah
-                        JOIN sampah sa ON s.id_sampah = sa.id_sampah
-                        JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
-                        WHERE lpl.id_setoran IS NOT NULL
-                    ) AS combined
+                    -- Setoran sampah (Pengeluaran)
+                    SELECT
+                        COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
+                        COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
+                        'Setoran Sampah' AS jenis_transaksi,
+                        kate.nama_kategori AS detail,
+                        s.harga AS nominal,
+                        'Pengeluaran' AS status,
+                        s.tanggal AS waktu_transaksi
+                    FROM laporan_pengeluaran lpl
+                    LEFT JOIN login u ON lpl.id_user = u.id_user
+                    JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran
+                    LEFT JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah
+                    JOIN sampah sa ON s.id_sampah = sa.id_sampah
+                    JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
+                    WHERE lpl.id_setoran IS NOT NULL
+
+                    UNION ALL
+
+                    -- Penarikan saldo (Pengeluaran dari perspektif bank)
+                    SELECT
+                        COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
+                        COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
+                        'Penarikan Saldo' AS jenis_transaksi,
+                        'Tarik Tunai' AS detail,
+                        ps.jumlah_penarikan AS nominal,
+                        'Pengeluaran' AS status,
+                        ps.tanggal_penarikan AS waktu_transaksi
+                    FROM penarikan_saldo ps
+                    LEFT JOIN login u ON ps.id_user = u.id_user
+                    LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                ) AS combined_data
                 """;
 
+        // Add filter if specified
         if (filterJenis != null && !filterJenis.isEmpty()) {
-            baseQuery += " WHERE jenis_transaksi = ? ";
+            baseQuery += " WHERE status = ? ";
         }
 
-        baseQuery += """
-                    ORDER BY
-                        STR_TO_DATE(riwayat, '%Y-%m-%d') DESC,
-                        STR_TO_DATE(riwayat, '%Y-%m-%d %H:%i:%s') DESC,
-                        nama_admin ASC,
-                        nama_nasabah ASC
-                    LIMIT ?, ?
-                """;
+        // Always sort by datetime in descending order (newest first)
+        baseQuery += " ORDER BY waktu_transaksi DESC LIMIT ? OFFSET ?";
 
         try (Connection conn = DBconnect.getConnection();
                 PreparedStatement pst = conn.prepareStatement(baseQuery)) {
@@ -163,23 +181,23 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
 
             // Add pagination parameters
             int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
-            pst.setInt(paramIndex++, startIndex);
             pst.setInt(paramIndex++, dataPerHalaman);
+            pst.setInt(paramIndex, startIndex);
 
             try (ResultSet rs = pst.executeQuery()) {
-                int no = 1;
+                int no = startIndex + 1;
                 while (rs.next()) {
-                    String harga = rs.getString("harga");
-                    if (!harga.equals("-")) {
+                    String nominal = rs.getString("nominal");
+                    if (!nominal.equals("-")) {
                         try {
-                            double nominal = Double.parseDouble(harga);
+                            double amount = Double.parseDouble(nominal);
                             NumberFormat formatRupiah = NumberFormat
                                     .getCurrencyInstance(Locale.forLanguageTag("id-ID"));
                             formatRupiah.setMaximumFractionDigits(0);
                             formatRupiah.setMinimumFractionDigits(0);
-                            harga = formatRupiah.format(nominal);
+                            nominal = formatRupiah.format(amount);
                         } catch (NumberFormatException e) {
-                            // Biarkan harga tetap apa adanya jika gagal format
+                            // Keep original value if formatting fails
                         }
                     }
 
@@ -187,16 +205,20 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                             no++,
                             rs.getString("nama_admin"),
                             rs.getString("nama_nasabah"),
-                            rs.getString("nama_barang_sampah"),
-                            harga,
                             rs.getString("jenis_transaksi"),
-                            rs.getString("riwayat")
+                            rs.getString("detail"),
+                            nominal,
+                            rs.getString("status"),
+                            rs.getString("waktu_transaksi")
                     });
                 }
             }
 
             tb_laporan.setModel(model);
             updatePaginationInfo();
+
+            // Update calculateTotalPage() to count all transactions
+            calculateTotalPage();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data laporan: " + e.getMessage());
@@ -207,52 +229,30 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         try {
             String countQuery = """
                         SELECT COUNT(*) as total FROM (
-                            SELECT
-                                COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                                COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
-                                tr.nama_barang AS nama_barang_sampah,
-                                'Pemasukan' AS jenis_transaksi,
-                                tr.harga AS harga,
-                                lp.riwayat AS riwayat
-                            FROM laporan_pemasukan lp
-                            LEFT JOIN login u ON lp.id_user = u.id_user
-                            LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
-                            LEFT JOIN manajemen_nasabah n ON lp.id_nasabah = n.id_nasabah
-                            WHERE lp.id_transaksi IS NOT NULL
+                        -- Transaksi penjualan barang (Pemasukan)
+                        SELECT tr.tanggal FROM laporan_pemasukan lp
+                        JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi
+                        WHERE lp.id_transaksi IS NOT NULL
 
-                            UNION ALL
+                        UNION ALL
 
-                            SELECT
-                                COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                                '-' AS nama_nasabah,
-                                kate.nama_kategori AS nama_barang_sampah,
-                                'Pemasukan' AS jenis_transaksi,
-                                js.harga AS harga,
-                                lp.riwayat AS riwayat
-                            FROM laporan_pemasukan lp
-                            LEFT JOIN login u ON lp.id_user = u.id_user
-                            LEFT JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
-                            JOIN sampah sa ON js.id_sampah = sa.id_sampah
-                            JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
-                            WHERE lp.id_jual_sampah IS NOT NULL
+                        -- Penjualan sampah (Pemasukan)
+                        SELECT js.tanggal FROM laporan_pemasukan lp
+                        JOIN jual_sampah js ON lp.id_jual_sampah = js.id_jual_sampah
+                        WHERE lp.id_jual_sampah IS NOT NULL
 
-                            UNION ALL
+                        UNION ALL
 
-                            SELECT
-                                COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                                COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
-                                kate.nama_kategori AS nama_barang_sampah,
-                                'Pengeluaran' AS jenis_transaksi,
-                                s.harga AS harga,
-                                lpl.riwayat AS riwayat
-                            FROM laporan_pengeluaran lpl
-                            LEFT JOIN login u ON lpl.id_user = u.id_user
-                            JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran
-                            LEFT JOIN manajemen_nasabah n ON s.id_nasabah = n.id_nasabah
-                            JOIN sampah sa ON s.id_sampah = sa.id_sampah
-                            JOIN kategori_sampah kate ON sa.id_kategori = kate.id_kategori
-                            WHERE lpl.id_setoran IS NOT NULL
-                        ) AS combined
+                        -- Setoran sampah (Pengeluaran)
+                        SELECT s.tanggal FROM laporan_pengeluaran lpl
+                        JOIN setor_sampah s ON lpl.id_setoran = s.id_setoran
+                        WHERE lpl.id_setoran IS NOT NULL
+
+                        UNION ALL
+
+                        -- Penarikan saldo (Pengeluaran)
+                        SELECT ps.tanggal_penarikan FROM penarikan_saldo ps
+                    ) AS all_transactions
                     """;
 
             try (Connection conn = DBconnect.getConnection();
@@ -447,7 +447,8 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         dateChooser1 = new datechooser.Main.DateChooser();
@@ -516,15 +517,19 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cardPengeluaranMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 cardPengeluaranMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 cardPengeluaranMouseExited(evt);
             }
+
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 cardPengeluaranMousePressed(evt);
             }
+
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 cardPengeluaranMouseReleased(evt);
             }
@@ -542,43 +547,48 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         javax.swing.GroupLayout cardPengeluaranLayout = new javax.swing.GroupLayout(cardPengeluaran);
         cardPengeluaran.setLayout(cardPengeluaranLayout);
         cardPengeluaranLayout.setHorizontalGroup(
-            cardPengeluaranLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardPengeluaranLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jLabel15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(cardPengeluaranLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel16)
-                    .addComponent(lb_pengeluaran))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                cardPengeluaranLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(cardPengeluaranLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel15)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(cardPengeluaranLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel16)
+                                        .addComponent(lb_pengeluaran))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
         cardPengeluaranLayout.setVerticalGroup(
-            cardPengeluaranLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardPengeluaranLayout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addGroup(cardPengeluaranLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel15)
-                    .addGroup(cardPengeluaranLayout.createSequentialGroup()
-                        .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lb_pengeluaran)))
-                .addContainerGap(34, Short.MAX_VALUE))
-        );
+                cardPengeluaranLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(cardPengeluaranLayout.createSequentialGroup()
+                                .addGap(17, 17, 17)
+                                .addGroup(cardPengeluaranLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jLabel15)
+                                        .addGroup(cardPengeluaranLayout.createSequentialGroup()
+                                                .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 10,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(lb_pengeluaran)))
+                                .addContainerGap(34, Short.MAX_VALUE)));
 
         cardTransaksi.setFillColor(new java.awt.Color(254, 244, 208));
         cardTransaksi.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cardTransaksiMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 cardTransaksiMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 cardTransaksiMouseExited(evt);
             }
+
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 cardTransaksiMousePressed(evt);
             }
+
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 cardTransaksiMouseReleased(evt);
             }
@@ -596,28 +606,30 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         javax.swing.GroupLayout cardTransaksiLayout = new javax.swing.GroupLayout(cardTransaksi);
         cardTransaksi.setLayout(cardTransaksiLayout);
         cardTransaksiLayout.setHorizontalGroup(
-            cardTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardTransaksiLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jLabel18)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(cardTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel19)
-                    .addComponent(lb_total))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                cardTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(cardTransaksiLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel18)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(cardTransaksiLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel19)
+                                        .addComponent(lb_total))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
         cardTransaksiLayout.setVerticalGroup(
-            cardTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardTransaksiLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(cardTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(cardTransaksiLayout.createSequentialGroup()
-                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lb_total))
-                    .addComponent(jLabel18))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                cardTransaksiLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(cardTransaksiLayout.createSequentialGroup()
+                                .addGap(16, 16, 16)
+                                .addGroup(cardTransaksiLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(cardTransaksiLayout.createSequentialGroup()
+                                                .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 10,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(lb_total))
+                                        .addComponent(jLabel18))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         cardPemasukan.setBackground(new java.awt.Color(234, 250, 247));
         cardPemasukan.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
@@ -626,15 +638,19 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cardPemasukanMouseClicked(evt);
             }
+
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 cardPemasukanMouseEntered(evt);
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 cardPemasukanMouseExited(evt);
             }
+
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 cardPemasukanMousePressed(evt);
             }
+
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 cardPemasukanMouseReleased(evt);
             }
@@ -653,65 +669,62 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         javax.swing.GroupLayout cardPemasukanLayout = new javax.swing.GroupLayout(cardPemasukan);
         cardPemasukan.setLayout(cardPemasukanLayout);
         cardPemasukanLayout.setHorizontalGroup(
-            cardPemasukanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardPemasukanLayout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(cardPemasukanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10)
-                    .addComponent(lb_pemasukan))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                cardPemasukanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(cardPemasukanLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(cardPemasukanLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel10)
+                                        .addComponent(lb_pemasukan))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
         cardPemasukanLayout.setVerticalGroup(
-            cardPemasukanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardPemasukanLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(cardPemasukanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(cardPemasukanLayout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lb_pemasukan))
-                    .addComponent(jLabel5))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                cardPemasukanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(cardPemasukanLayout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addGroup(cardPemasukanLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addGroup(cardPemasukanLayout.createSequentialGroup()
+                                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 10,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(lb_pemasukan))
+                                        .addComponent(jLabel5))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         javax.swing.GroupLayout panelCardLayout = new javax.swing.GroupLayout(panelCard);
         panelCard.setLayout(panelCardLayout);
         panelCardLayout.setHorizontalGroup(
-            panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelCardLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(cardPemasukan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(42, 42, 42)
-                .addComponent(cardPengeluaran, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(42, 42, 42)
-                .addComponent(cardTransaksi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
-        );
+                panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelCardLayout.createSequentialGroup()
+                                .addGap(0, 0, 0)
+                                .addComponent(cardPemasukan, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(42, 42, 42)
+                                .addComponent(cardPengeluaran, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(42, 42, 42)
+                                .addComponent(cardTransaksi, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(0, 0, 0)));
         panelCardLayout.setVerticalGroup(
-            panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(cardPemasukan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(cardPengeluaran, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(cardTransaksi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                panelCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(cardPemasukan, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cardPengeluaran, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cardTransaksi, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
         tb_laporan.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+                new Object[][] {
 
-            },
-            new String [] {
-                "No", "Nama Admin", "Nama Nasabah", "Nama Barang/Sampah", "Harga", "Riwayat"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
-            };
+                },
+                new String[] {
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
+                }));
         jScrollPane1.setViewportView(tb_laporan);
 
         lb_halaman1.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -742,37 +755,49 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         javax.swing.GroupLayout panelBawah1Layout = new javax.swing.GroupLayout(panelBawah1);
         panelBawah1.setLayout(panelBawah1Layout);
         panelBawah1Layout.setHorizontalGroup(
-            panelBawah1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBawah1Layout.createSequentialGroup()
-                .addComponent(btn_Export1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lb_halaman1, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_first1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_before1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbx_data1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_next1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_last1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
-        );
+                panelBawah1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelBawah1Layout.createSequentialGroup()
+                                .addComponent(btn_Export1, javax.swing.GroupLayout.PREFERRED_SIZE, 150,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lb_halaman1, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_first1, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_before1, javax.swing.GroupLayout.PREFERRED_SIZE, 30,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cbx_data1, javax.swing.GroupLayout.PREFERRED_SIZE, 80,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_next1, javax.swing.GroupLayout.PREFERRED_SIZE, 30,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_last1, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)));
         panelBawah1Layout.setVerticalGroup(
-            panelBawah1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelBawah1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelBawah1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_Export1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lb_halaman1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_first1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_before1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbx_data1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_next1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_last1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                panelBawah1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelBawah1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(panelBawah1Layout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(btn_Export1, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lb_halaman1, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btn_first1, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btn_before1, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(cbx_data1, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btn_next1, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(btn_last1, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         ShadowSearch.setBackground(new java.awt.Color(249, 251, 255));
         ShadowSearch.setPreferredSize(new java.awt.Dimension(259, 43));
@@ -793,7 +818,8 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
             }
         });
 
-        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Nasabah", "Nama Barang/Sampah" }));
+        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(
+                new String[] { "Default", "Nama Admin", "Nama Nasabah", "Nama Barang/Sampah" }));
         box_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 box_pilihActionPerformed(evt);
@@ -803,23 +829,25 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         javax.swing.GroupLayout ShadowSearchLayout = new javax.swing.GroupLayout(ShadowSearch);
         ShadowSearch.setLayout(ShadowSearchLayout);
         ShadowSearchLayout.setHorizontalGroup(
-            ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowSearchLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(box_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+                ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(ShadowSearchLayout.createSequentialGroup()
+                                .addGap(0, 0, 0)
+                                .addComponent(box_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, 81,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap()));
         ShadowSearchLayout.setVerticalGroup(
-            ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowSearchLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(box_pilih))
-                .addContainerGap())
-        );
+                ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(ShadowSearchLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(ShadowSearchLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(txt_search, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(box_pilih))
+                                .addContainerGap()));
 
         ShadowSearch1.setBackground(new java.awt.Color(249, 251, 255));
         ShadowSearch1.setPreferredSize(new java.awt.Dimension(259, 43));
@@ -860,26 +888,30 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         javax.swing.GroupLayout ShadowSearch1Layout = new javax.swing.GroupLayout(ShadowSearch1);
         ShadowSearch1.setLayout(ShadowSearch1Layout);
         ShadowSearch1Layout.setHorizontalGroup(
-            ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowSearch1Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pilihtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_date, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+                ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(ShadowSearch1Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pilihtanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 50,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txt_date, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap()));
         ShadowSearch1Layout.setVerticalGroup(
-            ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ShadowSearch1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pilihtanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txt_date, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+                ShadowSearch1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(ShadowSearch1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(ShadowSearch1Layout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(pilihtanggal, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(txt_date, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap()));
 
         btnReset.setText("Reset");
         btnReset.addActionListener(new java.awt.event.ActionListener() {
@@ -929,16 +961,15 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         javax.swing.GroupLayout panelCurve1Layout = new javax.swing.GroupLayout(panelCurve1);
         panelCurve1.setLayout(panelCurve1Layout);
         panelCurve1Layout.setHorizontalGroup(
-            panelCurve1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                panelCurve1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                Short.MAX_VALUE));
         panelCurve1Layout.setVerticalGroup(
-            panelCurve1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelCurve1Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(chart, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
-        );
+                panelCurve1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelCurve1Layout.createSequentialGroup()
+                                .addGap(0, 0, 0)
+                                .addComponent(chart, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addGap(0, 0, 0)));
 
         btn_laporan_saldo.setBackground(new java.awt.Color(0, 204, 204));
         btn_laporan_saldo.setForeground(new java.awt.Color(255, 255, 255));
@@ -953,33 +984,47 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         javax.swing.GroupLayout panelCurveLayout = new javax.swing.GroupLayout(panelCurve);
         panelCurve.setLayout(panelCurveLayout);
         panelCurveLayout.setHorizontalGroup(
-            panelCurveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelCurveLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addGroup(panelCurveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btn_laporan_jual_sampah, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_detail_pemasukan, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
-                    .addComponent(btn_laporan_transaksi, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_laporan_saldo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
-                    .addComponent(panelCurve1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+                panelCurveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelCurveLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addGroup(panelCurveLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(btn_laporan_jual_sampah,
+                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btn_detail_pemasukan, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                                        .addComponent(btn_laporan_transaksi, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btn_laporan_saldo, javax.swing.GroupLayout.Alignment.TRAILING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                                        .addComponent(panelCurve1, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap()));
         panelCurveLayout.setVerticalGroup(
-            panelCurveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelCurveLayout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_laporan_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_laporan_jual_sampah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_detail_pemasukan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_laporan_saldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(panelCurve1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                panelCurveLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelCurveLayout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 46,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_laporan_transaksi, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_laporan_jual_sampah, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_detail_pemasukan, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_laporan_saldo, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(panelCurve1, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel14.setText("Riwayat");
@@ -988,61 +1033,85 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         javax.swing.GroupLayout panelTableLayout = new javax.swing.GroupLayout(panelTable);
         panelTable.setLayout(panelTableLayout);
         panelTableLayout.setHorizontalGroup(
-            panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTableLayout.createSequentialGroup()
-                .addGroup(panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelBawah1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTableLayout.createSequentialGroup()
-                        .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelCurve, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
+                panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTableLayout.createSequentialGroup()
+                                .addGroup(panelTableLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(panelBawah1, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTableLayout
+                                                .createSequentialGroup()
+                                                .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 275,
+                                                        Short.MAX_VALUE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 275,
+                                                        Short.MAX_VALUE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 82,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jScrollPane1))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(panelCurve, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap()));
         panelTableLayout.setVerticalGroup(
-            panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelTableLayout.createSequentialGroup()
-                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addGroup(panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelTableLayout.createSequentialGroup()
-                        .addGroup(panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(ShadowSearch1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
-                            .addComponent(ShadowSearch, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
-                            .addComponent(btnReset, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 628, Short.MAX_VALUE))
-                    .addComponent(panelCurve, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelBawah1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
+                panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelTableLayout.createSequentialGroup()
+                                .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 44,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)
+                                .addGroup(panelTableLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(panelTableLayout.createSequentialGroup()
+                                                .addGroup(panelTableLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING,
+                                                                false)
+                                                        .addComponent(ShadowSearch1,
+                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, 45,
+                                                                Short.MAX_VALUE)
+                                                        .addComponent(ShadowSearch,
+                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, 45,
+                                                                Short.MAX_VALUE)
+                                                        .addComponent(btnReset,
+                                                                javax.swing.GroupLayout.Alignment.LEADING,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 45,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 628,
+                                                        Short.MAX_VALUE))
+                                        .addComponent(panelCurve, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(panelBawah1, javax.swing.GroupLayout.PREFERRED_SIZE, 50,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap()));
 
         javax.swing.GroupLayout panelViewLayout = new javax.swing.GroupLayout(panelView);
         panelView.setLayout(panelViewLayout);
         panelViewLayout.setHorizontalGroup(
-            panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelViewLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(20, 20, 20))
-        );
+                panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelViewLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(panelTable, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(panelCard, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(20, 20, 20)));
         panelViewLayout.setVerticalGroup(
-            panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelViewLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(panelCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
-                .addComponent(panelTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(20, 20, 20))
-        );
+                panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panelViewLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
+                                .addComponent(panelCard, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(20, 20, 20)
+                                .addComponent(panelTable, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(20, 20, 20)));
 
         panelMain.add(panelView, "card2");
 
