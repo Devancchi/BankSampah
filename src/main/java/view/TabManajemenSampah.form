@@ -2,6 +2,9 @@
 
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
+    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+      <Color blue="33" green="3a" red="18" type="rgb"/>
+    </Property>
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
       <Dimension value="[1192, 944]"/>
     </Property>
@@ -38,7 +41,7 @@
         <Container class="javax.swing.JPanel" name="panelView">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="fa" green="fa" red="fa" type="rgb"/>
+              <Color blue="fd" green="fd" red="fd" type="rgb"/>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[1192, 944]"/>
@@ -669,6 +672,7 @@
                 </Component>
                 <Component class="component.PlaceholderTextField" name="txt_Nama">
                   <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="placeholder" type="java.lang.String" value="Nama"/>
                   </Properties>
                 </Component>
@@ -676,6 +680,9 @@
                   <Properties>
                     <Property name="placeholder" type="java.lang.String" value="Berat sampah"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_BeratKeyTyped"/>
+                  </Events>
                 </Component>
                 <Container class="component.ShadowPanel" name="shadowTotal">
 
