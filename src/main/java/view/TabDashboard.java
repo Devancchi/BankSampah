@@ -58,6 +58,7 @@ public class TabDashboard extends javax.swing.JPanel {
          */
         @SuppressWarnings("unchecked")
         // <editor-fold defaultstate="collapsed" desc="Generated
+        // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -133,11 +134,11 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(panelGradient1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelGradient1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addGap(18, 18, 18)
-                        .addComponent(lb_totalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(lb_totalNasabah, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelGradient1Layout.setVerticalGroup(
@@ -187,14 +188,12 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(panelGradient2Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelGradient2Layout.createSequentialGroup()
-                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(183, 183, 183))
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelGradient2Layout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addGap(18, 18, 18)
-                        .addComponent(lb_totalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addComponent(lb_totalSampah, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         panelGradient2Layout.setVerticalGroup(
             panelGradient2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -230,11 +229,11 @@ public class TabDashboard extends javax.swing.JPanel {
         panelGradient3.setBackground(new java.awt.Color(38, 147, 142));
         panelGradient3.setColorGradient(new java.awt.Color(133, 213, 210));
 
-        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/laba_nasabah.png"))); // NOI18N
+        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_transaksi_dashboard.png"))); // NOI18N
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel12.setText("Laba");
+        jLabel12.setText("Transaksi hari ini");
 
         lb_laba.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lb_laba.setForeground(new java.awt.Color(255, 255, 255));
@@ -246,13 +245,11 @@ public class TabDashboard extends javax.swing.JPanel {
             .addGroup(panelGradient3Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(panelGradient3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelGradient3Layout.createSequentialGroup()
-                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelGradient3Layout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addGap(18, 18, 18)
-                        .addComponent(lb_laba, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(lb_laba, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelGradient3Layout.setVerticalGroup(
@@ -872,22 +869,27 @@ public class TabDashboard extends javax.swing.JPanel {
                                 lb_totalSampah.setText(df.format(totalSampah) + " KG");
                         }
 
-                        // Total Pemasukan
-                        ResultSet rsPemasukan = stmt.executeQuery(
-                                        "SELECT COALESCE(SUM(tr.total_harga), 0) + COALESCE(SUM(sp.harga), 0) AS total_pemasukan FROM laporan_pemasukan lp LEFT JOIN transaksi tr ON lp.id_transaksi = tr.id_transaksi LEFT JOIN jual_sampah sp ON lp.id_jual_sampah = sp.id_jual_sampah;");
-                        double pemasukan = rsPemasukan.next() ? rsPemasukan.getDouble("total_pemasukan") : 0;
+                        // Total Transaksi dari semua jenis transaksi
+                        String queryTotalTransaksi = """
+                                            SELECT (
+                                                (SELECT COUNT(*) FROM transaksi) +
+                                                (SELECT COUNT(*) FROM penarikan_saldo) +
+                                                (SELECT COUNT(*) FROM jual_sampah) +
+                                                (SELECT COUNT(*) FROM setor_sampah)
+                                            ) AS total_transaksi
+                                        """;
 
-                        // Total Pengeluaran
-                        ResultSet rsPengeluaran = stmt.executeQuery(
-                                        "SELECT SUM(s.harga) AS total_pengeluaran "
-                                                        + "FROM laporan_pengeluaran lp "
-                                                        + "JOIN setor_sampah s ON lp.id_setoran = s.id_setoran");
-                        double pengeluaran = rsPengeluaran.next() ? rsPengeluaran.getDouble("total_pengeluaran") : 0;
+                        ResultSet rsTransaksi = stmt.executeQuery(queryTotalTransaksi);
+                        int totalTransaksi = 0;
+                        if (rsTransaksi.next()) {
+                                totalTransaksi = rsTransaksi.getInt("total_transaksi");
+                        }
 
-                        double saldo = pemasukan - pengeluaran;
-                        lb_laba.setText("Rp " + String.format("%,.0f", saldo));
+                        // Update label judul transaksi
+                        jLabel12.setText("Total Transaksi");
 
-                        lb_laba.setText("Rp " + String.format("%,.0f", saldo));
+                        // Update label nilai total transaksi
+                        lb_laba.setText(String.format("%,d", totalTransaksi));
 
                         conn.close();
 

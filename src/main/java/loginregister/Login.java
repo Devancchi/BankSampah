@@ -56,9 +56,6 @@ public class Login extends JPanel {
         txtPassword.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Masukan Password Anda");
         add(txtPassword);
 
-        ButtonLink cmdForgotPassword = new ButtonLink("Forgot password ?");
-        add(cmdForgotPassword, "gapx push n");
-
         JLabel lbNote = new JLabel("");
         lbNote.putClientProperty(FlatClientProperties.STYLE, ""
                 + "font:-1;"
@@ -75,29 +72,13 @@ public class Login extends JPanel {
                 + "foreground:#FFFFFF;");
         add(cmdLogin);
 
-        add(new JSeparator(), "gapy 15 15");
-
-        add(new JLabel("Belum Punya Akun? "), "split 2,gapx push n");
-        ButtonLink cmdSignUp = new ButtonLink("Sign up");
-        add(cmdSignUp, "gapx n push");
-
-        // Event Handlers
-        cmdSignUp.addActionListener(actionEvent -> {
-            String icon = "icon/signup.svg";
-            ModalDialog.pushModal(new CustomModalBorder(new SignUp(), "Sign up", icon), ID);
-        });
-
-        cmdForgotPassword.addActionListener(actionEvent -> {
-            String icon = "icon/forgot_password.svg";
-            ModalDialog.pushModal(new CustomModalBorder(new ForgotPassword(), "Forgot password", icon), ID);
-        });
-
         cmdLogin.addActionListener(e -> {
             String username = txtUser.getText().trim();
             String password = new String(txtPassword.getPassword()).trim();
 
             if (username.isEmpty() || password.isEmpty()) {
-                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Username atau password tidak boleh kosong.");
+                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR,
+                        "Username atau password tidak boleh kosong.");
                 return;
             }
 
@@ -118,43 +99,50 @@ public class Login extends JPanel {
                         int idUser = rs.getInt("id_user");
                         String nama = rs.getString("nama_user");
                         String level = rs.getString("level");
-                        
+
                         // Tutup form login
                         SwingUtilities.getWindowAncestor(this).dispose();
-                        
+
                         // Buat user session
                         UserSession user = new UserSession(idUser, nama, level);
-                        
+
                         // Redirect berdasarkan level user
                         if ("Owner".equalsIgnoreCase(level)) {
                             // Jika level Owner, masuk ke Dashboard Owner
                             Dashboard dashboard = new Dashboard(user);
                             dashboard.setVisible(true);
-                            notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Selamat datang Owner " + nama + "!");
-                            
+                            notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS,
+                                    "Selamat datang Owner " + nama + "!");
+
                         } else if ("Admin".equalsIgnoreCase(level)) {
                             // Jika level Admin, masuk ke Dashboard Admin
                             Dashboard_admin dashboardAdmin = new Dashboard_admin(user);
                             dashboardAdmin.setVisible(true);
-                            notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Selamat datang Admin " + nama + "!");
-                            
+                            notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS,
+                                    "Selamat datang Admin " + nama + "!");
+
                         } else {
                             // Jika level tidak dikenali
-                            notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Level user tidak dikenali: " + level);
+                            notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR,
+                                    "Level user tidak dikenali: " + level);
                             // Tampilkan kembali form login jika level tidak valid
                             SwingUtilities.getWindowAncestor(this).setVisible(true);
                             return;
                         }
 
                     } else {
-                        notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Username atau password salah.");
+                        notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR,
+                                "Username atau password salah.");
                     }
                 } else {
-                    notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Username atau password salah.");
+                    notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR,
+                            "Username atau password salah.");
                 }
             } catch (Exception ex) {
-                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan koneksi:" + ex.getMessage());
-                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR, "Terjadi kesalahan koneksi: Akses ke Database");
+                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR,
+                        "Terjadi kesalahan koneksi:" + ex.getMessage());
+                notification.toast.Notifications.getInstance().show(Notifications.Type.ERROR,
+                        "Terjadi kesalahan koneksi: Akses ke Database");
                 ex.printStackTrace();
             }
         });
