@@ -204,6 +204,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
             try (ResultSet rs = pst.executeQuery()) {
                 int no = (halamanSaatIni - 1) * dataPerHalaman + 1;
                 while (rs.next()) {
+                    // Format harga to Rupiah
                     String harga = rs.getString("harga");
                     if (!harga.equals("-")) {
                         try {
@@ -214,6 +215,19 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                             // Biarkan harga tetap apa adanya jika gagal format
                         }
                     }
+
+                    // Format saldo_didapatkan to Rupiah
+                    String saldoDidapatkan = rs.getString("saldo_didapatkan");
+                    if (saldoDidapatkan != null && !saldoDidapatkan.equals("-")) {
+                        try {
+                            double nominal = Double.parseDouble(saldoDidapatkan);
+                            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
+                            saldoDidapatkan = formatRupiah.format(nominal);
+                        } catch (NumberFormatException e) {
+                            // Biarkan nilai tetap jika gagal format
+                        }
+                    }
+
                     model.addRow(new Object[] {
                             no++,
                             rs.getString("nama_admin"),
@@ -221,7 +235,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                             rs.getString("nama_sampah"),
                             rs.getString("berat_sampah"),
                             harga,
-                            rs.getString("saldo_didapatkan"),
+                            saldoDidapatkan, // Use the formatted saldo value
                             rs.getString("riwayat")
                     });
                 }
@@ -961,6 +975,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                 try (ResultSet rs = st.executeQuery()) {
                     int no = (halamanSaatIni - 1) * dataPerHalaman + 1;
                     while (rs.next()) {
+                        // Format harga to Rupiah
                         String harga = rs.getString("harga");
                         if (harga != null && !harga.equals("-")) {
                             try {
@@ -972,6 +987,18 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                             }
                         }
 
+                        // Format saldo_didapatkan to Rupiah
+                        String saldoDidapatkan = rs.getString("saldo_didapatkan");
+                        if (saldoDidapatkan != null && !saldoDidapatkan.equals("-")) {
+                            try {
+                                double nominal = Double.parseDouble(saldoDidapatkan);
+                                DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
+                                saldoDidapatkan = formatRupiah.format(nominal);
+                            } catch (NumberFormatException e) {
+                                // Biarkan nilai tetap jika gagal format
+                            }
+                        }
+
                         model.addRow(new Object[] {
                                 no++,
                                 rs.getString("nama_admin"),
@@ -979,7 +1006,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                                 rs.getString("nama_sampah"),
                                 rs.getString("berat_sampah"),
                                 harga,
-                                rs.getString("saldo_didapatkan"),
+                                saldoDidapatkan, // Use the formatted saldo value
                                 rs.getString("riwayat")
                         });
                     }
