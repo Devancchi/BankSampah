@@ -294,7 +294,7 @@
                 </Container>
                 <Component class="component.PlaceholderTextField" name="txt_search">
                   <Properties>
-                    <Property name="placeholder" type="java.lang.String" value="Cari daftar harga"/>
+                    <Property name="placeholder" type="java.lang.String" value="Cari jenis sampah"/>
                   </Properties>
                   <Events>
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_searchKeyTyped"/>

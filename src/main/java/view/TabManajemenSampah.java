@@ -459,7 +459,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             tblSampah.getColumnModel().getColumn(5).setResizable(false);
         }
 
-        txt_search.setPlaceholder("Cari daftar harga");
+        txt_search.setPlaceholder("Cari jenis sampah");
         txt_search.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txt_searchKeyTyped(evt);

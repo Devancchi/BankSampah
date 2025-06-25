@@ -499,7 +499,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="btn_add" min="-2" pref="150" max="-2" attributes="0"/>
+                      <Component id="btn_Export" min="-2" pref="150" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="lb_halaman" pref="215" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -534,7 +534,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="lb_halaman" alignment="3" min="-2" pref="39" max="-2" attributes="0"/>
-                                  <Component id="btn_add" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
+                                  <Component id="btn_Export" alignment="3" min="-2" pref="38" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -544,7 +544,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="component.Jbutton" name="btn_add">
+            <Component class="component.Jbutton" name="btn_Export">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/icon/icon_excel.png"/>
@@ -562,7 +562,7 @@
                 <Property name="roundedCorner" type="int" value="40"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_addActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_ExportActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="lb_halaman">

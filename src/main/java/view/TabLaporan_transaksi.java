@@ -716,8 +716,6 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
 
     private void btn_Export2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_Export2ActionPerformed
         try {
-            loadData("");
-
             DefaultTableModel model = (DefaultTableModel) tb_laporan.getModel();
 
             if (model.getRowCount() == 0) {
