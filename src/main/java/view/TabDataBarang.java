@@ -9,12 +9,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.sql.*;
-import java.sql.SQLException;
+
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.logging.*;
 import main.DBconnect;
 import java.awt.image.BufferedImage;
@@ -29,112 +28,29 @@ import component.ExcelExporter;
 import java.text.DecimalFormat;
 
 /**
- * TabDataBarang Class
- * 
- * This class manages the Product/Item data management tab in the Bank Sampah
- * application.
- * It provides functionality for displaying, adding, editing, and deleting
- * items,
- * as well as searching, pagination, and barcode generation.
- * 
- * Features:
- * - Grid display of products with images
- * - Add/Edit/Delete product functionality
- * - Search by name or product code
- * - Pagination controls
- * - Barcode generation for products
- * - Import/Export to Excel
- * 
+ *
  * @author devan
  */
 public class TabDataBarang extends javax.swing.JPanel {
 
-    /** Database connection instance */
     private final Connection conn = DBconnect.getConnection();
-
-    /** Currently selected image file for product */
     private File selectedImageFile;
-
-    /** List of item panels currently displayed in the UI */
     private List<Item> itemPanels = new ArrayList<>();
-
-    /** Currently selected item model */
-    private ModelItem selectedItem = null;
-
-    /** Current user session information */
+    private ModelItem selectedItem = null; // menyimpan item yang dipilih
     private final UserSession users;
 
-    // ==========================================================================
-    // PAGINATION VARIABLES
-    // ==========================================================================
-
-    /** Current page number */
+    // Pagination variables
     private int halamanSaatIni = 1;
-
-    /** Number of items per page */
     private int dataPerHalaman = 10;
-
-    /** Total number of pages */
     private int totalPages;
-
-    /** Total number of data records */
     private int totalData;
 
-    /**
-     * Constructor for TabDataBarang
-     * 
-     * @param user Current user session information
-     */
     public TabDataBarang(UserSession user) {
         this.users = user;
         initComponents();
         initializePanel();
-
-        // Add validation to prevent negative values in price field
-        txt_harga.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent evt) {
-                char c = evt.getKeyChar();
-                // Only allow digits, backspace and delete
-                if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
-                    evt.consume();
-                }
-                // Prevent leading zeros
-                if (c == '0' && txt_harga.getText().isEmpty()) {
-                    // Allow single '0'
-                } else if (txt_harga.getText().equals("0") && Character.isDigit(c)) {
-                    evt.consume();
-                }
-            }
-        });
-
-        // Add validation to prevent negative values in stock field
-        txt_stok.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent evt) {
-                char c = evt.getKeyChar();
-                // Only allow digits, backspace and delete
-                if (!(Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE)) {
-                    evt.consume();
-                }
-                // Prevent leading zeros
-                if (c == '0' && txt_stok.getText().isEmpty()) {
-                    // Allow single '0'
-                } else if (txt_stok.getText().equals("0") && Character.isDigit(c)) {
-                    evt.consume();
-                }
-            }
-        });
     }
 
-    // ==========================================================================
-    // INITIALIZATION METHODS
-    // ==========================================================================
-
-    /**
-     * Initialize panel configuration and event handlers
-     * Sets up UI components, pagination, and event listeners
-     */
     private void initializePanel() {
         btnKembali.setVisible(false);
         btnHapus.setVisible(false);
@@ -182,15 +98,6 @@ public class TabDataBarang extends javax.swing.JPanel {
         });
     }
 
-    // ==========================================================================
-    // PAGINATION AND DATA LOADING METHODS
-    // ==========================================================================
-
-    /**
-     * Calculates the total number of pages based on total records and items per
-     * page
-     * Updates totalData and totalPages variables
-     */
     private void calculateTotalPage() {
         try {
             String sql = "SELECT COUNT(*) as total FROM data_barang";
@@ -203,21 +110,18 @@ public class TabDataBarang extends javax.swing.JPanel {
             rs.close();
             pst.close();
         } catch (SQLException e) {
-            Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, "Error calculating pagination", e);
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Loads product data for the current page
-     * Populates the panel with product items and sets up their display
-     */
     private void loadDataBarang() {
         try {
             panelBarang.removeAll();
-            panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
-
-            // Clear the previous items list
+            // Clear the item panels list when reloading data
             itemPanels.clear();
+
+            // Always use GridLayout regardless of item count
+            panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
 
             int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
 
@@ -244,6 +148,12 @@ public class TabDataBarang extends javax.swing.JPanel {
                 ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
                 Item itemPanel = new Item();
                 itemPanel.setData(model);
+
+                // Set fixed size for each card
+                itemPanel.setPreferredSize(new java.awt.Dimension(200, 300));
+                itemPanel.setMinimumSize(new java.awt.Dimension(200, 300));
+                itemPanel.setMaximumSize(new java.awt.Dimension(200, 300));
+
                 itemPanel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -251,10 +161,26 @@ public class TabDataBarang extends javax.swing.JPanel {
                     }
                 });
 
-                panelBarang.add(itemPanel);
-                // Add to tracked panels list
+                // Add this line to track the panel
                 itemPanels.add(itemPanel);
+
+                panelBarang.add(itemPanel);
                 itemCount++;
+            }
+
+            // Always add empty panels to fill at least one row
+            // This forces the grid layout to maintain proper structure
+            int emptyPanelsNeeded = 5 - (itemCount % 5);
+            if (emptyPanelsNeeded < 5) {
+                for (int i = 0; i < emptyPanelsNeeded; i++) {
+                    JPanel emptyPanel = new JPanel();
+                    emptyPanel.setOpaque(false);
+                    // Set consistent size for empty panels too
+                    emptyPanel.setPreferredSize(new java.awt.Dimension(200, 300));
+                    emptyPanel.setMinimumSize(new java.awt.Dimension(200, 300));
+                    emptyPanel.setMaximumSize(new java.awt.Dimension(200, 300));
+                    panelBarang.add(emptyPanel);
+                }
             }
 
             rs.close();
@@ -263,13 +189,6 @@ public class TabDataBarang extends javax.swing.JPanel {
             // Update page label
             lb_halaman2.setText("Page " + halamanSaatIni + " dari total " + totalData + " data");
 
-            // Atur layout sesuai jumlah item
-            if (itemCount < 5) {
-                panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
-            } else {
-                panelBarang.setLayout(new GridLayout(0, 5, 10, 19));
-            }
-
             panelBarang.revalidate();
             panelBarang.repaint();
         } catch (SQLException e) {
@@ -277,12 +196,6 @@ public class TabDataBarang extends javax.swing.JPanel {
         }
     }
 
-    /**
-     * Searches for products by keyword (name or code)
-     * Updates the UI with filtered results
-     * 
-     * @param keyword The search term to filter products
-     */
     private void searchDataBarang(String keyword) {
         try {
             // Hitung total data hasil pencarian
@@ -300,10 +213,11 @@ public class TabDataBarang extends javax.swing.JPanel {
             pstCount.close();
 
             panelBarang.removeAll();
-            panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
-
-            // Clear the previous items list
+            // Clear the item panels list when searching
             itemPanels.clear();
+
+            // Always use GridLayout regardless of item count
+            panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
 
             String sql = "SELECT * FROM data_barang WHERE nama_barang LIKE ? OR kode_barang LIKE ? LIMIT ? OFFSET ?";
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -331,17 +245,34 @@ public class TabDataBarang extends javax.swing.JPanel {
                 ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
                 Item itemPanel = new Item();
                 itemPanel.setData(model);
+                // Set a fixed size for each card
+                itemPanel.setPreferredSize(new java.awt.Dimension(200, 300));
+                itemPanel.setMinimumSize(new java.awt.Dimension(200, 300));
                 itemPanel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         handleItemSelection(itemPanel, model);
                     }
                 });
+                itemPanels.add(itemPanel);
 
                 panelBarang.add(itemPanel);
-                // Add to tracked panels list
-                itemPanels.add(itemPanel);
                 itemCount++;
+            }
+
+            // In searchDataBarang method - modify the empty panels section
+            // Always add empty panels to fill at least one row
+            int emptyPanelsNeeded = 5 - (itemCount % 5);
+            if (emptyPanelsNeeded < 5) {
+                for (int i = 0; i < emptyPanelsNeeded; i++) {
+                    JPanel emptyPanel = new JPanel();
+                    emptyPanel.setOpaque(false);
+                    // Set consistent size for empty panels too
+                    emptyPanel.setPreferredSize(new java.awt.Dimension(200, 300));
+                    emptyPanel.setMinimumSize(new java.awt.Dimension(200, 300));
+                    emptyPanel.setMaximumSize(new java.awt.Dimension(200, 300));
+                    panelBarang.add(emptyPanel);
+                }
             }
 
             rs.close();
@@ -350,13 +281,6 @@ public class TabDataBarang extends javax.swing.JPanel {
             // Update page label
             lb_halaman2.setText("Halaman " + halamanSaatIni + " dari total " + totalData + " data");
 
-            // Atur layout sesuai jumlah item
-            if (itemCount < 5) {
-                panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
-            } else {
-                panelBarang.setLayout(new GridLayout(0, 5, 10, 19));
-            }
-
             panelBarang.revalidate();
             panelBarang.repaint();
         } catch (SQLException e) {
@@ -364,16 +288,7 @@ public class TabDataBarang extends javax.swing.JPanel {
         }
     }
 
-    // ==========================================================================
-    // BARCODE GENERATION METHODS
-    // ==========================================================================
-
-    /**
-     * Generates a random 12-digit number string for barcode
-     * First digit is 1-9 to ensure 12 significant digits
-     * 
-     * @return Random 12-digit numeric string
-     */
+    ////////// generate random number untuk barcode //////////
     public String getRandomNumberString() {
         Random rnd = new Random();
         StringBuilder sb = new StringBuilder();
@@ -387,12 +302,7 @@ public class TabDataBarang extends javax.swing.JPanel {
         return sb.toString(); // Total 12 digit
     }
 
-    /**
-     * Generates a barcode image for the product
-     * Creates a PNG image file with the product code
-     * 
-     * @param kode The product code to generate barcode for
-     */
+    ////////// generate barcode //////////
     public void generate(String kode) {
         String namaBarang = txt_nama.getText().trim();
         try {
@@ -435,34 +345,18 @@ public class TabDataBarang extends javax.swing.JPanel {
 
             System.out.println("Barcode berhasil dibuat di: " + outputFile.getPath());
 
-            // Log aktivitas pembuatan barcode
-            LoggerUtil.insert(users.getId(), "Membuat barcode untuk barang: " + namaBarang + " dengan kode: " + kode);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // ==========================================================================
-    // UI MANAGEMENT METHODS
-    // ==========================================================================
-
-    /**
-     * Sets the edit form data with the values from the selected item
-     * 
-     * @param item The item model to populate the form with
-     */
     private void setPanelEditFormData(ModelItem item) {
-        txt_kode.setText(item.getKode());
+        txt_kode.setText(item.getKode()); // Contoh, asumsi txt_kode1 di panelEdit
         txt_nama.setText(item.getNama());
         txt_harga.setText(String.valueOf((int) item.getHarga()));
         txt_stok.setText(String.valueOf(item.getStok()));
     }
 
-    /**
-     * Resets the main panel view
-     * Refreshes the panel and resets UI state
-     */
     private void showPanel() {
         panelMain.removeAll();
         panelMain.add(new TabDataBarang(users));
@@ -472,28 +366,18 @@ public class TabDataBarang extends javax.swing.JPanel {
         btnKembali.setVisible(false);
     }
 
-    /**
-     * Clears all form fields
-     * Resets text fields to empty values
-     */
     private void clearForm() {
         txt_gambar.setText("");
+        txt_gambar.setText("");
+        txt_harga.setText("");
         txt_harga.setText("");
         txt_kode.setText("");
         txt_nama.setText("");
+        txt_nama.setText("");
         txt_stok.setText("");
-
-        // Reset selected image
-        selectedImageFile = null;
+        txt_stok.setText("");
     }
 
-    /**
-     * Handles item selection in the grid
-     * Updates UI state to show selected item is active
-     * 
-     * @param itemPanel The panel component that was selected
-     * @param model     The data model of the selected item
-     */
     private void handleItemSelection(Item itemPanel, ModelItem model) {
         // Reset all items first
         for (Item panel : itemPanels) {
@@ -517,6 +401,8 @@ public class TabDataBarang extends javax.swing.JPanel {
     }
 
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -565,7 +451,7 @@ public class TabDataBarang extends javax.swing.JPanel {
         panelMain.setPreferredSize(new java.awt.Dimension(1192, 944));
         panelMain.setLayout(new java.awt.CardLayout());
 
-        panelView.setBackground(new java.awt.Color(250, 250, 250));
+        panelView.setBackground(new java.awt.Color(253, 253, 253));
         panelView.setPreferredSize(new java.awt.Dimension(1192, 944));
 
         scrollBarang.setBackground(new java.awt.Color(255, 255, 255));
@@ -589,7 +475,8 @@ public class TabDataBarang extends javax.swing.JPanel {
 
         scrollBarang.setViewportView(panelBarang);
 
-        lb_dataNasabah.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        lb_dataNasabah.setFont(lb_dataNasabah.getFont().deriveFont(
+                lb_dataNasabah.getFont().getStyle() | java.awt.Font.BOLD, lb_dataNasabah.getFont().getSize() + 10));
         lb_dataNasabah.setText("Data Barang");
 
         lb_halaman2.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -713,7 +600,8 @@ public class TabDataBarang extends javax.swing.JPanel {
         btnTambah.setFillClick(new java.awt.Color(55, 130, 60));
         btnTambah.setFillOriginal(new java.awt.Color(76, 175, 80));
         btnTambah.setFillOver(new java.awt.Color(69, 160, 75));
-        btnTambah.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnTambah.setFont(btnTambah.getFont().deriveFont(btnTambah.getFont().getStyle() | java.awt.Font.BOLD,
+                btnTambah.getFont().getSize() - 1));
         btnTambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTambahActionPerformed(evt);
@@ -725,7 +613,8 @@ public class TabDataBarang extends javax.swing.JPanel {
         btnHapus.setFillClick(new java.awt.Color(190, 30, 20));
         btnHapus.setFillOriginal(new java.awt.Color(231, 76, 60));
         btnHapus.setFillOver(new java.awt.Color(210, 50, 40));
-        btnHapus.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnHapus.setFont(btnHapus.getFont().deriveFont(btnHapus.getFont().getStyle() | java.awt.Font.BOLD,
+                btnHapus.getFont().getSize() - 1));
         btnHapus.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnHapusMouseClicked(evt);
@@ -742,7 +631,8 @@ public class TabDataBarang extends javax.swing.JPanel {
         btnKembali.setFillClick(new java.awt.Color(200, 125, 0));
         btnKembali.setFillOriginal(new java.awt.Color(243, 156, 18));
         btnKembali.setFillOver(new java.awt.Color(230, 145, 10));
-        btnKembali.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnKembali.setFont(btnKembali.getFont().deriveFont(btnKembali.getFont().getStyle() | java.awt.Font.BOLD,
+                btnKembali.getFont().getSize() - 1));
         btnKembali.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnKembaliActionPerformed(evt);
@@ -762,14 +652,14 @@ public class TabDataBarang extends javax.swing.JPanel {
                 shadowActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(shadowActionLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 940,
+                                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 872,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnTambah, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                                .addComponent(btnTambah, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnHapus, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
+                                .addComponent(btnHapus, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnKembali, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
+                                .addComponent(btnKembali, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
                                 .addContainerGap()));
         shadowActionLayout.setVerticalGroup(
                 shadowActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -815,18 +705,19 @@ public class TabDataBarang extends javax.swing.JPanel {
         panelAdd.setPreferredSize(new java.awt.Dimension(1192, 944));
         panelAdd.setLayout(new java.awt.CardLayout());
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        jLabel6.setFont(jLabel6.getFont().deriveFont(jLabel6.getFont().getStyle() | java.awt.Font.BOLD,
+                jLabel6.getFont().getSize() + 10));
         jLabel6.setText("Tambah Data Barang");
 
-        jLabel11.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
+        jLabel11.setFont(jLabel11.getFont().deriveFont(jLabel11.getFont().getSize() + 10f));
         jLabel11.setText("Kode Barang");
 
-        jLabel12.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
+        jLabel12.setFont(jLabel12.getFont().deriveFont(jLabel12.getFont().getSize() + 10f));
         jLabel12.setText("Nama Barang");
 
         txt_nama.setPreferredSize(new java.awt.Dimension(20, 22));
 
-        jLabel13.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
+        jLabel13.setFont(jLabel13.getFont().deriveFont(jLabel13.getFont().getSize() + 10f));
         jLabel13.setText("Harga");
 
         txt_harga.setPreferredSize(new java.awt.Dimension(20, 22));
@@ -836,7 +727,8 @@ public class TabDataBarang extends javax.swing.JPanel {
         btn_SaveAdd.setFillClick(new java.awt.Color(30, 100, 150));
         btn_SaveAdd.setFillOriginal(new java.awt.Color(41, 128, 185));
         btn_SaveAdd.setFillOver(new java.awt.Color(36, 116, 170));
-        btn_SaveAdd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_SaveAdd.setFont(btn_SaveAdd.getFont().deriveFont(btn_SaveAdd.getFont().getStyle() | java.awt.Font.BOLD,
+                btn_SaveAdd.getFont().getSize() - 1));
         btn_SaveAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_SaveAddActionPerformed(evt);
@@ -848,19 +740,20 @@ public class TabDataBarang extends javax.swing.JPanel {
         btn_CancelAdd.setFillClick(new java.awt.Color(200, 125, 0));
         btn_CancelAdd.setFillOriginal(new java.awt.Color(243, 156, 18));
         btn_CancelAdd.setFillOver(new java.awt.Color(230, 145, 10));
-        btn_CancelAdd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_CancelAdd.setFont(btn_CancelAdd.getFont().deriveFont(
+                btn_CancelAdd.getFont().getStyle() | java.awt.Font.BOLD, btn_CancelAdd.getFont().getSize() - 1));
         btn_CancelAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_CancelAddActionPerformed(evt);
             }
         });
 
-        jLabel14.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
+        jLabel14.setFont(jLabel14.getFont().deriveFont(jLabel14.getFont().getSize() + 10f));
         jLabel14.setText("Jumlah Stok");
 
         txt_stok.setPreferredSize(new java.awt.Dimension(20, 22));
 
-        jLabel15.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
+        jLabel15.setFont(jLabel15.getFont().deriveFont(jLabel15.getFont().getSize() + 10f));
         jLabel15.setText("Gambar");
 
         txt_gambar.setPreferredSize(new java.awt.Dimension(20, 22));
@@ -1000,7 +893,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                                                 Short.MAX_VALUE)
                                         .addComponent(btnPilihGambar, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap(451, Short.MAX_VALUE)));
+                                .addContainerGap(431, Short.MAX_VALUE)));
 
         panelAdd.add(ShadowUtama1, "card2");
 
@@ -1027,14 +920,6 @@ public class TabDataBarang extends javax.swing.JPanel {
         }
     }// GEN-LAST:event_btn_SaveAddActionPerformed
 
-    // ==========================================================================
-    // DATA MANAGEMENT METHODS
-    // ==========================================================================
-
-    /**
-     * Inserts new product data into the database
-     * Validates input and handles file upload for product image
-     */
     private void insertData() {
         String kodeBrg = txt_kode.getText();
         String namaBrg = txt_nama.getText();
@@ -1075,10 +960,6 @@ public class TabDataBarang extends javax.swing.JPanel {
         }
     }
 
-    /**
-     * Updates existing product data in the database
-     * Validates input and handles file upload for product image
-     */
     private void updateData() {
         try {
             int id = selectedItem.getId();
@@ -1298,9 +1179,6 @@ public class TabDataBarang extends javax.swing.JPanel {
                 try {
                     ExcelExporter.exportTableModelToExcel(model, fileToSave);
 
-                    // Log aktivitas export data barang
-                    LoggerUtil.insert(users.getId(), "Mengekspor data barang ke Excel: " + fileToSave.getName());
-
                     JOptionPane.showMessageDialog(this,
                             "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
                             "Sukses",
@@ -1463,11 +1341,6 @@ public class TabDataBarang extends javax.swing.JPanel {
                             "Data baru: %d\n" +
                             "Data dilewati (sudah ada): %d",
                     insertCount, skippedCount);
-
-            // Log aktivitas import data barang
-            LoggerUtil.insert(users.getId(), "Mengimport data barang dari Excel: " + insertCount + " data baru, "
-                    + skippedCount + " data dilewati");
-
             JOptionPane.showMessageDialog(this,
                     message,
                     "Hasil Import",

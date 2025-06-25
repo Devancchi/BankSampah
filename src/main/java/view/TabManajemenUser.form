@@ -5,11 +5,6 @@
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="33" green="3a" red="18" type="rgb"/>
     </Property>
-    <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
-      <FontInfo relative="true">
-        <Font component="Form" property="font" relativeSize="true" size="0"/>
-      </FontInfo>
-    </Property>
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
       <Dimension value="[1200, 716]"/>
     </Property>
@@ -138,7 +133,7 @@
                         <Font bold="true" component="lb_dataNasabah" property="font" relativeSize="true" size="10"/>
                       </FontInfo>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Data Nasabah"/>
+                    <Property name="text" type="java.lang.String" value="Data User"/>
                   </Properties>
                 </Component>
                 <Container class="component.ShadowPanel" name="panelBawah">
@@ -312,7 +307,7 @@
               <SubComponents>
                 <Component class="component.PlaceholderTextField" name="txt_search">
                   <Properties>
-                    <Property name="placeholder" type="java.lang.String" value="Cari Nasabah"/>
+                    <Property name="placeholder" type="java.lang.String" value="Cari User"/>
                   </Properties>
                   <Events>
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_searchKeyTyped"/>
@@ -399,6 +394,13 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="panelAdd">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+              <FontInfo relative="true">
+                <Font component="panelAdd" property="font" relativeSize="true" size="0"/>
+              </FontInfo>
+            </Property>
+          </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
               <CardConstraints cardName="card2"/>
@@ -618,6 +620,7 @@
                 </Component>
                 <Component class="component.PlaceholderTextField" name="txt_id">
                   <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="placeholder" type="java.lang.String" value="ID"/>
                   </Properties>
                 </Component>

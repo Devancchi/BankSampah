@@ -27,7 +27,7 @@ public class loginregister extends JFrame {
                 .getBorderOption()
                 .setShadow(BorderOption.Shadow.MEDIUM);
 
-        showLogin();  // tampilkan login saat awal
+        showLogin(); // tampilkan login saat awal
     }
 
     private void showLogin() {
@@ -37,11 +37,11 @@ public class loginregister extends JFrame {
                 .setAnimationEnabled(false)
                 .setOpacity(0.2f);
 
-        // Gunakan path yang benar untuk icon sahabat.svg
+        // Gunakan path yang benar untuk icon admin/staff
         String icon = "icon/account.svg";
 
-        // Gunakan CustomModalBorder dengan path icon
-        ModalDialog.showModal(this, new CustomModalBorder(new Login(), "Login", icon), option, Login.ID);
+        // Gunakan CustomModalBorder dengan path icon, title "Admin Login"
+        ModalDialog.showModal(this, new CustomModalBorder(new Login(), "Admin Login", icon), option, Login.ID);
     }
 
     public static void main(String[] args) {
@@ -53,6 +53,7 @@ public class loginregister extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         // Set Poppins font for all Swing components
         Font poppinsFont = new Font("Poppins", Font.PLAIN, 13);
         UIManager.put("Label.font", poppinsFont);

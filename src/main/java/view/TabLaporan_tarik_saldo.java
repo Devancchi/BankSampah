@@ -12,6 +12,8 @@ import java.util.Locale;
 import main.DBconnect;
 import notification.toast.Notifications;
 import java.text.DecimalFormat;
+import java.awt.Color;
+import java.awt.Cursor;
 
 public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     private final Connection conn = DBconnect.getConnection();
@@ -19,6 +21,13 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     private int dataPerHalaman = 20;
     private int totalPages;
     private int totalData;
+
+    // Variable to store current filter type - "Pemasukan", "Pengeluaran", or "" for
+    // all
+    private String currentFilterType = "";
+
+    // Variable for filtering based on combobox selection
+    private String filterJenis = null;
 
     public TabLaporan_tarik_saldo() {
         initComponents();
@@ -78,7 +87,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                                 st.tanggal
                             FROM laporan_pengeluaran lpn
                             INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                            INNER JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
+                            LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
                             WHERE lpn.id_setoran IS NOT NULL
 
                             UNION ALL
@@ -87,7 +96,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                             SELECT
                                 ps.tanggal_penarikan
                             FROM penarikan_saldo ps
-                            INNER JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                            LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
                         ) AS combined_data
                     """;
             try (PreparedStatement ps = conn.prepareStatement(query);
@@ -103,19 +112,31 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     }
 
     private void updateLabels() {
-        try (Connection conn = DBconnect.getConnection()) { // Query untuk total saldo masuk (sum harga dari setor
-                                                            // sampah)
+        try (Connection conn = DBconnect.getConnection()) {
             String querySaldoMasuk = "SELECT SUM(harga) as total_saldo_masuk FROM setor_sampah WHERE harga != '-'";
-
-            // Query untuk total saldo keluar (sum jumlah_penarikan dari penarikan_saldo)
             String querySaldoKeluar = "SELECT SUM(jumlah_penarikan) as total_saldo_keluar FROM penarikan_saldo";
+            String queryTotalTransaksi;
 
-            // Query untuk total transaksi (count dari keduanya)
-            String queryTotalTransaksi = """
-                    SELECT
-                        (SELECT COUNT(*) FROM setor_sampah) +
-                        (SELECT COUNT(*) FROM penarikan_saldo) as total_transaksi
-                    """;
+            // Modify total transaksi query based on filter
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM setor_sampah";
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM penarikan_saldo";
+                } else {
+                    queryTotalTransaksi = """
+                            SELECT
+                                (SELECT COUNT(*) FROM setor_sampah) +
+                                (SELECT COUNT(*) FROM penarikan_saldo) as total_transaksi
+                            """;
+                }
+            } else {
+                queryTotalTransaksi = """
+                        SELECT
+                            (SELECT COUNT(*) FROM setor_sampah) +
+                            (SELECT COUNT(*) FROM penarikan_saldo) as total_transaksi
+                        """;
+            }
 
             // Mengambil total saldo masuk
             double totalSaldoMasuk = 0;
@@ -127,6 +148,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
             }
 
             // Mengambil total saldo keluar
+
             double totalSaldoKeluar = 0;
             try (PreparedStatement pst = conn.prepareStatement(querySaldoKeluar);
                     ResultSet rs = pst.executeQuery()) {
@@ -140,12 +162,37 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
             String saldoMasukFormatted = formatRupiah.format(totalSaldoMasuk);
             String saldoKeluarFormatted = formatRupiah.format(totalSaldoKeluar);
 
-            // Menampilkan total saldo (saldo masuk - saldo keluar)
-            double netSaldo = totalSaldoMasuk - totalSaldoKeluar;
+            // Calculate the saldo based on filter
+            double netSaldo;
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    netSaldo = totalSaldoMasuk;
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    netSaldo = totalSaldoKeluar;
+                } else {
+                    netSaldo = totalSaldoMasuk - totalSaldoKeluar;
+                }
+            } else {
+                netSaldo = totalSaldoMasuk - totalSaldoKeluar;
+            }
+
             String netSaldoFormatted = formatRupiah.format(netSaldo);
 
             // Update label dengan total saldo
             lbl_saldoNasabah.setText(netSaldoFormatted);
+
+            // Update label judul saldo sesuai filter
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    LabelTotalSaldo.setText("Total Saldo Masuk");
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    LabelTotalSaldo.setText("Total Saldo Keluar");
+                } else {
+                    LabelTotalSaldo.setText("Total Saldo Nasabah");
+                }
+            } else {
+                LabelTotalSaldo.setText("Total Saldo Nasabah");
+            }
 
             // Mengambil total transaksi
             try (PreparedStatement pst = conn.prepareStatement(queryTotalTransaksi);
@@ -165,7 +212,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         }
     }
 
-    private void loadData(String filterJenis) {
+    private void loadData(String searchKeyword) {
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -175,7 +222,9 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         model.setColumnIdentifiers(new String[] {
                 "No", "Nama Admin", "Nama Nasabah", "Jenis Transaksi", "Deskripsi", "Saldo Masuk", "Saldo Keluar",
                 "Tanggal"
-        }); // Create a UNION query to combine both setor_sampah (saldo masuk) and
+        });
+
+        // Create a UNION query to combine both setor_sampah (saldo masuk) and
         // penarikan_saldo (saldo keluar) transactions
         String baseQuery = """
                     SELECT
@@ -189,41 +238,58 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                     FROM (
                         -- Setor sampah entries (Saldo Masuk)
                         SELECT
-                            u.nama_user AS admin_name,
-                            n.nama_nasabah AS nasabah_name,
+                            COALESCE(u.nama_user, '[user dihapus]') AS admin_name,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
                             'Setor Sampah' AS transaction_type,
-                            CONCAT(kate.nama_kategori, ' (', st.berat_sampah, ' kg)') AS description,
+                            CONCAT(COALESCE(kate.nama_kategori, '[kategori dihapus]'), ' (', COALESCE(st.berat_sampah, '0'), ' kg)') AS description,
                             st.harga AS saldo_masuk,
                             0 AS saldo_keluar,
                             st.tanggal AS transaction_date
                         FROM laporan_pengeluaran lpn
-                        INNER JOIN login u ON lpn.id_user = u.id_user
+                        LEFT JOIN login u ON lpn.id_user = u.id_user
                         INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                        INNER JOIN sampah s ON st.id_sampah = s.id_sampah
-                        INNER JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                        INNER JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
+                        LEFT JOIN sampah s ON st.id_sampah = s.id_sampah
+                        LEFT JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
+                        LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
                         WHERE lpn.id_setoran IS NOT NULL
 
                         UNION ALL
 
                         -- Penarikan saldo entries (Saldo Keluar)
                         SELECT
-                            l.nama_user AS admin_name,
-                            n.nama_nasabah AS nasabah_name,
+                            COALESCE(l.nama_user, '[user dihapus]') AS admin_name,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
                             'Tarik Tunai' AS transaction_type,
                             'Penarikan Saldo' AS description,
                             0 AS saldo_masuk,
                             ps.jumlah_penarikan AS saldo_keluar,
                             ps.tanggal_penarikan AS transaction_date
                         FROM penarikan_saldo ps
-                        INNER JOIN login l ON ps.id_user = l.id_user
-                        INNER JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                        LEFT JOIN login l ON ps.id_user = l.id_user
+                        LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
                     ) AS combined_data
                 """;
+        boolean whereAdded = false;
 
-        // Add filter conditions if necessary
-        if (filterJenis != null && !filterJenis.isEmpty()) {
-            baseQuery += " WHERE nasabah_name LIKE ? OR admin_name LIKE ? OR transaction_type LIKE ?";
+        // First apply filter based on the combobox selection (Saldo Masuk/Keluar)
+        if (filterJenis != null) {
+            if (filterJenis.equals("Pemasukan")) {
+                baseQuery += " WHERE transaction_type = 'Setor Sampah'";
+                whereAdded = true;
+            } else if (filterJenis.equals("Pengeluaran")) {
+                baseQuery += " WHERE transaction_type = 'Tarik Tunai'";
+                whereAdded = true;
+            }
+        }
+
+        // Then apply additional search keyword if provided
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            if (whereAdded) {
+                baseQuery += " AND (nasabah_name LIKE ? OR admin_name LIKE ? OR transaction_type LIKE ?)";
+            } else {
+                baseQuery += " WHERE (nasabah_name LIKE ? OR admin_name LIKE ? OR transaction_type LIKE ?)";
+                whereAdded = true;
+            }
         }
 
         baseQuery += " ORDER BY transaction_date DESC LIMIT ? OFFSET ?";
@@ -231,8 +297,9 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         try (PreparedStatement pst = conn.prepareStatement(baseQuery)) {
             int paramIndex = 1;
 
-            if (filterJenis != null && !filterJenis.isEmpty()) {
-                String searchPattern = "%" + filterJenis + "%";
+            // Add search parameters if we have a search keyword
+            if (searchKeyword != null && !searchKeyword.isEmpty()) {
+                String searchPattern = "%" + searchKeyword + "%";
                 pst.setString(paramIndex++, searchPattern);
                 pst.setString(paramIndex++, searchPattern);
                 pst.setString(paramIndex++, searchPattern);
@@ -252,13 +319,15 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
 
                     model.addRow(new Object[] {
                             no++,
-                            rs.getString("admin_name"),
-                            rs.getString("nasabah_name"),
+                            rs.getString("admin_name") != null ? rs.getString("admin_name") : "[admin tidak tercatat]",
+                            rs.getString("nasabah_name") != null ? rs.getString("nasabah_name")
+                                    : "[nasabah tidak tercatat]",
                             rs.getString("transaction_type"),
                             rs.getString("description"),
                             saldoMasuk,
                             saldoKeluar,
-                            rs.getString("transaction_date")
+                            rs.getString("transaction_date") != null ? rs.getString("transaction_date")
+                                    : "[tanggal tidak tercatat]"
                     });
                 }
             }
@@ -283,6 +352,15 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -301,6 +379,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         txt_date = new swing.TextField();
         jButton1 = new javax.swing.JButton();
         btn_cancel = new component.Jbutton();
+        box_FilterMK = new javax.swing.JComboBox<>();
         panelTable = new component.ShadowPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tb_laporan = new component.Table();
@@ -351,8 +430,8 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
             }
         });
 
-        box_pilih.setModel(
-                new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Nama Sampah" }));
+        box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(
+                new String[] { "Default", "Nama Admin", "Nama Nasabah", "Nama Sampah" }));
         box_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 box_pilihActionPerformed(evt);
@@ -365,8 +444,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                 ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(ShadowSearchLayout.createSequentialGroup()
                                 .addGap(0, 0, 0)
-                                .addComponent(box_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, 81,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(box_pilih, 0, 81, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 307,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -387,11 +465,6 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
 
         pilihtanggal.setText("...");
         pilihtanggal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        pilihtanggal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pilihtanggalActionPerformed(evt);
-            }
-        });
 
         jLabel8.setBackground(new java.awt.Color(204, 204, 204));
         jLabel8.setForeground(new java.awt.Color(204, 204, 204));
@@ -441,7 +514,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
                                                 ShadowSearch1Layout.createSequentialGroup()
-                                                        .addGap(0, 0, Short.MAX_VALUE)
+                                                        .addGap(0, 1, Short.MAX_VALUE)
                                                         .addComponent(pilihtanggal,
                                                                 javax.swing.GroupLayout.PREFERRED_SIZE, 32,
                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -462,10 +535,19 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         btn_cancel.setFillClick(new java.awt.Color(200, 125, 0));
         btn_cancel.setFillOriginal(new java.awt.Color(243, 156, 18));
         btn_cancel.setFillOver(new java.awt.Color(230, 145, 10));
-        btn_cancel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_cancel.setFont(btn_cancel.getFont().deriveFont(btn_cancel.getFont().getStyle() | java.awt.Font.BOLD,
+                btn_cancel.getFont().getSize() - 1));
         btn_cancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_cancelActionPerformed(evt);
+            }
+        });
+
+        box_FilterMK.setModel(
+                new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Saldo Masuk", "Saldo Keluar" }));
+        box_FilterMK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                box_FilterMKActionPerformed(evt);
             }
         });
 
@@ -481,9 +563,12 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                                 .addComponent(ShadowSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, 400,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(box_FilterMK, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134,
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27,
                                         Short.MAX_VALUE)
                                 .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -494,19 +579,23 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                                 .addGap(14, 14, 14)
                                 .addGroup(panelFilterLayout
                                         .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 45,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(panelFilterLayout
-                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 44,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 45,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(panelFilterLayout
-                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 44,
-                                                        Short.MAX_VALUE)
-                                                .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 44,
-                                                        Short.MAX_VALUE)))
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(ShadowSearch1, javax.swing.GroupLayout.Alignment.LEADING,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                                                .addComponent(ShadowSearch, javax.swing.GroupLayout.Alignment.LEADING,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                                                .addGroup(panelFilterLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(box_FilterMK)
+                                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                44, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addGap(15, 15, 15)));
+
+        panelFilterLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
+                new java.awt.Component[] { box_FilterMK, jButton1 });
 
         tb_laporan.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][] {
@@ -698,8 +787,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTableLayout.createSequentialGroup()
                                 .addGroup(
                                         panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 845,
-                                                        Short.MAX_VALUE)
+                                                .addComponent(jScrollPane1)
                                                 .addComponent(panelBawah5, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                         javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -752,6 +840,22 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         add(panelMain, "card2");
     }// </editor-fold>//GEN-END:initComponents
 
+    private void box_FilterMKActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_box_FilterMKActionPerformed
+        // Handle filter selection for Saldo Masuk and Saldo Keluar
+        String selectedFilter = box_FilterMK.getSelectedItem().toString();
+        if (selectedFilter.equals("Saldo Masuk")) {
+            filterJenis = "Pemasukan";
+        } else if (selectedFilter.equals("Saldo Keluar")) {
+            filterJenis = "Pengeluaran";
+        } else {
+            filterJenis = null; // Reset filter to show all data
+        }
+        // Apply the filter and refresh the table
+        searchByKeywordAndDate();
+        // Update labels to reflect the current filter
+        updateLabels();
+    }// GEN-LAST:event_box_FilterMKActionPerformed
+
     private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txt_searchActionPerformed
         // TODO add your handling code here:
     }// GEN-LAST:event_txt_searchActionPerformed
@@ -762,14 +866,11 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
 
     private void box_pilihActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_box_pilihActionPerformed
         searchByKeywordAndDate();
-    }// GEN-LAST:event_box_pilihActionPerformed
-
-    private void pilihtanggalActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_pilihtanggalActionPerformed
-        dateChooser1.showPopup();
-    }// GEN-LAST:event_pilihtanggalActionPerformed
+    }// GEN-LAST:event_box_pilihActionPerformed // Date chooser popup is now handled
+     // directly in the action listener
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
-        txt_date.setText("");
+        resetFilter();
     }// GEN-LAST:event_jButton1ActionPerformed
 
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_cancelActionPerformed
@@ -781,8 +882,6 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
 
     private void btn_Export5ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_Export5ActionPerformed
         try {
-            loadData("");
-
             DefaultTableModel model = (DefaultTableModel) tb_laporan.getModel();
 
             if (model.getRowCount() == 0) {
@@ -880,12 +979,10 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
         String kataKunci = txt_search.getText().trim();
         String tanggalRange = txt_date.getText().trim();
         String filter = box_pilih.getSelectedItem().toString();
-
         String tanggalMulai = "";
         String tanggalAkhir = "";
         boolean isRange = false;
         boolean isSingleDate = false;
-        boolean isTimeRangeFilter = false;
 
         if (!tanggalRange.isEmpty()) {
             if (tanggalRange.contains("dari")) {
@@ -914,77 +1011,111 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
 
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("""
-                    SELECT
-                        admin_name,
-                        nasabah_name,
-                        transaction_type,
-                        description,
-                        saldo_masuk,
-                        saldo_keluar,
-                        transaction_date
-                    FROM (
-                        -- Setor sampah entries (Saldo Masuk)
-                        SELECT
-                            u.nama_user AS admin_name,
-                            n.nama_nasabah AS nasabah_name,
-                            'Setor Sampah' AS transaction_type,
-                            CONCAT(kate.nama_kategori, ' (', st.berat_sampah, ' kg)') AS description,
-                            st.harga AS saldo_masuk,
-                            0 AS saldo_keluar,
-                            st.tanggal AS transaction_date
-                        FROM laporan_pengeluaran lpn
-                        INNER JOIN login u ON lpn.id_user = u.id_user
-                        INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                        INNER JOIN sampah s ON st.id_sampah = s.id_sampah
-                        INNER JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                        INNER JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
-                        WHERE lpn.id_setoran IS NOT NULL
+            sql.append(
+                    """
+                                SELECT
+                                    admin_name,
+                                    nasabah_name,
+                                    transaction_type,
+                                    description,
+                                    saldo_masuk,
+                                    saldo_keluar,
+                                    transaction_date
+                                FROM (
+                                    -- Setor sampah entries (Saldo Masuk)
+                                    SELECT
+                                        COALESCE(u.nama_user, '[user dihapus]') AS admin_name,
+                                        COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
+                                        'Setor Sampah' AS transaction_type,
+                                        CONCAT(COALESCE(kate.nama_kategori, '[kategori dihapus]'), ' (', COALESCE(st.berat_sampah, '0'), ' kg)') AS description,
+                                        st.harga AS saldo_masuk,
+                                        0 AS saldo_keluar,
+                                        st.tanggal AS transaction_date
+                                    FROM laporan_pengeluaran lpn
+                                    LEFT JOIN login u ON lpn.id_user = u.id_user
+                                    INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
+                                    LEFT JOIN sampah s ON st.id_sampah = s.id_sampah
+                                    LEFT JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
+                                    LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
+                                    WHERE lpn.id_setoran IS NOT NULL
 
-                        UNION ALL
+                                    UNION ALL
 
-                        -- Penarikan saldo entries (Saldo Keluar)
-                        SELECT
-                            l.nama_user AS admin_name,
-                            n.nama_nasabah AS nasabah_name,
-                            'Tarik Tunai' AS transaction_type,
-                            'Penarikan Saldo' AS description,
-                            0 AS saldo_masuk,
-                            ps.jumlah_penarikan AS saldo_keluar,
-                            ps.tanggal_penarikan AS transaction_date
-                        FROM penarikan_saldo ps
-                        INNER JOIN login l ON ps.id_user = l.id_user
-                        INNER JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
-                    ) AS combined_data
-                    """);
+                                    -- Penarikan saldo entries (Saldo Keluar)
+                                    SELECT
+                                        COALESCE(l.nama_user, '[user dihapus]') AS admin_name,
+                                        COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
+                                        'Tarik Tunai' AS transaction_type,
+                                        'Penarikan Saldo' AS description,
+                                        0 AS saldo_masuk,
+                                        ps.jumlah_penarikan AS saldo_keluar,
+                                        ps.tanggal_penarikan AS transaction_date
+                                    FROM penarikan_saldo ps
+                                    LEFT JOIN login l ON ps.id_user = l.id_user
+                                    LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                                ) AS combined_data
+                            """);
 
-            boolean whereAdded = false; // Filter berdasarkan kata kunci
+            boolean whereAdded = false;
+
+            // First apply filter based on the combobox selection (Saldo Masuk/Keluar)
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    sql.append(" WHERE transaction_type = 'Setor Sampah'");
+                    whereAdded = true;
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    sql.append(" WHERE transaction_type = 'Tarik Tunai'");
+                    whereAdded = true;
+                }
+            }
+
+            // Filter berdasarkan kata kunci
             if (!kataKunci.isEmpty()) {
                 switch (filter) {
                     case "Default":
-                        sql.append(" WHERE (admin_name LIKE ? OR nasabah_name LIKE ? OR transaction_type LIKE ?) ");
-                        whereAdded = true;
+                        if (whereAdded) {
+                            sql.append(" AND (admin_name LIKE ? OR nasabah_name LIKE ? OR transaction_type LIKE ?)");
+                        } else {
+                            sql.append(" WHERE (admin_name LIKE ? OR nasabah_name LIKE ? OR transaction_type LIKE ?)");
+                            whereAdded = true;
+                        }
                         break;
                     case "Nama Admin":
-                        sql.append(" WHERE admin_name LIKE ? ");
-                        whereAdded = true;
+                        if (whereAdded) {
+                            sql.append(" AND admin_name LIKE ?");
+                        } else {
+                            sql.append(" WHERE admin_name LIKE ?");
+                            whereAdded = true;
+                        }
                         break;
                     case "Nama Nasabah":
-                        sql.append(" WHERE nasabah_name LIKE ? ");
-                        whereAdded = true;
+                        if (whereAdded) {
+                            sql.append(" AND nasabah_name LIKE ?");
+                        } else {
+                            sql.append(" WHERE nasabah_name LIKE ?");
+                            whereAdded = true;
+                        }
                         break;
                     case "Jenis Transaksi":
-                        sql.append(" WHERE transaction_type LIKE ? ");
-                        whereAdded = true;
+                        if (whereAdded) {
+                            sql.append(" AND transaction_type LIKE ?");
+                        } else {
+                            sql.append(" WHERE transaction_type LIKE ?");
+                            whereAdded = true;
+                        }
                         break;
                 }
-            } // Filter berdasarkan tanggal
+            }
+
+            // Filter berdasarkan tanggal
             if (isRange) {
-                sql.append(whereAdded ? "AND " : "WHERE ");
+                sql.append(whereAdded ? " AND " : " WHERE ");
                 sql.append("DATE(transaction_date) BETWEEN ? AND ? ");
+                whereAdded = true;
             } else if (isSingleDate) {
-                sql.append(whereAdded ? "AND " : "WHERE ");
+                sql.append(whereAdded ? " AND " : " WHERE ");
                 sql.append("DATE(transaction_date) = ? ");
+                whereAdded = true;
             }
 
             sql.append(" ORDER BY transaction_date DESC LIMIT ? OFFSET ?");
@@ -1017,6 +1148,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
 
                 st.setInt(paramIndex++, dataPerHalaman);
                 st.setInt(paramIndex, (halamanSaatIni - 1) * dataPerHalaman);
+
                 try (ResultSet rs = st.executeQuery()) {
                     int no = (halamanSaatIni - 1) * dataPerHalaman + 1;
                     while (rs.next()) {
@@ -1028,25 +1160,28 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
 
                         model.addRow(new Object[] {
                                 no++,
-                                rs.getString("admin_name"),
-                                rs.getString("nasabah_name"),
+                                rs.getString("admin_name") != null ? rs.getString("admin_name")
+                                        : "[admin tidak tercatat]",
+                                rs.getString("nasabah_name") != null ? rs.getString("nasabah_name")
+                                        : "[nasabah tidak tercatat]",
                                 rs.getString("transaction_type"),
                                 rs.getString("description"),
                                 saldoMasuk,
                                 saldoKeluar,
-                                rs.getString("transaction_date")
+                                rs.getString("transaction_date") != null ? rs.getString("transaction_date")
+                                        : "[tanggal tidak tercatat]"
                         });
                     }
+
+                    tb_laporan.setModel(model);
+                    calculateTotalPage();
+                    updateLabels();
+                    updateLabelsWithFilter(kataKunci, filter, tanggalMulai, tanggalAkhir, isRange, isSingleDate);
                 }
             }
-
-            tb_laporan.setModel(model);
-            calculateTotalPage();
-            updateLabelsWithFilter(kataKunci, filter, tanggalMulai, tanggalAkhir, isRange, isSingleDate);
-
         } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal memuat data laporan: " + e.getMessage());
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
     } // Method tambahan untuk update labels berdasarkan filter yang diterapkan
 
@@ -1057,8 +1192,8 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
             StringBuilder querySaldoMasukBuilder = new StringBuilder();
             querySaldoMasukBuilder.append("SELECT SUM(harga) as total_saldo_masuk FROM setor_sampah st ");
             querySaldoMasukBuilder.append("JOIN laporan_pengeluaran lpn ON st.id_setoran = lpn.id_setoran ");
-            querySaldoMasukBuilder.append("JOIN manajemen_nasabah mn ON lpn.id_nasabah = mn.id_nasabah ");
-            querySaldoMasukBuilder.append("JOIN login l ON lpn.id_user = l.id_user ");
+            querySaldoMasukBuilder.append("LEFT JOIN manajemen_nasabah mn ON lpn.id_nasabah = mn.id_nasabah ");
+            querySaldoMasukBuilder.append("LEFT JOIN login l ON lpn.id_user = l.id_user ");
 
             boolean whereAdded = false;
 
@@ -1332,12 +1467,25 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
             lbl_jumlahPenarikan.setText("0 Transaksi");
         }
     } // This method has been removed since we're now using the penarikan_saldo table
-      // which is already created in the database
+      // which is already created in the database // Method to reset the filter type
+      // and reload all data
+
+    private void resetFilter() {
+        currentFilterType = "";
+        filterJenis = null;
+        txt_search.setText("");
+        txt_date.setText("");
+        box_pilih.setSelectedIndex(0);
+        box_FilterMK.setSelectedIndex(0); // Reset filter dropdown to "Default"
+        loadData("");
+        updateLabels(); // Update labels to reflect the reset filter
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel LabelTotalSaldo;
     private component.ShadowPanel ShadowSearch;
     private component.ShadowPanel ShadowSearch1;
+    private javax.swing.JComboBox<String> box_FilterMK;
     private javax.swing.JComboBox<String> box_pilih;
     private component.Jbutton btn_Export5;
     private javax.swing.JButton btn_before5;
