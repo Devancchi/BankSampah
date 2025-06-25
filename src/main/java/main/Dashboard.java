@@ -354,22 +354,22 @@ public class Dashboard extends javax.swing.JFrame {
         );
 
         jLabel5.setBackground(new java.awt.Color(221, 221, 221));
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel5.setFont(jLabel5.getFont().deriveFont(jLabel5.getFont().getSize()+2f));
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Sistem");
 
         jLabel6.setBackground(new java.awt.Color(221, 221, 221));
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel6.setFont(jLabel6.getFont().deriveFont(jLabel6.getFont().getSize()+2f));
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Transaksi");
 
         jLabel7.setBackground(new java.awt.Color(221, 221, 221));
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel7.setFont(jLabel7.getFont().deriveFont(jLabel7.getFont().getSize()+2f));
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Manajemen");
 
         jLabel8.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel8.setFont(jLabel8.getFont().deriveFont(jLabel8.getFont().getSize()+2f));
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setText("Dashboard");
 
@@ -439,11 +439,12 @@ public class Dashboard extends javax.swing.JFrame {
         pn_header.setBackground(new java.awt.Color(255, 255, 255));
 
         lb_level.setBackground(new java.awt.Color(0, 0, 0));
+        lb_level.setFont(lb_level.getFont());
         lb_level.setForeground(new java.awt.Color(153, 153, 153));
         lb_level.setText("Admin");
 
         lb_user.setBackground(new java.awt.Color(255, 255, 255));
-        lb_user.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lb_user.setFont(lb_user.getFont().deriveFont(lb_user.getFont().getStyle() | java.awt.Font.BOLD));
         lb_user.setText("User");
 
         panelSlide1.setBackground(new java.awt.Color(255, 255, 255));

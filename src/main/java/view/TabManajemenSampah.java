@@ -383,7 +383,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
         panelHarga.setFont(panelHarga.getFont());
 
-        jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        jLabel16.setFont(jLabel16.getFont().deriveFont(jLabel16.getFont().getStyle() | java.awt.Font.BOLD, jLabel16.getFont().getSize()+10));
         jLabel16.setText("Daftar Harga Sampah/KG");
 
         btnTambahHarga.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_tambah.png"))); // NOI18N
@@ -656,7 +656,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             }
         });
 
-        jLabel18.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        jLabel18.setFont(jLabel18.getFont().deriveFont(jLabel18.getFont().getStyle() | java.awt.Font.BOLD, jLabel18.getFont().getSize()+10));
         jLabel18.setText("Setor / Jual");
 
         txt_Kode.setPlaceholder("Kode nasabah");
