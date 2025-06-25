@@ -12,15 +12,24 @@ import java.util.Locale;
 import main.DBconnect;
 import notification.toast.Notifications;
 import java.text.DecimalFormat;
+import java.awt.Color;
+import java.awt.Cursor;
 
-public class TabLaporan_setor_sampah extends javax.swing.JPanel {
+public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     private final Connection conn = DBconnect.getConnection();
     private int halamanSaatIni = 1;
     private int dataPerHalaman = 20;
     private int totalPages;
     private int totalData;
 
-    public TabLaporan_setor_sampah() {
+    // Variable to store current filter type - "Pemasukan", "Pengeluaran", or "" for
+    // all
+    private String currentFilterType = "";
+
+    // Variable for filtering based on combobox selection
+    private String filterJenis = null;
+
+    public TabLaporan_tarik_saldo() {
         initComponents();
         txt_date.setText("");
         loadData("");
@@ -73,22 +82,22 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         try {
             String query = """
                         SELECT COUNT(*) as total FROM (
+                            -- Count setor sampah entries
                             SELECT
-                                COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                                COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
-                                COALESCE(kate.nama_kategori, '[sampah tidak tercatat]') AS nama_sampah,
-                                st.berat_sampah AS berat_sampah,
-                                st.harga AS harga,
-                                st.tanggal AS riwayat,
-                                st.saldo_nasabah AS saldo_didapatkan
+                                st.tanggal
                             FROM laporan_pengeluaran lpn
-                            LEFT JOIN login u ON lpn.id_user = u.id_user
                             INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                            LEFT JOIN sampah s ON st.id_sampah = s.id_sampah
-                            LEFT JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
                             LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
                             WHERE lpn.id_setoran IS NOT NULL
-                        ) AS combine
+
+                            UNION ALL
+
+                            -- Count withdrawal entries
+                            SELECT
+                                ps.tanggal_penarikan
+                            FROM penarikan_saldo ps
+                            LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                        ) AS combined_data
                     """;
             try (PreparedStatement ps = conn.prepareStatement(query);
                     ResultSet rs = ps.executeQuery()) {
@@ -103,61 +112,107 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
     }
 
     private void updateLabels() {
-        try (Connection conn = DBconnect.getConnection()) { // Query untuk total pengeluaran (sum harga) dengan LEFT
-                                                            // JOIN
-            String queryPengeluaran = """
-                        SELECT SUM(st.harga) as total_pengeluaran
-                        FROM laporan_pengeluaran lpn
-                        LEFT JOIN login u ON lpn.id_user = u.id_user
-                        INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                        LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
-                        WHERE st.harga != '-' AND lpn.id_setoran IS NOT NULL
-                    """;
+        try (Connection conn = DBconnect.getConnection()) {
+            String querySaldoMasuk = "SELECT SUM(harga) as total_saldo_masuk FROM setor_sampah WHERE harga != '-'";
+            String querySaldoKeluar = "SELECT SUM(jumlah_penarikan) as total_saldo_keluar FROM penarikan_saldo";
+            String queryTotalTransaksi;
 
-            // Query untuk total transaksi (count semua data) dengan LEFT JOIN
-            String queryTotalTransaksi = """
-                        SELECT COUNT(*) as total_transaksi
-                        FROM laporan_pengeluaran lpn
-                        LEFT JOIN login u ON lpn.id_user = u.id_user
-                        INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                        LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
-                        WHERE lpn.id_setoran IS NOT NULL
-                    """;
+            // Modify total transaksi query based on filter
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM setor_sampah";
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM penarikan_saldo";
+                } else {
+                    queryTotalTransaksi = """
+                            SELECT
+                                (SELECT COUNT(*) FROM setor_sampah) +
+                                (SELECT COUNT(*) FROM penarikan_saldo) as total_transaksi
+                            """;
+                }
+            } else {
+                queryTotalTransaksi = """
+                        SELECT
+                            (SELECT COUNT(*) FROM setor_sampah) +
+                            (SELECT COUNT(*) FROM penarikan_saldo) as total_transaksi
+                        """;
+            }
 
-            // Mengambil total pengeluaran
-            try (PreparedStatement pstPengeluaran = conn.prepareStatement(queryPengeluaran);
-                    ResultSet rsPengeluaran = pstPengeluaran.executeQuery()) {
-
-                if (rsPengeluaran.next()) {
-                    double totalPengeluaran = rsPengeluaran.getDouble("total_pengeluaran");
-
-                    // Format ke rupiah
-                    DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
-                    String pengeluaranFormatted = formatRupiah.format(totalPengeluaran);
-
-                    lbl_pengeluaran.setText(pengeluaranFormatted);
+            // Mengambil total saldo masuk
+            double totalSaldoMasuk = 0;
+            try (PreparedStatement pst = conn.prepareStatement(querySaldoMasuk);
+                    ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    totalSaldoMasuk = rs.getDouble("total_saldo_masuk");
                 }
             }
 
-            // Mengambil total transaksi
-            try (PreparedStatement pstTotalTransaksi = conn.prepareStatement(queryTotalTransaksi);
-                    ResultSet rsTotalTransaksi = pstTotalTransaksi.executeQuery()) {
+            // Mengambil total saldo keluar
 
-                if (rsTotalTransaksi.next()) {
-                    int totalTransaksi = rsTotalTransaksi.getInt("total_transaksi");
-                    lbl_total_transaksi.setText(String.valueOf(totalTransaksi) + " Transaksi");
+            double totalSaldoKeluar = 0;
+            try (PreparedStatement pst = conn.prepareStatement(querySaldoKeluar);
+                    ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    totalSaldoKeluar = rs.getDouble("total_saldo_keluar");
+                }
+            }
+
+            // Format ke rupiah
+            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
+            String saldoMasukFormatted = formatRupiah.format(totalSaldoMasuk);
+            String saldoKeluarFormatted = formatRupiah.format(totalSaldoKeluar);
+
+            // Calculate the saldo based on filter
+            double netSaldo;
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    netSaldo = totalSaldoMasuk;
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    netSaldo = totalSaldoKeluar;
+                } else {
+                    netSaldo = totalSaldoMasuk - totalSaldoKeluar;
+                }
+            } else {
+                netSaldo = totalSaldoMasuk - totalSaldoKeluar;
+            }
+
+            String netSaldoFormatted = formatRupiah.format(netSaldo);
+
+            // Update label dengan total saldo
+            lbl_saldoNasabah.setText(netSaldoFormatted);
+
+            // Update label judul saldo sesuai filter
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    LabelTotalSaldo.setText("Total Saldo Masuk");
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    LabelTotalSaldo.setText("Total Saldo Keluar");
+                } else {
+                    LabelTotalSaldo.setText("Total Saldo Nasabah");
+                }
+            } else {
+                LabelTotalSaldo.setText("Total Saldo Nasabah");
+            }
+
+            // Mengambil total transaksi
+            try (PreparedStatement pst = conn.prepareStatement(queryTotalTransaksi);
+                    ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    int totalTransaksi = rs.getInt("total_transaksi");
+                    lbl_jumlahPenarikan.setText(String.valueOf(totalTransaksi) + " Transaksi");
                 }
             }
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data label: " + e.getMessage());
             // Set default values jika terjadi error
-            lbl_pengeluaran.setText("Rp 0");
-            lbl_total_transaksi.setText("0 Transaksi");
+            lbl_saldoNasabah.setText("Rp 0");
+            lbl_jumlahPenarikan.setText("0 Transaksi");
+            e.printStackTrace();
         }
     }
 
-    private void loadData(String filterJenis) {
+    private void loadData(String searchKeyword) {
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -165,27 +220,31 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
             }
         };
         model.setColumnIdentifiers(new String[] {
-                "No", "Nama Admin", "Nama Nasabah", "Nama Sampah", "Berat Sampah", "Harga", "Saldo Didapatkan",
-                "Riwayat"
+                "No", "Nama Admin", "Nama Nasabah", "Jenis Transaksi", "Deskripsi", "Saldo Masuk", "Saldo Keluar",
+                "Tanggal"
         });
+
+        // Create a UNION query to combine both setor_sampah (saldo masuk) and
+        // penarikan_saldo (saldo keluar) transactions
         String baseQuery = """
                     SELECT
-                        nama_admin,
-                        nama_nasabah,
-                        nama_sampah,
-                        berat_sampah,
-                        harga,
-                        saldo_didapatkan,
-                        riwayat
+                        admin_name,
+                        nasabah_name,
+                        transaction_type,
+                        description,
+                        saldo_masuk,
+                        saldo_keluar,
+                        transaction_date
                     FROM (
+                        -- Setor sampah entries (Saldo Masuk)
                         SELECT
-                            COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
-                            COALESCE(kate.nama_kategori, '[sampah tidak tercatat]') AS nama_sampah,
-                            st.berat_sampah AS berat_sampah,
-                            st.harga AS harga,
-                            st.tanggal AS riwayat,
-                            st.saldo_nasabah AS saldo_didapatkan
+                            COALESCE(u.nama_user, '[user dihapus]') AS admin_name,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
+                            'Setor Sampah' AS transaction_type,
+                            CONCAT(COALESCE(kate.nama_kategori, '[kategori dihapus]'), ' (', COALESCE(st.berat_sampah, '0'), ' kg)') AS description,
+                            st.harga AS saldo_masuk,
+                            0 AS saldo_keluar,
+                            st.tanggal AS transaction_date
                         FROM laporan_pengeluaran lpn
                         LEFT JOIN login u ON lpn.id_user = u.id_user
                         INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
@@ -193,72 +252,82 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                         LEFT JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
                         LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
                         WHERE lpn.id_setoran IS NOT NULL
-                    ) AS combine
+
+                        UNION ALL
+
+                        -- Penarikan saldo entries (Saldo Keluar)
+                        SELECT
+                            COALESCE(l.nama_user, '[user dihapus]') AS admin_name,
+                            COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
+                            'Tarik Tunai' AS transaction_type,
+                            'Penarikan Saldo' AS description,
+                            0 AS saldo_masuk,
+                            ps.jumlah_penarikan AS saldo_keluar,
+                            ps.tanggal_penarikan AS transaction_date
+                        FROM penarikan_saldo ps
+                        LEFT JOIN login l ON ps.id_user = l.id_user
+                        LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                    ) AS combined_data
                 """;
-        baseQuery += " ORDER BY riwayat DESC LIMIT ? OFFSET ?";
+        boolean whereAdded = false;
+
+        // First apply filter based on the combobox selection (Saldo Masuk/Keluar)
+        if (filterJenis != null) {
+            if (filterJenis.equals("Pemasukan")) {
+                baseQuery += " WHERE transaction_type = 'Setor Sampah'";
+                whereAdded = true;
+            } else if (filterJenis.equals("Pengeluaran")) {
+                baseQuery += " WHERE transaction_type = 'Tarik Tunai'";
+                whereAdded = true;
+            }
+        }
+
+        // Then apply additional search keyword if provided
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            if (whereAdded) {
+                baseQuery += " AND (nasabah_name LIKE ? OR admin_name LIKE ? OR transaction_type LIKE ?)";
+            } else {
+                baseQuery += " WHERE (nasabah_name LIKE ? OR admin_name LIKE ? OR transaction_type LIKE ?)";
+                whereAdded = true;
+            }
+        }
+
+        baseQuery += " ORDER BY transaction_date DESC LIMIT ? OFFSET ?";
 
         try (PreparedStatement pst = conn.prepareStatement(baseQuery)) {
-            pst.setInt(1, dataPerHalaman);
-            pst.setInt(2, (halamanSaatIni - 1) * dataPerHalaman);
+            int paramIndex = 1;
+
+            // Add search parameters if we have a search keyword
+            if (searchKeyword != null && !searchKeyword.isEmpty()) {
+                String searchPattern = "%" + searchKeyword + "%";
+                pst.setString(paramIndex++, searchPattern);
+                pst.setString(paramIndex++, searchPattern);
+                pst.setString(paramIndex++, searchPattern);
+            }
+
+            pst.setInt(paramIndex++, dataPerHalaman);
+            pst.setInt(paramIndex, (halamanSaatIni - 1) * dataPerHalaman);
 
             try (ResultSet rs = pst.executeQuery()) {
                 int no = (halamanSaatIni - 1) * dataPerHalaman + 1;
                 while (rs.next()) {
-                    // Format harga to Rupiah
-                    String harga = rs.getString("harga");
-                    if (harga != null && !harga.equals("-")) {
-                        try {
-                            double nominal = Double.parseDouble(harga);
-                            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
-                            harga = formatRupiah.format(nominal);
-                        } catch (NumberFormatException e) {
-                            // Biarkan harga tetap apa adanya jika gagal format
-                            harga = "Rp 0"; // Default value if formatting fails
-                        }
-                    } else {
-                        harga = "Rp 0"; // Default value if NULL
-                    }
+                    // Format saldo masuk
+                    String saldoMasuk = formatToRupiah(rs.getDouble("saldo_masuk"));
 
-                    // Format berat sampah
-                    String beratSampah = rs.getString("berat_sampah");
-                    try {
-                        if (beratSampah != null) {
-                            double beratValue = rs.getDouble("berat_sampah");
-                            DecimalFormat formatBerat = new DecimalFormat("0.00");
-                            beratSampah = formatBerat.format(beratValue) + " kg";
-                        } else {
-                            beratSampah = "0.00 kg"; // Default value if NULL
-                        }
-                    } catch (NumberFormatException e) {
-                        beratSampah = "0.00 kg"; // Default for parsing errors
-                    }
-
-                    // Format saldo_didapatkan to Rupiah
-                    String saldoDidapatkan = rs.getString("saldo_didapatkan");
-                    if (saldoDidapatkan != null && !saldoDidapatkan.equals("-")) {
-                        try {
-                            double nominal = Double.parseDouble(saldoDidapatkan);
-                            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
-                            saldoDidapatkan = formatRupiah.format(nominal);
-                        } catch (NumberFormatException e) {
-                            // Default value if formatting fails
-                            saldoDidapatkan = "Rp 0";
-                        }
-                    } else {
-                        saldoDidapatkan = "Rp 0"; // Default value if NULL
-                    }
+                    // Format saldo keluar
+                    String saldoKeluar = formatToRupiah(rs.getDouble("saldo_keluar"));
 
                     model.addRow(new Object[] {
                             no++,
-                            rs.getString("nama_admin") != null ? rs.getString("nama_admin") : "[admin tidak tercatat]",
-                            rs.getString("nama_nasabah") != null ? rs.getString("nama_nasabah")
+                            rs.getString("admin_name") != null ? rs.getString("admin_name") : "[admin tidak tercatat]",
+                            rs.getString("nasabah_name") != null ? rs.getString("nasabah_name")
                                     : "[nasabah tidak tercatat]",
-                            rs.getString("nama_sampah") != null ? rs.getString("nama_sampah")
-                                    : "[sampah tidak tercatat]",
-                            beratSampah,
-                            harga,
-                            saldoDidapatkan,
-                            rs.getString("riwayat") != null ? rs.getString("riwayat") : "[tanggal tidak tercatat]"
+                            rs.getString("transaction_type"),
+                            rs.getString("description"),
+                            saldoMasuk,
+                            saldoKeluar,
+                            rs.getString("transaction_date") != null ? rs.getString("transaction_date")
+                                    : "[tanggal tidak tercatat]"
                     });
                 }
             }
@@ -268,10 +337,28 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data laporan: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
+    // Helper method to format double values to Rupiah
+    private String formatToRupiah(double value) {
+        if (value == 0)
+            return "-";
+        DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
+        return formatRupiah.format(value);
+    }
+
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
@@ -292,15 +379,16 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         txt_date = new swing.TextField();
         jButton1 = new javax.swing.JButton();
         btn_cancel = new component.Jbutton();
+        box_FilterMK = new javax.swing.JComboBox<>();
         panelTable = new component.ShadowPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tb_laporan = new component.Table();
         panelGradient1 = new grafik.panel.PanelGradient();
-        lbl_pengeluaran = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
+        lbl_saldoNasabah = new javax.swing.JLabel();
+        LabelTotalSaldo = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        lbl_total_transaksi = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        lbl_jumlahPenarikan = new javax.swing.JLabel();
+        lbl_totalJumlahPenarikan = new javax.swing.JLabel();
         panelBawah5 = new component.ShadowPanel();
         lb_halaman5 = new javax.swing.JLabel();
         btn_before5 = new javax.swing.JButton();
@@ -356,8 +444,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                 ShadowSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(ShadowSearchLayout.createSequentialGroup()
                                 .addGap(0, 0, 0)
-                                .addComponent(box_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, 81,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(box_pilih, 0, 81, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 307,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -378,11 +465,6 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
 
         pilihtanggal.setText("...");
         pilihtanggal.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        pilihtanggal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pilihtanggalActionPerformed(evt);
-            }
-        });
 
         jLabel8.setBackground(new java.awt.Color(204, 204, 204));
         jLabel8.setForeground(new java.awt.Color(204, 204, 204));
@@ -432,7 +514,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
                                                 ShadowSearch1Layout.createSequentialGroup()
-                                                        .addGap(0, 0, Short.MAX_VALUE)
+                                                        .addGap(0, 1, Short.MAX_VALUE)
                                                         .addComponent(pilihtanggal,
                                                                 javax.swing.GroupLayout.PREFERRED_SIZE, 32,
                                                                 javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -461,6 +543,14 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
             }
         });
 
+        box_FilterMK.setModel(
+                new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Saldo Masuk", "Saldo Keluar" }));
+        box_FilterMK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                box_FilterMKActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelFilterLayout = new javax.swing.GroupLayout(panelFilter);
         panelFilter.setLayout(panelFilterLayout);
         panelFilterLayout.setHorizontalGroup(
@@ -473,9 +563,12 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                                 .addComponent(ShadowSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, 400,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(box_FilterMK, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134,
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27,
                                         Short.MAX_VALUE)
                                 .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -486,27 +579,31 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                                 .addGap(14, 14, 14)
                                 .addGroup(panelFilterLayout
                                         .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 45,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(panelFilterLayout
-                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 44,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 45,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(panelFilterLayout
-                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(ShadowSearch1, javax.swing.GroupLayout.DEFAULT_SIZE, 44,
-                                                        Short.MAX_VALUE)
-                                                .addComponent(ShadowSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 44,
-                                                        Short.MAX_VALUE)))
+                                                .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(ShadowSearch1, javax.swing.GroupLayout.Alignment.LEADING,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                                                .addComponent(ShadowSearch, javax.swing.GroupLayout.Alignment.LEADING,
+                                                        javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                                                .addGroup(panelFilterLayout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(box_FilterMK)
+                                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                44, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addGap(15, 15, 15)));
+
+        panelFilterLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
+                new java.awt.Component[] { box_FilterMK, jButton1 });
 
         tb_laporan.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][] {
 
                 },
                 new String[] {
-                        "No", "Nama Admin", "Nama Nasabah", "Nama Sampah", "Berat Sampah", "Harga", "Saldo Didapatkan",
-                        "Riwayat"
+                        "No", "Nama Admin", "Nama Nasabah", "Jenis Transaksi", "Deskripsi", "Saldo Masuk",
+                        "Saldo Keluar", "Tanggal"
                 }) {
             Class[] types = new Class[] {
                     java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class,
@@ -523,33 +620,34 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         panelGradient1.setColorGradient(new java.awt.Color(0, 204, 204));
         panelGradient1.setPreferredSize(new java.awt.Dimension(295, 295));
 
-        lbl_pengeluaran.setBackground(new java.awt.Color(255, 255, 255));
-        lbl_pengeluaran.setFont(lbl_pengeluaran.getFont().deriveFont(
-                lbl_pengeluaran.getFont().getStyle() | java.awt.Font.BOLD, lbl_pengeluaran.getFont().getSize() + 24));
-        lbl_pengeluaran.setForeground(new java.awt.Color(255, 255, 255));
-        lbl_pengeluaran.setText("0");
+        lbl_saldoNasabah.setBackground(new java.awt.Color(255, 255, 255));
+        lbl_saldoNasabah.setFont(lbl_saldoNasabah.getFont().deriveFont(
+                lbl_saldoNasabah.getFont().getStyle() | java.awt.Font.BOLD, lbl_saldoNasabah.getFont().getSize() + 24));
+        lbl_saldoNasabah.setForeground(new java.awt.Color(255, 255, 255));
+        lbl_saldoNasabah.setText("0");
 
-        jLabel9.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel9.setFont(jLabel9.getFont().deriveFont(jLabel9.getFont().getStyle() | java.awt.Font.BOLD,
-                jLabel9.getFont().getSize() + 6));
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("Total Pengeluaran");
+        LabelTotalSaldo.setBackground(new java.awt.Color(255, 255, 255));
+        LabelTotalSaldo.setFont(LabelTotalSaldo.getFont().deriveFont(
+                LabelTotalSaldo.getFont().getStyle() | java.awt.Font.BOLD, LabelTotalSaldo.getFont().getSize() + 6));
+        LabelTotalSaldo.setForeground(new java.awt.Color(255, 255, 255));
+        LabelTotalSaldo.setText("Total Saldo Nasabah");
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/total_item.png"))); // NOI18N
         jLabel2.setText("jLabel2");
         jLabel2.setPreferredSize(new java.awt.Dimension(52, 47));
 
-        lbl_total_transaksi.setBackground(new java.awt.Color(255, 255, 255));
-        lbl_total_transaksi.setFont(
-                lbl_total_transaksi.getFont().deriveFont(lbl_total_transaksi.getFont().getStyle() | java.awt.Font.BOLD,
-                        lbl_total_transaksi.getFont().getSize() + 12));
-        lbl_total_transaksi.setForeground(new java.awt.Color(255, 255, 255));
-        lbl_total_transaksi.setText("0");
+        lbl_jumlahPenarikan.setBackground(new java.awt.Color(255, 255, 255));
+        lbl_jumlahPenarikan.setFont(
+                lbl_jumlahPenarikan.getFont().deriveFont(lbl_jumlahPenarikan.getFont().getStyle() | java.awt.Font.BOLD,
+                        lbl_jumlahPenarikan.getFont().getSize() + 12));
+        lbl_jumlahPenarikan.setForeground(new java.awt.Color(255, 255, 255));
+        lbl_jumlahPenarikan.setText("0");
 
-        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel6.setFont(jLabel6.getFont().deriveFont(jLabel6.getFont().getStyle() | java.awt.Font.BOLD));
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("Total Transaksi");
+        lbl_totalJumlahPenarikan.setBackground(new java.awt.Color(255, 255, 255));
+        lbl_totalJumlahPenarikan.setFont(lbl_totalJumlahPenarikan.getFont()
+                .deriveFont(lbl_totalJumlahPenarikan.getFont().getStyle() | java.awt.Font.BOLD));
+        lbl_totalJumlahPenarikan.setForeground(new java.awt.Color(255, 255, 255));
+        lbl_totalJumlahPenarikan.setText("Total Transaksi");
 
         javax.swing.GroupLayout panelGradient1Layout = new javax.swing.GroupLayout(panelGradient1);
         panelGradient1.setLayout(panelGradient1Layout);
@@ -564,24 +662,25 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGroup(panelGradient1Layout
                                                         .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                        .addComponent(lbl_totalJumlahPenarikan,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(lbl_total_transaksi,
+                                                        .addComponent(lbl_jumlahPenarikan,
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                        .addComponent(lbl_pengeluaran, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        .addComponent(lbl_saldoNasabah, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 255,
+                                        .addComponent(LabelTotalSaldo, javax.swing.GroupLayout.DEFAULT_SIZE, 255,
                                                 Short.MAX_VALUE))
                                 .addGap(20, 20, 20)));
         panelGradient1Layout.setVerticalGroup(
                 panelGradient1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(panelGradient1Layout.createSequentialGroup()
                                 .addGap(20, 20, 20)
-                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 25,
+                                .addComponent(LabelTotalSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 25,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbl_pengeluaran, javax.swing.GroupLayout.PREFERRED_SIZE, 53,
+                                .addComponent(lbl_saldoNasabah, javax.swing.GroupLayout.PREFERRED_SIZE, 53,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(120, 120, 120)
                                 .addGroup(panelGradient1Layout
@@ -590,10 +689,11 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(panelGradient1Layout.createSequentialGroup()
-                                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20,
+                                                .addComponent(lbl_totalJumlahPenarikan,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 20,
                                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(lbl_total_transaksi,
+                                                .addComponent(lbl_jumlahPenarikan,
                                                         javax.swing.GroupLayout.PREFERRED_SIZE, 25,
                                                         javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(20, 20, 20)));
@@ -687,8 +787,7 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTableLayout.createSequentialGroup()
                                 .addGroup(
                                         panelTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 845,
-                                                        Short.MAX_VALUE)
+                                                .addComponent(jScrollPane1)
                                                 .addComponent(panelBawah5, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                         javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -741,6 +840,22 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         add(panelMain, "card2");
     }// </editor-fold>//GEN-END:initComponents
 
+    private void box_FilterMKActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_box_FilterMKActionPerformed
+        // Handle filter selection for Saldo Masuk and Saldo Keluar
+        String selectedFilter = box_FilterMK.getSelectedItem().toString();
+        if (selectedFilter.equals("Saldo Masuk")) {
+            filterJenis = "Pemasukan";
+        } else if (selectedFilter.equals("Saldo Keluar")) {
+            filterJenis = "Pengeluaran";
+        } else {
+            filterJenis = null; // Reset filter to show all data
+        }
+        // Apply the filter and refresh the table
+        searchByKeywordAndDate();
+        // Update labels to reflect the current filter
+        updateLabels();
+    }// GEN-LAST:event_box_FilterMKActionPerformed
+
     private void txt_searchActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_txt_searchActionPerformed
         // TODO add your handling code here:
     }// GEN-LAST:event_txt_searchActionPerformed
@@ -751,14 +866,11 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
 
     private void box_pilihActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_box_pilihActionPerformed
         searchByKeywordAndDate();
-    }// GEN-LAST:event_box_pilihActionPerformed
-
-    private void pilihtanggalActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_pilihtanggalActionPerformed
-        dateChooser1.showPopup();
-    }// GEN-LAST:event_pilihtanggalActionPerformed
+    }// GEN-LAST:event_box_pilihActionPerformed // Date chooser popup is now handled
+     // directly in the action listener
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton1ActionPerformed
-        txt_date.setText("");
+        resetFilter();
     }// GEN-LAST:event_jButton1ActionPerformed
 
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_cancelActionPerformed
@@ -867,12 +979,10 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
         String kataKunci = txt_search.getText().trim();
         String tanggalRange = txt_date.getText().trim();
         String filter = box_pilih.getSelectedItem().toString();
-
         String tanggalMulai = "";
         String tanggalAkhir = "";
         boolean isRange = false;
         boolean isSingleDate = false;
-        boolean isTimeRangeFilter = false;
 
         if (!tanggalRange.isEmpty()) {
             if (tanggalRange.contains("dari")) {
@@ -894,76 +1004,121 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                 return false;
             }
         };
-
         model.setColumnIdentifiers(new String[] {
-                "No", "Nama Admin", "Nama Nasabah", "Nama Sampah", "Berat Sampah", "Harga", "Saldo Didapatkan",
-                "Riwayat"
+                "No", "Nama Admin", "Nama Nasabah", "Jenis Transaksi", "Deskripsi", "Saldo Masuk", "Saldo Keluar",
+                "Tanggal"
         });
 
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("""
-                        SELECT
-                            nama_admin,
-                            nama_nasabah,
-                            nama_sampah,
-                            berat_sampah,
-                            harga,
-                            saldo_didapatkan,
-                            riwayat
-                        FROM (
-                            SELECT
-                                COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                                COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
-                                COALESCE(kate.nama_kategori, '[sampah tidak tercatat]') AS nama_sampah,
-                                st.berat_sampah AS berat_sampah,
-                                st.harga AS harga,
-                                st.tanggal AS riwayat,
-                                st.saldo_nasabah AS saldo_didapatkan
-                            FROM laporan_pengeluaran lpn
-                            LEFT JOIN login u ON lpn.id_user = u.id_user
-                            INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                            LEFT JOIN sampah s ON st.id_sampah = s.id_sampah
-                            LEFT JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                            LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
-                            WHERE lpn.id_setoran IS NOT NULL
-                        ) AS combine
-                    """);
+            sql.append(
+                    """
+                                SELECT
+                                    admin_name,
+                                    nasabah_name,
+                                    transaction_type,
+                                    description,
+                                    saldo_masuk,
+                                    saldo_keluar,
+                                    transaction_date
+                                FROM (
+                                    -- Setor sampah entries (Saldo Masuk)
+                                    SELECT
+                                        COALESCE(u.nama_user, '[user dihapus]') AS admin_name,
+                                        COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
+                                        'Setor Sampah' AS transaction_type,
+                                        CONCAT(COALESCE(kate.nama_kategori, '[kategori dihapus]'), ' (', COALESCE(st.berat_sampah, '0'), ' kg)') AS description,
+                                        st.harga AS saldo_masuk,
+                                        0 AS saldo_keluar,
+                                        st.tanggal AS transaction_date
+                                    FROM laporan_pengeluaran lpn
+                                    LEFT JOIN login u ON lpn.id_user = u.id_user
+                                    INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
+                                    LEFT JOIN sampah s ON st.id_sampah = s.id_sampah
+                                    LEFT JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
+                                    LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
+                                    WHERE lpn.id_setoran IS NOT NULL
+
+                                    UNION ALL
+
+                                    -- Penarikan saldo entries (Saldo Keluar)
+                                    SELECT
+                                        COALESCE(l.nama_user, '[user dihapus]') AS admin_name,
+                                        COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
+                                        'Tarik Tunai' AS transaction_type,
+                                        'Penarikan Saldo' AS description,
+                                        0 AS saldo_masuk,
+                                        ps.jumlah_penarikan AS saldo_keluar,
+                                        ps.tanggal_penarikan AS transaction_date
+                                    FROM penarikan_saldo ps
+                                    LEFT JOIN login l ON ps.id_user = l.id_user
+                                    LEFT JOIN manajemen_nasabah n ON ps.id_nasabah = n.id_nasabah
+                                ) AS combined_data
+                            """);
 
             boolean whereAdded = false;
+
+            // First apply filter based on the combobox selection (Saldo Masuk/Keluar)
+            if (filterJenis != null) {
+                if (filterJenis.equals("Pemasukan")) {
+                    sql.append(" WHERE transaction_type = 'Setor Sampah'");
+                    whereAdded = true;
+                } else if (filterJenis.equals("Pengeluaran")) {
+                    sql.append(" WHERE transaction_type = 'Tarik Tunai'");
+                    whereAdded = true;
+                }
+            }
 
             // Filter berdasarkan kata kunci
             if (!kataKunci.isEmpty()) {
                 switch (filter) {
                     case "Default":
-                        sql.append(" WHERE (nama_admin LIKE ? OR nama_nasabah LIKE ? OR nama_sampah LIKE ?) ");
-                        whereAdded = true;
+                        if (whereAdded) {
+                            sql.append(" AND (admin_name LIKE ? OR nasabah_name LIKE ? OR transaction_type LIKE ?)");
+                        } else {
+                            sql.append(" WHERE (admin_name LIKE ? OR nasabah_name LIKE ? OR transaction_type LIKE ?)");
+                            whereAdded = true;
+                        }
                         break;
                     case "Nama Admin":
-                        sql.append(" WHERE nama_admin LIKE ? ");
-                        whereAdded = true;
+                        if (whereAdded) {
+                            sql.append(" AND admin_name LIKE ?");
+                        } else {
+                            sql.append(" WHERE admin_name LIKE ?");
+                            whereAdded = true;
+                        }
                         break;
                     case "Nama Nasabah":
-                        sql.append(" WHERE nama_nasabah LIKE ? ");
-                        whereAdded = true;
+                        if (whereAdded) {
+                            sql.append(" AND nasabah_name LIKE ?");
+                        } else {
+                            sql.append(" WHERE nasabah_name LIKE ?");
+                            whereAdded = true;
+                        }
                         break;
-                    case "Nama Sampah":
-                        sql.append(" WHERE nama_sampah LIKE ? ");
-                        whereAdded = true;
+                    case "Jenis Transaksi":
+                        if (whereAdded) {
+                            sql.append(" AND transaction_type LIKE ?");
+                        } else {
+                            sql.append(" WHERE transaction_type LIKE ?");
+                            whereAdded = true;
+                        }
                         break;
                 }
             }
 
             // Filter berdasarkan tanggal
             if (isRange) {
-                sql.append(whereAdded ? "AND " : "WHERE ");
-                sql.append("DATE(riwayat) BETWEEN ? AND ? ");
+                sql.append(whereAdded ? " AND " : " WHERE ");
+                sql.append("DATE(transaction_date) BETWEEN ? AND ? ");
+                whereAdded = true;
             } else if (isSingleDate) {
-                sql.append(whereAdded ? "AND " : "WHERE ");
-                sql.append("DATE(riwayat) = ? ");
+                sql.append(whereAdded ? " AND " : " WHERE ");
+                sql.append("DATE(transaction_date) = ? ");
+                whereAdded = true;
             }
 
-            sql.append(" ORDER BY riwayat DESC LIMIT ? OFFSET ?");
+            sql.append(" ORDER BY transaction_date DESC LIMIT ? OFFSET ?");
 
             try (PreparedStatement st = conn.prepareStatement(sql.toString())) {
                 int paramIndex = 1;
@@ -997,189 +1152,269 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                 try (ResultSet rs = st.executeQuery()) {
                     int no = (halamanSaatIni - 1) * dataPerHalaman + 1;
                     while (rs.next()) {
-                        // Format harga to Rupiah
-                        String harga = rs.getString("harga");
-                        if (harga != null && !harga.equals("-")) {
-                            try {
-                                double nominal = Double.parseDouble(harga);
-                                DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
-                                harga = formatRupiah.format(nominal);
-                            } catch (NumberFormatException e) {
-                                // Default value if formatting fails
-                                harga = "Rp 0";
-                            }
-                        } else {
-                            harga = "Rp 0"; // Default value if NULL
-                        }
+                        // Format saldo masuk
+                        String saldoMasuk = formatToRupiah(rs.getDouble("saldo_masuk"));
 
-                        // Format berat sampah
-                        String beratSampah = rs.getString("berat_sampah");
-                        try {
-                            if (beratSampah != null) {
-                                double beratValue = rs.getDouble("berat_sampah");
-                                DecimalFormat formatBerat = new DecimalFormat("0.00");
-                                beratSampah = formatBerat.format(beratValue) + " kg";
-                            } else {
-                                beratSampah = "0.00 kg"; // Default value if NULL
-                            }
-                        } catch (NumberFormatException e) {
-                            beratSampah = "0.00 kg"; // Default for parsing errors
-                        }
-
-                        // Format saldo_didapatkan to Rupiah
-                        String saldoDidapatkan = rs.getString("saldo_didapatkan");
-                        if (saldoDidapatkan != null && !saldoDidapatkan.equals("-")) {
-                            try {
-                                double nominal = Double.parseDouble(saldoDidapatkan);
-                                DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
-                                saldoDidapatkan = formatRupiah.format(nominal);
-                            } catch (NumberFormatException e) {
-                                saldoDidapatkan = "Rp 0"; // Default if formatting fails
-                            }
-                        } else {
-                            saldoDidapatkan = "Rp 0"; // Default value if NULL
-                        }
+                        // Format saldo keluar
+                        String saldoKeluar = formatToRupiah(rs.getDouble("saldo_keluar"));
 
                         model.addRow(new Object[] {
                                 no++,
-                                rs.getString("nama_admin") != null ? rs.getString("nama_admin")
+                                rs.getString("admin_name") != null ? rs.getString("admin_name")
                                         : "[admin tidak tercatat]",
-                                rs.getString("nama_nasabah") != null ? rs.getString("nama_nasabah")
+                                rs.getString("nasabah_name") != null ? rs.getString("nasabah_name")
                                         : "[nasabah tidak tercatat]",
-                                rs.getString("nama_sampah") != null ? rs.getString("nama_sampah")
-                                        : "[sampah tidak tercatat]",
-                                beratSampah,
-                                harga,
-                                saldoDidapatkan,
-                                rs.getString("riwayat") != null ? rs.getString("riwayat") : "[tanggal tidak tercatat]"
+                                rs.getString("transaction_type"),
+                                rs.getString("description"),
+                                saldoMasuk,
+                                saldoKeluar,
+                                rs.getString("transaction_date") != null ? rs.getString("transaction_date")
+                                        : "[tanggal tidak tercatat]"
                         });
                     }
+
+                    tb_laporan.setModel(model);
+                    calculateTotalPage();
+                    updateLabels();
+                    updateLabelsWithFilter(kataKunci, filter, tanggalMulai, tanggalAkhir, isRange, isSingleDate);
                 }
             }
-
-            tb_laporan.setModel(model);
-            calculateTotalPage();
-            updateLabelsWithFilter(kataKunci, filter, tanggalMulai, tanggalAkhir, isRange, isSingleDate);
-
         } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal memuat data laporan: " + e.getMessage());
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
-    }
+    } // Method tambahan untuk update labels berdasarkan filter yang diterapkan
 
-    // Method tambahan untuk update labels berdasarkan filter yang diterapkan
     private void updateLabelsWithFilter(String kataKunci, String filter, String tanggalMulai, String tanggalAkhir,
             boolean isRange, boolean isSingleDate) {
         try (Connection conn = DBconnect.getConnection()) {
-
-            // Base query untuk mengambil data yang sudah difilter
-            StringBuilder baseQuery = new StringBuilder();
-            baseQuery.append("""
-                        SELECT harga FROM (
-                            SELECT
-                                COALESCE(u.nama_user, '[user dihapus]') AS nama_admin,
-                                COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nama_nasabah,
-                                COALESCE(kate.nama_kategori, '[sampah tidak tercatat]') AS nama_sampah,
-                                st.harga AS harga,
-                                st.tanggal AS riwayat
-                            FROM laporan_pengeluaran lpn
-                            LEFT JOIN login u ON lpn.id_user = u.id_user
-                            INNER JOIN setor_sampah st ON lpn.id_setoran = st.id_setoran
-                            LEFT JOIN sampah s ON st.id_sampah = s.id_sampah
-                            LEFT JOIN kategori_sampah kate ON s.id_kategori = kate.id_kategori
-                            LEFT JOIN manajemen_nasabah n ON lpn.id_nasabah = n.id_nasabah
-                            WHERE lpn.id_setoran IS NOT NULL
-                        ) AS combine
-                    """);
+            // Query untuk total saldo masuk (setor sampah) dengan filter
+            StringBuilder querySaldoMasukBuilder = new StringBuilder();
+            querySaldoMasukBuilder.append("SELECT SUM(harga) as total_saldo_masuk FROM setor_sampah st ");
+            querySaldoMasukBuilder.append("JOIN laporan_pengeluaran lpn ON st.id_setoran = lpn.id_setoran ");
+            querySaldoMasukBuilder.append("LEFT JOIN manajemen_nasabah mn ON lpn.id_nasabah = mn.id_nasabah ");
+            querySaldoMasukBuilder.append("LEFT JOIN login l ON lpn.id_user = l.id_user ");
 
             boolean whereAdded = false;
 
             // Tambahkan filter kata kunci jika ada
             if (!kataKunci.isEmpty()) {
+                whereAdded = true;
+                querySaldoMasukBuilder.append(" WHERE ");
+
                 switch (filter) {
                     case "Default":
-                        baseQuery.append(" WHERE (nama_admin LIKE ? OR nama_nasabah LIKE ? OR nama_sampah LIKE ?) ");
-                        whereAdded = true;
+                        querySaldoMasukBuilder.append("(l.nama_user LIKE ? OR mn.nama_nasabah LIKE ?)");
                         break;
                     case "Nama Admin":
-                        baseQuery.append(" WHERE nama_admin LIKE ? ");
-                        whereAdded = true;
+                        querySaldoMasukBuilder.append("l.nama_user LIKE ?");
                         break;
                     case "Nama Nasabah":
-                        baseQuery.append(" WHERE nama_nasabah LIKE ? ");
-                        whereAdded = true;
-                        break;
-                    case "Nama Sampah":
-                        baseQuery.append(" WHERE nama_sampah LIKE ? ");
-                        whereAdded = true;
+                        querySaldoMasukBuilder.append("mn.nama_nasabah LIKE ?");
                         break;
                 }
             }
 
             // Tambahkan filter tanggal jika ada
             if (isRange) {
-                baseQuery.append(whereAdded ? "AND " : "WHERE ");
-                baseQuery.append("DATE(riwayat) BETWEEN ? AND ? ");
+                querySaldoMasukBuilder.append(whereAdded ? " AND " : " WHERE ");
+                querySaldoMasukBuilder.append("DATE(st.tanggal) BETWEEN ? AND ?");
             } else if (isSingleDate) {
-                baseQuery.append(whereAdded ? "AND " : "WHERE ");
-                baseQuery.append("DATE(riwayat) = ? ");
+                querySaldoMasukBuilder.append(whereAdded ? " AND " : " WHERE ");
+                querySaldoMasukBuilder.append("DATE(st.tanggal) = ?");
             }
 
-            // Query untuk total pengeluaran
-            String queryPengeluaran = "SELECT SUM(CASE WHEN harga != '-' THEN CAST(harga AS DECIMAL(10,2)) ELSE 0 END) as total_pengeluaran FROM ("
-                    + baseQuery.toString() + ") AS filtered_data";
+            // Query untuk total saldo keluar (penarikan saldo) dengan filter
+            StringBuilder querySaldoKeluarBuilder = new StringBuilder();
+            querySaldoKeluarBuilder
+                    .append("SELECT SUM(jumlah_penarikan) as total_saldo_keluar FROM penarikan_saldo ps ");
+            querySaldoKeluarBuilder.append("JOIN manajemen_nasabah mn ON ps.id_nasabah = mn.id_nasabah ");
+            querySaldoKeluarBuilder.append("JOIN login l ON ps.id_user = l.id_user ");
+
+            boolean whereAddedKeluar = false;
+
+            // Tambahkan filter kata kunci jika ada
+            if (!kataKunci.isEmpty()) {
+                whereAddedKeluar = true;
+                querySaldoKeluarBuilder.append(" WHERE ");
+
+                switch (filter) {
+                    case "Default":
+                        querySaldoKeluarBuilder.append("(l.nama_user LIKE ? OR mn.nama_nasabah LIKE ?)");
+                        break;
+                    case "Nama Admin":
+                        querySaldoKeluarBuilder.append("l.nama_user LIKE ?");
+                        break;
+                    case "Nama Nasabah":
+                        querySaldoKeluarBuilder.append("mn.nama_nasabah LIKE ?");
+                        break;
+                }
+            }
+
+            // Tambahkan filter tanggal jika ada
+            if (isRange) {
+                querySaldoKeluarBuilder.append(whereAddedKeluar ? " AND " : " WHERE ");
+                querySaldoKeluarBuilder.append("DATE(ps.tanggal_penarikan) BETWEEN ? AND ?");
+            } else if (isSingleDate) {
+                querySaldoKeluarBuilder.append(whereAddedKeluar ? " AND " : " WHERE ");
+                querySaldoKeluarBuilder.append("DATE(ps.tanggal_penarikan) = ?");
+            } // Mengambil total saldo masuk
+            double totalSaldoMasuk = 0;
+            try (PreparedStatement pstSaldoMasuk = conn.prepareStatement(querySaldoMasukBuilder.toString())) {
+                int paramIndex = 1;
+
+                // Set parameter untuk kata kunci saldo masuk
+                if (!kataKunci.isEmpty()) {
+                    String searchPattern = "%" + kataKunci + "%";
+                    switch (filter) {
+                        case "Default":
+                            pstSaldoMasuk.setString(paramIndex++, searchPattern);
+                            pstSaldoMasuk.setString(paramIndex++, searchPattern);
+                            break;
+                        default:
+                            pstSaldoMasuk.setString(paramIndex++, searchPattern);
+                            break;
+                    }
+                }
+
+                // Set parameter untuk tanggal saldo masuk
+                if (isRange) {
+                    pstSaldoMasuk.setString(paramIndex++, tanggalMulai);
+                    pstSaldoMasuk.setString(paramIndex++, tanggalAkhir);
+                } else if (isSingleDate) {
+                    pstSaldoMasuk.setString(paramIndex++, tanggalMulai);
+                }
+
+                try (ResultSet rsSaldoMasuk = pstSaldoMasuk.executeQuery()) {
+                    if (rsSaldoMasuk.next()) {
+                        totalSaldoMasuk = rsSaldoMasuk.getDouble("total_saldo_masuk");
+                    }
+                }
+            }
+
+            // Mengambil total saldo keluar
+            double totalSaldoKeluar = 0;
+            try (PreparedStatement pstSaldoKeluar = conn.prepareStatement(querySaldoKeluarBuilder.toString())) {
+                int paramIndex = 1;
+
+                // Set parameter untuk kata kunci saldo keluar
+                if (!kataKunci.isEmpty()) {
+                    String searchPattern = "%" + kataKunci + "%";
+                    switch (filter) {
+                        case "Default":
+                            pstSaldoKeluar.setString(paramIndex++, searchPattern);
+                            pstSaldoKeluar.setString(paramIndex++, searchPattern);
+                            break;
+                        default:
+                            pstSaldoKeluar.setString(paramIndex++, searchPattern);
+                            break;
+                    }
+                }
+
+                // Set parameter untuk tanggal saldo keluar
+                if (isRange) {
+                    pstSaldoKeluar.setString(paramIndex++, tanggalMulai);
+                    pstSaldoKeluar.setString(paramIndex++, tanggalAkhir);
+                } else if (isSingleDate) {
+                    pstSaldoKeluar.setString(paramIndex++, tanggalMulai);
+                }
+
+                try (ResultSet rsSaldoKeluar = pstSaldoKeluar.executeQuery()) {
+                    if (rsSaldoKeluar.next()) {
+                        totalSaldoKeluar = rsSaldoKeluar.getDouble("total_saldo_keluar");
+                    }
+                }
+            }
 
             // Query untuk total transaksi
-            String queryTotalTransaksi = "SELECT COUNT(*) as total_transaksi FROM (" + baseQuery.toString()
-                    + ") AS filtered_data";
+            StringBuilder queryTotalTransaksiBuilder = new StringBuilder();
+            queryTotalTransaksiBuilder.append("SELECT (");
+            queryTotalTransaksiBuilder.append("(SELECT COUNT(*) FROM setor_sampah st ");
+            queryTotalTransaksiBuilder.append("JOIN laporan_pengeluaran lpn ON st.id_setoran = lpn.id_setoran ");
+            queryTotalTransaksiBuilder.append("JOIN manajemen_nasabah mn ON lpn.id_nasabah = mn.id_nasabah ");
+            queryTotalTransaksiBuilder.append("JOIN login l ON lpn.id_user = l.id_user ");
 
-            // Mengambil total pengeluaran
-            try (PreparedStatement pstPengeluaran = conn.prepareStatement(queryPengeluaran)) {
-                int paramIndex = 1;
+            if (!kataKunci.isEmpty() || isRange || isSingleDate) {
+                queryTotalTransaksiBuilder.append("WHERE ");
+                boolean whereClauseAdded = false;
 
-                // Set parameter untuk kata kunci
                 if (!kataKunci.isEmpty()) {
-                    String searchPattern = "%" + kataKunci + "%";
+                    whereClauseAdded = true;
                     switch (filter) {
                         case "Default":
-                            pstPengeluaran.setString(paramIndex++, searchPattern);
-                            pstPengeluaran.setString(paramIndex++, searchPattern);
-                            pstPengeluaran.setString(paramIndex++, searchPattern);
+                            queryTotalTransaksiBuilder.append("(l.nama_user LIKE ? OR mn.nama_nasabah LIKE ?)");
                             break;
-                        default:
-                            pstPengeluaran.setString(paramIndex++, searchPattern);
+                        case "Nama Admin":
+                            queryTotalTransaksiBuilder.append("l.nama_user LIKE ?");
+                            break;
+                        case "Nama Nasabah":
+                            queryTotalTransaksiBuilder.append("mn.nama_nasabah LIKE ?");
                             break;
                     }
                 }
 
-                // Set parameter untuk tanggal
                 if (isRange) {
-                    pstPengeluaran.setString(paramIndex++, tanggalMulai);
-                    pstPengeluaran.setString(paramIndex++, tanggalAkhir);
+                    if (whereClauseAdded)
+                        queryTotalTransaksiBuilder.append(" AND ");
+                    queryTotalTransaksiBuilder.append("DATE(st.tanggal) BETWEEN ? AND ?");
                 } else if (isSingleDate) {
-                    pstPengeluaran.setString(paramIndex++, tanggalMulai);
-                }
-
-                try (ResultSet rsPengeluaran = pstPengeluaran.executeQuery()) {
-                    if (rsPengeluaran.next()) {
-                        double totalPengeluaran = rsPengeluaran.getDouble("total_pengeluaran");
-                        DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
-                        String pengeluaranFormatted = formatRupiah.format(totalPengeluaran);
-                        lbl_pengeluaran.setText(pengeluaranFormatted);
-                    }
+                    if (whereClauseAdded)
+                        queryTotalTransaksiBuilder.append(" AND ");
+                    queryTotalTransaksiBuilder.append("DATE(st.tanggal) = ?");
                 }
             }
 
-            // Mengambil total transaksi
-            try (PreparedStatement pstTotalTransaksi = conn.prepareStatement(queryTotalTransaksi)) {
+            queryTotalTransaksiBuilder.append(") + ");
+            queryTotalTransaksiBuilder.append("(SELECT COUNT(*) FROM penarikan_saldo ps ");
+            queryTotalTransaksiBuilder.append("JOIN manajemen_nasabah mn ON ps.id_nasabah = mn.id_nasabah ");
+            queryTotalTransaksiBuilder.append("JOIN login l ON ps.id_user = l.id_user ");
+
+            if (!kataKunci.isEmpty() || isRange || isSingleDate) {
+                queryTotalTransaksiBuilder.append("WHERE ");
+                boolean whereClauseAdded = false;
+
+                if (!kataKunci.isEmpty()) {
+                    whereClauseAdded = true;
+                    switch (filter) {
+                        case "Default":
+                            queryTotalTransaksiBuilder.append("(l.nama_user LIKE ? OR mn.nama_nasabah LIKE ?)");
+                            break;
+                        case "Nama Admin":
+                            queryTotalTransaksiBuilder.append("l.nama_user LIKE ?");
+                            break;
+                        case "Nama Nasabah":
+                            queryTotalTransaksiBuilder.append("mn.nama_nasabah LIKE ?");
+                            break;
+                    }
+                }
+
+                if (isRange) {
+                    if (whereClauseAdded)
+                        queryTotalTransaksiBuilder.append(" AND ");
+                    queryTotalTransaksiBuilder.append("DATE(ps.tanggal_penarikan) BETWEEN ? AND ?");
+                } else if (isSingleDate) {
+                    if (whereClauseAdded)
+                        queryTotalTransaksiBuilder.append(" AND ");
+                    queryTotalTransaksiBuilder.append("DATE(ps.tanggal_penarikan) = ?");
+                }
+            }
+
+            queryTotalTransaksiBuilder.append(")) as total_transaksi");
+
+            // Calculate net saldo
+            double netSaldo = totalSaldoMasuk - totalSaldoKeluar;
+            DecimalFormat formatRupiah = new DecimalFormat("'Rp '###,###");
+            lbl_saldoNasabah.setText(formatRupiah.format(netSaldo));
+
+            // Get total transactions count
+            try (PreparedStatement pstTotalTransaksi = conn.prepareStatement(queryTotalTransaksiBuilder.toString())) {
                 int paramIndex = 1;
 
-                // Set parameter untuk kata kunci
+                // Set parameters for setor_sampah query
                 if (!kataKunci.isEmpty()) {
                     String searchPattern = "%" + kataKunci + "%";
                     switch (filter) {
                         case "Default":
-                            pstTotalTransaksi.setString(paramIndex++, searchPattern);
                             pstTotalTransaksi.setString(paramIndex++, searchPattern);
                             pstTotalTransaksi.setString(paramIndex++, searchPattern);
                             break;
@@ -1189,7 +1424,27 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                     }
                 }
 
-                // Set parameter untuk tanggal
+                if (isRange) {
+                    pstTotalTransaksi.setString(paramIndex++, tanggalMulai);
+                    pstTotalTransaksi.setString(paramIndex++, tanggalAkhir);
+                } else if (isSingleDate) {
+                    pstTotalTransaksi.setString(paramIndex++, tanggalMulai);
+                }
+
+                // Set parameters for penarikan_saldo query
+                if (!kataKunci.isEmpty()) {
+                    String searchPattern = "%" + kataKunci + "%";
+                    switch (filter) {
+                        case "Default":
+                            pstTotalTransaksi.setString(paramIndex++, searchPattern);
+                            pstTotalTransaksi.setString(paramIndex++, searchPattern);
+                            break;
+                        default:
+                            pstTotalTransaksi.setString(paramIndex++, searchPattern);
+                            break;
+                    }
+                }
+
                 if (isRange) {
                     pstTotalTransaksi.setString(paramIndex++, tanggalMulai);
                     pstTotalTransaksi.setString(paramIndex++, tanggalAkhir);
@@ -1200,21 +1455,37 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
                 try (ResultSet rsTotalTransaksi = pstTotalTransaksi.executeQuery()) {
                     if (rsTotalTransaksi.next()) {
                         int totalTransaksi = rsTotalTransaksi.getInt("total_transaksi");
-                        lbl_total_transaksi.setText(String.valueOf(totalTransaksi) + " Transaksi");
+                        lbl_jumlahPenarikan.setText(String.valueOf(totalTransaksi) + " Transaksi");
                     }
                 }
             }
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data label: " + e.getMessage());
-            lbl_pengeluaran.setText("Rp 0");
-            lbl_total_transaksi.setText("0 Transaksi");
+            e.printStackTrace();
+            lbl_saldoNasabah.setText("Rp 0");
+            lbl_jumlahPenarikan.setText("0 Transaksi");
         }
+    } // This method has been removed since we're now using the penarikan_saldo table
+      // which is already created in the database // Method to reset the filter type
+      // and reload all data
+
+    private void resetFilter() {
+        currentFilterType = "";
+        filterJenis = null;
+        txt_search.setText("");
+        txt_date.setText("");
+        box_pilih.setSelectedIndex(0);
+        box_FilterMK.setSelectedIndex(0); // Reset filter dropdown to "Default"
+        loadData("");
+        updateLabels(); // Update labels to reflect the reset filter
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel LabelTotalSaldo;
     private component.ShadowPanel ShadowSearch;
     private component.ShadowPanel ShadowSearch1;
+    private javax.swing.JComboBox<String> box_FilterMK;
     private javax.swing.JComboBox<String> box_pilih;
     private component.Jbutton btn_Export5;
     private javax.swing.JButton btn_before5;
@@ -1228,13 +1499,12 @@ public class TabLaporan_setor_sampah extends javax.swing.JPanel {
     private datechooser.render.DefaultDateChooserRender defaultDateChooserRender1;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lb_halaman5;
-    private javax.swing.JLabel lbl_pengeluaran;
-    private javax.swing.JLabel lbl_total_transaksi;
+    private javax.swing.JLabel lbl_jumlahPenarikan;
+    private javax.swing.JLabel lbl_saldoNasabah;
+    private javax.swing.JLabel lbl_totalJumlahPenarikan;
     private component.ShadowPanel panelBawah5;
     private component.ShadowPanel panelFilter;
     private grafik.panel.PanelGradient panelGradient1;

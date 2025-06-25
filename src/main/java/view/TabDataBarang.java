@@ -9,12 +9,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.sql.*;
-import java.sql.SQLException;
+
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.logging.*;
 import main.DBconnect;
 import java.awt.image.BufferedImage;
@@ -118,10 +117,11 @@ public class TabDataBarang extends javax.swing.JPanel {
     private void loadDataBarang() {
         try {
             panelBarang.removeAll();
-            panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
-
-            // Clear the previous items list
+            // Clear the item panels list when reloading data
             itemPanels.clear();
+
+            // Always use GridLayout regardless of item count
+            panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
 
             int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
 
@@ -148,6 +148,12 @@ public class TabDataBarang extends javax.swing.JPanel {
                 ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
                 Item itemPanel = new Item();
                 itemPanel.setData(model);
+
+                // Set fixed size for each card
+                itemPanel.setPreferredSize(new java.awt.Dimension(200, 300));
+                itemPanel.setMinimumSize(new java.awt.Dimension(200, 300));
+                itemPanel.setMaximumSize(new java.awt.Dimension(200, 300));
+
                 itemPanel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -155,10 +161,26 @@ public class TabDataBarang extends javax.swing.JPanel {
                     }
                 });
 
-                panelBarang.add(itemPanel);
-                // Add to tracked panels list
+                // Add this line to track the panel
                 itemPanels.add(itemPanel);
+
+                panelBarang.add(itemPanel);
                 itemCount++;
+            }
+
+            // Always add empty panels to fill at least one row
+            // This forces the grid layout to maintain proper structure
+            int emptyPanelsNeeded = 5 - (itemCount % 5);
+            if (emptyPanelsNeeded < 5) {
+                for (int i = 0; i < emptyPanelsNeeded; i++) {
+                    JPanel emptyPanel = new JPanel();
+                    emptyPanel.setOpaque(false);
+                    // Set consistent size for empty panels too
+                    emptyPanel.setPreferredSize(new java.awt.Dimension(200, 300));
+                    emptyPanel.setMinimumSize(new java.awt.Dimension(200, 300));
+                    emptyPanel.setMaximumSize(new java.awt.Dimension(200, 300));
+                    panelBarang.add(emptyPanel);
+                }
             }
 
             rs.close();
@@ -166,13 +188,6 @@ public class TabDataBarang extends javax.swing.JPanel {
 
             // Update page label
             lb_halaman2.setText("Page " + halamanSaatIni + " dari total " + totalData + " data");
-
-            // Atur layout sesuai jumlah item
-            if (itemCount < 5) {
-                panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
-            } else {
-                panelBarang.setLayout(new GridLayout(0, 5, 10, 19));
-            }
 
             panelBarang.revalidate();
             panelBarang.repaint();
@@ -198,10 +213,11 @@ public class TabDataBarang extends javax.swing.JPanel {
             pstCount.close();
 
             panelBarang.removeAll();
-            panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
-
-            // Clear the previous items list
+            // Clear the item panels list when searching
             itemPanels.clear();
+
+            // Always use GridLayout regardless of item count
+            panelBarang.setLayout(new java.awt.GridLayout(0, 5, 10, 19));
 
             String sql = "SELECT * FROM data_barang WHERE nama_barang LIKE ? OR kode_barang LIKE ? LIMIT ? OFFSET ?";
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -229,17 +245,34 @@ public class TabDataBarang extends javax.swing.JPanel {
                 ModelItem model = new ModelItem(id, nama, kode, harga, stok, icon);
                 Item itemPanel = new Item();
                 itemPanel.setData(model);
+                // Set a fixed size for each card
+                itemPanel.setPreferredSize(new java.awt.Dimension(200, 300));
+                itemPanel.setMinimumSize(new java.awt.Dimension(200, 300));
                 itemPanel.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         handleItemSelection(itemPanel, model);
                     }
                 });
+                itemPanels.add(itemPanel);
 
                 panelBarang.add(itemPanel);
-                // Add to tracked panels list
-                itemPanels.add(itemPanel);
                 itemCount++;
+            }
+
+            // In searchDataBarang method - modify the empty panels section
+            // Always add empty panels to fill at least one row
+            int emptyPanelsNeeded = 5 - (itemCount % 5);
+            if (emptyPanelsNeeded < 5) {
+                for (int i = 0; i < emptyPanelsNeeded; i++) {
+                    JPanel emptyPanel = new JPanel();
+                    emptyPanel.setOpaque(false);
+                    // Set consistent size for empty panels too
+                    emptyPanel.setPreferredSize(new java.awt.Dimension(200, 300));
+                    emptyPanel.setMinimumSize(new java.awt.Dimension(200, 300));
+                    emptyPanel.setMaximumSize(new java.awt.Dimension(200, 300));
+                    panelBarang.add(emptyPanel);
+                }
             }
 
             rs.close();
@@ -247,13 +280,6 @@ public class TabDataBarang extends javax.swing.JPanel {
 
             // Update page label
             lb_halaman2.setText("Halaman " + halamanSaatIni + " dari total " + totalData + " data");
-
-            // Atur layout sesuai jumlah item
-            if (itemCount < 5) {
-                panelBarang.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 19));
-            } else {
-                panelBarang.setLayout(new GridLayout(0, 5, 10, 19));
-            }
 
             panelBarang.revalidate();
             panelBarang.repaint();
@@ -319,9 +345,6 @@ public class TabDataBarang extends javax.swing.JPanel {
 
             System.out.println("Barcode berhasil dibuat di: " + outputFile.getPath());
 
-            // Log aktivitas pembuatan barcode
-            LoggerUtil.insert(users.getId(), "Membuat barcode untuk barang: " + namaBarang + " dengan kode: " + kode);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -379,6 +402,8 @@ public class TabDataBarang extends javax.swing.JPanel {
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -426,7 +451,7 @@ public class TabDataBarang extends javax.swing.JPanel {
         panelMain.setPreferredSize(new java.awt.Dimension(1192, 944));
         panelMain.setLayout(new java.awt.CardLayout());
 
-        panelView.setBackground(new java.awt.Color(250, 250, 250));
+        panelView.setBackground(new java.awt.Color(253, 253, 253));
         panelView.setPreferredSize(new java.awt.Dimension(1192, 944));
 
         scrollBarang.setBackground(new java.awt.Color(255, 255, 255));
@@ -450,7 +475,8 @@ public class TabDataBarang extends javax.swing.JPanel {
 
         scrollBarang.setViewportView(panelBarang);
 
-        lb_dataNasabah.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        lb_dataNasabah.setFont(lb_dataNasabah.getFont().deriveFont(
+                lb_dataNasabah.getFont().getStyle() | java.awt.Font.BOLD, lb_dataNasabah.getFont().getSize() + 10));
         lb_dataNasabah.setText("Data Barang");
 
         lb_halaman2.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -574,7 +600,8 @@ public class TabDataBarang extends javax.swing.JPanel {
         btnTambah.setFillClick(new java.awt.Color(55, 130, 60));
         btnTambah.setFillOriginal(new java.awt.Color(76, 175, 80));
         btnTambah.setFillOver(new java.awt.Color(69, 160, 75));
-        btnTambah.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnTambah.setFont(btnTambah.getFont().deriveFont(btnTambah.getFont().getStyle() | java.awt.Font.BOLD,
+                btnTambah.getFont().getSize() - 1));
         btnTambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTambahActionPerformed(evt);
@@ -586,7 +613,8 @@ public class TabDataBarang extends javax.swing.JPanel {
         btnHapus.setFillClick(new java.awt.Color(190, 30, 20));
         btnHapus.setFillOriginal(new java.awt.Color(231, 76, 60));
         btnHapus.setFillOver(new java.awt.Color(210, 50, 40));
-        btnHapus.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnHapus.setFont(btnHapus.getFont().deriveFont(btnHapus.getFont().getStyle() | java.awt.Font.BOLD,
+                btnHapus.getFont().getSize() - 1));
         btnHapus.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnHapusMouseClicked(evt);
@@ -603,7 +631,8 @@ public class TabDataBarang extends javax.swing.JPanel {
         btnKembali.setFillClick(new java.awt.Color(200, 125, 0));
         btnKembali.setFillOriginal(new java.awt.Color(243, 156, 18));
         btnKembali.setFillOver(new java.awt.Color(230, 145, 10));
-        btnKembali.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnKembali.setFont(btnKembali.getFont().deriveFont(btnKembali.getFont().getStyle() | java.awt.Font.BOLD,
+                btnKembali.getFont().getSize() - 1));
         btnKembali.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnKembaliActionPerformed(evt);
@@ -623,14 +652,14 @@ public class TabDataBarang extends javax.swing.JPanel {
                 shadowActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(shadowActionLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 940,
+                                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 872,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnTambah, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                                .addComponent(btnTambah, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnHapus, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE)
+                                .addComponent(btnHapus, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnKembali, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
+                                .addComponent(btnKembali, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
                                 .addContainerGap()));
         shadowActionLayout.setVerticalGroup(
                 shadowActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -676,18 +705,19 @@ public class TabDataBarang extends javax.swing.JPanel {
         panelAdd.setPreferredSize(new java.awt.Dimension(1192, 944));
         panelAdd.setLayout(new java.awt.CardLayout());
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        jLabel6.setFont(jLabel6.getFont().deriveFont(jLabel6.getFont().getStyle() | java.awt.Font.BOLD,
+                jLabel6.getFont().getSize() + 10));
         jLabel6.setText("Tambah Data Barang");
 
-        jLabel11.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
+        jLabel11.setFont(jLabel11.getFont().deriveFont(jLabel11.getFont().getSize() + 10f));
         jLabel11.setText("Kode Barang");
 
-        jLabel12.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
+        jLabel12.setFont(jLabel12.getFont().deriveFont(jLabel12.getFont().getSize() + 10f));
         jLabel12.setText("Nama Barang");
 
         txt_nama.setPreferredSize(new java.awt.Dimension(20, 22));
 
-        jLabel13.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
+        jLabel13.setFont(jLabel13.getFont().deriveFont(jLabel13.getFont().getSize() + 10f));
         jLabel13.setText("Harga");
 
         txt_harga.setPreferredSize(new java.awt.Dimension(20, 22));
@@ -697,7 +727,8 @@ public class TabDataBarang extends javax.swing.JPanel {
         btn_SaveAdd.setFillClick(new java.awt.Color(30, 100, 150));
         btn_SaveAdd.setFillOriginal(new java.awt.Color(41, 128, 185));
         btn_SaveAdd.setFillOver(new java.awt.Color(36, 116, 170));
-        btn_SaveAdd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_SaveAdd.setFont(btn_SaveAdd.getFont().deriveFont(btn_SaveAdd.getFont().getStyle() | java.awt.Font.BOLD,
+                btn_SaveAdd.getFont().getSize() - 1));
         btn_SaveAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_SaveAddActionPerformed(evt);
@@ -709,19 +740,20 @@ public class TabDataBarang extends javax.swing.JPanel {
         btn_CancelAdd.setFillClick(new java.awt.Color(200, 125, 0));
         btn_CancelAdd.setFillOriginal(new java.awt.Color(243, 156, 18));
         btn_CancelAdd.setFillOver(new java.awt.Color(230, 145, 10));
-        btn_CancelAdd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_CancelAdd.setFont(btn_CancelAdd.getFont().deriveFont(
+                btn_CancelAdd.getFont().getStyle() | java.awt.Font.BOLD, btn_CancelAdd.getFont().getSize() - 1));
         btn_CancelAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_CancelAddActionPerformed(evt);
             }
         });
 
-        jLabel14.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
+        jLabel14.setFont(jLabel14.getFont().deriveFont(jLabel14.getFont().getSize() + 10f));
         jLabel14.setText("Jumlah Stok");
 
         txt_stok.setPreferredSize(new java.awt.Dimension(20, 22));
 
-        jLabel15.setFont(new java.awt.Font("Mongolian Baiti", 0, 22)); // NOI18N
+        jLabel15.setFont(jLabel15.getFont().deriveFont(jLabel15.getFont().getSize() + 10f));
         jLabel15.setText("Gambar");
 
         txt_gambar.setPreferredSize(new java.awt.Dimension(20, 22));
@@ -861,7 +893,7 @@ public class TabDataBarang extends javax.swing.JPanel {
                                                 Short.MAX_VALUE)
                                         .addComponent(btnPilihGambar, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap(451, Short.MAX_VALUE)));
+                                .addContainerGap(431, Short.MAX_VALUE)));
 
         panelAdd.add(ShadowUtama1, "card2");
 
@@ -1147,9 +1179,6 @@ public class TabDataBarang extends javax.swing.JPanel {
                 try {
                     ExcelExporter.exportTableModelToExcel(model, fileToSave);
 
-                    // Log aktivitas export data barang
-                    LoggerUtil.insert(users.getId(), "Mengekspor data barang ke Excel: " + fileToSave.getName());
-
                     JOptionPane.showMessageDialog(this,
                             "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
                             "Sukses",
@@ -1312,11 +1341,6 @@ public class TabDataBarang extends javax.swing.JPanel {
                             "Data baru: %d\n" +
                             "Data dilewati (sudah ada): %d",
                     insertCount, skippedCount);
-
-            // Log aktivitas import data barang
-            LoggerUtil.insert(users.getId(), "Mengimport data barang dari Excel: " + insertCount + " data baru, "
-                    + skippedCount + " data dilewati");
-
             JOptionPane.showMessageDialog(this,
                     message,
                     "Hasil Import",

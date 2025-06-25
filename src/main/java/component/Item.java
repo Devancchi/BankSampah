@@ -109,23 +109,23 @@ public class Item extends javax.swing.JPanel {
         lbStok = new javax.swing.JLabel();
         lbStok1 = new javax.swing.JLabel();
 
-        lbItemName.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
+        lbItemName.setFont(lbItemName.getFont().deriveFont(lbItemName.getFont().getStyle() | java.awt.Font.BOLD, lbItemName.getFont().getSize()+6));
         lbItemName.setText("Item Name");
 
-        lbKode.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        lbKode.setFont(lbKode.getFont().deriveFont(lbKode.getFont().getStyle() | java.awt.Font.BOLD, lbKode.getFont().getSize()+2));
         lbKode.setForeground(new java.awt.Color(178, 178, 178));
         lbKode.setText("AB010123");
 
         pic.setImage(new javax.swing.ImageIcon(getClass().getResource("/icon/img1.png"))); // NOI18N
 
-        lbPrice.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
+        lbPrice.setFont(lbPrice.getFont().deriveFont(lbPrice.getFont().getStyle() | java.awt.Font.BOLD, lbPrice.getFont().getSize()+6));
         lbPrice.setText("Rp. 000.000.00");
 
-        lbStok.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
+        lbStok.setFont(lbStok.getFont().deriveFont(lbStok.getFont().getStyle() | java.awt.Font.BOLD));
         lbStok.setForeground(new java.awt.Color(76, 76, 76));
         lbStok.setText("000");
 
-        lbStok1.setFont(new java.awt.Font("sansserif", 0, 10)); // NOI18N
+        lbStok1.setFont(lbStok1.getFont().deriveFont(lbStok1.getFont().getSize()-2f));
         lbStok1.setForeground(new java.awt.Color(76, 76, 76));
         lbStok1.setText("Stok :");
 
@@ -157,7 +157,7 @@ public class Item extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbKode)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(pic, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                .addComponent(pic, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbStok1)
