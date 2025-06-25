@@ -882,8 +882,6 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
 
     private void btn_Export5ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_Export5ActionPerformed
         try {
-            loadData("");
-
             DefaultTableModel model = (DefaultTableModel) tb_laporan.getModel();
 
             if (model.getRowCount() == 0) {
