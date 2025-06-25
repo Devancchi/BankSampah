@@ -249,6 +249,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         panelMain.setLayout(new java.awt.CardLayout());
 
         panelView.setBackground(new java.awt.Color(250, 250, 250));
+        panelView.setFont(panelView.getFont());
 
         ShadowSearch.setBackground(new java.awt.Color(249, 251, 255));
         ShadowSearch.setPreferredSize(new java.awt.Dimension(259, 43));
@@ -367,7 +368,7 @@ public class TabLaporan_transaksi extends javax.swing.JPanel {
         btn_cancel.setFillClick(new java.awt.Color(200, 125, 0));
         btn_cancel.setFillOriginal(new java.awt.Color(243, 156, 18));
         btn_cancel.setFillOver(new java.awt.Color(230, 145, 10));
-        btn_cancel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_cancel.setFont(btn_cancel.getFont().deriveFont(btn_cancel.getFont().getStyle() | java.awt.Font.BOLD, btn_cancel.getFont().getSize()-1));
         btn_cancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_cancelActionPerformed(evt);

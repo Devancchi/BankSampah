@@ -120,7 +120,7 @@ public class TabDashboard extends javax.swing.JPanel {
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/account_nasabah.png"))); // NOI18N
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel6.setFont(jLabel6.getFont().deriveFont(jLabel6.getFont().getStyle() | java.awt.Font.BOLD));
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Total Nasabah");
 
@@ -174,7 +174,7 @@ public class TabDashboard extends javax.swing.JPanel {
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/sampah_nasabah.png"))); // NOI18N
 
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel9.setFont(jLabel9.getFont().deriveFont(jLabel9.getFont().getStyle() | java.awt.Font.BOLD));
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("Total berat sampah");
 
@@ -231,7 +231,7 @@ public class TabDashboard extends javax.swing.JPanel {
 
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_transaksi_dashboard.png"))); // NOI18N
 
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel12.setFont(jLabel12.getFont().deriveFont(jLabel12.getFont().getStyle() | java.awt.Font.BOLD));
         jLabel12.setForeground(new java.awt.Color(255, 255, 255));
         jLabel12.setText("Transaksi hari ini");
 
@@ -301,7 +301,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        jLabel14.setFont(jLabel14.getFont().deriveFont(jLabel14.getFont().getStyle() | java.awt.Font.BOLD, jLabel14.getFont().getSize()+10));
         jLabel14.setText("Aktivitas terbaru");
         jLabel14.setPreferredSize(new java.awt.Dimension(145, 30));
 
@@ -392,6 +392,7 @@ public class TabDashboard extends javax.swing.JPanel {
             }
         });
 
+        box_pilih.setFont(box_pilih.getFont());
         box_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Nama Admin", "Jenis Aktivitas" }));
         box_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -485,6 +486,7 @@ public class TabDashboard extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
+        btnReset.setFont(btnReset.getFont());
         btnReset.setText("Reset");
         btnReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

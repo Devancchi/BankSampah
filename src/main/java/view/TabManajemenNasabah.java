@@ -108,6 +108,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         txt_id = new component.PlaceholderTextField();
 
         setBackground(new java.awt.Color(24, 58, 51));
+        setFont(getFont());
         setPreferredSize(new java.awt.Dimension(1200, 716));
         setLayout(new java.awt.CardLayout());
 
@@ -132,7 +133,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(tbl_data);
 
-        lb_dataNasabah.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        lb_dataNasabah.setFont(lb_dataNasabah.getFont().deriveFont(lb_dataNasabah.getFont().getStyle() | java.awt.Font.BOLD, lb_dataNasabah.getFont().getSize()+10));
         lb_dataNasabah.setText("Data Nasabah");
 
         lb_halaman.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -241,7 +242,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_add.setFillClick(new java.awt.Color(55, 130, 60));
         btn_add.setFillOriginal(new java.awt.Color(76, 175, 80));
         btn_add.setFillOver(new java.awt.Color(69, 160, 75));
-        btn_add.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_add.setFont(btn_add.getFont().deriveFont(btn_add.getFont().getStyle() | java.awt.Font.BOLD, btn_add.getFont().getSize()-1));
         btn_add.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_addActionPerformed(evt);
@@ -253,7 +254,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_delete.setFillClick(new java.awt.Color(190, 30, 20));
         btn_delete.setFillOriginal(new java.awt.Color(231, 76, 60));
         btn_delete.setFillOver(new java.awt.Color(210, 50, 40));
-        btn_delete.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_delete.setFont(btn_delete.getFont().deriveFont(btn_delete.getFont().getStyle() | java.awt.Font.BOLD, btn_delete.getFont().getSize()-1));
         btn_delete.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btn_deleteMouseClicked(evt);
@@ -270,7 +271,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_cancel.setFillClick(new java.awt.Color(200, 125, 0));
         btn_cancel.setFillOriginal(new java.awt.Color(243, 156, 18));
         btn_cancel.setFillOver(new java.awt.Color(230, 145, 10));
-        btn_cancel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btn_cancel.setFont(btn_cancel.getFont().deriveFont(btn_cancel.getFont().getStyle() | java.awt.Font.BOLD, btn_cancel.getFont().getSize()-1));
         btn_cancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_cancelActionPerformed(evt);
@@ -282,14 +283,14 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         panelActionLayout.setHorizontalGroup(
             panelActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelActionLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 178, Short.MAX_VALUE)
-                .addComponent(btn_add, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(txt_search, javax.swing.GroupLayout.PREFERRED_SIZE, 872, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_add, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_delete, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                 .addContainerGap())
         );
         panelActionLayout.setVerticalGroup(
