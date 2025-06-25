@@ -435,8 +435,8 @@
                   </Group>
                   <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="ChartDistribusiSampah" pref="407" max="32767" attributes="0"/>
                       <Component id="ChartBarangTerjualVsBarangSisa" pref="407" max="32767" attributes="0"/>
+                      <Component id="ChartDistribusiSampah" max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -444,23 +444,21 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
+                  <Component id="jLabel14" min="-2" pref="44" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Component id="ShadowSearch" alignment="1" max="32767" attributes="0"/>
+                      <Component id="ShadowSearch1" alignment="1" max="32767" attributes="0"/>
+                      <Component id="btnReset" alignment="1" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="ChartBarangTerjualVsBarangSisa" min="-2" pref="354" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="ChartDistribusiSampah" pref="357" max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="jLabel14" min="-2" pref="44" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="ShadowSearch" alignment="1" max="32767" attributes="0"/>
-                              <Component id="ShadowSearch1" alignment="1" max="32767" attributes="0"/>
-                              <Component id="btnReset" alignment="1" max="32767" attributes="0"/>
-                          </Group>
+                      <Group type="102" attributes="0">
+                          <Component id="ChartBarangTerjualVsBarangSisa" min="-2" pref="312" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane2" max="32767" attributes="0"/>
+                          <Component id="ChartDistribusiSampah" max="32767" attributes="0"/>
                       </Group>
+                      <Component id="jScrollPane2" pref="630" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="panelBawah" min="-2" pref="50" max="-2" attributes="0"/>
@@ -484,8 +482,6 @@
           </Properties>
         </Component>
         <Component class="chart.PolarAreaChart" name="ChartBarangTerjualVsBarangSisa">
-        </Component>
-        <Component class="chart.PolarAreaChart" name="ChartDistribusiSampah">
         </Component>
         <Container class="component.ShadowPanel" name="panelBawah">
           <Properties>
@@ -811,6 +807,8 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="chart.PolarAreaChart" name="ChartDistribusiSampah">
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>
