@@ -149,8 +149,10 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel16">
                   <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Segoe UI" size="22" style="1"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                      <FontInfo relative="true">
+                        <Font bold="true" component="jLabel16" property="font" relativeSize="true" size="10"/>
+                      </FontInfo>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Daftar Harga Sampah/KG"/>
                   </Properties>
@@ -670,8 +672,10 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel18">
                   <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Segoe UI" size="22" style="1"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                      <FontInfo relative="true">
+                        <Font bold="true" component="jLabel18" property="font" relativeSize="true" size="10"/>
+                      </FontInfo>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Setor / Jual"/>
                   </Properties>

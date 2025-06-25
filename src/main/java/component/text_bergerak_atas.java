@@ -32,7 +32,7 @@ public class text_bergerak_atas extends javax.swing.JPanel {
 
         lb = new javax.swing.JLabel();
 
-        lb.setFont(new java.awt.Font("Arial Black", 1, 24)); // NOI18N
+        lb.setFont(lb.getFont().deriveFont(lb.getFont().getStyle() | java.awt.Font.BOLD, lb.getFont().getSize()+12));
         lb.setText("MANAJEMEN NASABAH");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -49,7 +49,7 @@ public class text_bergerak_atas extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(lb)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
