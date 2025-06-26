@@ -416,6 +416,7 @@ public class TabTransaksi extends javax.swing.JPanel {
                 double jumlahBayar = total;
 
                 NumberFormat Rp = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+                Rp.setMaximumFractionDigits(0);
                 String totalFormatted = Rp.format(jumlahBayar);
 
                 String[] pilihan = { "Pembayaran", "Tarik Tunai", "Batal" };
@@ -1111,6 +1112,40 @@ public class TabTransaksi extends javax.swing.JPanel {
 
     // Process cash payment
     private void processCashPayment() {
+        // Periksa apakah nasabah "non-nasabah" ada di database
+        try {
+            Connection conn = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
+
+            String checkSql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE id_nasabah = 'non-nasabah'";
+            PreparedStatement checkPst = conn.prepareStatement(checkSql);
+            ResultSet rs = checkPst.executeQuery();
+
+            boolean exists = false;
+            if (rs.next()) {
+                exists = rs.getInt(1) > 0;
+            }
+
+            rs.close();
+            checkPst.close();
+
+            // Jika tidak ada, langsung buat nasabah dengan ID non-nasabah
+            if (!exists) {
+                String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, tanggal_bergabung, alamat, no_telpon, email, keterangan, saldo_total) "
+                        +
+                        "VALUES ('non-nasabah', 'Non Nasabah', NOW(), '-', '-', '-', 'Nasabah untuk transaksi tunai', 0)";
+                PreparedStatement insertPst = conn.prepareStatement(insertSql);
+                insertPst.executeUpdate();
+                insertPst.close();
+            }
+
+            conn.close();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage());
+            return;
+        }
+
+        // Lanjutkan dengan proses pembayaran tunai seperti biasa
         String input = txttunai.getText().trim().replaceAll("[^\\d]", "");
         if (input.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Masukkan jumlah tunai yang valid.");
