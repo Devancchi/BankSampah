@@ -55,6 +55,36 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 });
             }
         });
+        txt_Kode.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    cbxJenis_pnView.requestFocus();
+                    cbxJenis_pnView.showPopup();
+                }
+            }
+        });
+        cbxJenis_pnView.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    cbxKategori_pnView.requestFocus();
+                    cbxKategori_pnView.showPopup();
+                }
+            }
+        });
+        cbxKategori_pnView.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    txt_Berat.requestFocus();
+                }
+            }
+        });
+        txt_Berat.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    btn_ProsesSampah.doClick();
+                }
+            }
+        });
 
         // Add document listener to automatically trigger Enter key
         txt_Kode.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -72,6 +102,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
             }
+
         });
 
         // Inisialisasi pagination
@@ -137,18 +168,18 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
             // Check if we have an active search term
             if (!currentSearchTerm.isEmpty()) {
-                sql = "SELECT COUNT(*) as total FROM sampah s " +
-                        "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori " +
-                        "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis " +
-                        "WHERE j.nama_jenis LIKE ? OR k.nama_kategori LIKE ?";
+                sql = "SELECT COUNT(*) as total FROM sampah s "
+                        + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
+                        + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
+                        + "WHERE j.nama_jenis LIKE ? OR k.nama_kategori LIKE ?";
                 pst = conn.prepareStatement(sql);
                 String likeKeyword = "%" + currentSearchTerm + "%";
                 pst.setString(1, likeKeyword);
                 pst.setString(2, likeKeyword);
             } else {
-                sql = "SELECT COUNT(*) as total FROM sampah s " +
-                        "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori " +
-                        "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis";
+                sql = "SELECT COUNT(*) as total FROM sampah s "
+                        + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
+                        + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis";
                 pst = conn.prepareStatement(sql);
             }
 
@@ -1632,7 +1663,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
         // Allow only digits, decimal point, and control characters (backspace, delete,
         // etc.)
-        if ((c == '-') || // No minus sign
+        if ((c == '-')
+                || // No minus sign
                 (c != '.' && !Character.isDigit(c) && !Character.isISOControl(c))) {
             evt.consume(); // Ignore invalid characters
         }
@@ -1648,7 +1680,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
         // Allow only digits, decimal point, and control characters (backspace, delete,
         // etc.)
-        if ((c == '-') || // No minus sign
+        if ((c == '-')
+                || // No minus sign
                 (c != '.' && !Character.isDigit(c) && !Character.isISOControl(c))) {
             evt.consume(); // Ignore invalid characters
         }
@@ -1683,7 +1716,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
         // Allow only digits, decimal point, and control characters (backspace, delete,
         // etc.)
-        if ((c == '-') || // No minus sign
+        if ((c == '-')
+                || // No minus sign
                 (c != '.' && !Character.isDigit(c) && !Character.isISOControl(c))) {
             evt.consume(); // Ignore invalid characters
         }
@@ -1915,8 +1949,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             loadJenisSampah();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this,
-                    "Gagal " + (btnTambahJenis.getText().equals("Ubah") ? "Memperbarui" : "Menyimpan") +
-                            " Jenis Sampah: " + e.getMessage(),
+                    "Gagal " + (btnTambahJenis.getText().equals("Ubah") ? "Memperbarui" : "Menyimpan")
+                            + " Jenis Sampah: " + e.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }// GEN-LAST:event_btnTambahJenisActionPerformed
@@ -2107,9 +2141,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
                 // Cek apakah nama kategori baru sudah ada dalam jenis yang sama
                 String checkSql = "SELECT COUNT(*) FROM kategori_sampah k JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
-                        +
-                        "WHERE LOWER(k.nama_kategori) = LOWER(?) AND LOWER(j.nama_jenis) = LOWER(?) " +
-                        "AND NOT (LOWER(k.nama_kategori) = LOWER(?) AND LOWER(j.nama_jenis) = LOWER(?))";
+                        + "WHERE LOWER(k.nama_kategori) = LOWER(?) AND LOWER(j.nama_jenis) = LOWER(?) "
+                        + "AND NOT (LOWER(k.nama_kategori) = LOWER(?) AND LOWER(j.nama_jenis) = LOWER(?))";
 
                 PreparedStatement checkStmt = conn.prepareStatement(checkSql);
                 checkStmt.setString(1, kategoriBaru);
@@ -2127,8 +2160,7 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
                 // Lakukan update
                 String sql = "UPDATE kategori_sampah SET nama_kategori = ?, id_jenis = (SELECT id_jenis FROM jenis_sampah WHERE nama_jenis = ?) "
-                        +
-                        "WHERE id_kategori = ?";
+                        + "WHERE id_kategori = ?";
 
                 PreparedStatement pstmt = conn.prepareStatement(sql);
                 pstmt.setString(1, kategoriBaru);
@@ -2137,16 +2169,15 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 pstmt.executeUpdate();
 
                 // Log successful category update
-                LoggerUtil.insert(users.getId(), "Mengubah kategori sampah dari '" + kategoriLama +
-                        "' (jenis: " + jenisLama + ") menjadi '" + kategoriBaru + "' (jenis: " + jenis + ")");
+                LoggerUtil.insert(users.getId(), "Mengubah kategori sampah dari '" + kategoriLama
+                        + "' (jenis: " + jenisLama + ") menjadi '" + kategoriBaru + "' (jenis: " + jenis + ")");
 
                 JOptionPane.showMessageDialog(this, "Kategori berhasil diperbarui!", "Sukses",
                         JOptionPane.INFORMATION_MESSAGE);
             } else {
                 // Cek apakah kategori sudah ada dalam jenis yang sama
                 String checkSql = "SELECT COUNT(*) FROM kategori_sampah k JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
-                        +
-                        "WHERE LOWER(k.nama_kategori) = LOWER(?) AND LOWER(j.nama_jenis) = LOWER(?)";
+                        + "WHERE LOWER(k.nama_kategori) = LOWER(?) AND LOWER(j.nama_jenis) = LOWER(?)";
                 PreparedStatement checkStmt = conn.prepareStatement(checkSql);
                 checkStmt.setString(1, kategoriBaru);
                 checkStmt.setString(2, jenis);
@@ -2305,8 +2336,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
             // Validate inputs
             if ((lastButtonClicked.equals("setor")
-                    && (kode.isEmpty() || namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty())) ||
-                    (lastButtonClicked.equals("jual")
+                    && (kode.isEmpty() || namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty()))
+                    || (lastButtonClicked.equals("jual")
                             && (namaJenis.isEmpty() || namaKategori.isEmpty() || strBerat.isEmpty()))) {
                 JOptionPane.showMessageDialog(null, "Harap lengkapi semua data!", "Peringatan",
                         JOptionPane.WARNING_MESSAGE);
@@ -2419,10 +2450,10 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     conn.commit();
 
                     // Log successful waste deposit transaction
-                    LoggerUtil.insert(users.getId(), "Setor sampah dari nasabah " + kode +
-                            " (Kategori: " + cbxKategori_pnView.getSelectedItem() +
-                            ", Berat: " + berat + " kg, Total: Rp " +
-                            String.format("%,.0f", total) + ")");
+                    LoggerUtil.insert(users.getId(), "Setor sampah dari nasabah " + kode
+                            + " (Kategori: " + cbxKategori_pnView.getSelectedItem()
+                            + ", Berat: " + berat + " kg, Total: Rp "
+                            + String.format("%,.0f", total) + ")");
 
                     // Update display
                     lblTotal.setText(String.format("Rp %,.0f", total));
@@ -2515,18 +2546,18 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                     conn.commit();
 
                     // Log successful waste sale transaction
-                    LoggerUtil.insert(users.getId(), "Menjual sampah " +
-                            cbxKategori_pnView.getSelectedItem() +
-                            " (Berat: " + berat + " kg, Total: Rp " +
-                            String.format("%,.0f", total) + ")");
+                    LoggerUtil.insert(users.getId(), "Menjual sampah "
+                            + cbxKategori_pnView.getSelectedItem()
+                            + " (Berat: " + berat + " kg, Total: Rp "
+                            + String.format("%,.0f", total) + ")");
 
                     // Update display
                     lblTotal.setText(String.format("Rp %,.0f", total));
 
                     // Show success message
                     int result = JOptionPane.showConfirmDialog(null,
-                            "TRANSAKSI JUAL SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.0f", total) +
-                                    "\nSisa stok: " + String.format("%.2f kg", newStock),
+                            "TRANSAKSI JUAL SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.0f", total)
+                                    + "\nSisa stok: " + String.format("%.2f kg", newStock),
                             "Sukses", JOptionPane.DEFAULT_OPTION);
 
                     if (result == JOptionPane.OK_OPTION) {
@@ -3026,10 +3057,10 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     private void loadJenisSampah() {
         try {
             // For cbxJenis_pnView, only load jenis from tblSampah (unique values)
-            String sqlView = "SELECT DISTINCT j.nama_jenis FROM sampah s " +
-                    "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori " +
-                    "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis " +
-                    "ORDER BY j.nama_jenis";
+            String sqlView = "SELECT DISTINCT j.nama_jenis FROM sampah s "
+                    + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
+                    + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
+                    + "ORDER BY j.nama_jenis";
             Statement stmtView = conn.createStatement();
             ResultSet rsView = stmtView.executeQuery(sqlView);
 
@@ -3078,11 +3109,11 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 int idJenis = idRs.getInt("id_jenis");
 
                 // For cbxKategori_pnView, only load categories from tblSampah
-                String viewQuery = "SELECT DISTINCT k.nama_kategori FROM sampah s " +
-                        "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori " +
-                        "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis " +
-                        "WHERE j.nama_jenis = ? " +
-                        "ORDER BY k.nama_kategori";
+                String viewQuery = "SELECT DISTINCT k.nama_kategori FROM sampah s "
+                        + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
+                        + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
+                        + "WHERE j.nama_jenis = ? "
+                        + "ORDER BY k.nama_kategori";
                 PreparedStatement viewStmt = conn.prepareStatement(viewQuery);
                 viewStmt.setString(1, jenisSampah);
                 ResultSet viewRs = viewStmt.executeQuery();
@@ -3148,8 +3179,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         // Check for duplicate jenis and kategori combination
         if (isDuplicateJenisKategori(kategori, -1)) {
             JOptionPane.showMessageDialog(this,
-                    "Kategori " + kategori + " sudah memiliki harga yang terdaftar!\n" +
-                            "Tidak dapat menambahkan data duplikat.",
+                    "Kategori " + kategori + " sudah memiliki harga yang terdaftar!\n"
+                            + "Tidak dapat menambahkan data duplikat.",
                     "Validasi Data", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -3165,8 +3196,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             pst.executeUpdate();
 
             // Log the successful price addition
-            LoggerUtil.insert(users.getId(), "Menambahkan harga sampah baru untuk kategori: " + kategori +
-                    " (harga setor: " + hargaS + ", harga jual: " + hargaJ + ")");
+            LoggerUtil.insert(users.getId(), "Menambahkan harga sampah baru untuk kategori: " + kategori
+                    + " (harga setor: " + hargaS + ", harga jual: " + hargaJ + ")");
 
             JOptionPane.showMessageDialog(this, "Harga Sampah Berhasil di Tambahkan!", "Sukses",
                     JOptionPane.INFORMATION_MESSAGE);
@@ -3207,8 +3238,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
         // record
         if (isDuplicateJenisKategori(kategori, selectedIdSampah)) {
             JOptionPane.showMessageDialog(this,
-                    "Kategori " + kategori + " sudah memiliki harga yang terdaftar!\n" +
-                            "Tidak dapat mengupdate ke data duplikat.",
+                    "Kategori " + kategori + " sudah memiliki harga yang terdaftar!\n"
+                            + "Tidak dapat mengupdate ke data duplikat.",
                     "Validasi Data", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -3232,8 +3263,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
             if (rowsUpdated > 0) {
                 // Log the successful price update
-                LoggerUtil.insert(users.getId(), "Mengupdate harga sampah kategori: " + kategori +
-                        " (harga setor: " + harga + ", harga jual: " + harga2 + ")");
+                LoggerUtil.insert(users.getId(), "Mengupdate harga sampah kategori: " + kategori
+                        + " (harga setor: " + harga + ", harga jual: " + harga2 + ")");
 
                 JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!", "Informasi",
                         JOptionPane.INFORMATION_MESSAGE);
@@ -3361,9 +3392,10 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     /**
      * Checks if a combination of jenis (type) and kategori (category) already
      * exists in the sampah table
-     * 
+     *
      * @param kategori        The kategori name to check
-     * @param excludeSampahId Optional ID to exclude from the check (for updates)
+     * @param excludeSampahId Optional ID to exclude from the check (for
+     *                        updates)
      * @return true if the combination already exists, false otherwise
      */
     private boolean isDuplicateJenisKategori(String kategori, int excludeSampahId) {
@@ -3374,17 +3406,17 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             if (excludeSampahId > 0) {
                 // For updates - check if the same kategori exists BUT is not the current record
                 // being updated
-                sql = "SELECT COUNT(*) FROM sampah s " +
-                        "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori " +
-                        "WHERE k.nama_kategori = ? AND s.id_sampah != ?";
+                sql = "SELECT COUNT(*) FROM sampah s "
+                        + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
+                        + "WHERE k.nama_kategori = ? AND s.id_sampah != ?";
                 pst = conn.prepareStatement(sql);
                 pst.setString(1, kategori);
                 pst.setInt(2, excludeSampahId);
             } else {
                 // For inserts - check if the same kategori exists anywhere
-                sql = "SELECT COUNT(*) FROM sampah s " +
-                        "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori " +
-                        "WHERE k.nama_kategori = ?";
+                sql = "SELECT COUNT(*) FROM sampah s "
+                        + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
+                        + "WHERE k.nama_kategori = ?";
                 pst = conn.prepareStatement(sql);
                 pst.setString(1, kategori);
             }

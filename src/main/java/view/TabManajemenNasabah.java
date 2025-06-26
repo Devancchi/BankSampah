@@ -74,6 +74,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -121,7 +122,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         txt_date = new component.PlaceholderTextField();
 
         dateChooser1.setDateSelectable(null);
-        dateChooser1.setDateSelectionMode(datechooser.Main.DateChooser.DateSelectionMode.SINGLE_DATE_SELECTED);
+        dateChooser1.setDateSelectionMode(datechooser.Main.DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
 
         setBackground(new java.awt.Color(24, 58, 51));
         setFont(getFont());
@@ -604,6 +605,16 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         txt_nama.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    txt_date.requestFocus();
+                    dateChooser1.requestFocus();
+                    dateChooser1.showPopup();
+                }
+            }
+        });
+
+        txt_date.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
                     txt_alamat.requestFocus();
                 }
             }
@@ -628,7 +639,14 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         txt_email.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-                    btn_save.requestFocus();
+                    txt_Keterangan.requestFocus();
+                }
+            }
+        });
+        txt_Keterangan.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    btn_save.doClick();
                 }
             }
         });
@@ -950,8 +968,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         model.setRowCount(0);
         try {
             String sql = "SELECT id_nasabah, nama_nasabah, alamat, no_telpon, email, tanggal_bergabung, keterangan, saldo_total "
-                    +
-                    "FROM manajemen_nasabah ORDER BY id_nasabah DESC LIMIT ?,?";
+                    + "FROM manajemen_nasabah ORDER BY id_nasabah DESC LIMIT ?,?";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setInt(1, startIndex);
                 st.setInt(2, entriesPage);
@@ -971,8 +988,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                     BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     // Format saldo menjadi string dengan format "Rp 100.000" (tanpa desimal)
-                    String saldoFormatted = "Rp " +
-                            NumberFormat.getIntegerInstance(Locale.forLanguageTag("id-ID")).format(saldo);
+                    String saldoFormatted = "Rp "
+                            + NumberFormat.getIntegerInstance(Locale.forLanguageTag("id-ID")).format(saldo);
 
                     // Include the new fields in the table row
                     Object[] rowData = { idNasabah, namaNasabah, alamat, telepon, email, tanggalBergabung, keterangan,
@@ -1038,8 +1055,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         try {
             // First, get total count for pagination
-            String countSql = "SELECT COUNT(*) as total FROM manajemen_nasabah WHERE " +
-                    "id_nasabah LIKE ? OR nama_nasabah LIKE ? OR email LIKE ? OR no_telpon LIKE ? OR keterangan LIKE ?";
+            String countSql = "SELECT COUNT(*) as total FROM manajemen_nasabah WHERE "
+                    + "id_nasabah LIKE ? OR nama_nasabah LIKE ? OR email LIKE ? OR no_telpon LIKE ? OR keterangan LIKE ?";
 
             try (PreparedStatement countSt = conn.prepareStatement(countSql)) {
                 String pattern = "%" + searchTerm + "%";
@@ -1059,10 +1076,9 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             }
 
             // Now get paginated search results
-            String sql = "SELECT * FROM manajemen_nasabah WHERE " +
-                    "id_nasabah LIKE ? OR nama_nasabah LIKE ? OR email LIKE ? OR no_telpon LIKE ? OR keterangan LIKE ? "
-                    +
-                    "LIMIT ?, ?";
+            String sql = "SELECT * FROM manajemen_nasabah WHERE "
+                    + "id_nasabah LIKE ? OR nama_nasabah LIKE ? OR email LIKE ? OR no_telpon LIKE ? OR keterangan LIKE ? "
+                    + "LIMIT ?, ?";
 
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 String pattern = "%" + searchTerm + "%";
@@ -1121,8 +1137,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         try {
             // Execute search and display results
-            String sql = "SELECT * FROM manajemen_nasabah WHERE id_nasabah LIKE ? OR nama_nasabah LIKE ? " +
-                    "OR email LIKE ? OR no_telpon LIKE ? OR keterangan LIKE ?";
+            String sql = "SELECT * FROM manajemen_nasabah WHERE id_nasabah LIKE ? OR nama_nasabah LIKE ? "
+                    + "OR email LIKE ? OR no_telpon LIKE ? OR keterangan LIKE ?";
 
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 String searchPattern = "%" + currentSearchTerm + "%";
@@ -1181,8 +1197,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         String keterangan = txt_Keterangan.getText();
         String tanggalBergabung = txt_date.getText();
 
-        if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty() ||
-                telepon.isEmpty() || email.isEmpty() || tanggalBergabung.isEmpty()) {
+        if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty()
+                || telepon.isEmpty() || email.isEmpty() || tanggalBergabung.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Kolom ID, Nama, Alamat, Telepon, Email dan Tanggal Bergabung harus diisi!",
                     "Validasi", JOptionPane.ERROR_MESSAGE);
@@ -1196,8 +1212,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         try {
             String sql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, tanggal_bergabung, keterangan) "
-                    +
-                    "VALUES (?,?,?,?,?,?,?)";
+                    + "VALUES (?,?,?,?,?,?,?)";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setString(1, idNasabah);
                 st.setString(2, namaNasabah);
@@ -1236,8 +1251,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         String keterangan = txt_Keterangan.getText();
         String tanggalBergabung = txt_date.getText();
 
-        if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty() ||
-                telepon.isEmpty() || email.isEmpty() || tanggalBergabung.isEmpty()) {
+        if (idNasabah.isEmpty() || namaNasabah.isEmpty() || alamat.isEmpty()
+                || telepon.isEmpty() || email.isEmpty() || tanggalBergabung.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Kolom ID, Nama, Alamat, Telepon, Email dan Tanggal Bergabung harus diisi!",
                     "Validasi", JOptionPane.ERROR_MESSAGE);
@@ -1245,8 +1260,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         }
 
         try {
-            String sql = "UPDATE manajemen_nasabah SET nama_nasabah=?, alamat=?, no_telpon=?, " +
-                    "email=?, tanggal_bergabung=?, keterangan=? WHERE id_nasabah=?";
+            String sql = "UPDATE manajemen_nasabah SET nama_nasabah=?, alamat=?, no_telpon=?, "
+                    + "email=?, tanggal_bergabung=?, keterangan=? WHERE id_nasabah=?";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 st.setString(1, namaNasabah);
                 st.setString(2, alamat);

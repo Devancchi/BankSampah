@@ -263,7 +263,7 @@
                             <Font bold="true" component="jLabel19" property="font" relativeSize="true" size="0"/>
                           </FontInfo>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Jumlah Transaksi"/>
+                        <Property name="text" type="java.lang.String" value="Total Profit"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="lb_total">
