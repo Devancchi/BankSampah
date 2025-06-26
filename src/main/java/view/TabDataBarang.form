@@ -575,6 +575,9 @@
                       <Dimension value="[20, 22]"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_hargaKeyTyped"/>
+                  </Events>
                 </Component>
                 <Component class="component.Jbutton" name="btn_SaveAdd">
                   <Properties>
@@ -642,6 +645,9 @@
                       <Dimension value="[20, 22]"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txt_stokKeyTyped"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel15">
                   <Properties>

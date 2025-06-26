@@ -1,6 +1,8 @@
 package view;
 
 import component.ExcelExporter;
+import component.LoggerUtil;
+import component.UserSession;
 import java.io.File;
 import java.sql.*;
 import javax.swing.*;
@@ -19,8 +21,10 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
     private int dataPerHalaman = 20;
     private int totalPages;
     private int totalData;
+    private UserSession users;
 
-    public TabLaporan_jual_sampah() {
+    public TabLaporan_jual_sampah(UserSession user) {
+        this.users = user;
         initComponents();
         txt_date.setText("");
         loadData("");
@@ -845,7 +849,7 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
 
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_cancelActionPerformed
         panelMain.removeAll();
-        panelMain.add(new TabLaporanStatistik());
+        panelMain.add(new TabLaporanStatistik(users));
         panelMain.repaint();
         panelMain.revalidate();
     }// GEN-LAST:event_btn_cancelActionPerformed
@@ -902,6 +906,21 @@ public class TabLaporan_jual_sampah extends javax.swing.JPanel {
                 // Export to Excel
                 try {
                     ExcelExporter.exportTableModelToExcel(model, fileToSave);
+
+                    // Log export activity
+                    String exportDetails = "Laporan Jual Sampah";
+                    String kataKunci = txt_search.getText().trim();
+                    String tanggalRange = txt_date.getText().trim();
+                    String filterType = box_pilih.getSelectedItem().toString();
+
+                    if (!kataKunci.isEmpty()) {
+                        exportDetails += " dengan filter " + filterType + ": " + kataKunci;
+                    }
+                    if (!tanggalRange.isEmpty()) {
+                        exportDetails += " untuk tanggal: " + tanggalRange;
+                    }
+
+                    LoggerUtil.insert(users.getId(), "Export " + exportDetails);
 
                     // Show success message
                     JOptionPane.showMessageDialog(this,

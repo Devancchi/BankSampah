@@ -8,6 +8,8 @@ import component.UserSession;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.sql.*;
 
 import javax.swing.*;
@@ -332,9 +334,17 @@ public class TabDataBarang extends javax.swing.JPanel {
                     .replaceAll("[\\\\/:*?\"<>|]", "") // Hapus karakter ilegal
                     .replace(" ", "_"); // Ganti spasi dengan underscore
 
-            // Output file ke folder resources/barcode
-            File outputFile = new File("C:/Users/devan/Downloads/" + kode + "_" + cleanName + ".png");
-            outputFile.getParentFile().mkdirs();
+            // Gunakan folder di desktop untuk menyimpan barcode
+            String userHome = System.getProperty("user.home");
+            File barcodeDir = new File(userHome + "/Desktop/barcode");
+
+            // Buat folder barcode di desktop jika belum ada
+            if (!barcodeDir.exists()) {
+                barcodeDir.mkdirs();
+            }
+
+            // Output file ke folder desktop/barcode
+            File outputFile = new File(barcodeDir, kode + "_" + cleanName + ".png");
 
             BitmapCanvasProvider canvas = new BitmapCanvasProvider(
                     new FileOutputStream(outputFile),
@@ -355,6 +365,36 @@ public class TabDataBarang extends javax.swing.JPanel {
         txt_nama.setText(item.getNama());
         txt_harga.setText(String.valueOf((int) item.getHarga()));
         txt_stok.setText(String.valueOf(item.getStok()));
+
+        // Reset selectedImageFile to null
+        selectedImageFile = null;
+
+        try {
+            // Cari file gambar yang sesuai di Desktop/dataBarang
+            String userHome = System.getProperty("user.home");
+            File dataBarangDir = new File(userHome + "/Desktop/dataBarang");
+
+            if (dataBarangDir.exists()) {
+                // Mencari file dengan pattern kodeBarang_*
+                String kodeBrg = item.getKode();
+                File[] matchingFiles = dataBarangDir
+                        .listFiles(file -> file.isFile() && file.getName().startsWith(kodeBrg + "_"));
+
+                if (matchingFiles != null && matchingFiles.length > 0) {
+                    // Gunakan file pertama yang ditemukan
+                    selectedImageFile = matchingFiles[0];
+                    txt_gambar.setText(selectedImageFile.getName());
+                }
+            }
+
+            // Jika tidak ada file yang ditemukan
+            if (selectedImageFile == null) {
+                txt_gambar.setText("(Tidak ada gambar)");
+            }
+        } catch (Exception ex) {
+            System.out.println("Gagal mencari gambar: " + ex.getMessage());
+            txt_gambar.setText("(Error memuat gambar)");
+        }
     }
 
     private void showPanel() {
@@ -400,7 +440,120 @@ public class TabDataBarang extends javax.swing.JPanel {
         btnKembali.setVisible(true);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Checks if a kode_barang or nama_barang already exists in the database
+     * 
+     * @param kode      The item code to check
+     * @param nama      The item name to check
+     * @param excludeId Optional ID to exclude from the check (for updates)
+     * @return A string indicating the duplicate field ("kode", "nama", or null if
+     *         no duplicates)
+     */
+    private String checkDuplicateBarang(String kode, String nama, int excludeId) {
+        try {
+            // Check for duplicate kode_barang
+            String sqlKode = "SELECT COUNT(*) FROM data_barang WHERE kode_barang = ? AND id_barang != ?";
+            PreparedStatement pstKode = conn.prepareStatement(sqlKode);
+            pstKode.setString(1, kode);
+            pstKode.setInt(2, excludeId);
+
+            ResultSet rsKode = pstKode.executeQuery();
+            if (rsKode.next() && rsKode.getInt(1) > 0) {
+                return "kode";
+            }
+
+            // Check for duplicate nama_barang
+            String sqlNama = "SELECT COUNT(*) FROM data_barang WHERE nama_barang = ? AND id_barang != ?";
+            PreparedStatement pstNama = conn.prepareStatement(sqlNama);
+            pstNama.setString(1, nama);
+            pstNama.setInt(2, excludeId);
+
+            ResultSet rsNama = pstNama.executeQuery();
+            if (rsNama.next() && rsNama.getInt(1) > 0) {
+                return "nama";
+            }
+
+            return null; // No duplicates found
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Delete old files associated with a product when updating
+     * 
+     * @param oldKode the old product code
+     */
+    private void deleteOldFiles(String oldKode) {
+        try {
+            String userHome = System.getProperty("user.home");
+
+            // Delete old barcode files
+            File barcodeDir = new File(userHome + "/Desktop/barcode");
+            if (barcodeDir.exists()) {
+                File[] oldBarcodes = barcodeDir
+                        .listFiles((dir, name) -> name.startsWith(oldKode + ".") || name.startsWith(oldKode + "_"));
+                if (oldBarcodes != null) {
+                    for (File file : oldBarcodes) {
+                        if (file.delete()) {
+                            System.out.println("Berhasil menghapus barcode lama: " + file.getName());
+                        } else {
+                            System.out.println("Gagal menghapus barcode lama: " + file.getName());
+                        }
+                    }
+                }
+            }
+
+            // Delete old image files
+            File dataBarangDir = new File(userHome + "/Desktop/dataBarang");
+            if (dataBarangDir.exists()) {
+                File[] oldImages = dataBarangDir.listFiles((dir, name) -> name.startsWith(oldKode + "_"));
+                if (oldImages != null) {
+                    for (File file : oldImages) {
+                        if (file.delete()) {
+                            System.out.println("Berhasil menghapus gambar lama: " + file.getName());
+                        } else {
+                            System.out.println("Gagal menghapus gambar lama: " + file.getName());
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("Error saat menghapus file lama: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Delete only old image files associated with a product without deleting
+     * barcodes
+     * 
+     * @param oldKode the old product code
+     */
+    private void deleteOldImageOnly(String oldKode) {
+        try {
+            String userHome = System.getProperty("user.home");
+
+            // Delete only old image files, not barcode files
+            File dataBarangDir = new File(userHome + "/Desktop/dataBarang");
+            if (dataBarangDir.exists()) {
+                File[] oldImages = dataBarangDir.listFiles((dir, name) -> name.startsWith(oldKode + "_"));
+                if (oldImages != null) {
+                    for (File file : oldImages) {
+                        if (file.delete()) {
+                            System.out.println("Berhasil menghapus gambar lama: " + file.getName());
+                        } else {
+                            System.out.println("Gagal menghapus gambar lama: " + file.getName());
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("Error saat menghapus file gambar lama: " + ex.getMessage());
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated
@@ -721,6 +874,11 @@ public class TabDataBarang extends javax.swing.JPanel {
         jLabel13.setText("Harga");
 
         txt_harga.setPreferredSize(new java.awt.Dimension(20, 22));
+        txt_harga.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_hargaKeyTyped(evt);
+            }
+        });
 
         btn_SaveAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icon_simpan.png"))); // NOI18N
         btn_SaveAdd.setText("Simpan");
@@ -752,6 +910,11 @@ public class TabDataBarang extends javax.swing.JPanel {
         jLabel14.setText("Jumlah Stok");
 
         txt_stok.setPreferredSize(new java.awt.Dimension(20, 22));
+        txt_stok.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txt_stokKeyTyped(evt);
+            }
+        });
 
         jLabel15.setFont(jLabel15.getFont().deriveFont(jLabel15.getFont().getSize() + 10f));
         jLabel15.setText("Gambar");
@@ -902,6 +1065,37 @@ public class TabDataBarang extends javax.swing.JPanel {
         add(panelMain, "card2");
     }// </editor-fold>//GEN-END:initComponents
 
+    private void txt_hargaKeyTyped(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txt_hargaKeyTyped
+        char c = evt.getKeyChar();
+
+        // Allow only digits, decimal point, and control characters (backspace, delete,
+        // etc.)
+        if ((c == '-') || // No minus sign
+                (c != '.' && !Character.isDigit(c) && !Character.isISOControl(c))) {
+            evt.consume(); // Ignore invalid characters
+        }
+
+        // Only allow one decimal point
+        if (c == '.') {
+            evt.consume(); // Abaikan semua titik desimal
+        }
+    }// GEN-LAST:event_txt_hargaKeyTyped
+
+    private void txt_stokKeyTyped(java.awt.event.KeyEvent evt) {// GEN-FIRST:event_txt_stokKeyTyped
+        char c = evt.getKeyChar();
+
+        // Allow only digits, decimal point, and control characters (backspace, delete,
+        // etc.)
+        if ((c == '-') || // No minus sign
+                (c != '.' && !Character.isDigit(c) && !Character.isISOControl(c))) {
+            evt.consume(); // Ignore invalid characters
+        }
+
+        if (c == '.') {
+            evt.consume(); // Abaikan semua titik desimal
+        }
+    }// GEN-LAST:event_txt_stokKeyTyped
+
     private void btnKembaliActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnKembaliActionPerformed
         showPanel();
     }// GEN-LAST:event_btnKembaliActionPerformed
@@ -921,77 +1115,256 @@ public class TabDataBarang extends javax.swing.JPanel {
     }// GEN-LAST:event_btn_SaveAddActionPerformed
 
     private void insertData() {
-        String kodeBrg = txt_kode.getText();
-        String namaBrg = txt_nama.getText();
-        String hargaBrg = txt_harga.getText();
-        int harga = Integer.parseInt(hargaBrg);
-        String stok = txt_stok.getText();
-        int stock = Integer.parseInt(stok);
+        String kodeBrg = txt_kode.getText().trim();
+        String namaBrg = txt_nama.getText().trim();
 
-        // Baca gambar ke dalam byte array
-        byte[] gambarData = null;
-        if (selectedImageFile != null) {
-            try (FileInputStream fis = new FileInputStream(selectedImageFile)) {
-                gambarData = fis.readAllBytes();
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Gagal membaca file gambar.", "Error", JOptionPane.ERROR_MESSAGE);
+        // Validasi kode barang dan nama barang tidak boleh sama
+        if (kodeBrg.equalsIgnoreCase(namaBrg)) {
+            JOptionPane.showMessageDialog(this, "Kode barang dan nama barang tidak boleh sama!",
+                    "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Validasi kode barang dan nama barang tidak boleh kosong
+        if (kodeBrg.isEmpty() || namaBrg.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Kode barang dan nama barang harus diisi!",
+                    "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Validasi kode barang dan nama barang tidak boleh duplikat di database
+        String duplikat = checkDuplicateBarang(kodeBrg, namaBrg, -1); // -1 because we're inserting new record
+        if (duplikat != null) {
+            if (duplikat.equals("kode")) {
+                JOptionPane.showMessageDialog(this, "Kode barang '" + kodeBrg + "' sudah digunakan!",
+                        "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Nama barang '" + namaBrg + "' sudah digunakan!",
+                        "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+            }
+            return;
+        }
+
+        // Validasi format harga and stok
+        try {
+            String hargaBrg = txt_harga.getText().trim();
+            int harga = Integer.parseInt(hargaBrg);
+            String stokText = txt_stok.getText().trim();
+            int stock = Integer.parseInt(stokText);
+
+            if (harga < 0) {
+                JOptionPane.showMessageDialog(this, "Harga tidak boleh negatif!",
+                        "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-        }
-        try {
-            String sql = "INSERT INTO data_barang (kode_barang, nama_barang, harga, stok, gambar) "
-                    + "VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement pst = conn.prepareStatement(sql);
-            generate(kodeBrg);
-            pst.setString(1, kodeBrg);
-            pst.setString(2, namaBrg);
-            pst.setDouble(3, harga);
-            pst.setInt(4, stock);
-            pst.setBytes(5, gambarData);
-            pst.executeUpdate();
-            clearForm();
-            notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Data berhasil disimpan.");
-            LoggerUtil.insert(users.getId(), "Menambah Data Barang ID: " + kodeBrg);
-            showPanel();
-        } catch (SQLException ex) {
-            Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, null, ex);
-            notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING,
-                    "Gagal menyimpan data: " + ex.getMessage());
+
+            if (stock < 0) {
+                JOptionPane.showMessageDialog(this, "Stok tidak boleh negatif!",
+                        "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Baca gambar ke dalam byte array
+            byte[] gambarData = null;
+            String destinationFileName = "";
+
+            if (selectedImageFile != null) {
+                try (FileInputStream fis = new FileInputStream(selectedImageFile)) {
+                    gambarData = fis.readAllBytes();
+
+                    // Sanitasi nama barang untuk nama file
+                    String cleanName = namaBrg
+                            .replaceAll("[\\\\/:*?\"<>|]", "") // Hapus karakter ilegal
+                            .replace(" ", "_"); // Ganti spasi dengan underscore
+
+                    // Save image to Desktop/dataBarang
+                    String userHome = System.getProperty("user.home");
+                    File dataBarangDir = new File(userHome + "/Desktop/dataBarang");
+
+                    // Buat folder dataBarang di desktop jika belum ada
+                    if (!dataBarangDir.exists()) {
+                        dataBarangDir.mkdirs();
+                    }
+
+                    // Format nama file: kodeBarang_namaBarang.extension
+                    String extension = selectedImageFile.getName()
+                            .substring(selectedImageFile.getName().lastIndexOf('.'));
+                    destinationFileName = kodeBrg + "_" + cleanName + extension;
+                    File destinationFile = new File(dataBarangDir, destinationFileName);
+
+                    // Copy file to Desktop/dataBarang
+                    Files.copy(selectedImageFile.toPath(), destinationFile.toPath(),
+                            StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("Gambar tersimpan di: " + destinationFile.getPath());
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Gagal membaca file gambar: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+
+            try {
+                String sql = "INSERT INTO data_barang (kode_barang, nama_barang, harga, stok, gambar) "
+                        + "VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement pst = conn.prepareStatement(sql);
+                generate(kodeBrg);
+                pst.setString(1, kodeBrg);
+                pst.setString(2, namaBrg);
+                pst.setDouble(3, harga);
+                pst.setInt(4, stock);
+                pst.setBytes(5, gambarData); // gambarData bisa null jika tidak ada gambar
+                pst.executeUpdate();
+                clearForm();
+                notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS,
+                        "Data berhasil disimpan.");
+                LoggerUtil.insert(users.getId(), "Menambah Data Barang ID: " + kodeBrg);
+                showPanel();
+            } catch (SQLException ex) {
+                Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, null, ex);
+                notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING,
+                        "Gagal menyimpan data: " + ex.getMessage());
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Format harga atau stok tidak valid! Masukkan angka yang valid.",
+                    "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
         }
     }
 
     private void updateData() {
         try {
             int id = selectedItem.getId();
-            String kodeBrg = txt_kode.getText();
-            String namaBrg = txt_nama.getText();
-            double harga = Double.parseDouble(txt_harga.getText());
-            int stok = Integer.parseInt(txt_stok.getText());
+            String kodeBrg = txt_kode.getText().trim();
+            String namaBrg = txt_nama.getText().trim();
 
-            // Read the new image file if selected
-            byte[] gambarData = null;
-            if (selectedImageFile != null) {
-                try (FileInputStream fis = new FileInputStream(selectedImageFile)) {
-                    gambarData = fis.readAllBytes();
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "Gagal membaca file gambar : " + ex.getMessage());
-                    return;
-                }
+            // Validasi kode barang dan nama barang tidak boleh sama
+            if (kodeBrg.equalsIgnoreCase(namaBrg)) {
+                JOptionPane.showMessageDialog(this, "Kode barang dan nama barang tidak boleh sama!",
+                        "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+                return;
             }
 
-            String sql = "UPDATE data_barang SET kode_barang = ?, nama_barang = ?, harga = ?, stok = ?, gambar = ? WHERE id_barang = ?";
-            PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setString(1, kodeBrg);
-            pst.setString(2, namaBrg);
-            pst.setDouble(3, harga);
-            pst.setInt(4, stok);
-            pst.setBytes(5, gambarData);
-            pst.setInt(6, id);
-            pst.executeUpdate();
-            clearForm();
-            notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS, "Data berhasil diupdate.");
-            LoggerUtil.insert(users.getId(), "Mengupdate Data barang ID: " + kodeBrg);
-            showPanel();
+            // Validasi kode barang dan nama barang tidak boleh kosong
+            if (kodeBrg.isEmpty() || namaBrg.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Kode barang dan nama barang harus diisi!",
+                        "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Validasi kode barang dan nama barang tidak boleh duplikat di database
+            // Kecuali untuk item yang sedang diupdate (exclude item dengan ID yang sama)
+            String duplikat = checkDuplicateBarang(kodeBrg, namaBrg, id);
+            if (duplikat != null) {
+                if (duplikat.equals("kode")) {
+                    JOptionPane.showMessageDialog(this, "Kode barang '" + kodeBrg + "' sudah digunakan oleh item lain!",
+                            "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Nama barang '" + namaBrg + "' sudah digunakan oleh item lain!",
+                            "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+                }
+                return;
+            }
+
+            // Validasi format harga dan stok
+            try {
+                double harga = Double.parseDouble(txt_harga.getText().trim());
+                int stok = Integer.parseInt(txt_stok.getText().trim());
+
+                if (harga < 0) {
+                    JOptionPane.showMessageDialog(this, "Harga tidak boleh negatif!",
+                            "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if (stok < 0) {
+                    JOptionPane.showMessageDialog(this, "Stok tidak boleh negatif!",
+                            "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                // Read the new image file if selected
+                byte[] gambarData = null;
+                if (selectedImageFile != null) {
+                    try (FileInputStream fis = new FileInputStream(selectedImageFile)) {
+                        gambarData = fis.readAllBytes();
+
+                        // Sanitasi nama barang untuk nama file
+                        String cleanName = namaBrg
+                                .replaceAll("[\\\\/:*?\"<>|]", "") // Hapus karakter ilegal
+                                .replace(" ", "_"); // Ganti spasi dengan underscore
+
+                        // Save image to Desktop/dataBarang
+                        String userHome = System.getProperty("user.home");
+                        File dataBarangDir = new File(userHome + "/Desktop/dataBarang");
+
+                        // Buat folder dataBarang di desktop jika belum ada
+                        if (!dataBarangDir.exists()) {
+                            dataBarangDir.mkdirs();
+                        }
+
+                        // Format nama file: kodeBarang_namaBarang.extension
+                        String extension = selectedImageFile.getName()
+                                .substring(selectedImageFile.getName().lastIndexOf('.'));
+                        String destinationFileName = kodeBrg + "_" + cleanName + extension;
+                        File destinationFile = new File(dataBarangDir, destinationFileName);
+
+                        // Copy file to Desktop/dataBarang
+                        Files.copy(selectedImageFile.toPath(), destinationFile.toPath(),
+                                StandardCopyOption.REPLACE_EXISTING);
+                        System.out.println("Gambar tersimpan di: " + destinationFile.getPath());
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(this, "Gagal membaca file gambar : " + ex.getMessage());
+                        return;
+                    }
+                } else {
+                    // Jika tidak ada gambar baru dipilih, coba ambil gambar lama dari database
+                    try {
+                        String sqlGetOldImage = "SELECT gambar FROM data_barang WHERE id_barang = ?";
+                        PreparedStatement pstGetOld = conn.prepareStatement(sqlGetOldImage);
+                        pstGetOld.setInt(1, id);
+                        ResultSet rs = pstGetOld.executeQuery();
+                        if (rs.next()) {
+                            gambarData = rs.getBytes("gambar");
+                        }
+                        rs.close();
+                        pstGetOld.close();
+                    } catch (SQLException ex) {
+                        System.out.println("Gagal mengambil gambar lama: " + ex.getMessage());
+                        // Lanjutkan proses update meskipun gagal mengambil gambar lama
+                    }
+                }
+
+                // Get the old code before updating
+                String oldKode = selectedItem.getKode();
+
+                if (!kodeBrg.equals(oldKode)) {
+                    // If the product code is changed, delete all old files and generate new barcode
+                    deleteOldFiles(oldKode);
+                    generate(kodeBrg);
+                } else if (selectedImageFile != null) {
+                    // If only the image is changed (code stays the same), only delete old images,
+                    // not barcodes
+                    deleteOldImageOnly(oldKode);
+                }
+
+                String sql = "UPDATE data_barang SET kode_barang = ?, nama_barang = ?, harga = ?, stok = ?, gambar = ? WHERE id_barang = ?";
+                PreparedStatement pst = conn.prepareStatement(sql);
+                pst.setString(1, kodeBrg);
+                pst.setString(2, namaBrg);
+                pst.setDouble(3, harga);
+                pst.setInt(4, stok);
+                pst.setBytes(5, gambarData); // gambarData bisa null jika tidak ada gambar
+                pst.setInt(6, id);
+                pst.executeUpdate();
+                clearForm();
+                notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS,
+                        "Data berhasil diupdate.");
+                LoggerUtil.insert(users.getId(), "Mengupdate Data barang ID: " + kodeBrg);
+                showPanel();
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Format harga atau stok tidak valid! Masukkan angka yang valid.",
+                        "Validasi Gagal", JOptionPane.WARNING_MESSAGE);
+            }
         } catch (SQLException ex) {
             Logger.getLogger(TabDataBarang.class.getName()).log(Level.SEVERE, null, ex);
             notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING,
@@ -1091,12 +1464,15 @@ public class TabDataBarang extends javax.swing.JPanel {
                     pst.close();
 
                     if (rowsAffected > 0) {
+                        deleteOldFiles(kodeBrg);
+
                         notification.toast.Notifications.getInstance().show(Notifications.Type.SUCCESS,
                                 "Berhasil Menghapus Barang.");
                         loadDataBarang();
                         selectedItem = null;
                         btnTambah.setEnabled(false);
                         btnHapus.setEnabled(false);
+                        showPanel();
                         LoggerUtil.insert(users.getId(), "Menghapus Data Barang Kode: " + kodeBrg); // ⬅️ log aman
                     } else {
                         notification.toast.Notifications.getInstance().show(Notifications.Type.WARNING,
