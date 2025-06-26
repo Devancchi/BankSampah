@@ -1,6 +1,8 @@
 package view;
 
 import component.ExcelExporter;
+import component.LoggerUtil;
+import component.UserSession;
 import java.io.File;
 import java.sql.*;
 import javax.swing.*;
@@ -21,6 +23,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     private int dataPerHalaman = 20;
     private int totalPages;
     private int totalData;
+    private UserSession users;
 
     // Variable to store current filter type - "Pemasukan", "Pengeluaran", or "" for
     // all
@@ -29,7 +32,8 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
     // Variable for filtering based on combobox selection
     private String filterJenis = null;
 
-    public TabLaporan_tarik_saldo() {
+    public TabLaporan_tarik_saldo(UserSession user) {
+        this.users = user;
         initComponents();
         txt_date.setText("");
         loadData("");
@@ -875,7 +879,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
 
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_cancelActionPerformed
         panelMain.removeAll();
-        panelMain.add(new TabLaporanStatistik());
+        panelMain.add(new TabLaporanStatistik(users));
         panelMain.repaint();
         panelMain.revalidate();
     }// GEN-LAST:event_btn_cancelActionPerformed
@@ -932,6 +936,25 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                 // Export to Excel
                 try {
                     ExcelExporter.exportTableModelToExcel(model, fileToSave);
+
+                    // Log export activity
+                    String exportDetails = "Laporan Tarik Saldo";
+                    String kataKunci = txt_search.getText().trim();
+                    String tanggalRange = txt_date.getText().trim();
+                    String filterType = box_pilih.getSelectedItem().toString();
+                    String filterMasukKeluar = box_FilterMK.getSelectedItem().toString();
+
+                    if (!kataKunci.isEmpty()) {
+                        exportDetails += " dengan filter " + filterType + ": " + kataKunci;
+                    }
+                    if (!tanggalRange.isEmpty()) {
+                        exportDetails += " untuk tanggal: " + tanggalRange;
+                    }
+                    if (!"Default".equals(filterMasukKeluar)) {
+                        exportDetails += " filter transaksi: " + filterMasukKeluar;
+                    }
+
+                    LoggerUtil.insert(users.getId(), "Export " + exportDetails);
 
                     // Show success message
                     JOptionPane.showMessageDialog(this,

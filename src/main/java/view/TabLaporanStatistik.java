@@ -1,6 +1,8 @@
 package view;
 
 import component.ExcelExporter;
+import component.LoggerUtil;
+import component.UserSession;
 import grafik.main.ModelChart;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -25,8 +27,10 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
     private int dataPerHalaman = 20;
     private int totalPages;
     private int totalData;
+    private UserSession users;
 
-    public TabLaporanStatistik() {
+    public TabLaporanStatistik(UserSession user) {
+        this.users = user;
         initComponents();
         loadDashboardData();
         txt_date.setText("");
@@ -465,7 +469,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
 
     private void showPanel() {
         panelMain.removeAll();
-        panelMain.add(new TabLaporanStatistik());
+        panelMain.add(new TabLaporanStatistik(users));
         panelMain.repaint();
         panelMain.revalidate();
     }
@@ -1273,7 +1277,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
     private void btn_detail_pemasukanActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_detail_pemasukanActionPerformed
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabLaporan_setor_sampah());
+        panelMain.add(new TabLaporan_setor_sampah(users));
         panelMain.repaint();
         panelMain.revalidate();
         notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Transaksi");
@@ -1282,7 +1286,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
     private void btn_laporan_transaksiActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_laporan_transaksiActionPerformed
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabLaporan_transaksi());
+        panelMain.add(new TabLaporan_transaksi(users));
         panelMain.repaint();
         panelMain.revalidate();
         notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Transaksi");
@@ -1291,7 +1295,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
     private void btn_laporan_jual_sampahActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_laporan_jual_sampahActionPerformed
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabLaporan_jual_sampah());
+        panelMain.add(new TabLaporan_jual_sampah(users));
         panelMain.repaint();
         panelMain.revalidate();
         notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Jual Sampah");
@@ -1569,6 +1573,16 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
                 try {
                     ExcelExporter.exportTableModelToExcel(exportModel, fileToSave);
 
+                    // Log export activity
+                    String exportDetails = "Laporan Statistik";
+                    if (!kataKunci.isEmpty()) {
+                        exportDetails += " dengan filter kata kunci: " + kataKunci;
+                    }
+                    if (isSingleDate || isRange) {
+                        exportDetails += " untuk tanggal: " + txt_date.getText();
+                    }
+                    LoggerUtil.insert(users.getId(), "Export " + exportDetails);
+
                     JOptionPane.showMessageDialog(this,
                             "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
                             "Sukses",
@@ -1813,7 +1827,7 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
     private void btn_laporan_saldoActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_laporan_saldoActionPerformed
         panelMain.setOpaque(false);
         panelMain.removeAll();
-        panelMain.add(new TabLaporan_tarik_saldo());
+        panelMain.add(new TabLaporan_tarik_saldo(users));
         panelMain.repaint();
         panelMain.revalidate();
         notification.toast.Notifications.getInstance().show(Notifications.Type.INFO, "Beralih Halaman Saldo");
