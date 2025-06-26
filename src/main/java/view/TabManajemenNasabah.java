@@ -51,6 +51,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     private int dataPerHalaman = 20;
     private int totalPages;
     private final UserSession users;
+    private String currentSearchTerm = "";
+    private boolean isSearchActive = false;
 
     public TabManajemenNasabah(UserSession user) {
         this.users = user;
@@ -650,6 +652,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     }// GEN-LAST:event_btn_backActionPerformed
 
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btn_cancelActionPerformed
+        clearSearch();
         showPanel();
     }// GEN-LAST:event_btn_cancelActionPerformed
 
@@ -737,6 +740,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                             "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
                             "Sukses",
                             JOptionPane.INFORMATION_MESSAGE);
+                    LoggerUtil.insert(users.getId(), "Export data nasabah");
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this,
                             "Gagal mengekspor file: " + e.getMessage(),
@@ -982,14 +986,22 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
     }
 
     private void loadData() {
-        calculateTotalPage();
-        int totalData = getTotalData();
-        lb_halaman.setText(String.valueOf("Page " + halamanSaatIni + " Dari Total " + totalData + " Data"));
-        int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
-        getData(startIndex, dataPerHalaman, (DefaultTableModel) tbl_data.getModel());
+        if (isSearchActive) {
+            // If we're in search mode, use search method
+            searchWithPagination(currentSearchTerm, halamanSaatIni);
+        } else {
+            // Normal data loading
+            calculateTotalPage();
+            int totalData = getTotalData();
+            lb_halaman.setText(String.valueOf("Page " + halamanSaatIni + " Dari Total " + totalData + " Data"));
+            int startIndex = (halamanSaatIni - 1) * dataPerHalaman;
+            getData(startIndex, dataPerHalaman, (DefaultTableModel) tbl_data.getModel());
+        }
+
         btn_delete.setVisible(false);
         btn_cancel.setVisible(false);
-        resetPagination();
+        btn_add.setText("Tambah");
+        btn_add.setIcon(new ImageIcon("src\\main\\resources\\icon\\icon_tambah.png"));
     }
 
     private void dataTabel() {
@@ -1020,20 +1032,105 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         }
     }
 
-    private void searchData() {
-        String kataKunci = txt_search.getText();
+    private void searchWithPagination(String searchTerm, int page) {
         DefaultTableModel model = (DefaultTableModel) tbl_data.getModel();
         model.setRowCount(0);
 
         try {
+            // First, get total count for pagination
+            String countSql = "SELECT COUNT(*) as total FROM manajemen_nasabah WHERE " +
+                    "id_nasabah LIKE ? OR nama_nasabah LIKE ? OR email LIKE ? OR no_telpon LIKE ? OR keterangan LIKE ?";
+
+            try (PreparedStatement countSt = conn.prepareStatement(countSql)) {
+                String pattern = "%" + searchTerm + "%";
+                countSt.setString(1, pattern);
+                countSt.setString(2, pattern);
+                countSt.setString(3, pattern);
+                countSt.setString(4, pattern);
+                countSt.setString(5, pattern);
+
+                ResultSet countRs = countSt.executeQuery();
+                if (countRs.next()) {
+                    int totalData = countRs.getInt("total");
+                    totalPages = (int) Math.ceil((double) totalData / dataPerHalaman);
+                    lb_halaman.setText(
+                            String.valueOf("Page " + halamanSaatIni + " Dari Total " + totalData + " Data (Filtered)"));
+                }
+            }
+
+            // Now get paginated search results
+            String sql = "SELECT * FROM manajemen_nasabah WHERE " +
+                    "id_nasabah LIKE ? OR nama_nasabah LIKE ? OR email LIKE ? OR no_telpon LIKE ? OR keterangan LIKE ? "
+                    +
+                    "LIMIT ?, ?";
+
+            try (PreparedStatement st = conn.prepareStatement(sql)) {
+                String pattern = "%" + searchTerm + "%";
+                st.setString(1, pattern);
+                st.setString(2, pattern);
+                st.setString(3, pattern);
+                st.setString(4, pattern);
+                st.setString(5, pattern);
+                st.setInt(6, (page - 1) * dataPerHalaman);
+                st.setInt(7, dataPerHalaman);
+
+                ResultSet rs = st.executeQuery();
+                NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
+
+                while (rs.next()) {
+                    String idNasabah = rs.getString("id_nasabah");
+                    String namaNasabah = rs.getString("nama_nasabah");
+                    String alamat = rs.getString("alamat");
+                    String telepon = rs.getString("no_telpon");
+                    String email = rs.getString("email");
+                    String tanggalBergabung = rs.getString("tanggal_bergabung");
+                    String keterangan = rs.getString("keterangan");
+                    BigDecimal saldo = rs.getBigDecimal("saldo_total");
+
+                    String saldoFormatted;
+                    if (saldo.stripTrailingZeros().scale() <= 0) {
+                        // Tanpa desimal
+                        saldoFormatted = "Rp " + NumberFormat.getIntegerInstance(new Locale("id", "ID")).format(saldo);
+                    } else {
+                        // Dengan desimal
+                        saldoFormatted = "Rp " + formatRupiah.format(saldo).replace(",00", "");
+                    }
+
+                    Object[] rowData = { idNasabah, namaNasabah, alamat, telepon, email, tanggalBergabung, keterangan,
+                            saldoFormatted };
+                    model.addRow(rowData);
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    private void searchData() {
+        currentSearchTerm = txt_search.getText();
+        isSearchActive = !currentSearchTerm.isEmpty();
+
+        DefaultTableModel model = (DefaultTableModel) tbl_data.getModel();
+        model.setRowCount(0);
+
+        // If search is empty, just load normal data
+        if (!isSearchActive) {
+            loadData();
+            return;
+        }
+
+        try {
+            // Execute search and display results
             String sql = "SELECT * FROM manajemen_nasabah WHERE id_nasabah LIKE ? OR nama_nasabah LIKE ? " +
                     "OR email LIKE ? OR no_telpon LIKE ? OR keterangan LIKE ?";
+
             try (PreparedStatement st = conn.prepareStatement(sql)) {
-                st.setString(1, "%" + kataKunci + "%");
-                st.setString(2, "%" + kataKunci + "%");
-                st.setString(3, "%" + kataKunci + "%");
-                st.setString(4, "%" + kataKunci + "%");
-                st.setString(5, "%" + kataKunci + "%");
+                String searchPattern = "%" + currentSearchTerm + "%";
+                st.setString(1, searchPattern);
+                st.setString(2, searchPattern);
+                st.setString(3, searchPattern);
+                st.setString(4, searchPattern);
+                st.setString(5, searchPattern);
 
                 ResultSet rs = st.executeQuery();
                 NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"));
@@ -1387,6 +1484,15 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         btn_add.setFillOver(new Color(33, 150, 83));
         btn_delete.setVisible(false);
         btn_cancel.setVisible(false);
+    }
+
+    // Add a method to clear search
+    private void clearSearch() {
+        currentSearchTerm = "";
+        isSearchActive = false;
+        txt_search.setText("");
+        halamanSaatIni = 1;
+        loadData();
     }
 
     private boolean isDuplicate(String telepon, String email) {
