@@ -7,9 +7,7 @@ import java.sql.SQLException;
 
 public class DBconnect {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "";
+    private static final String URL = "jdbc:sqlite:bank_sampah_sahabat_ibu.db";
     private static DBconnect instance;
     
     public static DBconnect getInstance() {
@@ -22,8 +20,8 @@ public class DBconnect {
     public static Connection getConnection() {
         Connection connection = null;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // Load MySQL JDBC Driver
-            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Class.forName("org.sqlite.JDBC"); // Load SQLite JDBC Driver
+            connection = DriverManager.getConnection(URL);
             LoggerUtil.setConnection(connection);  // Set koneksi untuk LoggerUtil
         } catch (ClassNotFoundException e) {
             System.out.println("Driver tidak ditemukan: " + e.getMessage());
