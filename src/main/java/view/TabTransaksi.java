@@ -1135,11 +1135,11 @@ public class TabTransaksi extends javax.swing.JPanel {
                 String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, tanggal_bergabung, alamat, no_telpon, email, keterangan, saldo_total) "
                         +
                         "VALUES ('non-nasabah', 'Non Nasabah', CURRENT_TIMESTAMP, '-', '-', '-', 'Nasabah untuk transaksi tunai', 0)";
+
                 PreparedStatement insertPst = conn.prepareStatement(insertSql);
                 insertPst.executeUpdate();
                 insertPst.close();
             }
-
             // Lanjutkan dengan proses pembayaran tunai seperti biasa
             String input = txttunai.getText().trim().replaceAll("[^\\d]", "");
             if (input.isEmpty()) {

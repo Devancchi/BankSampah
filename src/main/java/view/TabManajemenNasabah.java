@@ -1268,7 +1268,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
             return;
         }
 
-        // Cek jika ID baru sudah ada di database dan bukan milik data yang sedang diedit
+        // Cek jika ID baru sudah ada di database dan bukan milik data yang sedang
+        // diedit
         if (!idNasabah.equals(oldIdNasabah)) {
             try {
                 String cekSql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE id_nasabah = ?";
@@ -1276,13 +1277,15 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                     cekSt.setString(1, idNasabah);
                     ResultSet rs = cekSt.executeQuery();
                     if (rs.next() && rs.getInt(1) > 0) {
-                        JOptionPane.showMessageDialog(this, "ID sudah ada pada nasabah lain!", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "ID sudah ada pada nasabah lain!", "Error",
+                                JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
             } catch (SQLException e) {
                 Logger.getLogger(TabManajemenNasabah.class.getName()).log(Level.SEVERE, null, e);
-                JOptionPane.showMessageDialog(this, "Gagal cek ID nasabah: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Gagal cek ID nasabah: " + e.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
@@ -1303,7 +1306,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 int rowUpdated = st.executeUpdate();
                 if (rowUpdated > 0) {
                     JOptionPane.showMessageDialog(this, "Data berhasil diupdate");
-                    LoggerUtil.insert(users.getId(), "Mengupdate data nasabah ID: " + idNasabah + " (dari ID lama: " + oldIdNasabah + ")");
+                    LoggerUtil.insert(users.getId(),
+                            "Mengupdate data nasabah ID: " + idNasabah + " (dari ID lama: " + oldIdNasabah + ")");
                     resetForm();
                     loadData();
                     showPanel();
@@ -1373,9 +1377,11 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
                     // Format saldo menjadi string dengan format "Rp 100.000" (tanpa desimal)
                     String saldoFormatted = "Rp "
-                            + java.text.NumberFormat.getIntegerInstance(java.util.Locale.forLanguageTag("id-ID")).format(saldo);
+                            + java.text.NumberFormat.getIntegerInstance(java.util.Locale.forLanguageTag("id-ID"))
+                                    .format(saldo);
 
-                    Object[] rowData = { id, nama, alamat, telepon, email, tanggalBergabung, keterangan, saldoFormatted };
+                    Object[] rowData = { id, nama, alamat, telepon, email, tanggalBergabung, keterangan,
+                            saldoFormatted };
                     model.addRow(rowData);
                 }
             }
@@ -1458,7 +1464,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                         continue;
                     }
 
-                    // Ambil cell sesuai urutan kolom export: ID, Nama, Alamat, Telepon, Email, Tanggal Bergabung, Keterangan, Saldo
+                    // Ambil cell sesuai urutan kolom export: ID, Nama, Alamat, Telepon, Email,
+                    // Tanggal Bergabung, Keterangan, Saldo
                     Cell idCell = row.getCell(0);
                     Cell namaCell = row.getCell(1);
                     Cell alamatCell = row.getCell(2);
@@ -1470,7 +1477,8 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
                     // Skip if any required cell is null
                     if (idCell == null || namaCell == null || alamatCell == null
-                            || teleponCell == null || emailCell == null || tanggalBergabungCell == null || keteranganCell == null || saldoCell == null) {
+                            || teleponCell == null || emailCell == null || tanggalBergabungCell == null
+                            || keteranganCell == null || saldoCell == null) {
                         continue;
                     }
 
