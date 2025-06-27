@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.math.BigDecimal;
 import notification.toast.Notifications;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 
 /**
  *
@@ -1017,8 +1018,12 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
 
         btn_delete.setVisible(false);
         btn_cancel.setVisible(false);
+        // Reset btn_add ke mode tambah (warna hijau, ikon tambah)
         btn_add.setText("Tambah");
         btn_add.setIcon(new ImageIcon("src\\main\\resources\\icon\\icon_tambah.png"));
+        btn_add.setFillClick(new Color(46, 204, 113));
+        btn_add.setFillOriginal(new Color(39, 174, 96));
+        btn_add.setFillOver(new Color(33, 150, 83));
     }
 
     private void dataTabel() {
@@ -1320,28 +1325,37 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         model.setRowCount(0);
 
         try {
-            String sql = "SELECT * FROM manajemen_nasabah ORDER BY id_nasabah DESC";
+            String sql = "SELECT id_nasabah, nama_nasabah, alamat, no_telpon, email, tanggal_bergabung, keterangan, saldo_total FROM manajemen_nasabah ORDER BY id_nasabah DESC";
             try (PreparedStatement st = conn.prepareStatement(sql)) {
                 ResultSet rs = st.executeQuery();
 
                 while (rs.next()) {
                     String id = rs.getString("id_nasabah");
+                    // Normalisasi ID: trim dan hilangkan .0 jika ada
+                    if (id != null) {
+                        id = id.trim();
+                        if (id.endsWith(".0")) {
+                            id = id.substring(0, id.length() - 2);
+                        }
+                    }
                     String nama = rs.getString("nama_nasabah");
                     String alamat = rs.getString("alamat");
                     String telepon = rs.getString("no_telpon");
                     String email = rs.getString("email");
-                    BigDecimal saldo = rs.getBigDecimal("saldo_total");
+                    String tanggalBergabung = rs.getString("tanggal_bergabung");
+                    String keterangan = rs.getString("keterangan");
+                    java.math.BigDecimal saldo = rs.getBigDecimal("saldo_total");
 
                     // Format saldo menjadi string dengan format "Rp 100.000" (tanpa desimal)
                     String saldoFormatted = "Rp "
-                            + NumberFormat.getIntegerInstance(Locale.forLanguageTag("id-ID")).format(saldo);
+                            + java.text.NumberFormat.getIntegerInstance(java.util.Locale.forLanguageTag("id-ID")).format(saldo);
 
-                    Object[] rowData = { id, nama, alamat, telepon, email, saldoFormatted };
+                    Object[] rowData = { id, nama, alamat, telepon, email, tanggalBergabung, keterangan, saldoFormatted };
                     model.addRow(rowData);
                 }
             }
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Gagal ambil data nasabah:\n" + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(null, "Gagal ambil data nasabah:\n" + e.getMessage());
         }
     }
 
@@ -1373,6 +1387,12 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
         txt_email.setText("");
         txt_date.setText("");
         txt_Keterangan.setText("");
+        // Reset btn_add ke mode tambah (warna hijau, ikon tambah)
+        btn_add.setText("Tambah");
+        btn_add.setIcon(new ImageIcon("src\\main\\resources\\icon\\icon_tambah.png"));
+        btn_add.setFillClick(new Color(46, 204, 113));
+        btn_add.setFillOriginal(new Color(39, 174, 96));
+        btn_add.setFillOver(new Color(33, 150, 83));
     }
 
     public void importExcelToDatabase(File excelFile) {
@@ -1396,7 +1416,7 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                 }
             }
 
-            String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, saldo_total) VALUES (?, ?, ?, ?, ?, ?)";
+            String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, alamat, no_telpon, email, tanggal_bergabung, keterangan, saldo_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insertPs = conn.prepareStatement(insertSql);
             PreparedStatement checkPs = conn
                     .prepareStatement("SELECT COUNT(*) FROM manajemen_nasabah WHERE id_nasabah = ?");
@@ -1412,25 +1432,42 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                         continue;
                     }
 
-                    // Get cell values with null checks
+                    // Ambil cell sesuai urutan kolom export: ID, Nama, Alamat, Telepon, Email, Tanggal Bergabung, Keterangan, Saldo
                     Cell idCell = row.getCell(0);
                     Cell namaCell = row.getCell(1);
                     Cell alamatCell = row.getCell(2);
                     Cell teleponCell = row.getCell(3);
                     Cell emailCell = row.getCell(4);
-                    Cell saldoCell = row.getCell(5);
+                    Cell tanggalBergabungCell = row.getCell(5);
+                    Cell keteranganCell = row.getCell(6);
+                    Cell saldoCell = row.getCell(7);
 
                     // Skip if any required cell is null
                     if (idCell == null || namaCell == null || alamatCell == null
-                            || teleponCell == null || emailCell == null || saldoCell == null) {
+                            || teleponCell == null || emailCell == null || tanggalBergabungCell == null || keteranganCell == null || saldoCell == null) {
                         continue;
                     }
 
-                    String id = idCell.toString();
+                    // ID: pastikan tidak ada .0 jika numeric
+                    String id;
+                    if (idCell.getCellType() == CellType.NUMERIC) {
+                        id = String.valueOf((int) idCell.getNumericCellValue());
+                    } else {
+                        id = idCell.toString();
+                    }
+                    // Normalisasi ID: trim dan hilangkan .0 jika ada
+                    if (id != null) {
+                        id = id.trim();
+                        if (id.endsWith(".0")) {
+                            id = id.substring(0, id.length() - 2);
+                        }
+                    }
                     String nama = namaCell.toString();
                     String alamat = alamatCell.toString();
                     String telepon = teleponCell.toString();
                     String email = emailCell.toString();
+                    String tanggalBergabung = tanggalBergabungCell.toString();
+                    String keterangan = keteranganCell.toString();
                     String saldoStr = saldoCell.toString().replace("Rp ", "").replace(".", "").replace(",", ".");
                     BigDecimal saldo = new BigDecimal(saldoStr);
 
@@ -1447,7 +1484,9 @@ public class TabManajemenNasabah extends javax.swing.JPanel {
                         insertPs.setString(3, alamat);
                         insertPs.setString(4, telepon);
                         insertPs.setString(5, email);
-                        insertPs.setBigDecimal(6, saldo);
+                        insertPs.setString(6, tanggalBergabung);
+                        insertPs.setString(7, keterangan);
+                        insertPs.setBigDecimal(8, saldo);
                         insertPs.addBatch();
                         insertCount++;
                     } else {

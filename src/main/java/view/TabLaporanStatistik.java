@@ -52,7 +52,13 @@ public class TabLaporanStatistik extends javax.swing.JPanel {
         try {
             List<ModelData> lists = new ArrayList<>();
             DBconnect.getInstance().getConnection();
-            String sql = "SELECT Month, SUM(Cost) AS Cost, SUM(GrossProfit) AS GrossProfit, SUM(GrossProfit) - SUM(Cost) AS Profit FROM (SELECT DATE_FORMAT(t.tanggal, '%b %Y') AS Month, SUM(t.total_harga) AS GrossProfit, 0 AS Cost FROM laporan_pemasukan lpm JOIN transaksi t ON lpm.id_transaksi = t.id_transaksi GROUP BY DATE_FORMAT(t.tanggal, '%m%Y') UNION ALL SELECT DATE_FORMAT(js.tanggal, '%b %Y') AS Month, SUM(js.harga) GrossProfit, 0 AS Cost FROM laporan_pemasukan lpm JOIN jual_sampah js ON lpm.id_jual_sampah = js.id_jual_sampah GROUP BY DATE_FORMAT(js.tanggal, '%m%Y') UNION ALL SELECT DATE_FORMAT(lp.riwayat, '%b %Y') AS Month, 0 AS Amount, SUM(ss.harga) AS Cost FROM laporan_pengeluaran lp JOIN setor_sampah ss ON lp.id_setoran = ss.id_setoran GROUP BY DATE_FORMAT(lp.riwayat, '%m%Y')) AS data GROUP BY Month ORDER BY STR_TO_DATE(CONCAT('01 ', Month), '%d %b %Y') DESC LIMIT 12;";
+            String sql = "SELECT Month, SUM(Cost) AS Cost, SUM(GrossProfit) AS GrossProfit, SUM(GrossProfit) - SUM(Cost) AS Profit FROM (" +
+                "SELECT strftime('%m-%Y', t.tanggal) AS Month, SUM(t.total_harga) AS GrossProfit, 0 AS Cost FROM laporan_pemasukan lpm JOIN transaksi t ON lpm.id_transaksi = t.id_transaksi GROUP BY strftime('%m-%Y', t.tanggal) " +
+                "UNION ALL " +
+                "SELECT strftime('%m-%Y', js.tanggal) AS Month, SUM(js.harga) AS GrossProfit, 0 AS Cost FROM laporan_pemasukan lpm JOIN jual_sampah js ON lpm.id_jual_sampah = js.id_jual_sampah GROUP BY strftime('%m-%Y', js.tanggal) " +
+                "UNION ALL " +
+                "SELECT strftime('%m-%Y', lp.riwayat) AS Month, 0 AS GrossProfit, SUM(ss.harga) AS Cost FROM laporan_pengeluaran lp JOIN setor_sampah ss ON lp.id_setoran = ss.id_setoran GROUP BY strftime('%m-%Y', lp.riwayat) " +
+            ") AS data GROUP BY Month ORDER BY substr(Month, 4, 4) || '-' || substr(Month, 1, 2) DESC LIMIT 12;";
             PreparedStatement p = DBconnect.getInstance().getConnection().prepareStatement(sql);
             ResultSet r = p.executeQuery();
             while (r.next()) {
