@@ -31,6 +31,7 @@ import javax.print.SimpleDoc;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import notification.toast.Notifications;
+import main.DBconnect;
 
 /**
  *
@@ -399,9 +400,9 @@ public class TabTransaksi extends javax.swing.JPanel {
     }
 
     private void prosesPembayaranNasabah(String id_nasabah) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
+            conn = main.DBconnect.getConnection();
 
             String sql = "SELECT * FROM manajemen_nasabah WHERE id_nasabah = ?";
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -501,7 +502,7 @@ public class TabTransaksi extends javax.swing.JPanel {
                                 updatePst.setString(2, id_nasabah);
                                 updatePst.executeUpdate();
                                 updatePst.close(); // Insert record into penarikan_saldo table
-                                String insertSql = "INSERT INTO penarikan_saldo (id_nasabah, id_user, jumlah_penarikan, tanggal_penarikan) VALUES (?, ?, ?, NOW())";
+                                String insertSql = "INSERT INTO penarikan_saldo (id_nasabah, id_user, jumlah_penarikan, tanggal_penarikan) VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
                                 PreparedStatement insertPst = conn.prepareStatement(insertSql);
                                 insertPst.setString(1, id_nasabah);
                                 insertPst.setInt(2, users.getId());
@@ -535,9 +536,10 @@ public class TabTransaksi extends javax.swing.JPanel {
 
             rs.close();
             pst.close();
-            conn.close();
+            DBconnect.closeConnection(conn);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage());
+            DBconnect.closeConnection(conn);
         }
     }
 
@@ -1112,10 +1114,9 @@ public class TabTransaksi extends javax.swing.JPanel {
 
     // Process cash payment
     private void processCashPayment() {
-        // Periksa apakah nasabah "non-nasabah" ada di database
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
+            conn = main.DBconnect.getConnection();
 
             String checkSql = "SELECT COUNT(*) FROM manajemen_nasabah WHERE id_nasabah = 'non-nasabah'";
             PreparedStatement checkPst = conn.prepareStatement(checkSql);
@@ -1133,42 +1134,45 @@ public class TabTransaksi extends javax.swing.JPanel {
             if (!exists) {
                 String insertSql = "INSERT INTO manajemen_nasabah (id_nasabah, nama_nasabah, tanggal_bergabung, alamat, no_telpon, email, keterangan, saldo_total) "
                         +
-                        "VALUES ('non-nasabah', 'Non Nasabah', NOW(), '-', '-', '-', 'Nasabah untuk transaksi tunai', 0)";
+                        "VALUES ('non-nasabah', 'Non Nasabah', CURRENT_TIMESTAMP, '-', '-', '-', 'Nasabah untuk transaksi tunai', 0)";
                 PreparedStatement insertPst = conn.prepareStatement(insertSql);
                 insertPst.executeUpdate();
                 insertPst.close();
             }
 
-            conn.close();
+            // Lanjutkan dengan proses pembayaran tunai seperti biasa
+            String input = txttunai.getText().trim().replaceAll("[^\\d]", "");
+            if (input.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Masukkan jumlah tunai yang valid.");
+                return;
+            }
+
+            int tunai = Integer.parseInt(input);
+            if (tunai < total) {
+                JOptionPane.showMessageDialog(this, "Uang tunai tidak mencukupi.");
+                return;
+            }
+
+            int kembali = tunai - total;
+            txtkembalian.setText(String.valueOf(kembali));
+
+            saveTransaction(null, tunai, kembali);
+
+            rs.close();
+            checkPst.close();
+            DBconnect.closeConnection(conn);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage());
+            DBconnect.closeConnection(conn);
             return;
         }
-
-        // Lanjutkan dengan proses pembayaran tunai seperti biasa
-        String input = txttunai.getText().trim().replaceAll("[^\\d]", "");
-        if (input.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Masukkan jumlah tunai yang valid.");
-            return;
-        }
-
-        int tunai = Integer.parseInt(input);
-        if (tunai < total) {
-            JOptionPane.showMessageDialog(this, "Uang tunai tidak mencukupi.");
-            return;
-        }
-
-        int kembali = tunai - total;
-        txtkembalian.setText(String.valueOf(kembali));
-
-        saveTransaction(null, tunai, kembali);
     }
 
     // Process balance payment
     private void processBalancePayment(String idNasabah) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
+            conn = main.DBconnect.getConnection();
 
             String sql = "SELECT * FROM manajemen_nasabah WHERE id_nasabah = ?";
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -1228,10 +1232,11 @@ public class TabTransaksi extends javax.swing.JPanel {
 
             rs.close();
             pst.close();
-            conn.close();
+            DBconnect.closeConnection(conn);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage());
             e.printStackTrace();
+            DBconnect.closeConnection(conn);
         }
     }
 
@@ -1241,11 +1246,10 @@ public class TabTransaksi extends javax.swing.JPanel {
         String kodeTransaksi = "TRX" + System.currentTimeMillis();
         List<Object[]> pesanan = new ArrayList<>();
 
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
+        try (Connection conn = main.DBconnect.getConnection();
                 PreparedStatement ps = conn.prepareStatement(
                         "INSERT INTO transaksi (id_user, id_nasabah, kode_transaksi, kode_barang, nama_barang, qty, harga, total_harga, bayar, kembalian, tanggal) "
-                                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)");
                 PreparedStatement pstUpdate = conn.prepareStatement(
                         "UPDATE data_barang SET stok = stok - ? WHERE kode_barang = ? AND stok >=?")) {
 
@@ -1321,11 +1325,9 @@ public class TabTransaksi extends javax.swing.JPanel {
     }
 
     private void fetchProductInfo(String barcode) {
+        Connection con = null;
         try {
-            Connection con = DriverManager.getConnection(
-                    "jdbc:MySQL://localhost:3306/bank_sampah_sahabat_ibu",
-                    "root",
-                    "");
+            con = main.DBconnect.getConnection();
 
             String sql = "SELECT * FROM data_barang WHERE kode_barang = ?";
             PreparedStatement pst = con.prepareStatement(sql);
@@ -1347,10 +1349,11 @@ public class TabTransaksi extends javax.swing.JPanel {
 
             rs.close();
             pst.close();
-            con.close();
+            DBconnect.closeConnection(con);
         } catch (Exception e) {
             System.out.println("Error! " + e.getMessage());
             JOptionPane.showMessageDialog(this, "Error saat memproses barcode: " + e.getMessage());
+            DBconnect.closeConnection(con);
         }
     }
 
@@ -1366,9 +1369,9 @@ public class TabTransaksi extends javax.swing.JPanel {
 
     // New method for handling withdrawals only
     private void handleTarikTunai(String id_nasabah) {
+        Connection conn = null;
         try {
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/bank_sampah_sahabat_ibu", "root", "");
+            conn = main.DBconnect.getConnection();
 
             String sql = "SELECT * FROM manajemen_nasabah WHERE id_nasabah = ?";
             PreparedStatement pst = conn.prepareStatement(sql);
@@ -1419,7 +1422,7 @@ public class TabTransaksi extends javax.swing.JPanel {
                             updatePst.close();
 
                             // Insert record into penarikan_saldo table
-                            String insertSql = "INSERT INTO penarikan_saldo (id_nasabah, id_user, jumlah_penarikan, tanggal_penarikan) VALUES (?, ?, ?, NOW())";
+                            String insertSql = "INSERT INTO penarikan_saldo (id_nasabah, id_user, jumlah_penarikan, tanggal_penarikan) VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
                             PreparedStatement insertPst = conn.prepareStatement(insertSql);
                             insertPst.setString(1, id_nasabah);
                             insertPst.setInt(2, users.getId());
@@ -1449,9 +1452,10 @@ public class TabTransaksi extends javax.swing.JPanel {
 
             rs.close();
             pst.close();
-            conn.close();
+            DBconnect.closeConnection(conn);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage());
+            DBconnect.closeConnection(conn);
         }
     }
 

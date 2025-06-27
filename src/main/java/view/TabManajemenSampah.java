@@ -30,6 +30,7 @@ import javax.swing.filechooser.FileFilter;
 
 public class TabManajemenSampah extends javax.swing.JPanel {
 
+    @SuppressWarnings("unused")
     private int id_user;
     private final Connection conn = DBconnect.getConnection();
     private DefaultTableModel tblModel;
@@ -2366,49 +2367,63 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 return;
             }
 
-            // Get category ID
+            // Declare variables at method scope
             String idKategori = "";
-            String queryKategori = "SELECT id_kategori FROM kategori_sampah WHERE nama_kategori = ?";
-            try (PreparedStatement psKategori = conn.prepareStatement(queryKategori)) {
-                psKategori.setString(1, namaKategori);
-                ResultSet rsKategori = psKategori.executeQuery();
-                if (rsKategori.next()) {
-                    idKategori = rsKategori.getString("id_kategori");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Kategori tidak ditemukan.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            }
-
-            // Get sampah ID and current stock
             String idSampah = "";
             double currentStock = 0;
-            String querySampah = "SELECT id_sampah, stok_sampah FROM sampah WHERE id_kategori = ?";
-            try (PreparedStatement ps = conn.prepareStatement(querySampah)) {
-                ps.setString(1, idKategori);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    idSampah = rs.getString("id_sampah");
-                    currentStock = rs.getDouble("stok_sampah");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Data sampah tidak ditemukan.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            }
-
-            // Handle customer's last balance if depositing waste
             double saldoTerakhir = 0;
-            if (lastButtonClicked.equals("setor")) {
-                String querySaldo = "SELECT saldo_nasabah FROM setor_sampah WHERE id_nasabah = ? ORDER BY tanggal DESC LIMIT 1";
-                try (PreparedStatement psSaldo = conn.prepareStatement(querySaldo)) {
-                    psSaldo.setString(1, kode);
-                    ResultSet rsSaldo = psSaldo.executeQuery();
-                    if (rsSaldo.next()) {
-                        saldoTerakhir = rsSaldo.getDouble("saldo_nasabah");
+
+            // Use a fresh connection for reading data to avoid potential locks
+            Connection readConn = DBconnect.getConnection();
+            try {
+                // Get category ID
+                String queryKategori = "SELECT id_kategori FROM kategori_sampah WHERE nama_kategori = ?";
+                try (PreparedStatement psKategori = readConn.prepareStatement(queryKategori)) {
+                    psKategori.setString(1, namaKategori);
+                    ResultSet rsKategori = psKategori.executeQuery();
+                    if (rsKategori.next()) {
+                        idKategori = rsKategori.getString("id_kategori");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Kategori tidak ditemukan.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
                     }
                 }
+
+                // Get sampah ID and current stock
+                String querySampah = "SELECT id_sampah, stok_sampah FROM sampah WHERE id_kategori = ?";
+                try (PreparedStatement ps = readConn.prepareStatement(querySampah)) {
+                    ps.setString(1, idKategori);
+                    ResultSet rs = ps.executeQuery();
+                    if (rs.next()) {
+                        idSampah = rs.getString("id_sampah");
+                        currentStock = rs.getDouble("stok_sampah");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Data sampah tidak ditemukan.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+
+                // Handle customer's last balance if depositing waste
+                if (lastButtonClicked.equals("setor")) {
+                    String querySaldo = "SELECT saldo_nasabah FROM setor_sampah WHERE id_nasabah = ? ORDER BY tanggal DESC LIMIT 1";
+                    try (PreparedStatement psSaldo = readConn.prepareStatement(querySaldo)) {
+                        psSaldo.setString(1, kode);
+                        ResultSet rsSaldo = psSaldo.executeQuery();
+                        if (rsSaldo.next()) {
+                            saldoTerakhir = rsSaldo.getDouble("saldo_nasabah");
+                        }
+                    }
+                }
+
+                // Close the read connection when done
+                DBconnect.closeConnection(readConn);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Kesalahan saat membaca data: " + ex.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                DBconnect.closeConnection(readConn);
+                return;
             }
 
             if (lastButtonClicked.equals("setor")) {
@@ -2429,82 +2444,87 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 // Update stock - add to existing stock
                 double newStock = currentStock + berat;
 
-                // Begin transaction
-                conn.setAutoCommit(false);
+                // Use a fresh connection for this transaction to avoid database locks
+                try (Connection freshConn = DBconnect.getConnection()) {
+                    // Begin transaction
+                    freshConn.setAutoCommit(false);
 
-                try {
-                    // 1. Insert into setor_sampah
-                    String insert = "INSERT INTO setor_sampah (id_nasabah, id_sampah, berat_sampah, harga, saldo_nasabah, id_user, tanggal) VALUES (?, ?, ?, ?, ?, ?, NOW())";
-                    try (PreparedStatement insertPs = conn.prepareStatement(insert)) {
-                        insertPs.setString(1, kode);
-                        insertPs.setString(2, idSampah);
-                        insertPs.setDouble(3, berat);
-                        insertPs.setDouble(4, total);
-                        insertPs.setDouble(5, saldoBaru);
-                        insertPs.setInt(6, users.getId());
-                        insertPs.executeUpdate();
-                    }
-
-                    // 2. Update customer balance
-                    String updateSaldo = "UPDATE manajemen_nasabah SET saldo_total = ? WHERE id_nasabah = ?";
-                    try (PreparedStatement psUpdateSaldo = conn.prepareStatement(updateSaldo)) {
-                        psUpdateSaldo.setDouble(1, saldoBaru);
-                        psUpdateSaldo.setString(2, kode);
-                        psUpdateSaldo.executeUpdate();
-                    }
-
-                    // 3. Update waste stock
-                    String updateStock = "UPDATE sampah SET stok_sampah = ? WHERE id_sampah = ?";
-                    try (PreparedStatement psUpdateStock = conn.prepareStatement(updateStock)) {
-                        psUpdateStock.setDouble(1, newStock);
-                        psUpdateStock.setString(2, idSampah);
-                        psUpdateStock.executeUpdate();
-                    }
-
-                    // Commit transaction
-                    conn.commit();
-
-                    // Log successful waste deposit transaction
-                    LoggerUtil.insert(users.getId(), "Setor sampah dari nasabah " + kode
-                            + " (Kategori: " + cbxKategori_pnView.getSelectedItem()
-                            + ", Berat: " + berat + " kg, Total: Rp "
-                            + String.format("%,.0f", total) + ")");
-
-                    // Update display
-                    lblTotal.setText(String.format("Rp %,.0f", total));
-
-                    // Get customer name
-                    String namaNasabah = kode; // fallback
-                    String namaNasabahQuery = "SELECT nama_nasabah FROM manajemen_nasabah WHERE id_nasabah = ?";
-                    try (PreparedStatement psNasabah = conn.prepareStatement(namaNasabahQuery)) {
-                        psNasabah.setString(1, kode);
-                        ResultSet rsNama = psNasabah.executeQuery();
-                        if (rsNama.next()) {
-                            namaNasabah = rsNama.getString("nama_nasabah");
+                    try {
+                        // 1. Insert into setor_sampah - using Java for date handling
+                        String insert = "INSERT INTO setor_sampah (id_nasabah, id_sampah, berat_sampah, harga, saldo_nasabah, id_user, tanggal) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                        try (PreparedStatement insertPs = freshConn.prepareStatement(insert)) {
+                            insertPs.setString(1, kode);
+                            insertPs.setString(2, idSampah);
+                            insertPs.setDouble(3, berat);
+                            insertPs.setDouble(4, total);
+                            insertPs.setDouble(5, saldoBaru);
+                            insertPs.setInt(6, users.getId());
+                            insertPs.setString(7,
+                                    new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
+                            insertPs.executeUpdate();
                         }
+
+                        // 2. Update customer balance
+                        String updateSaldo = "UPDATE manajemen_nasabah SET saldo_total = ? WHERE id_nasabah = ?";
+                        try (PreparedStatement psUpdateSaldo = freshConn.prepareStatement(updateSaldo)) {
+                            psUpdateSaldo.setDouble(1, saldoBaru);
+                            psUpdateSaldo.setString(2, kode);
+                            psUpdateSaldo.executeUpdate();
+                        }
+
+                        // 3. Update waste stock
+                        String updateStock = "UPDATE sampah SET stok_sampah = ? WHERE id_sampah = ?";
+                        try (PreparedStatement psUpdateStock = freshConn.prepareStatement(updateStock)) {
+                            psUpdateStock.setDouble(1, newStock);
+                            psUpdateStock.setString(2, idSampah);
+                            psUpdateStock.executeUpdate();
+                        }
+
+                        // Commit transaction
+                        freshConn.commit();
+
+                        // Log successful waste deposit transaction
+                        LoggerUtil.insert(users.getId(), "Setor sampah dari nasabah " + kode
+                                + " (Kategori: " + cbxKategori_pnView.getSelectedItem()
+                                + ", Berat: " + berat + " kg, Total: Rp "
+                                + String.format("%,.0f", total) + ")");
+
+                        // Update display
+                        lblTotal.setText(String.format("Rp %,.0f", total));
+
+                        // Get customer name
+                        String namaNasabah = kode; // fallback
+                        String namaNasabahQuery = "SELECT nama_nasabah FROM manajemen_nasabah WHERE id_nasabah = ?";
+                        try (PreparedStatement psNasabah = freshConn.prepareStatement(namaNasabahQuery)) {
+                            psNasabah.setString(1, kode);
+                            ResultSet rsNama = psNasabah.executeQuery();
+                            if (rsNama.next()) {
+                                namaNasabah = rsNama.getString("nama_nasabah");
+                            }
+                        }
+
+                        // Show success message
+                        int result = JOptionPane.showConfirmDialog(null,
+                                "SETOR SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.0f", total)
+                                        + "\nSaldo " + namaNasabah + " Bertambah Menjadi: Rp "
+                                        + String.format("%,.0f", saldoBaru),
+                                "Sukses",
+                                JOptionPane.DEFAULT_OPTION);
+
+                        if (result == JOptionPane.OK_OPTION) {
+                            lblTotal.setText("0");
+                            clearForm();
+                            loadJenisSampah();
+                            showPanel();
+                        }
+
+                    } catch (SQLException e) {
+                        // Rollback transaction on error
+                        freshConn.rollback();
+                        throw e;
+                    } finally {
+                        freshConn.setAutoCommit(true);
                     }
-
-                    // Show success message
-                    int result = JOptionPane.showConfirmDialog(null,
-                            "SETOR SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.0f", total)
-                                    + "\nSaldo " + namaNasabah + " Bertambah Menjadi: Rp "
-                                    + String.format("%,.0f", saldoBaru),
-                            "Sukses",
-                            JOptionPane.DEFAULT_OPTION);
-
-                    if (result == JOptionPane.OK_OPTION) {
-                        lblTotal.setText("0");
-                        clearForm();
-                        loadJenisSampah();
-                        showPanel();
-                    }
-
-                } catch (SQLException e) {
-                    // Rollback transaction on error
-                    conn.rollback();
-                    throw e;
-                } finally {
-                    conn.setAutoCommit(true);
                 }
 
             } else if (lastButtonClicked.equals("jual")) {
@@ -2535,59 +2555,64 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 // Calculate new stock - FIXED: Properly subtract only what was sold
                 double newStock = currentStock - berat;
 
-                // Begin transaction
-                conn.setAutoCommit(false);
+                // Use a fresh connection for this transaction to avoid database locks
+                try (Connection freshConn = DBconnect.getConnection()) {
+                    // Begin transaction
+                    freshConn.setAutoCommit(false);
 
-                try {
-                    // 1. Insert into jual_sampah
-                    String insert = "INSERT INTO jual_sampah (id_sampah, berat_sampah, harga, id_user, tanggal) VALUES (?, ?, ?, ?, NOW())";
-                    try (PreparedStatement insertPs = conn.prepareStatement(insert)) {
-                        insertPs.setString(1, idSampah);
-                        insertPs.setDouble(2, berat);
-                        insertPs.setDouble(3, total);
-                        insertPs.setInt(4, users.getId());
-                        insertPs.executeUpdate();
+                    try {
+                        // 1. Insert into jual_sampah - using Java for date handling
+                        String insert = "INSERT INTO jual_sampah (id_sampah, berat_sampah, harga, id_user, tanggal) VALUES (?, ?, ?, ?, ?)";
+                        try (PreparedStatement insertPs = freshConn.prepareStatement(insert)) {
+                            insertPs.setString(1, idSampah);
+                            insertPs.setDouble(2, berat);
+                            insertPs.setDouble(3, total);
+                            insertPs.setInt(4, users.getId());
+                            insertPs.setString(5,
+                                    new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
+                            insertPs.executeUpdate();
+                        }
+
+                        // 2. Update waste stock
+                        String updateStock = "UPDATE sampah SET stok_sampah = ? WHERE id_sampah = ?";
+                        try (PreparedStatement psUpdateStock = freshConn.prepareStatement(updateStock)) {
+                            psUpdateStock.setDouble(1, newStock);
+                            psUpdateStock.setString(2, idSampah);
+                            psUpdateStock.executeUpdate();
+                        }
+
+                        // Commit transaction
+                        freshConn.commit();
+
+                        // Log successful waste sale transaction
+                        LoggerUtil.insert(users.getId(), "Menjual sampah "
+                                + cbxKategori_pnView.getSelectedItem()
+                                + " (Berat: " + berat + " kg, Total: Rp "
+                                + String.format("%,.0f", total) + ")");
+
+                        // Update display
+                        lblTotal.setText(String.format("Rp %,.0f", total));
+
+                        // Show success message
+                        int result = JOptionPane.showConfirmDialog(null,
+                                "TRANSAKSI JUAL SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.0f", total)
+                                        + "\nSisa stok: " + String.format("%.2f kg", newStock),
+                                "Sukses", JOptionPane.DEFAULT_OPTION);
+
+                        if (result == JOptionPane.OK_OPTION) {
+                            lblTotal.setText("0");
+                            clearForm();
+                            loadJenisSampah();
+                            showPanel();
+                        }
+
+                    } catch (SQLException e) {
+                        // Rollback transaction on error
+                        freshConn.rollback();
+                        throw e;
+                    } finally {
+                        freshConn.setAutoCommit(true);
                     }
-
-                    // 2. Update waste stock
-                    String updateStock = "UPDATE sampah SET stok_sampah = ? WHERE id_sampah = ?";
-                    try (PreparedStatement psUpdateStock = conn.prepareStatement(updateStock)) {
-                        psUpdateStock.setDouble(1, newStock);
-                        psUpdateStock.setString(2, idSampah);
-                        psUpdateStock.executeUpdate();
-                    }
-
-                    // Commit transaction
-                    conn.commit();
-
-                    // Log successful waste sale transaction
-                    LoggerUtil.insert(users.getId(), "Menjual sampah "
-                            + cbxKategori_pnView.getSelectedItem()
-                            + " (Berat: " + berat + " kg, Total: Rp "
-                            + String.format("%,.0f", total) + ")");
-
-                    // Update display
-                    lblTotal.setText(String.format("Rp %,.0f", total));
-
-                    // Show success message
-                    int result = JOptionPane.showConfirmDialog(null,
-                            "TRANSAKSI JUAL SAMPAH BERHASIL!\nTotal Harga: Rp " + String.format("%,.0f", total)
-                                    + "\nSisa stok: " + String.format("%.2f kg", newStock),
-                            "Sukses", JOptionPane.DEFAULT_OPTION);
-
-                    if (result == JOptionPane.OK_OPTION) {
-                        lblTotal.setText("0");
-                        clearForm();
-                        loadJenisSampah();
-                        showPanel();
-                    }
-
-                } catch (SQLException e) {
-                    // Rollback transaction on error
-                    conn.rollback();
-                    throw e;
-                } finally {
-                    conn.setAutoCommit(true);
                 }
 
             } else {
@@ -3056,6 +3081,11 @@ public class TabManajemenSampah extends javax.swing.JPanel {
     private component.PlaceholderTextField txt_search;
 
     // End of variables declaration//GEN-END:variables
+    /**
+     * This method is kept for potential future use or as a reference.
+     * Currently not used in this class.
+     */
+    @SuppressWarnings("unused")
     private void getData(int startIndex, int entriesPage, DefaultTableModel model) {
         model.setRowCount(0);
 
