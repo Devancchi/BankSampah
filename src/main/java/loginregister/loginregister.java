@@ -1,8 +1,9 @@
 package loginregister;
 
 import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
+
+import main.AppInitializer;
 import net.miginfocom.swing.MigLayout;
 import raven.modal.ModalDialog;
 import raven.modal.option.BorderOption;
@@ -89,8 +90,9 @@ public class loginregister extends JFrame {
         UIManager.put("Tree.font", poppinsFont);
         UIManager.put("defaultFont", poppinsFont);
 
-        FlatLaf.registerCustomDefaultsSource("themes");
-        FlatMacLightLaf.setup();
-        EventQueue.invokeLater(() -> new loginregister().setVisible(true));
+        AppInitializer.setupLookAndFeel();
+        java.awt.EventQueue.invokeLater(() -> {
+            new loginregister().setVisible(true);
+        });
     }
 }

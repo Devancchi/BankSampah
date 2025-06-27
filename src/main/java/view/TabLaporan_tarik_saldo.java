@@ -245,7 +245,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                             COALESCE(u.nama_user, '[user dihapus]') AS admin_name,
                             COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
                             'Setor Sampah' AS transaction_type,
-                            CONCAT(COALESCE(kate.nama_kategori, '[kategori dihapus]'), ' (', COALESCE(st.berat_sampah, '0'), ' kg)') AS description,
+                            COALESCE(kate.nama_kategori, '[kategori dihapus]') || ' (' || COALESCE(st.berat_sampah, '0') || ' kg)' AS description,
                             st.harga AS saldo_masuk,
                             0 AS saldo_keluar,
                             st.tanggal AS transaction_date
@@ -1050,7 +1050,7 @@ public class TabLaporan_tarik_saldo extends javax.swing.JPanel {
                                         COALESCE(u.nama_user, '[user dihapus]') AS admin_name,
                                         COALESCE(n.nama_nasabah, '[nasabah dihapus]') AS nasabah_name,
                                         'Setor Sampah' AS transaction_type,
-                                        CONCAT(COALESCE(kate.nama_kategori, '[kategori dihapus]'), ' (', COALESCE(st.berat_sampah, '0'), ' kg)') AS description,
+                                        COALESCE(kate.nama_kategori, '[kategori dihapus]') || ' (' || COALESCE(st.berat_sampah, '0') || ' kg)' AS description,
                                         st.harga AS saldo_masuk,
                                         0 AS saldo_keluar,
                                         st.tanggal AS transaction_date

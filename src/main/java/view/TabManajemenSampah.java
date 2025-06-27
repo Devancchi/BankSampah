@@ -238,13 +238,29 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
+                // Format tanggal dengan benar dari SQLite
+                String tanggalStr = rs.getString("tanggal");
+                String formattedDate = tanggalStr; // Default to the string as is
+
+                try {
+                    // Coba parse tanggal dan format ulang ke yyyy-MM-dd
+                    SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = parser.parse(tanggalStr);
+
+                    // Format ulang ke yyyy-MM-dd untuk tampilan
+                    formattedDate = parser.format(date);
+                } catch (Exception e) {
+                    // Jika gagal parse, gunakan tanggal original
+                    System.out.println("Error parsing date: " + e.getMessage());
+                }
+
                 Object[] row = {
                         rs.getString("id_sampah"),
                         rs.getString("nama_jenis"),
                         rs.getString("nama_kategori"),
                         rs.getInt("harga_setor"),
                         rs.getInt("harga_jual"),
-                        rs.getDate("tanggal"),
+                        formattedDate, // Gunakan tanggal yang sudah diformat
                         String.format("%.2f", rs.getDouble("stok_sampah")).replace(",", ".")
                 };
                 tblModel.addRow(row);
@@ -1138,8 +1154,6 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                                         javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(20, 20, 20)));
 
-        panelMain.add(panelAdd, "card2");
-
         panelRiwayat.setPreferredSize(new java.awt.Dimension(1192, 944));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
@@ -1624,7 +1638,8 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                                                 .addComponent(btnTambahKategori, javax.swing.GroupLayout.PREFERRED_SIZE,
                                                         36, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(btnHapusKategori, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        36,
+                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addComponent(btn_cancelJenisKategori, javax.swing.GroupLayout.DEFAULT_SIZE,
                                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap()));
@@ -2617,6 +2632,19 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 return;
             }
 
+            // Informasikan jumlah data yang akan diekspor
+            String infoMsg = "Anda akan mengekspor " + model.getRowCount() + " baris data";
+            if (!currentSearchTerm.isEmpty()) {
+                infoMsg += " dengan filter: '" + currentSearchTerm + "'";
+            }
+            infoMsg += ". Lanjutkan?";
+
+            int confirmExport = JOptionPane.showConfirmDialog(this, infoMsg, "Konfirmasi Export",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            if (confirmExport != JOptionPane.YES_OPTION) {
+                return;
+            }
+
             // Pilih lokasi penyimpanan file
             JFileChooser chooser = new JFileChooser();
             chooser.setDialogTitle("Simpan file Excel");
@@ -2660,6 +2688,13 @@ public class TabManajemenSampah extends javax.swing.JPanel {
                 // Ekspor data ke Excel
                 try {
                     ExcelExporter.exportTableModelToExcel(model, fileToSave);
+
+                    // Log export activity with row count and search info
+                    String logMessage = "Export data sampah to Excel. Rows: " + model.getRowCount();
+                    if (!currentSearchTerm.isEmpty()) {
+                        logMessage += ", Filter: " + currentSearchTerm;
+                    }
+                    LoggerUtil.insert(users.getId(), logMessage);
 
                     JOptionPane.showMessageDialog(this,
                             "Export berhasil!\nFile disimpan di: " + fileToSave.getAbsolutePath(),
@@ -3284,21 +3319,57 @@ public class TabManajemenSampah extends javax.swing.JPanel {
 
     private void getAllSampahData(DefaultTableModel model) {
         try {
-            String sql = "SELECT s.id_sampah, j.nama_jenis, k.nama_kategori, s.harga_setor, s.harga_jual, s.tanggal, s.stok_sampah "
-                    + "FROM sampah s "
-                    + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
-                    + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis";
-            PreparedStatement pst = conn.prepareStatement(sql);
+            String sql;
+            PreparedStatement pst;
+
+            // Check if we have an active search term - use the same filter as in the table
+            // view
+            if (!currentSearchTerm.isEmpty()) {
+                // Use search query - same as in loadtabelSampah() but without LIMIT and OFFSET
+                sql = "SELECT s.id_sampah, j.nama_jenis, k.nama_kategori, s.harga_setor, s.harga_jual, s.tanggal, s.stok_sampah "
+                        + "FROM sampah s "
+                        + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
+                        + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
+                        + "WHERE j.nama_jenis LIKE ? OR k.nama_kategori LIKE ? "
+                        + "ORDER BY s.id_sampah";
+                pst = conn.prepareStatement(sql);
+                String likeKeyword = "%" + currentSearchTerm + "%";
+                pst.setString(1, likeKeyword);
+                pst.setString(2, likeKeyword);
+            } else {
+                // Use normal query - same as in loadtabelSampah() but without LIMIT and OFFSET
+                sql = "SELECT s.id_sampah, j.nama_jenis, k.nama_kategori, s.harga_setor, s.harga_jual, s.tanggal, s.stok_sampah "
+                        + "FROM sampah s "
+                        + "JOIN kategori_sampah k ON s.id_kategori = k.id_kategori "
+                        + "JOIN jenis_sampah j ON k.id_jenis = j.id_jenis "
+                        + "ORDER BY s.id_sampah";
+                pst = conn.prepareStatement(sql);
+            }
+
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
+                // Format tanggal with the same format as in the table
+                String tanggalStr = rs.getString("tanggal");
+                String formattedDate = tanggalStr; // Default to the string as is
+
+                try {
+                    // Try to parse the date and reformat to yyyy-MM-dd
+                    SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = parser.parse(tanggalStr);
+                    formattedDate = parser.format(date);
+                } catch (Exception e) {
+                    // If parsing fails, use the original date string
+                    System.out.println("Error parsing date in export: " + e.getMessage());
+                }
+
                 Object[] row = {
                         rs.getString("id_sampah"),
                         rs.getString("nama_jenis"),
                         rs.getString("nama_kategori"),
                         rs.getInt("harga_setor"),
                         rs.getInt("harga_jual"),
-                        rs.getDate("tanggal"),
+                        formattedDate,
                         String.format("%.2f", rs.getDouble("stok_sampah")).replace(",", ".")
                 };
                 model.addRow(row);
@@ -3360,13 +3431,29 @@ public class TabManajemenSampah extends javax.swing.JPanel {
             pst.setInt(4, startIndex);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
+                // Format tanggal dengan benar dari SQLite
+                String tanggalStr = rs.getString("tanggal");
+                String formattedDate = tanggalStr; // Default to the string as is
+
+                try {
+                    // Coba parse tanggal dan format ulang ke yyyy-MM-dd
+                    SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = parser.parse(tanggalStr);
+
+                    // Format ulang ke yyyy-MM-dd untuk tampilan
+                    formattedDate = parser.format(date);
+                } catch (Exception e) {
+                    // Jika gagal parse, gunakan tanggal original
+                    System.out.println("Error parsing date: " + e.getMessage());
+                }
+
                 Object[] row = {
                         rs.getString("id_sampah"),
                         rs.getString("nama_jenis"),
                         rs.getString("nama_kategori"),
                         rs.getInt("harga_setor"),
                         rs.getInt("harga_jual"),
-                        rs.getDate("tanggal"),
+                        formattedDate, // Gunakan tanggal yang sudah diformat
                         String.format("%.2f", rs.getDouble("stok_sampah")).replace(",", ".")
                 };
                 model.addRow(row);
