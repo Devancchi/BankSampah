@@ -1,8 +1,5 @@
 package loginregister;
 
-import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.themes.FlatMacLightLaf;
-
 import main.AppInitializer;
 import net.miginfocom.swing.MigLayout;
 import raven.modal.ModalDialog;
@@ -15,6 +12,9 @@ import java.awt.*;
 public class loginregister extends JFrame {
 
     public loginregister() {
+        // Initialize database terlebih dahulu
+        initializeDatabase();
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(new Dimension(1366, 768));
         setLocationRelativeTo(null);
@@ -29,6 +29,37 @@ public class loginregister extends JFrame {
                 .setShadow(BorderOption.Shadow.MEDIUM);
 
         showLogin(); // tampilkan login saat awal
+    }
+
+    private void initializeDatabase() {
+        try {
+            // Initialize database manager
+            DatabaseManager dbManager = DatabaseManager.getInstance();
+
+            // Test koneksi database
+            if (dbManager.testConnection()) {
+                System.out.println("✅ Database connection successful");
+                System.out.println("📁 Database location: " + dbManager.getDatabasePath());
+            } else {
+                System.err.println("❌ Database connection failed");
+                showDatabaseError();
+            }
+
+        } catch (Exception e) {
+            System.err.println("❌ Database initialization error: " + e.getMessage());
+            e.printStackTrace();
+            showDatabaseError();
+        }
+    }
+
+    private void showDatabaseError() {
+        JOptionPane.showMessageDialog(
+                this,
+                "Terjadi kesalahan saat menginisialisasi database.\n" +
+                        "Aplikasi mungkin tidak berfungsi dengan baik.\n\n" +
+                        "Silakan restart aplikasi atau hubungi administrator.",
+                "Database Error",
+                JOptionPane.ERROR_MESSAGE);
     }
 
     private void showLogin() {
